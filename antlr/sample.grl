@@ -1,0 +1,58 @@
+// This is a comment
+// And this
+
+/* And also this */
+/*
+   As well as this
+*/
+
+rule RuleOne "Some rule description." salience 10 {
+    when
+        (someContext.attributeA.attributeA == 123 &&
+        someContext.attributeA.attributeB > 123 ||
+        someContext.attributeA.attributeB < 123 &&
+        someContext.attributeA.attributeB >= 123 &&
+        (someContext.attributeA.attributeB <= 123 && someContext.attributeA.attributeB != 123) &&
+        someContext.attributeA.attributeB > 123) ||
+        someContext.subContext.methodAbc( 23 + someContext.subContext.another() )
+        ||
+        someContext.attributeA.attributeA == 123.32
+        ||
+        someContext.attributeA.attributeS == "abcdefg"
+        ||
+        trim(someContext.attributeA.attributeS) == "abcdefg"
+        ||
+        someContext.date.value < now( 12 - 32)
+    then
+        otherContext.property.attr1 = 12;  // comment here
+        otherContext.property.attr1 = otherContext.property.attr1-12;
+        /*
+         another comment
+        */
+        otherContext.property.attr1 = func(otherContext.property.attr1-12) / 45;
+}
+
+
+rule RuleTwo "Some rule description." {
+    when
+        (someContext.attributeA.attributeA == 123 &&
+        someContext.attributeA.attributeB > 123 ||
+        someContext.attributeA.attributeB < 123 &&
+        someContext.attributeA.attributeB >= 123 &&
+        (someContext.attributeA.attributeB <= 123 && someContext.attributeA.attributeB != 123) &&
+        someContext.attributeA.attributeB > 123)
+        ||
+        someContext.attributeA.attributeA == 123.32
+        ||
+        someContext.attributeA.attributeS == "abcdefg"
+        ||
+        trim(someContext.attributeA.attributeS) == "abcdefg"
+        ||
+        someContext.date.value < now()
+    then
+        otherContext.property.attr1 = 12;
+        otherContext.property.attr1 = otherContext.property.attr1-12;
+        // commented code
+        // otherContext.property.attr1 = func(otherContext.property.attr1-12) / 45;
+        log("this is to be logged");
+}

@@ -1,0 +1,47 @@
+rule TaxingLuxuryItems "When its a luxury Item, you tax them 15 percent." salience 10 {
+    when
+        Purchase.IgnoredPurchase == false && Purchase.Tax == 0 && Purchase.ItemType == "LUXURY"
+    then
+        Purchase.Tax = Purchase.Price + (Purchase.Price * 0.15);
+}
+
+rule TaxingNormalItems "When its a Normal Item, you tax them 10 percent." salience 8 {
+    when
+        Purchase.IgnoredPurchase == false && Purchase.Tax == 0 && Purchase.ItemType == "NORMAL"
+    then
+        Purchase.Tax = Purchase.Price + (Purchase.Price * 0.1);
+}
+
+rule TaxingOtherTypeItems "When its not Normal or Luxury Item, you tax them 20 percent." salience 7 {
+    when
+        Purchase.IgnoredPurchase == false &&  Purchase.Tax == 0 && Purchase.ItemType != "NORMAL" && Purchase.ItemType != "LUXURY"
+    then
+        Purchase.Tax = Purchase.Price + (Purchase.Price * 0.2);
+}
+
+rule CalculatePriceAfterTax "When tax is calculated, time to calculate price after tax" {
+    when
+        Purchase.Tax > 0 && Purchase.PriceAfterTax == 0
+    then
+        Purchase.PriceAfterTax = Purchase.Price + Purchase.Tax;
+}
+
+rule SumUpPurchase "When price after tax calculated, sum it up" {
+    when
+        Purchase.PriceAfterTax > 0
+    then
+        CashFlow.PurchaseCount = PurchaseCount + 1;
+        CashFlow.TotalPurchases = CashFlow.TotalPurchases + Purchase.Price;
+        CashFlow.TotalTax = CashFlow.TotalTax + Purchase.Tax;
+        CashFlow.PurchasesAfterTax = CashFlow.PurchasesAfterTax + Purchase.PriceAfterTax;
+        Retract("SumUpPurchase");
+}
+
+rule OnlyCalculatePurchaseInYear2019 "All other purchase dated not in 2019, we should ignore" salience 100 {
+    when
+        Purchase.IgnoredPurchase == false && Purchase.PurchaseDate.Year() != 2019 && Purchase.PriceAfterTax == 0
+    then
+        Purchase.IgnoredPurchase = true;
+        Retract("OnlyCalculatePurchaseInYear2019");
+}
+

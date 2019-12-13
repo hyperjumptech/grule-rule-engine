@@ -1,0 +1,33 @@
+trigger:
+  - master
+
+variables:
+  GO111MODULE: 'on'
+  GOBIN:  '$(GOPATH)/bin' # Go binaries path
+  GOROOT: '/usr/local/go1.13' # Go installation path
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  modulePath: '$(GOPATH)/src/github.com/hyperjumptech/grule' # Path to the module's code
+
+steps:
+  - script: |
+      mkdir -p '$(GOBIN)'
+      mkdir -p '$(GOPATH)/pkg'
+      mkdir -p '$(modulePath)'
+      shopt -s extglob
+      mv !(gopath) '$(modulePath)'
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
+      echo '##vso[task.setvariable variable=path]$(PATH):$(GOBIN)'
+    displayName: 'Set up the Go workspace'
+  - script: go get -v -t -d ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'go get dependencies'
+  - script: go build -v ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build'
+  - script: |
+      go get -u golang.org/x/lint/golint
+      go test -v ./...
+      golint -set_exit_status builder/... context/... engine/... examples/... model/... pkg/... antlr/.
+    workingDirectory: '$(modulePath)'
+    displayName: 'Run tests'
