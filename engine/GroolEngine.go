@@ -12,13 +12,29 @@ import (
 // It will set the max cycle to 5000
 func NewGruleEngine() *GruleEngine {
 	return &GruleEngine{
-		MaxCycle: 5000,
+		MaxCycle:    5000,
+		subscribers: make([]func(*model.RuleEntry), 0),
 	}
 }
 
+//TODO: test subscribers
+
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
-	MaxCycle uint64
+	MaxCycle    uint64
+	subscribers []func(*model.RuleEntry)
+}
+
+// Subscribe adds custom func to subscribers slice
+func (g *GruleEngine) Subscribe(f func(*model.RuleEntry)) {
+	g.subscribers = append(g.subscribers, f)
+}
+
+// Notify all subscribers
+func (g *GruleEngine) notifySubscribers(r *model.RuleEntry) {
+	for _, f := range g.subscribers {
+		go f(r)
+	}
 }
 
 // Execute function will execute a knowledge evaluation and action against data context.
@@ -86,6 +102,10 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 					log.Errorf("Failed execution rule : %s. Got error %v", r.RuleName, err)
 					return errors.Trace(err)
 				}
+
+				// notify subscribers about executed rule
+				g.notifySubscribers(r)
+
 				//if there is a variable change, restart the cycle.
 				if dataCtx.VariableChangeCount > 0 {
 					cycleDone = false
