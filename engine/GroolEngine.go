@@ -17,8 +17,6 @@ func NewGruleEngine() *GruleEngine {
 	}
 }
 
-//TODO: test subscribers
-
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
 	MaxCycle    uint64
