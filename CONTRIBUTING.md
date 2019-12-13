@@ -12,7 +12,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 3. Create a new directory `mkdir $GOPATH/src/github.com/hyperjumptech`
 4. Enter the newly created directory `cd $GOPATH/src/github.com/hyperjumptech`
 5. Clone the project `git clone git@github.com:hyperjumptech/grule.git`
-6. Now you can work with your clone at `$GOPATH/src/github.com/hyperjumptech/grule` folderr.
+6. Now you can work with your clone at `$GOPATH/src/github.com/hyperjumptech/grule` folder.
 
 ## Pull Request Process
 
@@ -82,7 +82,7 @@ further defined and clarified by project maintainers.
 ### Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at [INSERT EMAIL ADDRESS]. All
+reported by contacting the project team at `oss@hyperjump.tech`. All
 complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.

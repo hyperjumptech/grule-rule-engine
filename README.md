@@ -122,8 +122,8 @@ rule <RuleName> <RuleDescription> [salience <priority>] {
 }
 ```
 
-**RuleName** identify a speciffic rule. The name should be unique in the entire knowledge base, consist of one word thus 
-it should not contains white-spece. 
+**RuleName** identify a specific rule. The name should be unique in the entire knowledge base, consist of one word thus 
+it should not contains white-space. 
 
 **RuleDescription** describes the rule. The description should be enclosed with a double-quote.
 
@@ -133,7 +133,7 @@ may define negative value for the salience, to make the salience even lower. Lik
 there are no definitive algorithm to specify which rule to be execute in case of conflicting candidate, the engine may run which ever they like.
 Salience is one way of hinting the rule engine of which rule have more importance compared to the other.
 
-**Boolean Expression** is an expression that will be used by rule engine to identify if that speciffic rule
+**Boolean Expression** is an expression that will be used by rule engine to identify if that specific rule
 are a candidate for execution for the current facts.
 
 **Assignment or Operation Expression** contains list of expressions (each expression should be ended with ";" symbol.) 
@@ -150,14 +150,14 @@ when
 then
      ...
 ```
-#### Constants and Literalss
+#### Constants and Literals
 
-| Literal | Description | Example |
-| ------- | ----------- | ------- |
-| String | Hold string literal, enclosed a string with double quote symbol &quot; | "This is a string" |
-| Decimal | Hold a decimal value, may preceeded with negative symbol - | `1` or `34` or `42344` or `-553` |
-| Real | Hold a real value | `234.4553`, `-234.3` |
-| Boolean | Hold a boolean value | `true`, `TRUE`, `False` |
+| Literal | Description                                                            | Example                          |
+| ------- | ---------------------------------------------------------------------- | -------------------------------- |
+| String  | Hold string literal, enclosed a string with double quote symbol &quot; | "This is a string"               |
+| Decimal | Hold a decimal value, may preceeded with negative symbol -             | `1` or `34` or `42344` or `-553` |
+| Real    | Hold a real value                                                      | `234.4553`, `-234.3`             |
+| Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
 
 Math operator such as `+`, `-`, `/`, `*`; Logical `&&` and `||`; Comparison 
 `<`,`<=`,`>`,`>=`,`==`,`!=` all are supported by the language.
@@ -314,7 +314,7 @@ if err != nil {
     t.Log(dr.TotalDistance)
 }
 ```
-The rule engine will use loaded knowledgebase to work upon sets of 
+The rule engine will use loaded knowledge base to work upon sets of 
 fact data in data context. 
 
 ## Calling Function in Grule
