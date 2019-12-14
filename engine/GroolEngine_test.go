@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/model"
@@ -112,6 +113,53 @@ func TestGrule_Execute(t *testing.T) {
 		t.FailNow()
 	} else {
 		engine := NewGruleEngine()
+		start := time.Now()
+		err = engine.Execute(dctx, kb)
+		if err != nil {
+			t.Errorf("Got error : %v", err)
+			t.FailNow()
+		} else {
+			dur := time.Since(start)
+			t.Log(dr.TotalDistance)
+			t.Logf("Duration %f ms", float64(dur)/float64(time.Millisecond))
+		}
+	}
+}
+
+func TestGrule_ExecuteWithSubscribers(t *testing.T) {
+	tc := &TestCar{
+		SpeedUp:        true,
+		Speed:          0,
+		MaxSpeed:       100,
+		SpeedIncrement: 2,
+	}
+	dr := &DistanceRecorder{
+		TotalDistance: 0,
+	}
+	dctx := context.NewDataContext()
+	err := dctx.Add("TestCar", tc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = dctx.Add("DistanceRecord", dr)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := func(r *model.RuleEntry) {
+		fmt.Printf("executed rule: %s\n", r.RuleName)
+	}
+
+	kb := model.NewKnowledgeBase()
+	rb := builder.NewRuleBuilder(kb)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(rules)))
+	if err != nil {
+		t.Errorf("Got error : %v", err)
+		t.FailNow()
+	} else {
+		engine := NewGruleEngine()
+		engine.Subscribe(f)
+
 		start := time.Now()
 		err = engine.Execute(dctx, kb)
 		if err != nil {
