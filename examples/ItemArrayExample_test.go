@@ -33,14 +33,17 @@ func TestItemPriceChecker_TestParser(t *testing.T) {
 	lexer := parser.NewgruleLexer(nis)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	listener := antlr2.NewGruleParserListener(model.NewKnowledgeBase())
+	var parseError error
+	listener := antlr2.NewGruleParserListener(model.NewKnowledgeBase(), func(e error) {
+		parseError = e
+	})
 
 	psr := parser.NewgruleParser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
 
-	for _, e := range listener.ParseErrors {
-		t.Log(e)
+	if parseError != nil {
+		t.Log(parseError)
 		t.FailNow()
 	}
 
