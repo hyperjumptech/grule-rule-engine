@@ -21,6 +21,7 @@ func NewGruleParserListener(kbase *model.KnowledgeBase, errCallback func(e error
 		KnowledgeBase: kbase,
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errCallback,
+		StopParse:     false,
 	}
 }
 
@@ -30,14 +31,17 @@ type GruleParserListener struct {
 	parser.BasegruleListener
 	PreviousNode []string
 
-	//RuleEntries map[string]*model.RuleEntry
 	KnowledgeBase *model.KnowledgeBase
 	Stack         *stack.Stack
+	StopParse     bool
 	ErrorCallback func(e error)
 }
 
 // VisitTerminal is called when a terminal node is visited.
 func (s *GruleParserListener) VisitTerminal(node antlr.TerminalNode) {
+	if s.StopParse {
+		return
+	}
 	s.PreviousNode = append(s.PreviousNode, node.GetText())
 	if len(s.PreviousNode) > 5 {
 		s.PreviousNode = s.PreviousNode[1:]
@@ -46,6 +50,7 @@ func (s *GruleParserListener) VisitTerminal(node antlr.TerminalNode) {
 
 // VisitErrorNode is called when an error node is visited.
 func (s *GruleParserListener) VisitErrorNode(node antlr.ErrorNode) {
+	s.StopParse = true
 	s.ErrorCallback(errors.New(fmt.Sprintf("GRL error, after %v and then unexpected '%s'", s.PreviousNode, node.GetText())))
 }
 
@@ -63,12 +68,18 @@ func (s *GruleParserListener) ExitRoot(ctx *parser.RootContext) {}
 
 // EnterRuleEntry is called when production ruleEntry is entered.
 func (s *GruleParserListener) EnterRuleEntry(ctx *parser.RuleEntryContext) {
+	if s.StopParse {
+		return
+	}
 	entry := &model.RuleEntry{}
 	s.Stack.Push(entry)
 }
 
 // ExitRuleEntry is called when production ruleEntry is exited.
 func (s *GruleParserListener) ExitRuleEntry(ctx *parser.RuleEntryContext) {
+	if s.StopParse {
+		return
+	}
 	entry := s.Stack.Pop().(*model.RuleEntry)
 	// check for duplicate engine.
 	if _, ok := s.KnowledgeBase.RuleEntries[entry.RuleName]; ok {
@@ -81,6 +92,9 @@ func (s *GruleParserListener) ExitRuleEntry(ctx *parser.RuleEntryContext) {
 
 // EnterRuleName is called when production ruleName is entered.
 func (s *GruleParserListener) EnterRuleName(ctx *parser.RuleNameContext) {
+	if s.StopParse {
+		return
+	}
 	ruleName := ctx.GetText()
 	entry := s.Stack.Peek().(*model.RuleEntry)
 	entry.RuleName = ruleName
@@ -99,6 +113,9 @@ func (s *GruleParserListener) ExitSalience(ctx *parser.SalienceContext) {}
 
 // EnterRuleDescription is called when production ruleDescription is entered.
 func (s *GruleParserListener) EnterRuleDescription(ctx *parser.RuleDescriptionContext) {
+	if s.StopParse {
+		return
+	}
 	ruleDescription := ctx.GetText()
 	entry := s.Stack.Peek().(*model.RuleEntry)
 	entry.RuleDescription = ruleDescription
@@ -109,12 +126,18 @@ func (s *GruleParserListener) ExitRuleDescription(ctx *parser.RuleDescriptionCon
 
 // EnterWhenScope is called when production whenScope is entered.
 func (s *GruleParserListener) EnterWhenScope(ctx *parser.WhenScopeContext) {
+	if s.StopParse {
+		return
+	}
 	whenScope := &model.WhenScope{}
 	s.Stack.Push(whenScope)
 }
 
 // ExitWhenScope is called when production whenScope is exited.
 func (s *GruleParserListener) ExitWhenScope(ctx *parser.WhenScopeContext) {
+	if s.StopParse {
+		return
+	}
 	whenScope := s.Stack.Pop().(*model.WhenScope)
 	ruleEntry := s.Stack.Peek().(*model.RuleEntry)
 	ruleEntry.WhenScope = whenScope
@@ -122,12 +145,18 @@ func (s *GruleParserListener) ExitWhenScope(ctx *parser.WhenScopeContext) {
 
 // EnterThenScope is called when production thenScope is entered.
 func (s *GruleParserListener) EnterThenScope(ctx *parser.ThenScopeContext) {
+	if s.StopParse {
+		return
+	}
 	thenScope := &model.ThenScope{}
 	s.Stack.Push(thenScope)
 }
 
 // ExitThenScope is called when production thenScope is exited.
 func (s *GruleParserListener) ExitThenScope(ctx *parser.ThenScopeContext) {
+	if s.StopParse {
+		return
+	}
 	thenScope := s.Stack.Pop().(*model.ThenScope)
 	ruleEntry := s.Stack.Peek().(*model.RuleEntry)
 	ruleEntry.ThenScope = thenScope
@@ -135,6 +164,9 @@ func (s *GruleParserListener) ExitThenScope(ctx *parser.ThenScopeContext) {
 
 // EnterAssignExpressions is called when production assignExpressions is entered.
 func (s *GruleParserListener) EnterAssignExpressions(ctx *parser.AssignExpressionsContext) {
+	if s.StopParse {
+		return
+	}
 	assigns := &model.AssignExpressions{
 		ExpressionList: make([]*model.AssignExpression, 0),
 	}
@@ -143,6 +175,9 @@ func (s *GruleParserListener) EnterAssignExpressions(ctx *parser.AssignExpressio
 
 // ExitAssignExpressions is called when production assignExpressions is exited.
 func (s *GruleParserListener) ExitAssignExpressions(ctx *parser.AssignExpressionsContext) {
+	if s.StopParse {
+		return
+	}
 	assigns := s.Stack.Pop().(*model.AssignExpressions)
 	thenScope := s.Stack.Peek().(*model.ThenScope)
 	thenScope.AssignExpressions = assigns
@@ -150,12 +185,18 @@ func (s *GruleParserListener) ExitAssignExpressions(ctx *parser.AssignExpression
 
 // EnterAssignExpression is called when production assignExpression is entered.
 func (s *GruleParserListener) EnterAssignExpression(ctx *parser.AssignExpressionContext) {
+	if s.StopParse {
+		return
+	}
 	assign := &model.AssignExpression{}
 	s.Stack.Push(assign)
 }
 
 // ExitAssignExpression is called when production assignExpression is exited.
 func (s *GruleParserListener) ExitAssignExpression(ctx *parser.AssignExpressionContext) {
+	if s.StopParse {
+		return
+	}
 	assign := s.Stack.Pop().(*model.AssignExpression)
 	assigns := s.Stack.Peek().(*model.AssignExpressions)
 	assigns.ExpressionList = append(assigns.ExpressionList, assign)
@@ -163,12 +204,18 @@ func (s *GruleParserListener) ExitAssignExpression(ctx *parser.AssignExpressionC
 
 // EnterAssignment is called when production assignment is entered.
 func (s *GruleParserListener) EnterAssignment(ctx *parser.AssignmentContext) {
+	if s.StopParse {
+		return
+	}
 	assignment := &model.Assignment{}
 	s.Stack.Push(assignment)
 }
 
 // ExitAssignment is called when production assignment is exited.
 func (s *GruleParserListener) ExitAssignment(ctx *parser.AssignmentContext) {
+	if s.StopParse {
+		return
+	}
 	assignment := s.Stack.Pop().(*model.Assignment)
 	assign := s.Stack.Peek().(*model.AssignExpression)
 	assign.Assignment = assignment
@@ -176,12 +223,18 @@ func (s *GruleParserListener) ExitAssignment(ctx *parser.AssignmentContext) {
 
 // EnterExpression is called when production expression is entered.
 func (s *GruleParserListener) EnterExpression(ctx *parser.ExpressionContext) {
+	if s.StopParse {
+		return
+	}
 	expression := &model.Expression{}
 	s.Stack.Push(expression)
 }
 
 // ExitExpression is called when production expression is exited.
 func (s *GruleParserListener) ExitExpression(ctx *parser.ExpressionContext) {
+	if s.StopParse {
+		return
+	}
 	expr := s.Stack.Pop().(*model.Expression)
 	holder := s.Stack.Peek().(model.ExpressionHolder)
 	err := holder.AcceptExpression(expr)
@@ -192,12 +245,18 @@ func (s *GruleParserListener) ExitExpression(ctx *parser.ExpressionContext) {
 
 // EnterPredicate is called when production predicate is entered.
 func (s *GruleParserListener) EnterPredicate(ctx *parser.PredicateContext) {
+	if s.StopParse {
+		return
+	}
 	predicate := &model.Predicate{}
 	s.Stack.Push(predicate)
 }
 
 // ExitPredicate is called when production predicate is exited.
 func (s *GruleParserListener) ExitPredicate(ctx *parser.PredicateContext) {
+	if s.StopParse {
+		return
+	}
 	predicate := s.Stack.Pop().(*model.Predicate)
 	expr := s.Stack.Peek().(*model.Expression)
 	expr.Predicate = predicate
@@ -205,6 +264,9 @@ func (s *GruleParserListener) ExitPredicate(ctx *parser.PredicateContext) {
 
 // EnterExpressionAtom is called when production expressionAtom is entered.
 func (s *GruleParserListener) EnterExpressionAtom(ctx *parser.ExpressionAtomContext) {
+	if s.StopParse {
+		return
+	}
 	exprAtom := &model.ExpressionAtom{
 		Text: ctx.GetText(),
 	}
@@ -213,6 +275,9 @@ func (s *GruleParserListener) EnterExpressionAtom(ctx *parser.ExpressionAtomCont
 
 // ExitExpressionAtom is called when production expressionAtom is exited.
 func (s *GruleParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomContext) {
+	if s.StopParse {
+		return
+	}
 	//fmt.Println(ctx.GetText())
 	exprAtom := s.Stack.Pop().(*model.ExpressionAtom)
 	holder := s.Stack.Peek().(model.ExpressionAtomHolder)
@@ -224,6 +289,9 @@ func (s *GruleParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomConte
 
 // EnterMethodCall is called when production methodCall is entered.
 func (s *GruleParserListener) EnterMethodCall(ctx *parser.MethodCallContext) {
+	if s.StopParse {
+		return
+	}
 	funcCall := &model.MethodCall{
 		MethodName: ctx.DOTTEDNAME().GetText(),
 	}
@@ -232,6 +300,9 @@ func (s *GruleParserListener) EnterMethodCall(ctx *parser.MethodCallContext) {
 
 // ExitMethodCall is called when production methodCall is exited.
 func (s *GruleParserListener) ExitMethodCall(ctx *parser.MethodCallContext) {
+	if s.StopParse {
+		return
+	}
 	methodCall := s.Stack.Pop().(*model.MethodCall)
 	holder := s.Stack.Peek().(model.MethodCallHolder)
 	err := holder.AcceptMethodCall(methodCall)
@@ -243,6 +314,9 @@ func (s *GruleParserListener) ExitMethodCall(ctx *parser.MethodCallContext) {
 
 // EnterFunctionCall is called when production functionCall is entered.
 func (s *GruleParserListener) EnterFunctionCall(ctx *parser.FunctionCallContext) {
+	if s.StopParse {
+		return
+	}
 	funcCall := &model.FunctionCall{
 		FunctionName: ctx.SIMPLENAME().GetText(),
 	}
@@ -251,6 +325,9 @@ func (s *GruleParserListener) EnterFunctionCall(ctx *parser.FunctionCallContext)
 
 // ExitFunctionCall is called when production functionCall is exited.
 func (s *GruleParserListener) ExitFunctionCall(ctx *parser.FunctionCallContext) {
+	if s.StopParse {
+		return
+	}
 	funcCall := s.Stack.Pop().(*model.FunctionCall)
 	holder := s.Stack.Peek().(model.FunctionCallHolder)
 	err := holder.AcceptFunctionCall(funcCall)
@@ -261,6 +338,9 @@ func (s *GruleParserListener) ExitFunctionCall(ctx *parser.FunctionCallContext) 
 
 // EnterFunctionArgs is called when production functionArgs is entered.
 func (s *GruleParserListener) EnterFunctionArgs(ctx *parser.FunctionArgsContext) {
+	if s.StopParse {
+		return
+	}
 	funcArg := &model.FunctionArgument{
 		Arguments: make([]*model.ArgumentHolder, 0),
 	}
@@ -269,6 +349,9 @@ func (s *GruleParserListener) EnterFunctionArgs(ctx *parser.FunctionArgsContext)
 
 // ExitFunctionArgs is called when production functionArgs is exited.
 func (s *GruleParserListener) ExitFunctionArgs(ctx *parser.FunctionArgsContext) {
+	if s.StopParse {
+		return
+	}
 	funcArgs := s.Stack.Pop().(*model.FunctionArgument)
 	// return immediately when there's an error
 	argHolder := s.Stack.Peek().(model.FunctionArgumentHolder)
@@ -284,6 +367,9 @@ func (s *GruleParserListener) EnterLogicalOperator(ctx *parser.LogicalOperatorCo
 
 // ExitLogicalOperator is called when production logicalOperator is exited.
 func (s *GruleParserListener) ExitLogicalOperator(ctx *parser.LogicalOperatorContext) {
+	if s.StopParse {
+		return
+	}
 	expr := s.Stack.Peek().(*model.Expression)
 	switch ctx.GetText() {
 	case "&&":
@@ -300,6 +386,9 @@ func (s *GruleParserListener) EnterVariable(ctx *parser.VariableContext) {}
 
 // ExitVariable is called when production variable is exited.
 func (s *GruleParserListener) ExitVariable(ctx *parser.VariableContext) {
+	if s.StopParse {
+		return
+	}
 	varName := ctx.GetText()
 	holder := s.Stack.Peek().(model.VariableHolder)
 	err := holder.AcceptVariable(varName)
@@ -314,6 +403,9 @@ func (s *GruleParserListener) EnterMathOperator(ctx *parser.MathOperatorContext)
 
 // ExitMathOperator is called when production mathOperator is exited.
 func (s *GruleParserListener) ExitMathOperator(ctx *parser.MathOperatorContext) {
+	if s.StopParse {
+		return
+	}
 	expr := s.Stack.Peek().(*model.ExpressionAtom)
 	switch ctx.GetText() {
 	case "+":
@@ -334,6 +426,9 @@ func (s *GruleParserListener) EnterComparisonOperator(ctx *parser.ComparisonOper
 
 // ExitComparisonOperator is called when production comparisonOperator is exited.
 func (s *GruleParserListener) ExitComparisonOperator(ctx *parser.ComparisonOperatorContext) {
+	if s.StopParse {
+		return
+	}
 	predicate := s.Stack.Peek().(*model.Predicate)
 	switch ctx.GetText() {
 	case "==":
@@ -355,12 +450,18 @@ func (s *GruleParserListener) ExitComparisonOperator(ctx *parser.ComparisonOpera
 
 // EnterConstant is called when production constant is entered.
 func (s *GruleParserListener) EnterConstant(ctx *parser.ConstantContext) {
+	if s.StopParse {
+		return
+	}
 	cons := &model.Constant{}
 	s.Stack.Push(cons)
 }
 
 // ExitConstant is called when production constant is exited.
 func (s *GruleParserListener) ExitConstant(ctx *parser.ConstantContext) {
+	if s.StopParse {
+		return
+	}
 	cons := s.Stack.Pop().(*model.Constant)
 	if ctx.NULL_LITERAL() != nil {
 		if ctx.NOT() != nil {
@@ -382,6 +483,9 @@ func (s *GruleParserListener) EnterDecimalLiteral(ctx *parser.DecimalLiteralCont
 
 // ExitDecimalLiteral is called when production decimalLiteral is exited.
 func (s *GruleParserListener) ExitDecimalLiteral(ctx *parser.DecimalLiteralContext) {
+	if s.StopParse {
+		return
+	}
 	decHold := s.Stack.Peek().(model.DecimalHolder)
 	i64, err := strconv.ParseInt(ctx.GetText(), 10, 64)
 	if err != nil {
@@ -397,6 +501,9 @@ func (s *GruleParserListener) EnterStringLiteral(ctx *parser.StringLiteralContex
 
 // ExitStringLiteral is called when production stringLiteral is exited.
 func (s *GruleParserListener) ExitStringLiteral(ctx *parser.StringLiteralContext) {
+	if s.StopParse {
+		return
+	}
 	cons := s.Stack.Peek().(*model.Constant)
 	cons.ConstantValue = reflect.ValueOf(strings.Trim(ctx.GetText(), "\"'"))
 }
@@ -407,6 +514,9 @@ func (s *GruleParserListener) EnterBooleanLiteral(ctx *parser.BooleanLiteralCont
 
 // ExitBooleanLiteral is called when production booleanLiteral is exited.
 func (s *GruleParserListener) ExitBooleanLiteral(ctx *parser.BooleanLiteralContext) {
+	if s.StopParse {
+		return
+	}
 	cons := s.Stack.Peek().(*model.Constant)
 	val := strings.ToLower(ctx.GetText())
 	switch val {
@@ -424,6 +534,9 @@ func (s *GruleParserListener) EnterRealLiteral(ctx *parser.RealLiteralContext) {
 
 // ExitRealLiteral is called when production realLiteral is exited.
 func (s *GruleParserListener) ExitRealLiteral(ctx *parser.RealLiteralContext) {
+	if s.StopParse {
+		return
+	}
 	cons := s.Stack.Peek().(*model.Constant)
 	flo, err := strconv.ParseFloat(ctx.GetText(), 64)
 	if err != nil {
