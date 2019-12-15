@@ -62,15 +62,21 @@ func (builder *RuleBuilder) BuildRuleFromResource(resource pkg.Resource) error {
 	lexer := parser.NewgruleLexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	listener := antlr2.NewGruleParserListener(builder.KnowledgeBase)
+	var parseError error
+
+	errCall := func(e error) {
+		parseError = e
+	}
+
+	listener := antlr2.NewGruleParserListener(builder.KnowledgeBase, errCall)
 
 	psr := parser.NewgruleParser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
 
-	if len(listener.ParseErrors) > 0 {
-		log.Errorf("Loading rule resource : %s failed. Got %d errors. 1st error : %v", resource.String(), len(listener.ParseErrors), listener.ParseErrors[0])
-		return errors.Errorf("error were found before builder bailing out. %d errors. 1st error : %v", len(listener.ParseErrors), listener.ParseErrors[0])
+	if parseError != nil {
+		log.Errorf("Loading rule resource : %s failed. Got %v", resource.String(), parseError)
+		return errors.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
 	log.Debugf("Loading rule resource : %s success", resource.String())
 	return nil
