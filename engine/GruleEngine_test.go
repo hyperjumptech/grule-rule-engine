@@ -105,7 +105,7 @@ func TestGrule_Execute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("Test", "0.1.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(rules)))
 	if err != nil {
@@ -150,7 +150,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		fmt.Printf("executed rule: %s\n", r.RuleName)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("Test", "0.1.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(rules)))
 	if err != nil {

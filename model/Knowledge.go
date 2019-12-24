@@ -2,12 +2,16 @@ package model
 
 // KnowledgeBase hold list of rule entry to be evaluated in each cycle.
 type KnowledgeBase struct {
+	Version     string
+	Name        string
 	RuleEntries map[string]*RuleEntry
 }
 
 // NewKnowledgeBase create new instance of knowledge
-func NewKnowledgeBase() *KnowledgeBase {
+func NewKnowledgeBase(name, version string) *KnowledgeBase {
 	return &KnowledgeBase{
+		Version:     version,
+		Name:        name,
 		RuleEntries: make(map[string]*RuleEntry),
 	}
 }

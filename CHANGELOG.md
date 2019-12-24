@@ -36,3 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Better DRL load and compilation
 - Better DRL error handling when compiling DRL
+
+## [Planned]
+
+### [1.0.1] - 2019-12-16
+
+#### Added
+
+- Versioning of knowledge base

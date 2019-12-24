@@ -60,7 +60,7 @@ func (cf *ItemPriceChecker) CheckPrices() {
 	})
 
 	// Prepare knowledgebase and load it with our rule.
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("PriceCheck", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
 	if err != nil {
@@ -145,7 +145,7 @@ func (cf *ItemPriceChecker) CheckCart() {
 	cart := &ItemCart{Items: items}
 
 	// Prepare knowledgebase and load it with our rule.
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("Cart Check Rules", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
 	if err != nil {

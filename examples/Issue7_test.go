@@ -46,7 +46,7 @@ func TestMethodCall_Issue7(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	knowledgeBase := model.NewKnowledgeBase()
+	knowledgeBase := model.NewKnowledgeBase("Test", "0.1.1")
 	ruleBuilder := builder.NewRuleBuilder(knowledgeBase)
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(Rule7)))

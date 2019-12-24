@@ -49,7 +49,7 @@ func TestMyPoGo_GetStringLength(t *testing.T) {
 	}
 
 	//初始化规则引擎
-	knowledgeBase := model.NewKnowledgeBase()
+	knowledgeBase := model.NewKnowledgeBase("Test", "0.1.1")
 	ruleBuilder := builder.NewRuleBuilder(knowledgeBase)
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule2)))
@@ -84,7 +84,7 @@ func TestMyPoGo_Compare(t *testing.T) {
 	}
 
 	//初始化规则引擎
-	knowledgeBase := model.NewKnowledgeBase()
+	knowledgeBase := model.NewKnowledgeBase("Test", "0.1.1")
 	ruleBuilder := builder.NewRuleBuilder(knowledgeBase)
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule3)))
