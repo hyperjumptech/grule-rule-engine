@@ -6,6 +6,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"sort"
 	"testing"
@@ -190,4 +191,121 @@ func TestEmptyValueEquality(t *testing.T) {
 
 		t.FailNow()
 	}
+}
+
+type TestStruct struct {
+	Param1 bool
+	Param2 bool
+	Param3 bool
+	Param4 bool
+	Result int64
+}
+
+const complexRule1 = `rule ComplexRule "test complex rule" salience 10 {
+    when
+        TestStruct.Param1 == true && TestStruct.Param2 == true || 
+		TestStruct.Param3 == true && TestStruct.Param4 == true
+    then
+        TestStruct.Result = 1;
+		Retract("ComplexRule");
+}`
+
+func TestEngine_ComplexRule1(t *testing.T) {
+
+	ts := &TestStruct{
+		Param1: true,
+		Param2: true,
+		Param3: true,
+		Param4: true,
+	}
+
+	dctx := context.NewDataContext()
+	err := dctx.Add("TestStruct", ts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kb := model.NewKnowledgeBase()
+	rb := builder.NewRuleBuilder(kb)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule1)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(1), ts.Result)
+}
+
+const complexRule2 = `rule ComplexRule "test complex rule" salience 10 {
+    when
+        TestStruct.Param1 == true && TestStruct.Param2 == true || 
+		TestStruct.Param3 == true && TestStruct.Param4 == false
+    then
+        TestStruct.Result = 1;
+		Retract("ComplexRule");
+}`
+
+func TestEngine_ComplexRule2(t *testing.T) {
+
+	ts := &TestStruct{
+		Param1: false,
+		Param2: false,
+		Param3: true,
+		Param4: false,
+	}
+
+	dctx := context.NewDataContext()
+	err := dctx.Add("TestStruct", ts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kb := model.NewKnowledgeBase()
+	rb := builder.NewRuleBuilder(kb)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule2)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(1), ts.Result)
+}
+
+const complexRule3 = `rule ComplexRule "test complex rule" salience 10 {
+    when
+        TestStruct.Param1 == true && TestStruct.Param2 == true  || 
+		TestStruct.Param1 == true && TestStruct.Param3 == false ||
+		TestStruct.Param4 == true
+    then
+        TestStruct.Result = 1;
+		Retract("ComplexRule");
+}`
+
+func TestEngine_ComplexRule3(t *testing.T) {
+
+	ts := &TestStruct{
+		Param1: false,
+		Param2: false,
+		Param3: true,
+		Param4: true,
+	}
+
+	dctx := context.NewDataContext()
+	err := dctx.Add("TestStruct", ts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kb := model.NewKnowledgeBase()
+	rb := builder.NewRuleBuilder(kb)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule3)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(1), ts.Result)
 }
