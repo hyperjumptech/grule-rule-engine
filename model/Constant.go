@@ -30,3 +30,7 @@ func (cons *Constant) AcceptDecimal(val int64) error {
 	cons.ConstantValue = reflect.ValueOf(val)
 	return nil
 }
+
+func (cons *Constant) EqualsTo(that AlphaNode) bool {
+	return reflect.TypeOf(that).Elem().Name() == "Constant" && reflect.DeepEqual(cons.ConstantValue, that.(*Constant).ConstantValue)
+}
