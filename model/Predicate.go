@@ -20,12 +20,12 @@ type Predicate struct {
 	ExpressionAtomRight *ExpressionAtom
 	ComparisonOperator  ComparisonOperator
 	knowledgeContext    *context.KnowledgeContext
-	ruleCtx             *context.RuleContext
+	ruleCtx             *RuleContext
 	dataCtx             *context.DataContext
 }
 
 // Initialize initialize this graph with context
-func (prdct *Predicate) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (prdct *Predicate) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	prdct.knowledgeContext = knowledgeContext
 	prdct.ruleCtx = ruleCtx
 	prdct.dataCtx = dataCtx
@@ -157,4 +157,38 @@ func (prdct *Predicate) Evaluate() (reflect.Value, error) {
 		}
 	}
 	return reflect.ValueOf(nil), nil
+}
+
+// EqualsTo will compare two Predicates
+func (prdct *Predicate) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "Predicate" {
+			thatPrdct := that.(*Predicate)
+			if prdct.ExpressionAtomLeft != nil && thatPrdct.ExpressionAtomLeft != nil &&
+				prdct.ExpressionAtomRight == nil && thatPrdct.ExpressionAtomRight == nil &&
+				prdct.ExpressionAtomLeft.EqualsTo(thatPrdct.ExpressionAtomLeft) {
+				return true
+			}
+			if prdct.ExpressionAtomLeft != nil && thatPrdct.ExpressionAtomLeft != nil &&
+				prdct.ExpressionAtomRight != nil && thatPrdct.ExpressionAtomRight != nil &&
+				prdct.ComparisonOperator == thatPrdct.ComparisonOperator {
+				switch prdct.ComparisonOperator {
+				case ComparisonOperatorEQ, ComparisonOperatorNEQ:
+					if (prdct.ExpressionAtomLeft.EqualsTo(thatPrdct.ExpressionAtomLeft) && prdct.ExpressionAtomRight.EqualsTo(thatPrdct.ExpressionAtomRight)) ||
+						(prdct.ExpressionAtomLeft.EqualsTo(thatPrdct.ExpressionAtomRight) && prdct.ExpressionAtomRight.EqualsTo(thatPrdct.ExpressionAtomLeft)) {
+						return true
+					}
+				default:
+					if prdct.ExpressionAtomLeft.EqualsTo(thatPrdct.ExpressionAtomLeft) && prdct.ExpressionAtomRight.EqualsTo(thatPrdct.ExpressionAtomRight) {
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
 }

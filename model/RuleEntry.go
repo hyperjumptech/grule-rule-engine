@@ -13,7 +13,7 @@ type RuleEntry struct {
 	WhenScope        *WhenScope
 	ThenScope        *ThenScope
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 
 	Retracted bool
@@ -26,7 +26,7 @@ func (entry *RuleEntry) AcceptDecimal(val int64) error {
 }
 
 // Initialize will init this graph prior execution.
-func (entry *RuleEntry) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (entry *RuleEntry) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	entry.knowledgeContext = knowledgeContext
 	entry.ruleCtx = ruleCtx
 	entry.dataCtx = dataCtx

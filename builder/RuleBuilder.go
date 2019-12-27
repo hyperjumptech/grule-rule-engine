@@ -78,6 +78,6 @@ func (builder *RuleBuilder) BuildRuleFromResource(resource pkg.Resource) error {
 		log.Errorf("Loading rule resource : %s failed. Got %v", resource.String(), parseError)
 		return errors.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
-	log.Debugf("Loading rule resource : %s success", resource.String())
+	log.Debugf("Loading rule resource : %s success. ", resource.String())
 	return nil
 }

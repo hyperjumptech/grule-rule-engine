@@ -10,12 +10,12 @@ import (
 type AssignExpressions struct {
 	ExpressionList   []*AssignExpression
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize will initialize this graph with context.
-func (ae *AssignExpressions) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (ae *AssignExpressions) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	ae.knowledgeContext = knowledgeContext
 	ae.ruleCtx = ruleCtx
 	ae.dataCtx = dataCtx

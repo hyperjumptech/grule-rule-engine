@@ -15,12 +15,12 @@ type ArgumentHolder struct {
 	MethodCall       *MethodCall
 	Expression       *Expression
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize this ArgumentHolder instance graph before rule execution start.
-func (ah *ArgumentHolder) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (ah *ArgumentHolder) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	ah.knowledgeContext = knowledgeContext
 	ah.ruleCtx = ruleCtx
 	ah.dataCtx = dataCtx
@@ -57,4 +57,33 @@ func (ah *ArgumentHolder) Evaluate() (reflect.Value, error) {
 		return ah.Expression.Evaluate()
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("argument holder stores no value")
+}
+
+// EqualsTo will compare two literal constants, be it string, int, uint, floats bools and nils
+func (ah *ArgumentHolder) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "ArgumentHolder" {
+			thatAh := that.(*ArgumentHolder)
+			if ah.Constant != nil && thatAh.Constant != nil {
+				return ah.Constant.EqualsTo(thatAh.Constant)
+			}
+			if ah.FunctionCall != nil && thatAh.FunctionCall != nil {
+				return ah.FunctionCall.EqualsTo(thatAh.FunctionCall)
+			}
+			if ah.MethodCall != nil && thatAh.MethodCall != nil {
+				return ah.MethodCall.EqualsTo(thatAh.MethodCall)
+			}
+			if ah.Expression != nil && thatAh.Expression != nil {
+				return ah.Expression.EqualsTo(thatAh.Expression)
+			}
+			if ah.Variable == thatAh.Variable {
+				return true
+			}
+		}
+	}
+	return false
 }

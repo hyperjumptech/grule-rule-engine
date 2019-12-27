@@ -225,7 +225,7 @@ func TestEngine_ComplexRule1(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("test", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule1)))
 	assert.NoError(t, err)
@@ -261,7 +261,7 @@ func TestEngine_ComplexRule2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("test", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule2)))
 	assert.NoError(t, err)
@@ -298,7 +298,7 @@ func TestEngine_ComplexRule3(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("test", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule3)))
 	assert.NoError(t, err)
@@ -336,7 +336,7 @@ func TestEngine_ComplexRule4(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("test", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule4)))
 	assert.NoError(t, err)

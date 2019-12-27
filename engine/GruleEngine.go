@@ -53,7 +53,7 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 		Knowledge: knowledge,
 	}
 	kctx := &context.KnowledgeContext{}
-	rctx := &context.RuleContext{}
+	rctx := knowledge.RuleContext
 	dataCtx.Add("DEFUNC", defunc)
 
 	knowledge.Reset()
@@ -90,6 +90,8 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 				runnable = append(runnable, v)
 			}
 		}
+
+		knowledge.RuleContextReset()
 
 		// If there are rules to execute, sort them by their Salience
 		if len(runnable) > 0 {

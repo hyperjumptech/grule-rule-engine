@@ -323,8 +323,11 @@ func (s *GruleParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomConte
 	Logger.Tracef("Exiting expression atom '%s'", ctx.GetText())
 	//fmt.Println(ctx.GetText())
 	exprAtom := s.Stack.Pop().(*model.ExpressionAtom)
+
+	theAtm := s.KnowledgeBase.RuleContext.Add(exprAtom)
+
 	holder := s.Stack.Peek().(model.ExpressionAtomHolder)
-	err := holder.AcceptExpressionAtom(exprAtom)
+	err := holder.AcceptExpressionAtom(theAtm)
 	if err != nil {
 		Logger.Errorf("error while exiting expression atom. Got '%v'", err)
 		s.ErrorCallback(err)

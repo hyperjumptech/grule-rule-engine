@@ -5,6 +5,7 @@ type KnowledgeBase struct {
 	Version     string
 	Name        string
 	RuleEntries map[string]*RuleEntry
+	RuleContext *RuleContext
 }
 
 // NewKnowledgeBase create new instance of knowledge
@@ -13,6 +14,7 @@ func NewKnowledgeBase(name, version string) *KnowledgeBase {
 		Version:     version,
 		Name:        name,
 		RuleEntries: make(map[string]*RuleEntry),
+		RuleContext: NewRuleContext(),
 	}
 }
 
@@ -28,4 +30,9 @@ func (k *KnowledgeBase) Reset() {
 	for _, v := range k.RuleEntries {
 		v.Retracted = false
 	}
+}
+
+// RuleContextReset will reset the rule contexts, render them un-evaluated
+func (k *KnowledgeBase) RuleContextReset() {
+	k.RuleContext.Reset()
 }

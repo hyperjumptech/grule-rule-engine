@@ -10,7 +10,7 @@ import (
 type FunctionArgument struct {
 	Arguments        []*ArgumentHolder
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
@@ -31,7 +31,7 @@ func (funcArg *FunctionArgument) EvaluateArguments() ([]reflect.Value, error) {
 }
 
 // Initialize will prepare this set of arguments with contexts.
-func (funcArg *FunctionArgument) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (funcArg *FunctionArgument) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	funcArg.knowledgeContext = knowledgeContext
 	funcArg.ruleCtx = ruleCtx
 	funcArg.dataCtx = dataCtx
@@ -86,4 +86,27 @@ func (funcArg *FunctionArgument) AcceptConstant(cons *Constant) error {
 	}
 	funcArg.Arguments = append(funcArg.Arguments, holder)
 	return nil
+}
+
+// EqualsTo will compare two literal constants, be it string, int, uint, floats bools and nils
+func (funcArg *FunctionArgument) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "FunctionArgument" {
+			thatArgument := that.(*FunctionArgument)
+			if len(funcArg.Arguments) == len(thatArgument.Arguments) {
+				for i, thisHolder := range funcArg.Arguments {
+					thatHolder := thatArgument.Arguments[i]
+					if thisHolder.EqualsTo(thatHolder) == false {
+						return false
+					}
+				}
+				return true
+			}
+		}
+	}
+	return false
 }

@@ -12,12 +12,12 @@ import (
 type WhenScope struct {
 	Expression       *Expression
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize initialize the object graph prior execution
-func (when *WhenScope) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (when *WhenScope) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	when.knowledgeContext = knowledgeContext
 	when.ruleCtx = ruleCtx
 	when.dataCtx = dataCtx
