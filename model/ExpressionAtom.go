@@ -27,6 +27,7 @@ type ExpressionAtom struct {
 	evalErrorResult error
 }
 
+// Reset will mark this expression as not evaluated, thus next call to Evaluate will run normally.
 func (exprAtm *ExpressionAtom) Reset() {
 	exprAtm.evaluated = false
 }
