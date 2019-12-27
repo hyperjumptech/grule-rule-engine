@@ -110,7 +110,7 @@ type CashFlowCalculator struct {
 func (cf *CashFlowCalculator) CalculatePurchases() {
 	cashFlow := &CashFlow{}
 
-	kb := model.NewKnowledgeBase()
+	kb := model.NewKnowledgeBase("Purchase Calculator", "0.0.1")
 	rb := builder.NewRuleBuilder(kb)
 	err := rb.BuildRuleFromResource(pkg.NewFileResource("CashFlowRule.grl"))
 	if err != nil {

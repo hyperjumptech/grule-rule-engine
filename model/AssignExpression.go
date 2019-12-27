@@ -12,12 +12,12 @@ type AssignExpression struct {
 	FunctionCall     *FunctionCall
 	MethodCall       *MethodCall
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize will initiate this graph with context.
-func (ae *AssignExpression) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (ae *AssignExpression) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	ae.knowledgeContext = knowledgeContext
 	ae.ruleCtx = ruleCtx
 	ae.dataCtx = dataCtx

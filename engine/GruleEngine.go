@@ -4,8 +4,17 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/juju/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"sort"
+	"time"
+)
+
+var (
+	// Logger is a logrus instance twith default fields for grule
+	log = logrus.WithFields(logrus.Fields{
+		"lib":    "grule",
+		"struct": "GruleEngine",
+	})
 )
 
 // NewGruleEngine will create new instance of GruleEngine struct.
@@ -38,11 +47,13 @@ func (g *GruleEngine) notifySubscribers(r *model.RuleEntry) {
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.KnowledgeBase) error {
+	log.Infof("Starting rule execution using knowledge '%s' version %s", knowledge.Name, knowledge.Version)
+	startTime := time.Now()
 	defunc := &model.GruleFunction{
 		Knowledge: knowledge,
 	}
 	kctx := &context.KnowledgeContext{}
-	rctx := &context.RuleContext{}
+	rctx := knowledge.RuleContext
 	dataCtx.Add("DEFUNC", defunc)
 
 	knowledge.Reset()
@@ -80,6 +91,8 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 			}
 		}
 
+		knowledge.RuleContextReset()
+
 		// If there are rules to execute, sort them by their Salience
 		if len(runnable) > 0 {
 			if len(runnable) > 1 {
@@ -94,7 +107,7 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 			for _, r := range runnable {
 				// reset the counter to 0 to detect if there are variable change.
 				dataCtx.VariableChangeCount = 0
-				log.Infof("Executing rule : %s. Salience %d", r.RuleName, r.Salience)
+				log.Debugf("Executing rule : %s. Salience %d", r.RuleName, r.Salience)
 				err := r.Execute()
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.RuleName, err)
@@ -120,6 +133,6 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 			break
 		}
 	}
-	log.Infof("Finished Rules execution. Total #%d cycles.", cycle)
+	log.Infof("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d microsec.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime))
 	return nil
 }

@@ -9,12 +9,12 @@ import (
 type ThenScope struct {
 	AssignExpressions *AssignExpressions
 	knowledgeContext  *context.KnowledgeContext
-	ruleCtx           *context.RuleContext
+	ruleCtx           *RuleContext
 	dataCtx           *context.DataContext
 }
 
 // Initialize will init this object graph prior execution
-func (then *ThenScope) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (then *ThenScope) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	then.knowledgeContext = knowledgeContext
 	then.ruleCtx = ruleCtx
 

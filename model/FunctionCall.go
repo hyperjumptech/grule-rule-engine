@@ -12,7 +12,7 @@ type FunctionCall struct {
 	FunctionName      string
 	FunctionArguments *FunctionArgument
 	knowledgeContext  *context.KnowledgeContext
-	ruleCtx           *context.RuleContext
+	ruleCtx           *RuleContext
 	dataCtx           *context.DataContext
 }
 
@@ -23,7 +23,7 @@ func (funcCall *FunctionCall) AcceptFunctionArgument(funcArg *FunctionArgument) 
 }
 
 // Initialize will prepare this graph with context
-func (funcCall *FunctionCall) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (funcCall *FunctionCall) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	funcCall.knowledgeContext = knowledgeContext
 	funcCall.ruleCtx = ruleCtx
 	funcCall.dataCtx = dataCtx
@@ -48,4 +48,20 @@ func (funcCall *FunctionCall) Evaluate() (reflect.Value, error) {
 
 	fName := fmt.Sprintf("DEFUNC.%s", funcCall.FunctionName)
 	return funcCall.dataCtx.ExecMethod(fName, argumentValues)
+}
+
+// EqualsTo will compare two function signature
+func (funcCall *FunctionCall) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "FunctionCall" {
+			thatFuncCall := that.(*FunctionCall)
+			return funcCall.FunctionName == thatFuncCall.FunctionName &&
+				funcCall.FunctionArguments.EqualsTo(thatFuncCall.FunctionArguments)
+		}
+	}
+	return false
 }

@@ -14,12 +14,12 @@ type Expression struct {
 	LogicalOperator  LogicalOperator
 	Predicate        *Predicate
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize this object graph with necessary context prior engine execution.
-func (expr *Expression) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (expr *Expression) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	expr.knowledgeContext = knowledgeContext
 	expr.ruleCtx = ruleCtx
 	expr.dataCtx = dataCtx
@@ -67,4 +67,28 @@ func (expr *Expression) Evaluate() (reflect.Value, error) {
 		return reflect.ValueOf(lv.Bool() || rv.Bool()), nil
 	}
 	return reflect.ValueOf(nil), errors.Errorf("cannot apply logical for non boolean expression")
+}
+
+// EqualsTo will compare two literal constants, be it string, int, uint, floats bools and nils
+func (expr *Expression) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "Expression" {
+			thatExpr := that.(*Expression)
+			if expr.Predicate != nil && thatExpr.Predicate != nil {
+				return expr.Predicate.EqualsTo(thatExpr.Predicate)
+			}
+			if expr.LogicalOperator == thatExpr.LogicalOperator &&
+				expr.LeftExpression != nil && thatExpr.LeftExpression != nil &&
+				expr.RightExpression != nil && thatExpr.RightExpression != nil &&
+				((expr.LeftExpression.EqualsTo(thatExpr.LeftExpression) && expr.RightExpression.EqualsTo(thatExpr.RightExpression)) ||
+					(expr.LeftExpression.EqualsTo(thatExpr.RightExpression) && expr.RightExpression.EqualsTo(thatExpr.LeftExpression))) {
+				return true
+			}
+		}
+	}
+	return false
 }

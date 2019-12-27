@@ -1,3 +1,6 @@
+
+[![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+
 [![Build Status](https://travis-ci.org/hyperjumptech/grule-rule-engine.svg?branch=master)](https://travis-ci.org/hyperjumptech/grule-rule-engine)
 [![Build Status](https://dev.azure.com/hyperjumptech/grule-rule-engine/_apis/build/status/hyperjumptech.grule-rule-engine?branchName=master)](https://dev.azure.com/hyperjumptech/grule-rule-engine/_build/latest?definitionId=1&branchName=master)
 
@@ -370,6 +373,35 @@ When you make your own function to be called from rule engine, you need to know 
 1. The function must be visible. Public function convention should start with capital letter. Private functions cant be executed.
 2. The function must only return 1 type. Returning multiple variable from function are not acceptable, the rule execution will fail if there are multiple return variable.
 3. The way number literal were treated in Grule's DRL is; **decimal** will always taken as `int64` and **real** as `float64`, thus always consider to define your function argument and returns between `int64` and `float64` when your function works with numbers.
+
+## RETE Algorithm
+
+From Wikipedia : The Rete algorithm (/ˈriːtiː/ REE-tee, /ˈreɪtiː/ RAY-tee, rarely /ˈriːt/ REET, /rɛˈteɪ/ reh-TAY) is a pattern matching algorithm for implementing rule-based systems. The algorithm was developed to efficiently apply many rules or patterns to many objects, or facts, in a knowledge base. It is used to determine which of the system's rules should fire based on its data store, its facts.
+
+Some form of RETE algorithm were employed in `grule-rule-engine` starting from version `1.1.0`.
+It replaces the __Naive__ approach when evaluating rules to add to `ConflictSet`.
+ 
+`ExpressionAtom` in the DRL were compiled and will not be duplicated within the working memory of the engine.
+This makes the engine performance be increased significantly if you have many rules defined with lots of duplicated expressions
+or lots of heavy function/method calls.
+
+Grule's RETE implementation don't have `Class` selector as one expression my involve multiple class. For example an expression such as:
+
+```.go
+when
+    ClassA.attr == ClassB.attr + ClassC.AFunc()
+then
+    ...
+```
+
+The expression above involve attribute/function result comparison and math operation from 3 different class. This makes
+RETE's class separation of expression token difficult.
+
+You can read about RETE algorithm here:
+
+* https://en.wikipedia.org/wiki/Rete_algorithm
+* https://www.drdobbs.com/architecture-and-design/the-rete-matching-algorithm/184405218
+* https://www.sparklinglogic.com/rete-algorithm-demystified-part-2/ 
 
 # Tasks and Help Wanted.
 

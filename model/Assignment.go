@@ -13,12 +13,12 @@ type Assignment struct {
 	Variable         string
 	Expression       *Expression
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize will prepare this graph with contexts.
-func (assign *Assignment) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (assign *Assignment) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	assign.knowledgeContext = knowledgeContext
 	assign.ruleCtx = ruleCtx
 	assign.dataCtx = dataCtx

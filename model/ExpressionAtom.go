@@ -19,51 +19,78 @@ type ExpressionAtom struct {
 	FunctionCall        *FunctionCall
 	MethodCall          *MethodCall
 	knowledgeContext    *context.KnowledgeContext
-	ruleCtx             *context.RuleContext
+	ruleCtx             *RuleContext
 	dataCtx             *context.DataContext
+
+	evaluated       bool
+	evalValueResult reflect.Value
+	evalErrorResult error
+}
+
+// Reset will mark this expression as not evaluated, thus next call to Evaluate will run normally.
+func (exprAtm *ExpressionAtom) Reset() {
+	exprAtm.evaluated = false
 }
 
 // Evaluate the object graph against underlined context or execute evaluation in the sub graph.
 func (exprAtm *ExpressionAtom) Evaluate() (reflect.Value, error) {
+	if exprAtm.evaluated {
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	exprAtm.evaluated = true
 	//logrus.Tracef("ExpressionAtom : %s", exprAtm.Text)
 	if len(exprAtm.Variable) > 0 {
 		logrus.Tracef("ExpressionAtom Variable : %s", exprAtm.Text)
-		return exprAtm.dataCtx.GetValue(exprAtm.Variable)
-	} else if exprAtm.Constant != nil {
-		logrus.Tracef("ExpressionAtom Constant : %s", exprAtm.Text)
-		return exprAtm.Constant.Evaluate()
-	} else if exprAtm.FunctionCall != nil {
-		logrus.Tracef("ExpressionAtom Function : %s", exprAtm.Text)
-		return exprAtm.FunctionCall.Evaluate()
-	} else if exprAtm.MethodCall != nil {
-		logrus.Tracef("MethodCall Function : %s", exprAtm.Text)
-		return exprAtm.MethodCall.Evaluate()
-	} else {
-		logrus.Tracef("ExpressionAtom MathOps : %s", exprAtm.Text)
-		lv, err := exprAtm.ExpressionAtomLeft.Evaluate()
-		if err != nil {
-			return reflect.ValueOf(nil), errors.Trace(err)
-		}
-		rv, err := exprAtm.ExpressionAtomRight.Evaluate()
-		if err != nil {
-			return reflect.ValueOf(nil), errors.Trace(err)
-		}
-		switch exprAtm.MathOperator {
-		case MathOperatorPlus:
-			return pkg.ValueAdd(lv, rv)
-		case MathOperatorMinus:
-			return pkg.ValueSub(lv, rv)
-		case MathOperatorMul:
-			return pkg.ValueMul(lv, rv)
-		case MathOperatorDiv:
-			return pkg.ValueDiv(lv, rv)
-		}
-		return reflect.ValueOf(nil), errors.Errorf("math operation can only be applied to numerical data (eg. int, uit or float) or string")
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.dataCtx.GetValue(exprAtm.Variable)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
+	if exprAtm.Constant != nil {
+		logrus.Tracef("ExpressionAtom Constant : %s", exprAtm.Text)
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.Constant.Evaluate()
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	if exprAtm.FunctionCall != nil {
+		logrus.Tracef("ExpressionAtom Function : %s", exprAtm.Text)
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.FunctionCall.Evaluate()
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	if exprAtm.MethodCall != nil {
+		logrus.Tracef("MethodCall Function : %s", exprAtm.Text)
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.MethodCall.Evaluate()
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+
+	logrus.Tracef("ExpressionAtom MathOps : %s", exprAtm.Text)
+	lv, err := exprAtm.ExpressionAtomLeft.Evaluate()
+	if err != nil {
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = reflect.ValueOf(nil), errors.Trace(err)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	rv, err := exprAtm.ExpressionAtomRight.Evaluate()
+	if err != nil {
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = reflect.ValueOf(nil), errors.Trace(err)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	switch exprAtm.MathOperator {
+	case MathOperatorPlus:
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = pkg.ValueAdd(lv, rv)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	case MathOperatorMinus:
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = pkg.ValueSub(lv, rv)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	case MathOperatorMul:
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = pkg.ValueMul(lv, rv)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	case MathOperatorDiv:
+		exprAtm.evalValueResult, exprAtm.evalErrorResult = pkg.ValueDiv(lv, rv)
+		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	}
+	exprAtm.evalValueResult, exprAtm.evalErrorResult = reflect.ValueOf(nil), errors.Errorf("math operation can only be applied to numerical data (eg. int, uit or float) or string")
+	return exprAtm.evalValueResult, exprAtm.evalErrorResult
 }
 
 // Initialize will prepare this graph with  contexts
-func (exprAtm *ExpressionAtom) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (exprAtm *ExpressionAtom) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	exprAtm.knowledgeContext = knowledgeContext
 	exprAtm.ruleCtx = ruleCtx
 	exprAtm.dataCtx = dataCtx
@@ -136,4 +163,48 @@ func (exprAtm *ExpressionAtom) AcceptConstant(cons *Constant) error {
 		return nil
 	}
 	return errors.Errorf("constant already defined")
+}
+
+// EqualsTo will compare two literal constants, be it string, int, uint, floats bools and nils
+func (exprAtm *ExpressionAtom) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "ExpressionAtom" {
+			thatExprAtm := that.(*ExpressionAtom)
+			if len(exprAtm.Variable) > 0 && exprAtm.Variable == thatExprAtm.Variable {
+				return true
+			}
+			if exprAtm.Constant != nil && thatExprAtm.Constant != nil && exprAtm.Constant.EqualsTo(thatExprAtm.Constant) {
+				return true
+			}
+			if exprAtm.FunctionCall != nil && thatExprAtm.FunctionCall != nil && exprAtm.FunctionCall.EqualsTo(thatExprAtm.FunctionCall) {
+				return true
+			}
+			if exprAtm.MethodCall != nil && thatExprAtm.MethodCall != nil && exprAtm.MethodCall.EqualsTo(thatExprAtm.MethodCall) {
+				return true
+			}
+			if exprAtm.MathOperator == thatExprAtm.MathOperator &&
+				exprAtm.ExpressionAtomLeft != nil && thatExprAtm.ExpressionAtomLeft != nil &&
+				exprAtm.ExpressionAtomRight != nil && thatExprAtm.ExpressionAtomRight != nil {
+				switch exprAtm.MathOperator {
+				case MathOperatorPlus, MathOperatorMul:
+					if (exprAtm.ExpressionAtomLeft.EqualsTo(thatExprAtm.ExpressionAtomLeft) &&
+						exprAtm.ExpressionAtomRight.EqualsTo(thatExprAtm.ExpressionAtomRight)) ||
+						(exprAtm.ExpressionAtomLeft.EqualsTo(thatExprAtm.ExpressionAtomRight) &&
+							exprAtm.ExpressionAtomRight.EqualsTo(thatExprAtm.ExpressionAtomLeft)) {
+						return true
+					}
+				default:
+					if exprAtm.ExpressionAtomLeft.EqualsTo(thatExprAtm.ExpressionAtomLeft) &&
+						exprAtm.ExpressionAtomRight.EqualsTo(thatExprAtm.ExpressionAtomRight) {
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
 }

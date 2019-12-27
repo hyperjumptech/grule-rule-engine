@@ -5,6 +5,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/hyperjumptech/grule-rule-engine/antlr/parser"
 	"github.com/hyperjumptech/grule-rule-engine/model"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"reflect"
 	"testing"
@@ -35,6 +36,7 @@ func TestLexer(t *testing.T) {
 }
 
 func TestParser(t *testing.T) {
+	logrus.SetLevel(logrus.TraceLevel)
 	data, err := ioutil.ReadFile("./sample2.grl")
 	if err != nil {
 		t.Fatal(err)
@@ -46,7 +48,7 @@ func TestParser(t *testing.T) {
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 		var parseError error
-		listener := NewGruleParserListener(model.NewKnowledgeBase(), func(e error) {
+		listener := NewGruleParserListener(model.NewKnowledgeBase("Test", "0.1.1"), func(e error) {
 			parseError = e
 		})
 

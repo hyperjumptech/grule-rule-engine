@@ -34,7 +34,7 @@ func TestItemPriceChecker_TestParser(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	listener := antlr2.NewGruleParserListener(model.NewKnowledgeBase(), func(e error) {
+	listener := antlr2.NewGruleParserListener(model.NewKnowledgeBase("Test", "0.1.1"), func(e error) {
 		parseError = e
 	})
 

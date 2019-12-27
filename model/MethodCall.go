@@ -11,12 +11,12 @@ type MethodCall struct {
 	MethodName       string
 	MethodArguments  *FunctionArgument
 	knowledgeContext *context.KnowledgeContext
-	ruleCtx          *context.RuleContext
+	ruleCtx          *RuleContext
 	dataCtx          *context.DataContext
 }
 
 // Initialize will initialize this graph with context.
-func (methCall *MethodCall) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *context.RuleContext, dataCtx *context.DataContext) {
+func (methCall *MethodCall) Initialize(knowledgeContext *context.KnowledgeContext, ruleCtx *RuleContext, dataCtx *context.DataContext) {
 	methCall.knowledgeContext = knowledgeContext
 	methCall.ruleCtx = ruleCtx
 	methCall.dataCtx = dataCtx
@@ -46,4 +46,20 @@ func (methCall *MethodCall) Evaluate() (reflect.Value, error) {
 	}
 
 	return methCall.dataCtx.ExecMethod(methCall.MethodName, argumentValues)
+}
+
+// EqualsTo will compare two method signature
+func (methCall *MethodCall) EqualsTo(that AlphaNode) bool {
+	typ := reflect.TypeOf(that)
+	if that == nil {
+		return false
+	}
+	if typ.Kind() == reflect.Ptr {
+		if typ.Elem().Name() == "MethodCall" {
+			thatFuncCall := that.(*MethodCall)
+			return methCall.MethodName == thatFuncCall.MethodName &&
+				methCall.MethodArguments.EqualsTo(thatFuncCall.MethodArguments)
+		}
+	}
+	return false
 }

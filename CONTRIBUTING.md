@@ -11,8 +11,8 @@ Please note we have a code of conduct, please follow it in all your interactions
 2. Configure your Golang working space as `$GOPATH`
 3. Create a new directory `mkdir $GOPATH/src/github.com/hyperjumptech`
 4. Enter the newly created directory `cd $GOPATH/src/github.com/hyperjumptech`
-5. Clone the project `git clone git@github.com:hyperjumptech/grule.git`
-6. Now you can work with your clone at `$GOPATH/src/github.com/hyperjumptech/grule` folder.
+5. Clone the project `git clone git@github.com:hyperjumptech/grule-rule-engine.git`
+6. Now you can work with your clone at `$GOPATH/src/github.com/hyperjumptech/grule-rule-engine` folder.
 
 ## Pull Request Process
 
