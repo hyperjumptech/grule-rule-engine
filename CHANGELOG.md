@@ -37,10 +37,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better DRL load and compilation
 - Better DRL error handling when compiling DRL
 
-## [Planned]
-
-### [1.0.1] - 2019-12-16
+### [1.1.0] - 2019-12-27
 
 #### Added
 
-- Versioning of knowledge base
+- Initial RETE algorithm were added into Grule with only optimization in the ExpressionAtom level.
+- Naming and Versioning of knowledge base
+
+## [Planned]
+
+### [1.1.1] - 2020-1-15
+
+#### Added
+
+- RETE optimization to ensure reset of ExpressionAtom only happen if a known variable were changed
