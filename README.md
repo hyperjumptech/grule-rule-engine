@@ -385,7 +385,7 @@ It replaces the __Naive__ approach when evaluating rules to add to `ConflictSet`
 This makes the engine performance be increased significantly if you have many rules defined with lots of duplicated expressions
 or lots of heavy function/method calls.
 
-Grule's RETE implementation don't have `Class` selector as one expression my involve multiple class. For example an expression such as:
+Grule's RETE implementation don't have `Class` selector as one expression may involve multiple class. For example an expression such as:
 
 ```.go
 when
@@ -397,13 +397,156 @@ then
 The expression above involve attribute/function result comparison and math operation from 3 different class. This makes
 RETE's class separation of expression token difficult.
 
-
-
 You can read about RETE algorithm here:
 
 * https://en.wikipedia.org/wiki/Rete_algorithm
 * https://www.drdobbs.com/architecture-and-design/the-rete-matching-algorithm/184405218
 * https://www.sparklinglogic.com/rete-algorithm-demystified-part-2/ 
+
+### How Grool's RETE remembers facts
+
+Suppose we have a fact.
+
+```go
+type Fact struct {
+    StringValue string
+}
+
+func (f *Fact) VeryHeavyAndLongFunction() bool {
+    ...
+}
+```
+
+And add the fact to data contest
+
+```go
+f := &Fact{}
+dctx := context.NewDataContext()
+err := dctx.Add("Fact", f)
+```
+
+And we have DRL like ...
+
+```go
+rule ... {
+    when 
+        Fact.VeryHeavyAndLongFunction() && Fact.StringValue == "Fish"
+    then
+        ...
+}
+rule ... {
+    when 
+        Fact.VeryHeavyAndLongFunction() && Fact.StringValue == "Bird"
+    then
+        ...
+}
+rule ... {
+    when 
+        Fact.VeryHeavyAndLongFunction() && Fact.StringValue == "Mamal"
+    then
+        ...
+}
+...
+// and alot more of simillar rule
+...
+rule ... {
+    when 
+        Fact.VeryHeavyAndLongFunction() && Fact.StringValue == "Insect"
+    then
+        ...
+}
+```
+
+Executing the DRL above might "kill" the engine because when it try to choose what rule to execute,
+the engine will call the `Fact.VeryHeavyAndLongFunction` function in every rules `when` scope. 
+
+Thus, instead of executing the `Fact.VeryHeavyAndLongFunction` while evaluating each 
+rule, Rete algorithm only evaluate them once (one the first encounter with the function), and remember the result 
+for the rest of the rules.
+
+The same with `Fact.StringValue`. Rete algorithm will load the value from the object instance and
+remember it. Until it got changed in the `then` scope, as in ...
+
+```go
+rule ... {
+    when 
+        ...
+    then
+        Fact.StringValue = "something else";
+}
+```
+
+### Known RETE issue with Functions or Methods
+
+While Grule will try to remember any variable it evaluate within the `when` and `then` scope, if you change
+the variable value from outside the rule engine, for example changed from within a function call, 
+Grule won't be able to see this change, thus Grule may mistakenly evaluate a variable which already changed.
+
+Consider the following fact:
+
+```go
+type Fact struct {
+    StringValue string
+}
+
+func (f *Fact) SetStringValue(newValue string) {
+    f.StringValue = newValue
+}
+```
+
+Then you instantiate your fact and add it into data context
+
+```go
+f := &Fact{
+    StringValue: "One",
+}
+dctx := context.NewDataContext()
+err := dctx.Add("Fact", f)
+```
+
+In your GRL you did something like this
+
+```go
+rule one "One" {
+    when 
+        Fact.StringValue == "One" 
+        // here grule remember that Fact.StringValue value is "One"
+    then
+        Fact.SetStringValue("Two");
+        // here grule does not know if Fact.StringValue has changed inside the function.
+        // What grule know is Fact.StringValue is still "One"
+}
+
+rule two "Two" {
+    when 
+        Fact.StringValue == "Two"
+        // Because of that, this will never evaluated true.
+    then
+        Fact.SetStringValue("Three");
+}
+```
+
+Thus the engine will finish without error, but the expected result, where `Fact.StringValue` should be `Three`
+is not met.
+
+To overcome this, you should tell grule if the variable has changed using `Changed` function.
+
+```go
+rule one "One" {
+    when 
+        Fact.StringValue == "One" 
+        // here grule remember that Fact.StringValue value is "One"
+    then
+        Fact.SetStringValue("Two");
+        // here grule does not know if Fact.StringValue has changed inside the function.
+        // What grule know is Fact.StringValue is still "One"
+
+        // We should tell Grule that the variable changed within the Fact
+        Changed("Fact.StringValue")
+}
+```
+
+
 
 # Tasks and Help Wanted.
 
