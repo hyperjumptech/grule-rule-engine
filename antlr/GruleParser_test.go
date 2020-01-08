@@ -48,7 +48,9 @@ func TestParser(t *testing.T) {
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 		var parseError error
-		listener := NewGruleParserListener(model.NewKnowledgeBase("Test", "0.1.1"), func(e error) {
+
+		reteConf := NewReteConfig(true, true, true, false, true)
+		listener := NewGruleParserListener(model.NewKnowledgeBase("Test", "0.1.1"), reteConf, func(e error) {
 			parseError = e
 		})
 
