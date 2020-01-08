@@ -47,6 +47,7 @@ func (g *GruleEngine) notifySubscribers(r *model.RuleEntry) {
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.KnowledgeBase) error {
+	println("")
 	log.Infof("Starting rule execution using knowledge '%s' version %s", knowledge.Name, knowledge.Version)
 	startTime := time.Now()
 	defunc := &model.GruleFunction{
@@ -91,6 +92,7 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 			}
 		}
 
+		// disabled to test the rete's variable change detection.
 		knowledge.RuleContextReset()
 
 		// If there are rules to execute, sort them by their Salience

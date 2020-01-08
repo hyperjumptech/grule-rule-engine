@@ -54,5 +54,6 @@ func (entry *RuleEntry) CanExecute() (bool, error) {
 
 // Execute will execute the action part of the rule entry.
 func (entry *RuleEntry) Execute() error {
+	println("Execute rule", entry.RuleName)
 	return entry.ThenScope.Execute()
 }

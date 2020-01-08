@@ -10,6 +10,7 @@ import (
 
 // Assignment contains a simple assignment, where rule can assign some result from an expression into variable.
 type Assignment struct {
+	Text             string
 	Variable         string
 	Expression       *Expression
 	knowledgeContext *context.KnowledgeContext
@@ -48,6 +49,7 @@ func (assign *Assignment) AcceptVariable(name string) error {
 
 // Evaluate the object graph against underlined context or execute evaluation in the sub graph.
 func (assign *Assignment) Evaluate() (reflect.Value, error) {
+	log.Trace("------  Evaluating assignment : ", assign.Text)
 	v, err := assign.Expression.Evaluate()
 	if err != nil {
 		log.Errorf("Evaluate Got error %v", err)
@@ -58,5 +60,6 @@ func (assign *Assignment) Evaluate() (reflect.Value, error) {
 		log.Errorf("SetValue Got error %v", err)
 		return reflect.ValueOf(nil), errors.Trace(err)
 	}
+	assign.ruleCtx.ResetVariable(assign.Variable)
 	return reflect.ValueOf(nil), nil
 }

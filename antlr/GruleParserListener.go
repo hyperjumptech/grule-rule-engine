@@ -44,6 +44,7 @@ type GruleParserListener struct {
 	Stack         *stack.Stack
 	StopParse     bool
 	ErrorCallback func(e error)
+	SerialCounter int
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -242,7 +243,9 @@ func (s *GruleParserListener) EnterAssignment(ctx *parser.AssignmentContext) {
 		return
 	}
 	Logger.Tracef("Entering assignment")
-	assignment := &model.Assignment{}
+	assignment := &model.Assignment{
+		Text: ctx.GetText(),
+	}
 	s.Stack.Push(assignment)
 }
 
@@ -323,6 +326,8 @@ func (s *GruleParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomConte
 	Logger.Tracef("Exiting expression atom '%s'", ctx.GetText())
 	//fmt.Println(ctx.GetText())
 	exprAtom := s.Stack.Pop().(*model.ExpressionAtom)
+	exprAtom.SerialNumber = s.SerialCounter
+	s.SerialCounter++
 
 	theAtm := s.KnowledgeBase.RuleContext.Add(exprAtom)
 

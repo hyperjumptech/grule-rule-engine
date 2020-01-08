@@ -18,6 +18,15 @@ func (gf *GruleFunction) MakeTime(year, month, day, hour, minute, second int64) 
 	return time.Date(int(year), time.Month(month), int(day), int(hour), int(minute), int(second), 0, time.Local)
 }
 
+// Changed will enable Grule's working memory to forget about a variable, so in the next cycle
+// grue will re-valuate that variable instead of just use the value from its working memory.
+// If you change the variable from within grule DRL (using assignment expression, you dont need to call this
+// function on that variable since grule will automaticaly see the change. So only call this
+// function if the variable got changed from your internal struct logic.
+func (gf *GruleFunction) Changed(variableName string) {
+	gf.Knowledge.RuleContext.ResetVariable(variableName)
+}
+
 // Now is an extension tn time.Now().
 func (gf *GruleFunction) Now() time.Time {
 	return time.Now()

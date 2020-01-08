@@ -25,6 +25,8 @@ type ExpressionAtom struct {
 	evaluated       bool
 	evalValueResult reflect.Value
 	evalErrorResult error
+
+	SerialNumber int
 }
 
 // Reset will mark this expression as not evaluated, thus next call to Evaluate will run normally.
@@ -34,28 +36,41 @@ func (exprAtm *ExpressionAtom) Reset() {
 
 // Evaluate the object graph against underlined context or execute evaluation in the sub graph.
 func (exprAtm *ExpressionAtom) Evaluate() (reflect.Value, error) {
+	//logrus.Trace(exprAtm.Text)
 	if exprAtm.evaluated {
+		if len(exprAtm.Variable) > 0 {
+			logrus.Tracef("Variable %s #%d is NOT FROM working memory", exprAtm.Text, exprAtm.SerialNumber)
+		}
+		if exprAtm.Constant != nil {
+			logrus.Tracef("Constant %s #%d is NOT FROM working memory", exprAtm.Text, exprAtm.SerialNumber)
+		}
+		if exprAtm.FunctionCall != nil {
+			logrus.Tracef("Function %s #%d is NOT FROM working memory", exprAtm.Text, exprAtm.SerialNumber)
+		}
+		if exprAtm.MethodCall != nil {
+			logrus.Tracef("Method %s #%d is NOT FROM working memory", exprAtm.Text, exprAtm.SerialNumber)
+		}
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	exprAtm.evaluated = true
 	//logrus.Tracef("ExpressionAtom : %s", exprAtm.Text)
 	if len(exprAtm.Variable) > 0 {
-		logrus.Tracef("ExpressionAtom Variable : %s", exprAtm.Text)
+		logrus.Tracef("Variable %s #%d is FROM working memory", exprAtm.Text, exprAtm.SerialNumber)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.dataCtx.GetValue(exprAtm.Variable)
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.Constant != nil {
-		logrus.Tracef("ExpressionAtom Constant : %s", exprAtm.Text)
+		logrus.Tracef("ExpressionAtom Constant FROM working memory: %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.Constant.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.FunctionCall != nil {
-		logrus.Tracef("ExpressionAtom Function : %s", exprAtm.Text)
+		logrus.Tracef("ExpressionAtom Function FROM working memory: %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.FunctionCall.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.MethodCall != nil {
-		logrus.Tracef("MethodCall Function : %s", exprAtm.Text)
+		logrus.Tracef("MethodCall Function FROM working memory: %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.MethodCall.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
@@ -205,6 +220,26 @@ func (exprAtm *ExpressionAtom) EqualsTo(that AlphaNode) bool {
 				}
 			}
 		}
+	}
+	return false
+}
+
+// IsContainVariable should check for this ExpressionAtom whether it contains a variable
+func (exprAtm *ExpressionAtom) IsContainVariable(atm *ExpressionAtom, varName string) bool {
+	if atm.Variable == varName {
+		return true
+	}
+	if atm.FunctionCall != nil && atm.FunctionCall.FunctionArguments != nil {
+		return atm.FunctionCall.IsContainVariable(varName)
+	}
+	if atm.MethodCall != nil && atm.MethodCall.MethodArguments != nil {
+		return atm.MethodCall.IsContainVariable(varName)
+	}
+	if atm.ExpressionAtomLeft != nil {
+		return atm.ExpressionAtomLeft.IsContainVariable(atm.ExpressionAtomLeft, varName)
+	}
+	if atm.ExpressionAtomRight != nil {
+		return atm.ExpressionAtomRight.IsContainVariable(atm.ExpressionAtomRight, varName)
 	}
 	return false
 }

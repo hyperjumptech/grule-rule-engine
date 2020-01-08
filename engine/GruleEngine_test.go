@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/model"
@@ -128,6 +127,7 @@ func TestGrule_Execute(t *testing.T) {
 }
 
 func TestGrule_ExecuteWithSubscribers(t *testing.T) {
+	// logrus.SetLevel(logrus.TraceLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -148,7 +148,8 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 	}
 
 	f := func(r *model.RuleEntry) {
-		fmt.Printf("executed rule: %s\n", r.RuleName)
+		// TODO reenable bellow line when test is done
+		// fmt.Printf("executed rule: %s\n", r.RuleName)
 	}
 
 	kb := model.NewKnowledgeBase("Test", "0.1.1")
@@ -159,6 +160,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		t.FailNow()
 	} else {
 		engine := NewGruleEngine()
+		//engine.MaxCycle = 5
 		engine.Subscribe(f)
 
 		start := time.Now()
