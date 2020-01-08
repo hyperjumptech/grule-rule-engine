@@ -93,7 +93,7 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 		}
 
 		// disabled to test the rete's variable change detection.
-		knowledge.RuleContextReset()
+		// knowledge.RuleContextReset()
 
 		// If there are rules to execute, sort them by their Salience
 		if len(runnable) > 0 {

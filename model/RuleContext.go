@@ -19,8 +19,6 @@ type RuleContext struct {
 
 // Reset will reset all expression atoms as if they were never evaluated before.
 func (rc *RuleContext) Reset() {
-
-	//
 	for _, eat := range rc.ExpressionAtoms {
 		eat.Reset()
 	}

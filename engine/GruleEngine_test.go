@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/model"
@@ -148,8 +149,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 	}
 
 	f := func(r *model.RuleEntry) {
-		// TODO reenable bellow line when test is done
-		// fmt.Printf("executed rule: %s\n", r.RuleName)
+		fmt.Printf("executed rule: %s\n", r.RuleName)
 	}
 
 	kb := model.NewKnowledgeBase("Test", "0.1.1")
