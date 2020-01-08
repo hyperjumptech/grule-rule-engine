@@ -235,11 +235,11 @@ func (exprAtm *ExpressionAtom) IsContainVariable(atm *ExpressionAtom, varName st
 	if atm.MethodCall != nil && atm.MethodCall.MethodArguments != nil {
 		return atm.MethodCall.IsContainVariable(varName)
 	}
-	if atm.ExpressionAtomLeft != nil {
-		return atm.ExpressionAtomLeft.IsContainVariable(atm.ExpressionAtomLeft, varName)
+	if atm.ExpressionAtomLeft != nil && atm.ExpressionAtomLeft.IsContainVariable(atm.ExpressionAtomLeft, varName) {
+		return true
 	}
-	if atm.ExpressionAtomRight != nil {
-		return atm.ExpressionAtomRight.IsContainVariable(atm.ExpressionAtomRight, varName)
+	if atm.ExpressionAtomRight != nil && atm.ExpressionAtomRight.IsContainVariable(atm.ExpressionAtomRight, varName) {
+		return true
 	}
 	return false
 }

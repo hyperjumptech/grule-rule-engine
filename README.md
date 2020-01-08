@@ -397,6 +397,8 @@ then
 The expression above involve attribute/function result comparison and math operation from 3 different class. This makes
 RETE's class separation of expression token difficult.
 
+
+
 You can read about RETE algorithm here:
 
 * https://en.wikipedia.org/wiki/Rete_algorithm
