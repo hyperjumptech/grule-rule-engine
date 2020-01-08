@@ -128,6 +128,7 @@ func TestGrule_Execute(t *testing.T) {
 }
 
 func TestGrule_ExecuteWithSubscribers(t *testing.T) {
+	// logrus.SetLevel(logrus.TraceLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -159,6 +160,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		t.FailNow()
 	} else {
 		engine := NewGruleEngine()
+		//engine.MaxCycle = 5
 		engine.Subscribe(f)
 
 		start := time.Now()

@@ -65,3 +65,13 @@ func (funcCall *FunctionCall) EqualsTo(that AlphaNode) bool {
 	}
 	return false
 }
+
+// IsContainVariable should check for this Function call whether it contains a variable argument
+func (funcCall *FunctionCall) IsContainVariable(varName string) bool {
+	for _, fa := range funcCall.FunctionArguments.Arguments {
+		if fa.IsContainVariable(varName) {
+			return true
+		}
+	}
+	return false
+}

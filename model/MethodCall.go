@@ -63,3 +63,13 @@ func (methCall *MethodCall) EqualsTo(that AlphaNode) bool {
 	}
 	return false
 }
+
+// IsContainVariable should check for this MethodCall whether it contains a variable argument
+func (methCall *MethodCall) IsContainVariable(varName string) bool {
+	for _, fa := range methCall.MethodArguments.Arguments {
+		if fa.IsContainVariable(varName) {
+			return true
+		}
+	}
+	return false
+}

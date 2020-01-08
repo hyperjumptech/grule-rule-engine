@@ -21,16 +21,37 @@ var (
 	})
 )
 
+// NewReteConfig will create a new instance of ReteConfig
+func NewReteConfig(rememberConstant, rememberVariable, rememberFunction, rememberMethod, rememberMathExpression bool) *ReteConfig {
+	return &ReteConfig{
+		RememberConstant:       rememberConstant,
+		RememberVariable:       rememberVariable,
+		RememberFunction:       rememberFunction,
+		RememberMethod:         rememberMethod,
+		RememberMathExpression: rememberMathExpression,
+	}
+}
+
+// ReteConfig will determine what can be recorded in the rete's working memory.
+type ReteConfig struct {
+	RememberConstant       bool
+	RememberVariable       bool
+	RememberFunction       bool
+	RememberMethod         bool
+	RememberMathExpression bool
+}
+
 // NewGruleParserListener create a new instancce of GruleParserListener.
 // This listener will walk in the Grule GRL file and invoke operations based on the
 // context within the knowledge base.
-func NewGruleParserListener(kbase *model.KnowledgeBase, errCallback func(e error)) *GruleParserListener {
+func NewGruleParserListener(kbase *model.KnowledgeBase, reteConfig *ReteConfig, errCallback func(e error)) *GruleParserListener {
 	return &GruleParserListener{
 		Stack:         stack.New(),
 		KnowledgeBase: kbase,
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errCallback,
 		StopParse:     false,
+		ReteConfig:    reteConfig,
 	}
 }
 
@@ -44,6 +65,9 @@ type GruleParserListener struct {
 	Stack         *stack.Stack
 	StopParse     bool
 	ErrorCallback func(e error)
+	SerialCounter int
+
+	ReteConfig *ReteConfig
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -242,7 +266,9 @@ func (s *GruleParserListener) EnterAssignment(ctx *parser.AssignmentContext) {
 		return
 	}
 	Logger.Tracef("Entering assignment")
-	assignment := &model.Assignment{}
+	assignment := &model.Assignment{
+		Text: ctx.GetText(),
+	}
 	s.Stack.Push(assignment)
 }
 
@@ -321,9 +347,24 @@ func (s *GruleParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomConte
 		return
 	}
 	Logger.Tracef("Exiting expression atom '%s'", ctx.GetText())
-	//fmt.Println(ctx.GetText())
 	exprAtom := s.Stack.Pop().(*model.ExpressionAtom)
+	exprAtom.SerialNumber = s.SerialCounter
+	s.SerialCounter++
 
+	// Check if the expression atom should enable rete or not depends oo the rete configuration.
+	if (len(exprAtom.Variable) > 0 && s.ReteConfig.RememberVariable) ||
+		(exprAtom.Constant != nil && s.ReteConfig.RememberConstant) ||
+		(exprAtom.FunctionCall != nil && s.ReteConfig.RememberFunction) ||
+		(exprAtom.MethodCall != nil && s.ReteConfig.RememberMethod) ||
+		(exprAtom.ExpressionAtomLeft != nil && exprAtom.ExpressionAtomRight != nil && s.ReteConfig.RememberMathExpression) {
+		exprAtom.ReteEnable = true
+	} else {
+		exprAtom.ReteEnable = false
+	}
+
+	// Lets look into the working memory if this expression atom is already in.
+	// if its already in, Add function will return the expression atom from working memory.
+	// if its not, it will add into the working memory
 	theAtm := s.KnowledgeBase.RuleContext.Add(exprAtom)
 
 	holder := s.Stack.Peek().(model.ExpressionAtomHolder)

@@ -87,3 +87,17 @@ func (ah *ArgumentHolder) EqualsTo(that AlphaNode) bool {
 	}
 	return false
 }
+
+// IsContainVariable should check for this ArgumentHolder whether it contains a variable related argument
+func (ah *ArgumentHolder) IsContainVariable(varName string) bool {
+	if ah.Variable == varName {
+		return true
+	}
+	if ah.MethodCall != nil {
+		return ah.MethodCall.IsContainVariable(varName)
+	}
+	if ah.FunctionCall != nil {
+		return ah.FunctionCall.IsContainVariable(varName)
+	}
+	return false
+}

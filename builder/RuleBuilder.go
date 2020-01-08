@@ -68,7 +68,9 @@ func (builder *RuleBuilder) BuildRuleFromResource(resource pkg.Resource) error {
 		parseError = e
 	}
 
-	listener := antlr2.NewGruleParserListener(builder.KnowledgeBase, errCall)
+	reteConf := antlr2.NewReteConfig(true, true, true, true, true)
+
+	listener := antlr2.NewGruleParserListener(builder.KnowledgeBase, reteConf, errCall)
 
 	psr := parser.NewgruleParser(stream)
 	psr.BuildParseTrees = true

@@ -4,7 +4,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/juju/errors"
-	"github.com/sirupsen/logrus"
 	"reflect"
 )
 
@@ -25,6 +24,10 @@ type ExpressionAtom struct {
 	evaluated       bool
 	evalValueResult reflect.Value
 	evalErrorResult error
+
+	ReteEnable bool
+
+	SerialNumber int
 }
 
 // Reset will mark this expression as not evaluated, thus next call to Evaluate will run normally.
@@ -34,33 +37,30 @@ func (exprAtm *ExpressionAtom) Reset() {
 
 // Evaluate the object graph against underlined context or execute evaluation in the sub graph.
 func (exprAtm *ExpressionAtom) Evaluate() (reflect.Value, error) {
-	if exprAtm.evaluated {
-		return exprAtm.evalValueResult, exprAtm.evalErrorResult
+	if exprAtm.ReteEnable {
+		if exprAtm.evaluated {
+			return exprAtm.evalValueResult, exprAtm.evalErrorResult
+		}
+		exprAtm.evaluated = true
 	}
-	exprAtm.evaluated = true
 	//logrus.Tracef("ExpressionAtom : %s", exprAtm.Text)
 	if len(exprAtm.Variable) > 0 {
-		logrus.Tracef("ExpressionAtom Variable : %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.dataCtx.GetValue(exprAtm.Variable)
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.Constant != nil {
-		logrus.Tracef("ExpressionAtom Constant : %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.Constant.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.FunctionCall != nil {
-		logrus.Tracef("ExpressionAtom Function : %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.FunctionCall.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 	if exprAtm.MethodCall != nil {
-		logrus.Tracef("MethodCall Function : %s", exprAtm.Text)
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = exprAtm.MethodCall.Evaluate()
 		return exprAtm.evalValueResult, exprAtm.evalErrorResult
 	}
 
-	logrus.Tracef("ExpressionAtom MathOps : %s", exprAtm.Text)
 	lv, err := exprAtm.ExpressionAtomLeft.Evaluate()
 	if err != nil {
 		exprAtm.evalValueResult, exprAtm.evalErrorResult = reflect.ValueOf(nil), errors.Trace(err)
@@ -205,6 +205,26 @@ func (exprAtm *ExpressionAtom) EqualsTo(that AlphaNode) bool {
 				}
 			}
 		}
+	}
+	return false
+}
+
+// IsContainVariable should check for this ExpressionAtom whether it contains a variable
+func (exprAtm *ExpressionAtom) IsContainVariable(atm *ExpressionAtom, varName string) bool {
+	if atm.Variable == varName {
+		return true
+	}
+	if atm.FunctionCall != nil && atm.FunctionCall.FunctionArguments != nil {
+		return atm.FunctionCall.IsContainVariable(varName)
+	}
+	if atm.MethodCall != nil && atm.MethodCall.MethodArguments != nil {
+		return atm.MethodCall.IsContainVariable(varName)
+	}
+	if atm.ExpressionAtomLeft != nil && atm.ExpressionAtomLeft.IsContainVariable(atm.ExpressionAtomLeft, varName) {
+		return true
+	}
+	if atm.ExpressionAtomRight != nil && atm.ExpressionAtomRight.IsContainVariable(atm.ExpressionAtomRight, varName) {
+		return true
 	}
 	return false
 }
