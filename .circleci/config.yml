@@ -22,6 +22,7 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
+      - run: go mod init github.com/hyperjumptech/grule-rule-engine
       - run: go get -v -t -d ./...
       - run: go get -u golang.org/x/lint/golint
       - run: make test
