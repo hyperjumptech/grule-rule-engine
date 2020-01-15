@@ -5,23 +5,28 @@ email, or any other method with the owners of this repository before making a ch
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
-## Clone Process
+## Fork Process
 
-1. Ensure that you've installed the latest Golang in your system.
-2. Configure your Golang working space as `$GOPATH`
-3. Create a new directory `mkdir $GOPATH/src/github.com/hyperjumptech`
-4. Enter the newly created directory `cd $GOPATH/src/github.com/hyperjumptech`
-5. Clone the project `git clone git@github.com:hyperjumptech/grule-rule-engine.git`
-6. Now you can work with your clone at `$GOPATH/src/github.com/hyperjumptech/grule-rule-engine` folder.
+1. Ensure that you've installed the Golang (minimum 1.13) in your system.
+2. For this project into your own Github account.
+3. Clone the `grule-rule-engine` forked repository on your account.
+4. Enter the cloned directory.
+5. Apply new "upstream" to original `hyperjumptech/grule-rule-engine` git 
+4. Now you can work on your account
+5. Remember to pull from your upstream often. `git pull upstream master`
 
 ## Pull Request Process
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
+1. Make sure you always have the most recent update from your upstream. `git pull upstream master`
+2. Resolve all conflict, if any.
+3. Make sure `make test` always successful (you wont be able to create pull request if this fail, circle-ci, travis-ci and azure-devops will make sure of this.)
+4. Push your code to your project's master repository.
+5. Create PullRequest. 
+    * Go to `hithub.com/hyperjumptech/grule-ruleengine`
+    * Select `Pull Request` tab
+    * Click "New pull request" button
+    * Click "compare across fork"
+    * Change the source head repository from your fork and target is `hyperjumptech/grule-rule-engine`
+    * Hit the "Create pull request" button
+    * Fill in all necessary information to help us understand about your pull request.  
 
