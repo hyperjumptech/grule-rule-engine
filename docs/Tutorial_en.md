@@ -114,6 +114,41 @@ if err != nil {
 }
 ```
 
+### Resources
+
+You can always load a GRL from multiple sources.
+
+
+#### From File
+
+```go
+fileRes := grule.pkg.NewFileResource("/path/to/rules.grl")
+err := ruleBuilder.BuildRuleFromResource(fileRes)
+if err != nil {
+    panic(err)
+}
+```
+
+#### From String or ByteArray
+
+```go
+byteArr := grule.pkg.NewBytesResource([]byte(rules))
+err := ruleBuilder.BuildRuleFromResource(byteArr)
+if err != nil {
+    panic(err)
+}
+```
+
+#### From URL
+
+```go
+urlRes := grule.pkg.NewUrlResource("http://host.com/path/to/rule.grl")
+err := ruleBuilder.BuildRuleFromResource(urlRes)
+if err != nil {
+    panic(err)
+}
+```
+
 ## Executing Grule Rule Engine
 
 To execute the rules, we need to create an instance of `GruleEngine` and with it,
