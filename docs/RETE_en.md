@@ -104,10 +104,10 @@ rule ... {
 
 ### What is inside Grule's Working-Memory
 
-Grule will try to remember all of the `ExpressionAtom` defined within rule's `when` scope of all rules 
+Grule will try to remember all of the `Expression` defined within rule's `when` scope of all rules 
 in the KnowledgeBase. 
 
-First, It will try its best to make sure none of the `ExpressionAtom` AST (Abstract Syntax Tree) node get duplicated
+First, It will try its best to make sure none of the `v` AST (Abstract Syntax Tree) node get duplicated
 
 Second, Each of this AST node can only be evaluated once, until it's relevant `variable` get changed. For example :
 
@@ -118,19 +118,19 @@ Boolean Expression :
     Fact.A == Fact.B + Fact.Func(Fact.C) - 20
 ```
 
-This expression will be broken down into the following ExpressionAtoms.
+This expression will be broken down into the following Expressions.
 
 ```text
-ExpressionAtom "Fact.A" --> A variable
-ExpressionAtom "Fact.B" --> A variable
-ExpressionAtom "Fact.C" --> A variable
-ExpressionAtom "Fact.Func(Fact.C)"" --> A function containing argument Fact.C
-ExpressionAtom "20" --> A constant
-ExpressionAtom "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable; Fact.B and Fact.C
-ExpressionAtom "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
+Expression "Fact.A" --> A variable
+Expression "Fact.B" --> A variable
+Expression "Fact.C" --> A variable
+Expression "Fact.Func(Fact.C)"" --> A function containing argument Fact.C
+Expression "20" --> A constant
+Expression "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable; Fact.B and Fact.C
+Expression "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
 ```
 
-Each of the above ExpressionAtoms will be remembered for their underlaying values whenever
+Each of the above Expressions will be remembered for their underlaying values whenever
 they get evaluated for the first time. So subsequent evaluation will not be evaluated
 as their remembered value will immediately returned.
 
@@ -141,16 +141,16 @@ If one of this Variable got altered inside the rule's `then` scope, for example
         Fact.B = Fact.A * 20
 ```
 
-We can see `Fact.B` value is changed, then all ExpressionAtom containing `Fact.B` will
+We can see `Fact.B` value is changed, then all Expression containing `Fact.B` will
 be removed from Working memory:
 
 ```text
-ExpressionAtom "Fact.B"
-ExpressionAtom "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable; Fact.B and Fact.C
-ExpressionAtom "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
+Expression "Fact.B"
+Expression "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable; Fact.B and Fact.C
+Expression "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
 ```
 
-This makes those ExpressionAtom removed from the working memory and get re-evaluated again on the next cycle.
+This makes those Expression removed from the working memory and get re-evaluated again on the next cycle.
 
 ### Known RETE issue with Functions or Methods
 

@@ -3,23 +3,25 @@ package builder
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	"github.com/hyperjumptech/grule-rule-engine/antlr/parser"
-	"github.com/hyperjumptech/grule-rule-engine/model"
+	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/juju/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
-func NewRuleBuilder(KnowledgeBase *model.KnowledgeBase) *RuleBuilder {
+func NewRuleBuilder(KnowledgeBase *ast.KnowledgeBase, memory *ast.WorkingMemory) *RuleBuilder {
 	return &RuleBuilder{
 		KnowledgeBase: KnowledgeBase,
+		WorkingMemory: memory,
 	}
 }
 
 // RuleBuilder builds rule from DRL script into contained KnowledgeBase
 type RuleBuilder struct {
-	KnowledgeBase *model.KnowledgeBase
+	KnowledgeBase *ast.KnowledgeBase
+	WorkingMemory *ast.WorkingMemory
 }
 
 // MustBuildRuleFromResources is similar to BuildRuleFromResources, with the difference is, it will panic if rule script contains error.
@@ -59,7 +61,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(resource pkg.Resource) error {
 	sdata := string(data)
 
 	is := antlr.NewInputStream(sdata)
-	lexer := parser.NewgruleLexer(is)
+	lexer := parser2.Newgrulev2Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
@@ -68,11 +70,9 @@ func (builder *RuleBuilder) BuildRuleFromResource(resource pkg.Resource) error {
 		parseError = e
 	}
 
-	reteConf := antlr2.NewReteConfig(true, true, true, true, true)
+	listener := antlr2.NewGruleV2ParserListener(builder.KnowledgeBase, builder.WorkingMemory, errCall)
 
-	listener := antlr2.NewGruleParserListener(builder.KnowledgeBase, reteConf, errCall)
-
-	psr := parser.NewgruleParser(stream)
+	psr := parser2.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
 

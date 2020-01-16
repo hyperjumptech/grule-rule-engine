@@ -44,10 +44,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial RETE algorithm were added into Grule with only optimization in the ExpressionAtom level.
 - Naming and Versioning of knowledge base
 
-## [Planned]
 
-### [1.1.1] - 2020-1-15
+### [1.2.0] - 2020-01-16
 
 #### Added
 
+- Newly revamped ANTLR4 Grammar for Grule, syntax and structure not changed but parsing get more efficient.
+- Support for modulus % operator
+- Support for bitwise OR and AND operator
+- Operator precedence support
 - RETE optimization to ensure reset of ExpressionAtom only happen if a known variable were changed

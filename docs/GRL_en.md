@@ -61,8 +61,9 @@ then
 | Real    | Hold a real value                                                      | `234.4553`, `-234.3`             |
 | Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
 
-Math operator such as `+`, `-`, `/`, `*`; Logical `&&` and `||`; Comparison 
+Math operator such as `+`, `-`, `/`, `*`, `%`, `|`, `&`; Logical `&&` and `||`; Comparison 
 `<`,`<=`,`>`,`>=`,`==`,`!=` all are supported by the language.
+
 #### Comments
 
 You can always put a comment inside your GRL script. Such as :

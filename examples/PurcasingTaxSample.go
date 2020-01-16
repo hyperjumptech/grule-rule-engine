@@ -2,10 +2,9 @@ package examples
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/context"
 	engine2 "github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"time"
 )
@@ -110,8 +109,9 @@ type CashFlowCalculator struct {
 func (cf *CashFlowCalculator) CalculatePurchases() {
 	cashFlow := &CashFlow{}
 
-	kb := model.NewKnowledgeBase("Purchase Calculator", "0.0.1")
-	rb := builder.NewRuleBuilder(kb)
+	mem := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Purchase Calculator", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, mem)
 	err := rb.BuildRuleFromResource(pkg.NewFileResource("CashFlowRule.grl"))
 	if err != nil {
 		panic(err)
@@ -120,10 +120,10 @@ func (cf *CashFlowCalculator) CalculatePurchases() {
 	engine := engine2.NewGruleEngine()
 
 	for _, purchase := range Purchases {
-		dctx := context.NewDataContext()
+		dctx := ast.NewDataContext()
 		dctx.Add("CashFlow", cashFlow)
 		dctx.Add("Purchase", purchase)
-		err = engine.Execute(dctx, kb)
+		err = engine.Execute(dctx, kb, mem)
 		if err != nil {
 			panic(err)
 		}

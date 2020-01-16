@@ -1,3 +1,11 @@
+rule OperatorPrecedence "Test Operator Precedence" {
+    when
+        1 + 2 + 3 * 5 == 18
+    then
+        Log("Hurrah");
+        Retract("OperatorPrecedence");
+}
+
 rule TaxingLuxuryItems "When its a luxury Item, you tax them 15 percent." salience 10 {
     when
         Purchase.IgnoredPurchase == false && Purchase.Tax == 0 && Purchase.ItemType == "LUXURY"
