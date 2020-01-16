@@ -5,7 +5,7 @@
 
 ## Build-In Functions
 
-All build-in function are all defined within then `model/GruleFunctions.go` File. As of now, they are :
+All build-in function are all defined within then `ast/BuildInFunctions.go` File. As of now, they are :
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time 
 

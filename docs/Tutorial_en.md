@@ -74,7 +74,7 @@ You can create as many fact as you wish.
 Now, you have prepare a `DataContext` and add your instance(s) of fact into it.
 
 ```go
-dataCtx := grule.context.NewDataContext()
+dataCtx := grule.ast.NewDataContext()
 err := dataCtx.Add("MF", myFact)
 if err != nil {
     panic()
@@ -89,11 +89,12 @@ loaded from multiple sources.
 The DRL, can be in the form of simple string, stored on a file or some where on the internet, are
 used to build those rules.
 
-Now lets create the `KnowledgeBase` and then create new `RuleBuilder` to build the rule into prepared `KnowledgeBase`
+Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBuilder` to build the rule into prepared `KnowledgeBase`
 
 ```go
-knowledgeBase := grule.model.NewKnowledgeBase()
-ruleBuilder := grule.builder.NewRuleBuilder(knowledgeBase)
+workingMemory := grule.ast.NewWorkingMemory()
+knowledgeBase := grule.ast.NewKnowledgeBase()
+ruleBuilder := grule.builder.NewRuleBuilder(knowledgeBase, workingMemory)
 ```
 
 Now we can add rules (defined within a GRL)
@@ -156,7 +157,7 @@ we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
 engine := grule.engine.NewGruleEngine()
-err = engine.Execute(dataCtx, knowledgeBase)
+err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
     panic()
 }

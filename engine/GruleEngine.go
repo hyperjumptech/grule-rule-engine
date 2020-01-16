@@ -1,8 +1,7 @@
 package engine
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/context"
-	"github.com/hyperjumptech/grule-rule-engine/model"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 	"sort"
@@ -13,7 +12,7 @@ var (
 	// Logger is a logrus instance twith default fields for grule
 	log = logrus.WithFields(logrus.Fields{
 		"lib":    "grule",
-		"struct": "GruleEngine",
+		"struct": "GruleEngineV2",
 	})
 )
 
@@ -22,23 +21,23 @@ var (
 func NewGruleEngine() *GruleEngine {
 	return &GruleEngine{
 		MaxCycle:    5000,
-		subscribers: make([]func(*model.RuleEntry), 0),
+		subscribers: make([]func(*ast.RuleEntry), 0),
 	}
 }
 
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
 	MaxCycle    uint64
-	subscribers []func(*model.RuleEntry)
+	subscribers []func(*ast.RuleEntry)
 }
 
 // Subscribe adds custom func to subscribers slice
-func (g *GruleEngine) Subscribe(f func(*model.RuleEntry)) {
+func (g *GruleEngine) Subscribe(f func(*ast.RuleEntry)) {
 	g.subscribers = append(g.subscribers, f)
 }
 
 // Notify all subscribers
-func (g *GruleEngine) notifySubscribers(r *model.RuleEntry) {
+func (g *GruleEngine) notifySubscribers(r *ast.RuleEntry) {
 	for _, f := range g.subscribers {
 		go f(r)
 	}
@@ -46,22 +45,23 @@ func (g *GruleEngine) notifySubscribers(r *model.RuleEntry) {
 
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
-func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.KnowledgeBase) error {
-	println("")
-	log.Infof("Starting rule execution using knowledge '%s' version %s", knowledge.Name, knowledge.Version)
+func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase, memory *ast.WorkingMemory) error {
+	log.Infof("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
+
+	knowledge.WorkingMemory = memory
+
 	startTime := time.Now()
-	defunc := &model.GruleFunction{
-		Knowledge: knowledge,
+	defunc := &ast.BuildInFunctions{
+		Knowledge:     knowledge,
+		WorkingMemory: memory,
 	}
-	kctx := &context.KnowledgeContext{}
-	rctx := knowledge.RuleContext
 	dataCtx.Add("DEFUNC", defunc)
 
-	knowledge.Reset()
+	log.Debugf("Resetting Working memory")
+	knowledge.WorkingMemory.ResetAll()
 
-	for _, v := range knowledge.RuleEntries {
-		v.Initialize(kctx, rctx, dataCtx)
-	}
+	log.Debugf("Initializing Context")
+	knowledge.InitializeContext(dataCtx, memory)
 
 	var cycle uint64
 
@@ -72,18 +72,19 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 	*/
 	for {
 		cycle++
-
+		log.Debugf("Cycle #%d", cycle)
 		if cycle > g.MaxCycle {
 			return errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
 		}
 
 		// Select all rule entry that can be executed.
-		runnable := make([]*model.RuleEntry, 0)
+		log.Debugf("Select all rule entry that can be executed.")
+		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
 			// test if this rule entry v can execute.
-			can, err := v.CanExecute()
+			can, err := v.Evaluate()
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.Name, err)
 				// No longer return error, since unavailability of variable or fact in context might be intentional.
 			}
 			// if can, add into runnable array
@@ -94,6 +95,7 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 
 		// disabled to test the rete's variable change detection.
 		// knowledge.RuleContextReset()
+		log.Debugf("Selected rules %d.", len(runnable))
 
 		// If there are rules to execute, sort them by their Salience
 		if len(runnable) > 0 {
@@ -109,10 +111,10 @@ func (g *GruleEngine) Execute(dataCtx *context.DataContext, knowledge *model.Kno
 			for _, r := range runnable {
 				// reset the counter to 0 to detect if there are variable change.
 				dataCtx.VariableChangeCount = 0
-				log.Debugf("Executing rule : %s. Salience %d", r.RuleName, r.Salience)
+				log.Debugf("Executing rule : %s. Salience %d", r.Name, r.Salience)
 				err := r.Execute()
 				if err != nil {
-					log.Errorf("Failed execution rule : %s. Got error %v", r.RuleName, err)
+					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
 					return errors.Trace(err)
 				}
 

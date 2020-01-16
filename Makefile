@@ -8,7 +8,7 @@ build:
 
 test: build
 	go test ./... -v -covermode=count -coverprofile=coverage.out
-	golint -set_exit_status builder/... context/... engine/... examples/... model/... pkg/... antlr/.
+	golint -set_exit_status builder/... context/... engine/... examples/... ast/... pkg/... antlr/.
 
 test-coverage: test
 	go tool cover -html=coverage.out

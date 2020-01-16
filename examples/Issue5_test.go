@@ -1,10 +1,9 @@
 package examples
 
 import (
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"testing"
 )
@@ -38,21 +37,22 @@ func TestMethodCall_Issue5(t *testing.T) {
 		Name: "Watson",
 	}
 
-	dataContext := context.NewDataContext()
+	dataContext := ast.NewDataContext()
 	err := dataContext.Add("User", user)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	knowledgeBase := model.NewKnowledgeBase("Test", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase)
+	mem := ast.NewWorkingMemory()
+	knowledgeBase := ast.NewKnowledgeBase("Test", "0.1.1")
+	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, mem)
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(Rule)))
 	if err != nil {
 		t.Log(err)
 	} else {
 		eng1 := &engine.GruleEngine{MaxCycle: 5}
-		err := eng1.Execute(dataContext, knowledgeBase)
+		err := eng1.Execute(dataContext, knowledgeBase, mem)
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	"github.com/hyperjumptech/grule-rule-engine/antlr/parser"
-	"github.com/hyperjumptech/grule-rule-engine/model"
+	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ func TestItemPriceChecker_TestLexer(t *testing.T) {
 	is := antlr.NewInputStream(PriceCheckRule)
 
 	// Create the Lexer
-	lexer := parser.NewgruleLexer(is)
+	lexer := parser2.Newgrulev2Lexer(is)
 	//lexer := parser.NewLdifParserLexer(is)
 
 	// Read all tokens
@@ -30,16 +30,17 @@ func TestItemPriceChecker_TestLexer(t *testing.T) {
 func TestItemPriceChecker_TestParser(t *testing.T) {
 	nis := antlr.NewInputStream(PriceCheckRule)
 
-	lexer := parser.NewgruleLexer(nis)
+	lexer := parser2.Newgrulev2Lexer(nis)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
+	mem := ast.NewWorkingMemory()
+
 	var parseError error
-	reteConf := antlr2.NewReteConfig(true, true, true, false, true)
-	listener := antlr2.NewGruleParserListener(model.NewKnowledgeBase("Test", "0.1.1"), reteConf, func(e error) {
+	listener := antlr2.NewGruleV2ParserListener(ast.NewKnowledgeBase("Test", "0.1.1"), mem, func(e error) {
 		parseError = e
 	})
 
-	psr := parser.NewgruleParser(stream)
+	psr := parser2.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
 

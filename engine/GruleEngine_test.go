@@ -1,11 +1,10 @@
 package engine
 
 import (
-	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/context"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"sort"
@@ -96,7 +95,7 @@ func TestGrule_Execute(t *testing.T) {
 	dr := &DistanceRecorder{
 		TotalDistance: 0,
 	}
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestCar", tc)
 	if err != nil {
 		t.Fatal(err)
@@ -105,9 +104,9 @@ func TestGrule_Execute(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	kb := model.NewKnowledgeBase("Test", "0.1.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.1.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(rules)))
 	if err != nil {
 		t.Errorf("Got error : %v", err)
@@ -115,7 +114,7 @@ func TestGrule_Execute(t *testing.T) {
 	} else {
 		engine := NewGruleEngine()
 		start := time.Now()
-		err = engine.Execute(dctx, kb)
+		err = engine.Execute(dctx, kb, memory)
 		if err != nil {
 			t.Errorf("Got error : %v", err)
 			t.FailNow()
@@ -128,7 +127,7 @@ func TestGrule_Execute(t *testing.T) {
 }
 
 func TestGrule_ExecuteWithSubscribers(t *testing.T) {
-	// logrus.SetLevel(logrus.TraceLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -138,7 +137,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 	dr := &DistanceRecorder{
 		TotalDistance: 0,
 	}
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestCar", tc)
 	if err != nil {
 		t.Fatal(err)
@@ -148,12 +147,13 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := func(r *model.RuleEntry) {
-		fmt.Printf("executed rule: %s\n", r.RuleName)
+	f := func(r *ast.RuleEntry) {
+		log.Debugf("Now executing rule %s", r.Name)
 	}
 
-	kb := model.NewKnowledgeBase("Test", "0.1.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.1.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(rules)))
 	if err != nil {
 		t.Errorf("Got error : %v", err)
@@ -164,7 +164,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		engine.Subscribe(f)
 
 		start := time.Now()
-		err = engine.Execute(dctx, kb)
+		err = engine.Execute(dctx, kb, memory)
 		if err != nil {
 			t.Errorf("Got error : %v", err)
 			t.FailNow()
@@ -221,19 +221,20 @@ func TestEngine_ComplexRule1(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase("Test", "0.0.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule1)))
 	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
-	err = engine.Execute(dctx, kb)
+	err = engine.Execute(dctx, kb, memory)
 	assert.NoError(t, err)
 
 	assert.Equal(t, int64(1), ts.Result)
@@ -257,19 +258,20 @@ func TestEngine_ComplexRule2(t *testing.T) {
 		Param4: false,
 	}
 
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase("Test", "0.0.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule2)))
 	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
-	err = engine.Execute(dctx, kb)
+	err = engine.Execute(dctx, kb, memory)
 	assert.NoError(t, err)
 
 	assert.Equal(t, int64(1), ts.Result)
@@ -294,19 +296,20 @@ func TestEngine_ComplexRule3(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase("Test", "0.0.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule3)))
 	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
-	err = engine.Execute(dctx, kb)
+	err = engine.Execute(dctx, kb, memory)
 	assert.NoError(t, err)
 
 	assert.Equal(t, int64(1), ts.Result)
@@ -332,20 +335,52 @@ func TestEngine_ComplexRule4(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	kb := model.NewKnowledgeBase("Test", "0.0.1")
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(complexRule4)))
 	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
-	err = engine.Execute(dctx, kb)
+	err = engine.Execute(dctx, kb, memory)
 	assert.NoError(t, err)
 
 	assert.Equal(t, int64(1), ts.Result)
+}
+
+const OpPresedenceRule = `rule OpPresedenceRule "test operator presedence" salience 10 {
+    when
+        1 + 2 + 3 * 4 == 15
+    then
+        TestStruct.Result = 3;
+		Retract("OpPresedenceRule");
+}`
+
+func TestEngine_OperatorPrecedence(t *testing.T) {
+
+	ts := &TestStruct{}
+
+	dctx := ast.NewDataContext()
+	err := dctx.Add("TestStruct", ts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(OpPresedenceRule)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb, memory)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(3), ts.Result)
 }
