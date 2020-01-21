@@ -4,6 +4,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -44,6 +45,16 @@ func (gf *BuildInFunctions) Now() time.Time {
 // Log extension to log.Print
 func (gf *BuildInFunctions) Log(text string) {
 	GrlLogger.Println(text)
+}
+
+// StringContains extension to strings.Contains
+func (gf *BuildInFunctions) StringContains(str, substr string) bool {
+	return strings.Contains(str, substr)
+}
+
+// LogFormat extension to log.Printf
+func (gf *BuildInFunctions) LogFormat(format string, i interface{}) {
+	GrlLogger.Printf(format, i)
 }
 
 // IsNil Enables nill checking on variables.
