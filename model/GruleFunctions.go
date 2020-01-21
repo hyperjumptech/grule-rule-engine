@@ -33,6 +33,11 @@ func (gf *GruleFunction) LogFormat(format string, i interface{}) {
 	log.Printf(format, i)
 }
 
+// StringContains extension to strings.Contains
+func (gf *GruleFunction) StringContains(str, substr string) bool {
+	return strings.Contains(str, substr)
+}
+
 // IsNil Enables nill checking on variables.
 func (gf *GruleFunction) IsNil(i interface{}) bool {
 	val := reflect.ValueOf(i)
