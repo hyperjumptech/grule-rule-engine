@@ -178,8 +178,6 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 		}
 		iargs := make([]interface{}, 0)
 		for i, t := range types {
-			fmt.Printf("traceMethod - t: %+v\n", t)
-
 			if t.Kind() != args[i].Kind() {
 				if t.Kind() == reflect.Interface || t.Kind() == reflect.Slice {
 					iargs = append(iargs, pkg.ValueToInterface(args[i]))
