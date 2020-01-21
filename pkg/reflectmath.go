@@ -2,218 +2,744 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/juju/errors"
 	"reflect"
+	"time"
 )
 
-// ValueAdd will try to do a mathematical addition between two values.
-// It will return another value as the result and an error if between the two values are not compatible for Addition
-func ValueAdd(a, b reflect.Value) (reflect.Value, error) {
-	aBkind := GetBaseKind(a)
-	bBkind := GetBaseKind(b)
+// EvaluateMultiplication will evaluate multiplication operation over two value
+func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv * rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv * int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) * rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) * rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv * rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) * rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv * float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv * float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv * rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+		}
+	default:
+		return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", left.Kind().String())
+	}
+}
 
-	switch aBkind {
-	case reflect.Int64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Int() + b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Int() + int64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Int()) + b.Float()), nil
-		case reflect.String:
-			return reflect.ValueOf(fmt.Sprintf("%d%s", a.Int(), b.String())), nil
+// EvaluateDivision will evaluate division operation over two value
+func EvaluateDivision(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(float64(lv) / float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(float64(lv) / float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) / rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do addition math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", right.Kind().String())
 		}
-	case reflect.Uint64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(int64(a.Uint()) + b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Uint() + b.Uint()), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Uint()) + b.Float()), nil
-		case reflect.String:
-			return reflect.ValueOf(fmt.Sprintf("%d%s", a.Uint(), b.String())), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(float64(lv) / float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(float64(lv) / float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) / rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do addition math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", right.Kind().String())
 		}
-	case reflect.Float64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Float() + float64(b.Int())), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Float() + float64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(a.Float() + b.Float()), nil
-		case reflect.String:
-			return reflect.ValueOf(fmt.Sprintf("%f%s", a.Float(), b.String())), nil
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv / float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv / float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv / rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do addition math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", right.Kind().String())
 		}
+	default:
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", left.Kind().String())
+	}
+}
+
+// EvaluateModulo will evaluate modulo operation over two value
+func EvaluateModulo(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv % rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv % int64(rv)), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in modulo", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) % rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(int64(lv) % int64(rv)), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in modulo", right.Kind().String())
+		}
+	default:
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in modulo", left.Kind().String())
+	}
+}
+
+// EvaluateAddition will evaluate addition operation over two value
+func EvaluateAddition(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
 	case reflect.String:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(fmt.Sprintf("%s%d", a.String(), b.Int())), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(fmt.Sprintf("%s%d", a.String(), b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(fmt.Sprintf("%s%f", a.String(), b.Float())), nil
+		lv := left.String()
+		switch right.Kind() {
 		case reflect.String:
-			return reflect.ValueOf(fmt.Sprintf("%s%s", a.String(), b.String())), nil
+			rv := right.String()
+			return reflect.ValueOf(fmt.Sprintf("%s%s", lv, rv)), nil
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(fmt.Sprintf("%s%d", lv, rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(fmt.Sprintf("%s%d", lv, rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(fmt.Sprintf("%s%f", lv, rv)), nil
 		case reflect.Bool:
-			return reflect.ValueOf(fmt.Sprintf("%s%v", a.String(), b.Bool())), nil
-		case reflect.Ptr:
-			if b.CanInterface() {
-				return reflect.ValueOf(fmt.Sprintf("%s%v", a.String(), b.Interface())), nil
+			rv := right.Bool()
+			return reflect.ValueOf(fmt.Sprintf("%s%v", lv, rv)), nil
+		default:
+			if right.Type().String() == "time.Time" {
+				rv := right.Interface().(time.Time)
+				return reflect.ValueOf(fmt.Sprintf("%s%s", lv, rv.Format(time.RFC3339))), nil
 			}
-			return reflect.ValueOf(nil), errors.Errorf("Can not do addition math operator between %s and non interface-able %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in addition", right.Kind().String())
+		}
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(fmt.Sprintf("%d%s", lv, rv)), nil
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv + rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv + int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) + rv), nil
 		default:
-			return reflect.ValueOf(fmt.Sprintf("%s%v", a.String(), b.String())), nil
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in addition", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(fmt.Sprintf("%d%s", lv, rv)), nil
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) + rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv + rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) + rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(fmt.Sprintf("%f%s", lv, rv)), nil
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv + float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv + float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv + rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", right.Kind().String())
 		}
 	default:
-		if bBkind == reflect.String {
-			if a.CanInterface() {
-				return reflect.ValueOf(fmt.Sprintf("%v%s", a.Interface(), b.String())), nil
-			}
-			return reflect.ValueOf(nil), errors.Errorf("Can not do addition math operator between non interface-able %s and %s", b.Kind().String(), a.Kind().String())
-		}
-		return reflect.ValueOf(nil), errors.Errorf("Can not do math operator between %s and %s", a.Kind().String(), b.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in division", left.Kind().String())
 	}
 }
 
-// ValueSub will try to do a mathematical substraction between two values.
-// It will return another value as the result and an error if between the two values are not compatible for substraction
-func ValueSub(a, b reflect.Value) (reflect.Value, error) {
-	aBkind := GetBaseKind(a)
-	bBkind := GetBaseKind(b)
-
-	switch aBkind {
-	case reflect.Int64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Int() - b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Int() - int64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Int()) - b.Float()), nil
+// EvaluateSubstraction will evaluate substraction operation over two value
+func EvaluateSubstraction(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv - rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv - int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) - rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do subtraction math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
 		}
-	case reflect.Uint64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(int64(a.Uint()) - b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Uint() - b.Uint()), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Uint()) - b.Float()), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) - rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv - rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) - rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do subtraction math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
 		}
-	case reflect.Float64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Float() - float64(b.Int())), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Float() - float64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(a.Float() - b.Float()), nil
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv - float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv - float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv - rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do subtraction math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
 		}
 	default:
-		return reflect.ValueOf(nil), errors.Errorf("Can not do subtraction math operator between %s and %s", a.Kind().String(), b.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", left.Kind().String())
 	}
 }
 
-// ValueMul will try to do a mathematical multiplication between two values.
-// It will return another value as the result and an error if between the two values are not compatible for multiplication
-func ValueMul(a, b reflect.Value) (reflect.Value, error) {
-	aBkind := GetBaseKind(a)
-	bBkind := GetBaseKind(b)
-
-	switch aBkind {
-	case reflect.Int64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Int() * b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Int() * int64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Int()) * b.Float()), nil
+// EvaluateBitAnd will evaluate Bitwise And operation over two value
+func EvaluateBitAnd(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv & rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv & int64(rv)), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do multiplication math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise AND operation", right.Kind().String())
 		}
-	case reflect.Uint64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(int64(a.Uint()) * b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Uint() * b.Uint()), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Uint()) * b.Float()), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) & rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv & rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do multiplication math operator between %s and %s", a.Kind().String(), b.Kind().String())
-		}
-	case reflect.Float64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Float() * float64(b.Int())), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Float() * float64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(a.Float() * b.Float()), nil
-		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do multiplication math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise AND operation", right.Kind().String())
 		}
 	default:
-		return reflect.ValueOf(nil), errors.Errorf("Can not do multiplication math operator between %s and %s", a.Kind().String(), b.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise AND operation", left.Kind().String())
 	}
 }
 
-// ValueDiv will try to do a mathematical division between two values.
-// It will return another value as the result and an error if between the two values are not compatible for division
-func ValueDiv(a, b reflect.Value) (reflect.Value, error) {
-	aBkind := GetBaseKind(a)
-	bBkind := GetBaseKind(b)
-
-	switch aBkind {
-	case reflect.Int64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Int() / b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Int() / int64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Int()) / b.Float()), nil
+// EvaluateBitOr will evaluate Bitwise Or operation over two value
+func EvaluateBitOr(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv | rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv | int64(rv)), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do division math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise OR operation", right.Kind().String())
 		}
-	case reflect.Uint64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(int64(a.Uint()) / b.Int()), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Uint() / b.Uint()), nil
-		case reflect.Float64:
-			return reflect.ValueOf(float64(a.Uint()) / b.Float()), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) | rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv | rv), nil
 		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do division math operator between %s and %s", a.Kind().String(), b.Kind().String())
-		}
-	case reflect.Float64:
-		switch bBkind {
-		case reflect.Int64:
-			return reflect.ValueOf(a.Float() / float64(b.Int())), nil
-		case reflect.Uint64:
-			return reflect.ValueOf(a.Float() / float64(b.Uint())), nil
-		case reflect.Float64:
-			return reflect.ValueOf(a.Float() / b.Float()), nil
-		default:
-			return reflect.ValueOf(nil), errors.Errorf("Can not do division math operator between %s and %s", a.Kind().String(), b.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise OR operation", right.Kind().String())
 		}
 	default:
-		return reflect.ValueOf(nil), errors.Errorf("Can not do division math operator between %s and %s", a.Kind().String(), b.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in bitwise OR operation", left.Kind().String())
 	}
+}
+
+// EvaluateGreaterThan will evaluate GreaterThan operation over two value
+func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv > rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv > int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) > rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GT comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) > rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv > rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) > rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GT comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv > float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv > float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv > rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GT comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv.After(rv)), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GT comparison", left.Kind().String())
+	}
+}
+
+// EvaluateLesserThan will evaluate LesserThan operation over two value
+func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv < rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv < int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) < rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LT comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) < rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv < rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) < rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LT comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv < float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv < float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv < rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LT comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv.Before(rv)), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LT comparison", left.Kind().String())
+	}
+}
+
+// EvaluateGreaterThanEqual will evaluate GreaterThanEqual operation over two value
+func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv >= rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv >= int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) >= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GTE comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) >= rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv >= rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) >= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GTE comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv >= float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv >= float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv >= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GTE comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv.After(rv) || lv == rv), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in GTE comparison", left.Kind().String())
+	}
+}
+
+// EvaluateLesserThanEqual will evaluate LesserThanEqual operation over two value
+func EvaluateLesserThanEqual(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv <= rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv <= int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) <= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LTE comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) <= rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv <= rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) <= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LTE comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv <= float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv <= float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv <= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LTE comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv.Before(rv) || lv == rv), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in LTE comparison", left.Kind().String())
+	}
+}
+
+// EvaluateEqual will evaluate Equal operation over two value
+func EvaluateEqual(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		if right.Kind() == reflect.String {
+			rv := right.String()
+			return reflect.ValueOf(lv == rv), nil
+		}
+		return reflect.ValueOf(false), nil
+	case reflect.Bool:
+		lv := left.Bool()
+		if right.Kind() == reflect.Bool {
+			rv := right.Bool()
+			return reflect.ValueOf(lv == rv), nil
+		}
+		return reflect.ValueOf(false), nil
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv == rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv == int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) == rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) == rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv == rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) == rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv == float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv == float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv == rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv == rv), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", left.Kind().String())
+	}
+}
+
+// EvaluateNotEqual will evaluate NotEqual operation over two value
+func EvaluateNotEqual(left, right reflect.Value) (reflect.Value, error) {
+	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		if right.Kind() == reflect.String {
+			rv := right.String()
+			return reflect.ValueOf(lv != rv), nil
+		}
+		return reflect.ValueOf(false), nil
+	case reflect.Bool:
+		lv := left.Bool()
+		if right.Kind() == reflect.Bool {
+			rv := right.Bool()
+			return reflect.ValueOf(lv != rv), nil
+		}
+		return reflect.ValueOf(false), nil
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		lv := left.Int()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv != rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv != int64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) != rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		lv := left.Uint()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(int64(lv) != rv), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv != rv), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(float64(lv) != rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	case reflect.Float32, reflect.Float64:
+		lv := left.Float()
+		switch right.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			rv := right.Int()
+			return reflect.ValueOf(lv != float64(rv)), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			rv := right.Uint()
+			return reflect.ValueOf(lv != float64(rv)), nil
+		case reflect.Float32, reflect.Float64:
+			rv := right.Float()
+			return reflect.ValueOf(lv != rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", right.Kind().String())
+		}
+	default:
+		if left.Type().String() == "time.Time" && right.Type().String() == "time.Time" {
+			lv := left.Interface().(time.Time)
+			rv := right.Interface().(time.Time)
+			return reflect.ValueOf(lv != rv), nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in EQ comparison", left.Kind().String())
+	}
+}
+
+// EvaluateLogicAnd will evaluate LogicalAnd operation over two value
+func EvaluateLogicAnd(left, right reflect.Value) (reflect.Value, error) {
+	if left.Kind() == reflect.Bool && right.Kind() == reflect.Bool {
+		lv := left.Bool()
+		rv := right.Bool()
+		return reflect.ValueOf(lv && rv), nil
+	}
+	return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in Logical AND comparison", left.Kind().String())
+}
+
+// EvaluateLogicOr will evaluate LogicalOr operation over two value
+func EvaluateLogicOr(left, right reflect.Value) (reflect.Value, error) {
+	if left.Kind() == reflect.Bool && right.Kind() == reflect.Bool {
+		lv := left.Bool()
+		rv := right.Bool()
+		return reflect.ValueOf(lv || rv), nil
+	}
+	return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in Logical OR comparison", left.Kind().String())
 }

@@ -108,7 +108,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
 }
 `
-byteArr := grule.pkg.NewBytesResource([]byte(rules))
+byteArr := grule.pkg.NewBytesResource([]byte(drls))
 err := ruleBuilder.BuildRuleFromResource(byteArr)
 if err != nil {
     panic(err)
