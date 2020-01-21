@@ -132,6 +132,9 @@ func IsStruct(obj interface{}) bool {
 // ValueToInterface will try to obtain an interface to a speciffic value.
 // it will detect the value's kind.
 func ValueToInterface(v reflect.Value) interface{} {
+
+	fmt.Printf("ValueToInterface - value: %+v\n", v)
+
 	if v.Type().Kind() == reflect.String {
 		return v.String()
 	}
@@ -162,6 +165,9 @@ func ValueToInterface(v reflect.Value) interface{} {
 		return v.Float()
 	case reflect.Bool:
 		return v.Bool()
+	case reflect.Slice:
+		return v.Slice(1, 1)
+
 	case reflect.Ptr:
 		newPtr := reflect.New(v.Elem().Type())
 		newPtr.Elem().Set(v.Elem())

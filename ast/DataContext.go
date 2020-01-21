@@ -1,4 +1,4 @@
-package context
+package ast
 
 import (
 	"fmt"
@@ -6,13 +6,6 @@ import (
 	"github.com/juju/errors"
 	"reflect"
 	"strings"
-)
-
-var (
-	// ErrFactNotFound indicates an error if some fact are not found within the data context.
-	ErrFactNotFound = errors.New("Fact not found")
-	// ErrFactRetracted indicates an error when a fact were found but it was retracted in the knowledge base.
-	ErrFactRetracted = errors.New("Fact is retracted")
 )
 
 // NewDataContext will create a new DataContext instance
@@ -67,9 +60,9 @@ func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (ref
 		if !ctx.IsRestracted(varArray[0]) {
 			return traceMethod(val, varArray[1:], args)
 		}
-		return reflect.ValueOf(nil), ErrFactRetracted
+		return reflect.ValueOf(nil), errors.New("fact is retracted")
 	}
-	return reflect.ValueOf(nil), ErrFactNotFound
+	return reflect.ValueOf(nil), errors.New("fact not found")
 }
 
 // GetType will extract type information of data in this context.
@@ -79,9 +72,9 @@ func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
 		if !ctx.IsRestracted(varArray[0]) {
 			return traceType(val, varArray[1:])
 		}
-		return nil, ErrFactRetracted
+		return nil, errors.New("fact is retracted")
 	}
-	return nil, ErrFactNotFound
+	return nil, errors.New("fact not found")
 }
 
 // GetValue will get member variables Value information.
@@ -96,9 +89,9 @@ func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
 			}
 			return vval, err
 		}
-		return reflect.ValueOf(nil), ErrFactRetracted
+		return reflect.ValueOf(nil), errors.New("fact is retracted")
 	}
-	return reflect.ValueOf(nil), ErrFactNotFound
+	return reflect.ValueOf(nil), errors.New("fact not found")
 }
 
 // SetValue will set variable value of an object instance in this data context, Used by rule script to set values.
@@ -112,9 +105,9 @@ func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error 
 			}
 			return err
 		}
-		return ErrFactRetracted
+		return errors.New("fact is retracted")
 	}
-	return ErrFactNotFound
+	return errors.New("fact not found")
 }
 
 func traceType(obj interface{}, path []string) (reflect.Type, error) {
@@ -178,10 +171,8 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 		}
 		iargs := make([]interface{}, 0)
 		for i, t := range types {
-			fmt.Printf("traceMethod - t: %+v\n", t)
-
 			if t.Kind() != args[i].Kind() {
-				if t.Kind() == reflect.Interface || t.Kind() == reflect.Slice {
+				if t.Kind() == reflect.Interface {
 					iargs = append(iargs, pkg.ValueToInterface(args[i]))
 				} else {
 					return reflect.ValueOf(nil),

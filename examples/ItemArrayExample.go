@@ -2,10 +2,9 @@ package examples
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/context"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -60,8 +59,9 @@ func (cf *ItemPriceChecker) CheckPrices() {
 	})
 
 	// Prepare knowledgebase and load it with our rule.
-	kb := model.NewKnowledgeBase()
-	rb := builder.NewRuleBuilder(kb)
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("PriceCheck", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
 	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
 	if err != nil {
 		panic(err)
@@ -74,12 +74,12 @@ func (cf *ItemPriceChecker) CheckPrices() {
 	// Handling of the array is this program's job.
 	// Let the rule decide for every item.
 	for _, v := range items {
-		dctx := context.NewDataContext()
+		dctx := ast.NewDataContext()
 		err = dctx.Add("Item", v)
 		if err != nil {
 			panic(err)
 		}
-		err = eng.Execute(dctx, kb)
+		err = eng.Execute(dctx, kb, memory)
 		if err != nil {
 			panic(err)
 		}
@@ -145,8 +145,9 @@ func (cf *ItemPriceChecker) CheckCart() {
 	cart := &ItemCart{Items: items}
 
 	// Prepare knowledgebase and load it with our rule.
-	kb := model.NewKnowledgeBase()
-	rb := builder.NewRuleBuilder(kb)
+	mem := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Cart Check Rules", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, mem)
 	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
 	if err != nil {
 		panic(err)
@@ -155,12 +156,12 @@ func (cf *ItemPriceChecker) CheckCart() {
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
 
-	dctx := context.NewDataContext()
+	dctx := ast.NewDataContext()
 	err = dctx.Add("Cart", cart)
 	if err != nil {
 		panic(err)
 	}
-	err = eng.Execute(dctx, kb)
+	err = eng.Execute(dctx, kb, mem)
 	if err != nil {
 		panic(err)
 	}

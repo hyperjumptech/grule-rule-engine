@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
-### [1.0] - 2019-08-15
+### [1.0.0] - 2019-12-13
 
 #### Added
 
+- Grool is donated to hyperjump.tech with new name `grule-rule-engine`
 - GRL Lexer, Parser using ANTLR
 - Rule Builder
 - Knowledge Base container
@@ -19,21 +20,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cycle counter to ensure rule voting are not looped infinitely
 - Grule Rule Engine
 - Basic Built-In Functions
-
-### [1.0.1] - 2019-10-24
+- RuleEngine are working on facts that based on pointer so it can modify facts struct instances. Thus adding variable into DataContext will be checked to ensure `ptr` to a `struct`.
+- Added `Retract` function so rule can temporary retract a rule from knowledge base so it will not get voted any more in the next cycle.
+- Method invocation and tracer bug
+- Reflectools are now able to detect the object under reflection for its `value` vs `ptr to struct`
+- Function invocation now check if the argument is an Interface, it should accept any type of argument type values.
+ 
+### [1.0.1] - 2019-12-16
 
 #### Added
 
-- RuleEngine are working on facts that based on pointer so it can modify facts struct instances. Thus adding variable into DataContext will be checked to ensure `ptr` to a `struct`.
-- Added `Retract` function so rule can temporary retract a rule from knowledge base so it will not get voted any more in the next cycle.
+- Added Pub-Sub mechanism for rule execution events.
 
-#### Fixed
+#### Fix
 
-- Method invocation and tracer bug
-- Reflectools are now able to detect the object under reflection for its `value` vs `ptr to struct`
+- Better DRL load and compilation
+- Better DRL error handling when compiling DRL
 
-### [1.0.2] - TBD
+### [1.1.0] - 2019-12-27
 
-#### Fixed
+#### Added
 
-- Function invocation now check if the argument is an Interface, it should accept any type of argument type values. 
+- Initial RETE algorithm were added into Grule with only optimization in the ExpressionAtom level.
+- Naming and Versioning of knowledge base
+
+
+### [1.2.0] - 2020-01-16
+
+#### Added
+
+- Newly revamped ANTLR4 Grammar for Grule, syntax and structure not changed but parsing get more efficient.
+- Support for modulus % operator
+- Support for bitwise OR and AND operator
+- Operator precedence support
+- RETE optimization to ensure reset of ExpressionAtom only happen if a known variable were changed
