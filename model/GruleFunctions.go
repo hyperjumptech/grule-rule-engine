@@ -28,6 +28,11 @@ func (gf *GruleFunction) Log(text string) {
 	log.Println(text)
 }
 
+// LogFormat extension to log.Printf
+func (gf *GruleFunction) LogFormat(format string, i interface{}) {
+	log.Printf(format, i)
+}
+
 // IsNil Enables nill checking on variables.
 func (gf *GruleFunction) IsNil(i interface{}) bool {
 	val := reflect.ValueOf(i)
