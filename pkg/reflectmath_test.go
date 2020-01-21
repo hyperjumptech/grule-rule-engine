@@ -43,7 +43,7 @@ var (
 func TestValueAdd(t *testing.T) {
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
-			vc, err := ValueAdd(va, vb)
+			vc, err := EvaluateAddition(va, vb)
 			if err != nil {
 				t.Errorf("Error %v", err)
 			}
@@ -78,7 +78,7 @@ func TestValueAdd(t *testing.T) {
 			}
 		}
 		stringVal := reflect.ValueOf("Text")
-		vd, err := ValueAdd(va, stringVal)
+		vd, err := EvaluateAddition(va, stringVal)
 		if err != nil {
 			t.Errorf("Error while adding string. Got %v", err)
 		} else if vd.Kind() != reflect.String {
@@ -89,7 +89,7 @@ func TestValueAdd(t *testing.T) {
 			t.Errorf("Should be \"12.000000Text\". Got \"%s\"", vd.String())
 		}
 
-		vs, err := ValueAdd(stringVal, va)
+		vs, err := EvaluateAddition(stringVal, va)
 		if err != nil {
 			t.Errorf("Error while adding string. Got %v", err)
 		} else if vs.Kind() != reflect.String {
@@ -105,7 +105,7 @@ func TestValueAdd(t *testing.T) {
 func TestValueSub(t *testing.T) {
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
-			vc, err := ValueSub(va, vb)
+			vc, err := EvaluateSubstraction(va, vb)
 			if err != nil {
 				t.Errorf("Error %v", err)
 			}
@@ -140,7 +140,7 @@ func TestValueSub(t *testing.T) {
 			}
 		}
 		stringVal := reflect.ValueOf("Text")
-		_, err := ValueSub(va, stringVal)
+		_, err := EvaluateSubstraction(va, stringVal)
 		if err == nil {
 			t.Errorf("Subtracting with string should raise an error, but its not.")
 		}
@@ -151,7 +151,7 @@ func TestValueSub(t *testing.T) {
 func TestValueMul(t *testing.T) {
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
-			vc, err := ValueMul(va, vb)
+			vc, err := EvaluateMultiplication(va, vb)
 			if err != nil {
 				t.Errorf("Error %v", err)
 			}
@@ -187,7 +187,7 @@ func TestValueMul(t *testing.T) {
 		}
 
 		stringVal := reflect.ValueOf("Text")
-		_, err := ValueMul(va, stringVal)
+		_, err := EvaluateMultiplication(va, stringVal)
 		if err == nil {
 			t.Errorf("Multiplication with string should raise an error, but its not.")
 		}
@@ -197,7 +197,7 @@ func TestValueMul(t *testing.T) {
 func TestValueDiv(t *testing.T) {
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
-			vc, err := ValueDiv(va, vb)
+			vc, err := EvaluateDivision(va, vb)
 			if err != nil {
 				t.Errorf("Error %v", err)
 			}
@@ -215,24 +215,24 @@ func TestValueDiv(t *testing.T) {
 					t.Errorf("Expected float 10 but %d", vc.Int())
 				}
 			} else {
-				t.Errorf("Math Mul expect number types return")
+				t.Errorf("Math div expect number types return")
 			}
 			if GetBaseKind(va) == reflect.Float64 || GetBaseKind(vb) == reflect.Float64 {
 				if vc.Kind() != reflect.Float64 {
-					t.Errorf("Any Mul to float should yield Float64, but %s", vc.Kind().String())
+					t.Errorf("Any Div to float should yield Float64, but %s", vc.Kind().String())
 				}
 			} else if GetBaseKind(va) == reflect.Int64 || GetBaseKind(vb) == reflect.Int64 {
-				if vc.Kind() != reflect.Int64 {
-					t.Errorf("Any Mul to int should yield int64, but %s", vc.Kind().String())
+				if vc.Kind() != reflect.Float64 {
+					t.Errorf("Any Div to int should yield int64, but %s", vc.Kind().String())
 				}
 			} else {
-				if vc.Kind() != reflect.Uint64 {
-					t.Errorf("The rest should be uint64, but %s", vc.Kind().String())
+				if vc.Kind() != reflect.Float64 {
+					t.Errorf("The rest should be float64, but %s", vc.Kind().String())
 				}
 			}
 		}
 		stringVal := reflect.ValueOf("Text")
-		_, err := ValueDiv(va, stringVal)
+		_, err := EvaluateDivision(va, stringVal)
 		if err == nil {
 			t.Errorf("Division with string should raise an error, but its not.")
 		}
