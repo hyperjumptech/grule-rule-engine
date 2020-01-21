@@ -1,10 +1,11 @@
-package context
+package ast
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 	"testing"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 type TestAStruct struct {
