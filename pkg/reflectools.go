@@ -162,9 +162,6 @@ func ValueToInterface(v reflect.Value) interface{} {
 		return v.Float()
 	case reflect.Bool:
 		return v.Bool()
-	case reflect.Slice:
-		return v.Slice(1, 1)
-
 	case reflect.Ptr:
 		newPtr := reflect.New(v.Elem().Type())
 		newPtr.Elem().Set(v.Elem())
