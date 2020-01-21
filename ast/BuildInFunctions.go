@@ -3,7 +3,6 @@ package ast
 import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
-	"log"
 	"reflect"
 	"strings"
 	"time"
@@ -55,7 +54,7 @@ func (gf *BuildInFunctions) StringContains(str, substr string) bool {
 
 // LogFormat extension to log.Printf
 func (gf *BuildInFunctions) LogFormat(format string, i interface{}) {
-	log.Printf(format, i)
+	GrlLogger.Printf(format, i)
 }
 
 // IsNil Enables nill checking on variables.
