@@ -46,7 +46,7 @@ func (g *GruleEngine) notifySubscribers(r *ast.RuleEntry) {
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase, memory *ast.WorkingMemory) error {
-	log.Infof("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
+	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	knowledge.WorkingMemory = memory
 
@@ -137,6 +137,6 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 			break
 		}
 	}
-	log.Infof("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d microsec.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime))
+	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d microsec.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime))
 	return nil
 }
