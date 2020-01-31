@@ -86,6 +86,7 @@ rule SetTime "When Distance Recorder time not set, set it." {
 )
 
 func TestGrule_Execute(t *testing.T) {
+	logrus.SetLevel(logrus.DebugLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -121,7 +122,7 @@ func TestGrule_Execute(t *testing.T) {
 		} else {
 			dur := time.Since(start)
 			t.Log(dr.TotalDistance)
-			t.Logf("Duration %f ms", float64(dur)/float64(time.Millisecond))
+			t.Logf("Duration %d ms", dur.Milliseconds())
 		}
 	}
 }
