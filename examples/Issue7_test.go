@@ -59,7 +59,7 @@ func TestMethodCall_Issue7(t *testing.T) {
 			t.Fatal(err)
 		}
 		if user.GetName() != "FromRule" {
-			t.Errorf("User should be FromRule but %s", user.GetName())
+			t.Fatalf("User should be FromRule but %s", user.GetName())
 		}
 	}
 }

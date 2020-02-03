@@ -9,6 +9,7 @@ import (
 func NewWorkingMemory() *WorkingMemory {
 	return &WorkingMemory{
 		ExpressionSnapshotMap: make(map[string]*Expression),
+		ExpressionVariableMap: make(map[string][]*Expression),
 		ID:                    uuid.New().String(),
 	}
 }
@@ -16,7 +17,20 @@ func NewWorkingMemory() *WorkingMemory {
 // WorkingMemory handles states of expression evaluation status
 type WorkingMemory struct {
 	ExpressionSnapshotMap map[string]*Expression
+	ExpressionVariableMap map[string][]*Expression
 	ID                    string
+}
+
+// IndexVar will index all expression that contains a speciffic variable name
+func (wm *WorkingMemory) IndexVar(varName string) {
+	if _, ok := wm.ExpressionVariableMap[varName]; ok == false {
+		wm.ExpressionVariableMap[varName] = make([]*Expression, 0)
+		for snapshot, expr := range wm.ExpressionSnapshotMap {
+			if strings.Contains(snapshot, varName) {
+				wm.ExpressionVariableMap[varName] = append(wm.ExpressionVariableMap[varName], expr)
+			}
+		}
+	}
 }
 
 // Add will add expression into its map if the expression signature is unique
@@ -33,8 +47,8 @@ func (wm *WorkingMemory) Add(exp *Expression) *Expression {
 
 // Reset will reset the evaluated status of a speciffic expression if its contains a variable name in its signature.
 func (wm *WorkingMemory) Reset(variableName string) {
-	for snapshot, expr := range wm.ExpressionSnapshotMap {
-		if strings.Contains(snapshot, variableName) {
+	if arr, ok := wm.ExpressionVariableMap[variableName]; ok {
+		for _, expr := range arr {
 			expr.Evaluated = false
 		}
 	}

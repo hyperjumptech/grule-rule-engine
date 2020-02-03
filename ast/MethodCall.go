@@ -75,7 +75,7 @@ func (e *MethodCall) SetGrlText(grlText string) {
 
 // AcceptArgumentList will accept an ArgumentList AST graph into this ast graph
 func (e *MethodCall) AcceptArgumentList(argList *ArgumentList) {
-	log.Debugf("Method received argument list")
+	log.Tracef("Method received argument list")
 	e.ArgumentList = argList
 }
 

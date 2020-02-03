@@ -172,7 +172,7 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		} else {
 			dur := time.Since(start)
 			t.Log(dr.TotalDistance)
-			t.Logf("Duration %f ms", float64(dur)/float64(time.Millisecond))
+			t.Logf("Duration %d ms", dur.Milliseconds())
 		}
 	}
 }

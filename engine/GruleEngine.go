@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	// Logger is a logrus instance twith default fields for grule
+	// Logger is a logrus instance with default fields for grule
 	log = logrus.WithFields(logrus.Fields{
 		"lib":    "grule",
 		"struct": "GruleEngineV2",
@@ -50,35 +50,43 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 	knowledge.WorkingMemory = memory
 
+	// Prepare the timer, we need to measure the processing time in debug mode.
 	startTime := time.Now()
+
+	// Prepare the build-in function and add to datacontext.
 	defunc := &ast.BuildInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: memory,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
+	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
 	knowledge.WorkingMemory.ResetAll()
 
+	// Initialize all AST with datacontext and working memory
 	log.Debugf("Initializing Context")
 	knowledge.InitializeContext(dataCtx, memory)
 
 	var cycle uint64
 
 	/*
-		Un-limitted loop as long as there are rule to exsecute.
+		Un-limitted loop as long as there are rule to execute.
 		We need to add safety mechanism to detect unlimitted loop as there are posibility executed rule are not changing
 		data context which makes rules to get executed again and again.
 	*/
 	for {
+
+		// add the cycle counter
 		cycle++
 		log.Debugf("Cycle #%d", cycle)
+		// if cycle is above the maximum allowed cycle, returnan error indicated the cycle has ended.
 		if cycle > g.MaxCycle {
 			return errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
 		}
 
 		// Select all rule entry that can be executed.
-		log.Debugf("Select all rule entry that can be executed.")
+		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
 			// test if this rule entry v can execute.
@@ -95,7 +103,7 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 		// disabled to test the rete's variable change detection.
 		// knowledge.RuleContextReset()
-		log.Debugf("Selected rules %d.", len(runnable))
+		log.Tracef("Selected rules %d.", len(runnable))
 
 		// If there are rules to execute, sort them by their Salience
 		if len(runnable) > 0 {

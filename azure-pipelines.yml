@@ -28,6 +28,6 @@ steps:
   - script: |
       go get -u golang.org/x/lint/golint
       go test -v ./...
-      golint -set_exit_status builder/... context/... engine/... examples/... ast/... pkg/... antlr/.
+      golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/.
     workingDirectory: '$(modulePath)'
     displayName: 'Run tests'
