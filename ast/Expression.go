@@ -195,8 +195,11 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 	if e.LeftExpression != nil && e.RightExpression != nil {
 		lval, lerr := e.LeftExpression.Evaluate()
 		rval, rerr := e.RightExpression.Evaluate()
-		if lerr != nil || rerr != nil {
-			return reflect.ValueOf(nil), fmt.Errorf("left hand or right hand expression error. left got %v and/or right got %v", lerr, rerr)
+		if lerr != nil {
+			return reflect.ValueOf(nil), fmt.Errorf("left hand expression error. got %v", lerr)
+		}
+		if rerr != nil {
+			return reflect.ValueOf(nil), fmt.Errorf("right hand expression error.  got %v", rerr)
 		}
 
 		var val reflect.Value

@@ -14,7 +14,7 @@ rule AgeNameCheck "test" {
     when
       Pogo.GetStringLength("9999") > 0 
     then
-      AstLog(User.Name);
+      Log(User.Name);
 }
 `
 
@@ -24,7 +24,7 @@ rule AgeNameCheck "test"  salience 10{
       Pogo.Compare(User.Name, "Calo")  
     then
       User.Name = "Success";
-      AstLog(User.Name);
+      Log(User.Name);
       Retract("AgeNameCheck");
 }
 `
@@ -53,12 +53,12 @@ func TestMyPoGo_GetStringLength(t *testing.T) {
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule2)))
 	if err != nil {
-		t.Log(err)
+		t.Fatal(err)
 	} else {
 		eng1 := &engine.GruleEngine{MaxCycle: 1}
 		err := eng1.Execute(dataContext, knowledgeBase, memory)
 		if err != nil {
-			t.Logf("Got error %v", err)
+			t.Fatalf("Got error %v", err)
 		} else {
 			t.Log(user)
 		}
@@ -93,7 +93,7 @@ func TestMyPoGo_Compare(t *testing.T) {
 		eng1 := &engine.GruleEngine{MaxCycle: 100}
 		err := eng1.Execute(dataContext, knowledgeBase, memory)
 		if err != nil {
-			t.Logf("Got error %v", err)
+			t.Fatalf("Got error %v", err)
 		} else {
 			t.Log(user)
 		}

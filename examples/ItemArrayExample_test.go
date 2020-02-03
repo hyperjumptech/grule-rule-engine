@@ -10,7 +10,7 @@ import (
 )
 
 func TestItemPriceChecker_TestLexer(t *testing.T) {
-	is := antlr.NewInputStream(PriceCheckRule)
+	is := antlr.NewInputStream(PriceCheckRule1)
 
 	// Create the Lexer
 	lexer := parser2.Newgrulev2Lexer(is)
@@ -28,7 +28,7 @@ func TestItemPriceChecker_TestLexer(t *testing.T) {
 }
 
 func TestItemPriceChecker_TestParser(t *testing.T) {
-	nis := antlr.NewInputStream(PriceCheckRule)
+	nis := antlr.NewInputStream(PriceCheckRule1)
 
 	lexer := parser2.Newgrulev2Lexer(nis)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)

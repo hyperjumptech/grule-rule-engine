@@ -58,7 +58,7 @@ func TestMethodCall_Issue4(t *testing.T) {
 
 	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(Rule4)))
 	if err != nil {
-		t.Log(err)
+		t.Fatal(err)
 	} else {
 		eng1 := &engine.GruleEngine{MaxCycle: 3}
 		err := eng1.Execute(dataContext, knowledgeBase, mem)
@@ -66,7 +66,7 @@ func TestMethodCall_Issue4(t *testing.T) {
 			t.Fatal(err)
 		}
 		if user.GetName() != "FromRuleScope4" {
-			t.Errorf("User should be FromRuleScope4 but %s", user.GetName())
+			t.Fatalf("User should be FromRuleScope4 but %s", user.GetName())
 		}
 	}
 }

@@ -9,16 +9,18 @@ import (
 )
 
 var (
-	// PriceCheckRule is a rule definition for test.
-	PriceCheckRule = `
+	// PriceCheckRule1 is a rule definition for test.
+	PriceCheckRule1 = `
 rule ApplyDiscountForItemAbove100 "If an item prices is above 100 we give them discount"  {
     when
         Item.Price > 100 && Item.Discount == 0
     then
         Log("Rule applying discount to " + Item.Name);
 		Item.Discount = 10;
-}
+}`
 
+	// PriceCheckRule2 is a rule definition for test.
+	PriceCheckRule2 = `
 rule ApplyDiscountForCart "If a cart contain item prices is above 100 we give them discount"  {
     when
         Cart.CountItemWithPriceAboveWithNoDiscount(100) > 0
@@ -62,7 +64,7 @@ func (cf *ItemPriceChecker) CheckPrices() {
 	memory := ast.NewWorkingMemory()
 	kb := ast.NewKnowledgeBase("PriceCheck", "0.0.1")
 	rb := builder.NewRuleBuilder(kb, memory)
-	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
+	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule1)))
 	if err != nil {
 		panic(err)
 	}
@@ -148,7 +150,7 @@ func (cf *ItemPriceChecker) CheckCart() {
 	mem := ast.NewWorkingMemory()
 	kb := ast.NewKnowledgeBase("Cart Check Rules", "0.0.1")
 	rb := builder.NewRuleBuilder(kb, mem)
-	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule)))
+	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule2)))
 	if err != nil {
 		panic(err)
 	}

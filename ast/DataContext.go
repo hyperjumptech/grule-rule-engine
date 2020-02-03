@@ -62,7 +62,7 @@ func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (ref
 		}
 		return reflect.ValueOf(nil), errors.New("fact is retracted")
 	}
-	return reflect.ValueOf(nil), errors.New("fact not found")
+	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while execute method", varArray[0])
 }
 
 // GetType will extract type information of data in this context.
@@ -74,7 +74,7 @@ func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
 		}
 		return nil, errors.New("fact is retracted")
 	}
-	return nil, errors.New("fact not found")
+	return nil, fmt.Errorf("fact [%s] not found while obtaining type", variable)
 }
 
 // GetValue will get member variables Value information.
@@ -91,7 +91,7 @@ func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
 		}
 		return reflect.ValueOf(nil), errors.New("fact is retracted")
 	}
-	return reflect.ValueOf(nil), errors.New("fact not found")
+	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while retrieving value", varArray[0])
 }
 
 // SetValue will set variable value of an object instance in this data context, Used by rule script to set values.
@@ -107,7 +107,7 @@ func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error 
 		}
 		return errors.New("fact is retracted")
 	}
-	return errors.New("fact not found")
+	return fmt.Errorf("fact [%s] not found while setting value", varArray[0])
 }
 
 func traceType(obj interface{}, path []string) (reflect.Type, error) {

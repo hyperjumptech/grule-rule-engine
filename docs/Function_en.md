@@ -5,7 +5,7 @@
 
 ## Build-In Functions
 
-All build-in function are all defined within then `ast/BuildInFunctions.go` File. As of now, they are :
+All build-in function are all defined within the `ast/BuildInFunctions.go` File. As of now, they are :
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time 
 
@@ -388,7 +388,7 @@ rule LogPurchaseDate  "Log the purchase date." {
     when
         IsZero(Purchase.TransactionDate) == false
     then
-        Log(TimeFormat(Purchase.TransactionDate, "2006-01-02T15:04:05-0700")
+        Log(TimeFormat(Purchase.TransactionDate, "2006-01-02T15:04:05-0700");
 }
 ```
 

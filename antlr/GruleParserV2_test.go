@@ -80,7 +80,7 @@ rule StartSpeedDown "When testcar is speeding up and over max speed we change to
         TestCar.SpeedUp == true && TestCar.Speed >= TestCar.MaxSpeed
     then
         TestCar.SpeedUp = false;
-		AstLog("Now we slow down");
+		Log("Now we slow down");
 }
 
 rule SlowDown "When testcar is slowing down we keep decreasing the speed." salience 10  {
@@ -96,9 +96,9 @@ rule SetTime "When Distance Recorder time not set, set it." {
 		IsZero(DistanceRecord.TestTime)
 	then
 		ABC.abc = "cde";
-		AstLog("Set the test time");
+		Log("Set the test time");
 		DistanceRecord.TestTime = Now();
-		AstLog(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
 		ABC.abc = "cde";
 
 }

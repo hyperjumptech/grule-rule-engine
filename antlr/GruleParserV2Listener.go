@@ -24,6 +24,7 @@ var (
 func NewGruleV2ParserListener(knowleedgeBase *ast.KnowledgeBase, memory *ast.WorkingMemory, errorCallBack func(e error)) *GruleV2ParserListener {
 	return &GruleV2ParserListener{
 		PreviousNode:  make([]string, 0),
+		VarNames:      make([]string, 0),
 		ErrorCallback: errorCallBack,
 		KnowledgeBase: knowleedgeBase,
 		WorkingMemory: memory,
@@ -35,6 +36,7 @@ func NewGruleV2ParserListener(knowleedgeBase *ast.KnowledgeBase, memory *ast.Wor
 type GruleV2ParserListener struct {
 	parser2.Basegrulev2Listener
 	PreviousNode []string
+	VarNames     []string
 
 	WorkingMemory *ast.WorkingMemory
 	KnowledgeBase *ast.KnowledgeBase
@@ -79,6 +81,11 @@ func (s *GruleV2ParserListener) ExitRoot(ctx *parser2.RootContext) {
 		return
 	}
 	s.Stack.Pop()
+	if len(s.VarNames) > 0 {
+		for _, varN := range s.VarNames {
+			s.WorkingMemory.IndexVar(varN)
+		}
+	}
 	//s.KnowledgeBase.MakeSnapshoot()
 }
 
@@ -442,7 +449,7 @@ func (s *GruleV2ParserListener) ExitArgumentList(ctx *parser2.ArgumentListContex
 	}
 	argList := s.Stack.Pop().(*ast.ArgumentList)
 	argListRec := s.Stack.Peek().(ast.ArgumentListReceiver)
-	LoggerV2.Debugf("Adding Argument List To Receiver")
+	LoggerV2.Tracef("Adding Argument List To Receiver")
 	argListRec.AcceptArgumentList(argList)
 }
 
@@ -451,8 +458,19 @@ func (s *GruleV2ParserListener) EnterVariable(ctx *parser2.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	vari := ast.NewVariable(ctx.GetText())
-	vari.GrlText = ctx.GetText()
+	varName := ctx.GetText()
+	vari := ast.NewVariable(varName)
+	vari.GrlText = varName
+	varFound := false
+	for _, vn := range s.VarNames {
+		if vn == varName {
+			varFound = true
+			break
+		}
+	}
+	if !varFound {
+		s.VarNames = append(s.VarNames, varName)
+	}
 	s.Stack.Push(vari)
 }
 
@@ -501,7 +519,7 @@ func (s *GruleV2ParserListener) ExitDecimalLiteral(ctx *parser2.DecimalLiteralCo
 	dec, _ := strconv.Atoi(ctx.GetText())
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
 		cons := s.Stack.Peek().(*ast.Constant)
-		cons.Value = reflect.ValueOf(dec)
+		cons.Value = reflect.ValueOf(int64(dec))
 	}
 }
 
@@ -513,10 +531,10 @@ func (s *GruleV2ParserListener) ExitRealLiteral(ctx *parser2.RealLiteralContext)
 	if s.StopParse {
 		return
 	}
-	dec, _ := strconv.ParseFloat(ctx.GetText(), 64)
+	floa, _ := strconv.ParseFloat(ctx.GetText(), 64)
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
 		cons := s.Stack.Peek().(*ast.Constant)
-		cons.Value = reflect.ValueOf(dec)
+		cons.Value = reflect.ValueOf(floa)
 	}
 }
 

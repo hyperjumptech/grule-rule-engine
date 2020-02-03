@@ -57,7 +57,7 @@ func TestMethodCall_Issue5(t *testing.T) {
 			t.Fatal(err)
 		}
 		if user.GetName() != "FromRuleScope3" {
-			t.Errorf("User should be FromRuleScope3 but %s", user.GetName())
+			t.Fatalf("User should be FromRuleScope3 but %s", user.GetName())
 		}
 	}
 }

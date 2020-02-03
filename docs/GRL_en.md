@@ -2,20 +2,12 @@
 
 [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md)
 
---- 
-**Note**
-```text
-The GRL grammar is currently being re-worked to support Operator Presedence.
-Until this grammar were fixed and tested, this part of document will remain WIP.  
-```
----
-
 The **GRL**  is a DSL (Domain Specific Language) designed for Grule. Its a simplified language
 to be used for defining rule evaluation criteria and action to be executed if the criteria were met.
 
 Generally, the language have the following structure :
 
-```.go
+```text
 rule <RuleName> <RuleDescription> [salience <priority>] {
     when
         <boolean expression>
@@ -56,13 +48,29 @@ then
 
 | Literal | Description                                                            | Example                          |
 | ------- | ---------------------------------------------------------------------- | -------------------------------- |
-| String  | Hold string literal, enclosed a string with double quote symbol &quot; | "This is a string"               |
+| String  | Hold string literal, enclosed a string with double quote symbol &quot; or a single quote | "This is a string" or 'this is a string' |
 | Decimal | Hold a decimal value, may preceeded with negative symbol -             | `1` or `34` or `42344` or `-553` |
-| Real    | Hold a real value                                                      | `234.4553`, `-234.3`             |
+| Real    | Hold a real value                                                      | `234.4553`, `-234.3` , `314E-2`, `.32` , `12.32E12`  |
 | Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
 
-Math operator such as `+`, `-`, `/`, `*`, `%`, `|`, `&`; Logical `&&` and `||`; Comparison 
-`<`,`<=`,`>`,`>=`,`==`,`!=` all are supported by the language.
+Operators supported :
+
+* Math operators : `+`, `-`, `/`, `*`, `%`
+* Bit-wise operators : `|`, `&`
+* Logical operators : `&&` and `||`
+* Comparison operators : `<`,`<=`,`>`,`>=`,`==`,`!=` 
+
+Operator precedence : 
+
+Grule follows operator precedence in Golang.
+
+| Precedence |  Operator |
+| ---------- | --------- |
+|    5       |      `*` , `/` , `%` , `&` |
+|    4       |      `+` , `-` , `|`     |
+|    3       |      `==` , `!=` , `<` , `<=` ,`>` , `>=`  |
+|    2       |      `&&`  |
+|    1       |      `||`  |
 
 #### Comments
 
