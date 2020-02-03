@@ -2,7 +2,6 @@
 [![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
 [![Build Status](https://travis-ci.org/hyperjumptech/grule-rule-engine.svg?branch=master)](https://travis-ci.org/hyperjumptech/grule-rule-engine)
-[![Build Status](https://dev.azure.com/hyperjumptech/grule-rule-engine/_apis/build/status/hyperjumptech.grule-rule-engine?branchName=master)](https://dev.azure.com/hyperjumptech/grule-rule-engine/_build/latest?definitionId=1&branchName=master)
 [![Build Status](https://circleci.com/gh/hyperjumptech/grule-rule-engine.svg?style=svg)](https://circleci.com/gh/hyperjumptech/grule-rule-engine)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
