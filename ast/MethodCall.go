@@ -85,6 +85,7 @@ func (e *MethodCall) Evaluate() (reflect.Value, error) {
 	if err != nil {
 		return reflect.ValueOf(nil), err
 	}
+	log.Tracef("Calling method %s", e.MethodName)
 	retVal, err := e.DataContext.ExecMethod(e.MethodName, args)
 	if err == nil {
 		e.Value = retVal

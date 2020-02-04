@@ -47,6 +47,8 @@ func (wm *WorkingMemory) Add(exp *Expression) *Expression {
 
 // Reset will reset the evaluated status of a speciffic expression if its contains a variable name in its signature.
 func (wm *WorkingMemory) Reset(variableName string) {
+	AstLog.Tracef("%s : Resetting %s", wm.ID, variableName)
+
 	if arr, ok := wm.ExpressionVariableMap[variableName]; ok {
 		for _, expr := range arr {
 			expr.Evaluated = false
