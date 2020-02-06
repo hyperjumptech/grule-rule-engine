@@ -43,7 +43,7 @@ Grule can also call Fact's functions.
 
 ```go
 func (mf *MyFact) GetWhatToSay(sentence string) string {
-    return fmt.sprintf("Let say \"%s\"", sentence)
+    return fmt.Sprintf("Let say \"%s\"", sentence)
 }
 ```
 
@@ -77,7 +77,7 @@ Now, you have prepare a `DataContext` and add your instance(s) of fact into it.
 dataCtx := grule.ast.NewDataContext()
 err := dataCtx.Add("MF", myFact)
 if err != nil {
-    panic()
+    panic(err)
 }
 ```
 
@@ -93,7 +93,7 @@ Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBu
 
 ```go
 workingMemory := grule.ast.NewWorkingMemory()
-knowledgeBase := grule.ast.NewKnowledgeBase()
+knowledgeBase := grule.ast.NewKnowledgeBase("tutorial", "1.0.0")
 ruleBuilder := grule.builder.NewRuleBuilder(knowledgeBase, workingMemory)
 ```
 
@@ -106,6 +106,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+        Retract("CheckValues);
 }
 `
 byteArr := grule.pkg.NewBytesResource([]byte(drls))
@@ -156,10 +157,10 @@ To execute the rules, we need to create an instance of `GruleEngine` and with it
 we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
-engine := grule.engine.NewGruleEngine()
+engine = grule.engine.NewGruleEngine()
 err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
-    panic()
+    panic(err)
 }
 ```
 
@@ -173,6 +174,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+        Retract("CheckValues);
 }
 ```
 
