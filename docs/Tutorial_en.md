@@ -77,7 +77,7 @@ Now, you have prepare a `DataContext` and add your instance(s) of fact into it.
 dataCtx := grule.ast.NewDataContext()
 err := dataCtx.Add("MF", myFact)
 if err != nil {
-    panic()
+    panic(err)
 }
 ```
 
@@ -106,6 +106,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+        Retract("CheckValues);
 }
 `
 byteArr := grule.pkg.NewBytesResource([]byte(drls))
@@ -173,6 +174,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+        Retract("CheckValues);
 }
 ```
 
