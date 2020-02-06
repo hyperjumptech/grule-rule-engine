@@ -43,7 +43,7 @@ Grule can also call Fact's functions.
 
 ```go
 func (mf *MyFact) GetWhatToSay(sentence string) string {
-    return fmt.sprintf("Let say \"%s\"", sentence)
+    return fmt.Sprintf("Let say \"%s\"", sentence)
 }
 ```
 
@@ -93,7 +93,7 @@ Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBu
 
 ```go
 workingMemory := grule.ast.NewWorkingMemory()
-knowledgeBase := grule.ast.NewKnowledgeBase()
+knowledgeBase := grule.ast.NewKnowledgeBase("tutorial", "1.0.0")
 ruleBuilder := grule.builder.NewRuleBuilder(knowledgeBase, workingMemory)
 ```
 
@@ -156,10 +156,10 @@ To execute the rules, we need to create an instance of `GruleEngine` and with it
 we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
-engine := grule.engine.NewGruleEngine()
+engine = grule.engine.NewGruleEngine()
 err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
-    panic()
+    panic(err)
 }
 ```
 
