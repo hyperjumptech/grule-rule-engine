@@ -15,7 +15,7 @@ $ go get github.com/hyperjumptech/grule-rule-engine
 From your `go` you can import Grule.
 
 ```go
-import grule ""github.com/hyperjumptech/grule-rule-engine"
+import grule "github.com/hyperjumptech/grule-rule-engine"
 ``` 
 
 ## Creating Fact Structure
