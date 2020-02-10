@@ -47,7 +47,7 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 ```
 
-Please note, that there are some convetion though.
+Please note, that there are some convention though.
 
 * Member function must be **Visible**, have capital first letter.
 * If the function have returns, there must be only 1 return.
