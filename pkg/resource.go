@@ -2,11 +2,25 @@ package pkg
 
 import (
 	"fmt"
+	"github.com/bmatcuk/doublestar"
 	"github.com/juju/errors"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/src-d/go-billy.v4"
+	"gopkg.in/src-d/go-billy.v4/memfs"
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
+	http2 "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"io"
 	"io/ioutil"
 	"net/http"
 )
+
+// ResouceBundle is a helper struct to help load multiple resource at once.
+type ResouceBundle interface {
+	Load() ([]Resource, error)
+	MustLoad() []Resource
+}
 
 // Resource should be implemented by any resource model so it can be loaded and parsed by the grule parser.
 type Resource interface {
@@ -39,6 +53,78 @@ func NewFileResource(path string) Resource {
 	return &FileResource{
 		Path: path,
 	}
+}
+
+// FileResourceBundle is a helper struct to load multiple files all at once by specifying
+// the root location of the file and the file pattern to look for.
+// It will look into sub-directories for the file with pattern matching.
+type FileResourceBundle struct {
+	// The base path where all the
+	BasePath string
+	// List Glob like file pattern.
+	// *.grl           <- matches abc.grl but not /anyfolder/abc.grl
+	// **/*.grl        <- matches abc/def.grl or abc/def/ghi.grl or abc/def/.grl
+	// /abc/**/*.grl   <- matches /abc/def.grl or /abc/def/ghi.drl
+	PathPattern []string
+}
+
+// Load all file resources that locateed under BasePath that conform to the PathPattern.
+func (bundle *FileResourceBundle) Load() ([]Resource, error) {
+	return bundle.loadPath(bundle.BasePath)
+}
+
+// MustLoad function is the same as Load with difference that it will panic if any error is raised
+func (bundle *FileResourceBundle) MustLoad() []Resource {
+	resources, err := bundle.Load()
+	if err != nil {
+		panic(err)
+	}
+	return resources
+}
+
+func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
+	logrus.Tracef("Enter directory %s", path)
+
+	finfos, err := ioutil.ReadDir(path)
+
+	if err != nil {
+		return nil, err
+	}
+	ret := make([]Resource, 0)
+	for _, finfo := range finfos {
+		fulPath := fmt.Sprintf("%s/%s", path, finfo.Name())
+		if path == "/" && finfo.IsDir() {
+			fulPath = fmt.Sprintf("/%s", finfo.Name())
+		}
+		if finfo.IsDir() {
+			gres, err := bundle.loadPath(fulPath)
+			if err != nil {
+				return nil, err
+			}
+			ret = append(ret, gres...)
+		} else {
+			for _, pattern := range bundle.PathPattern {
+				matched, err := doublestar.Match(pattern, fulPath)
+				if err != nil {
+					return nil, err
+				}
+				if matched {
+					logrus.Debugf("Loading file %s", fulPath)
+					bytes, err := ioutil.ReadFile(fulPath)
+					if err != nil {
+						return nil, err
+					}
+					gress := &FileResource{
+						Path:  fulPath,
+						Bytes: bytes,
+					}
+					ret = append(ret, gress)
+					break
+				}
+			}
+		}
+	}
+	return ret, nil
 }
 
 // FileResource is a struct that will hold the file path and readed data bytes.
@@ -126,5 +212,138 @@ func (res *URLResource) Load() ([]byte, error) {
 		return nil, errors.Trace(err)
 	}
 	res.Bytes = data
+	return res.Bytes, nil
+}
+
+// GITResourceBundle is a helper struct to load multiple files from GIT all at once by specifying
+// the necessary information needed to communicate to the GIT server.
+// It will look into sub-directories, in the git, for the file with pattern matching.
+type GITResourceBundle struct {
+	// GIT Repository HTTPS URL
+	URL string
+	// The Ref name to checkout, if you dont know, let it empty
+	RefName string
+	// The remote name. IF you left it empty, it will use origin
+	Remote string
+	// Specify the user name if your repository requires user/password authentication
+	User string
+	// Password for authentication
+	Password string
+	// File path pattern to load in your git. The path / is the root on the repository.
+	PathPattern []string
+}
+
+// Load will load the file from your git repository
+func (bundle *GITResourceBundle) Load() ([]Resource, error) {
+	fs := memfs.New()
+	CloneOpts := &git.CloneOptions{}
+	if len(bundle.URL) == 0 {
+		return nil, fmt.Errorf("GIT URL is not specified")
+	}
+	CloneOpts.URL = bundle.URL
+
+	if len(bundle.RefName) == 0 {
+		CloneOpts.ReferenceName = plumbing.ReferenceName("refs/heads/master")
+	} else {
+		CloneOpts.ReferenceName = plumbing.ReferenceName(bundle.RefName)
+	}
+
+	if len(bundle.Remote) == 0 {
+		CloneOpts.RemoteName = "origin"
+	} else {
+		CloneOpts.RemoteName = bundle.Remote
+	}
+
+	if len(bundle.PathPattern) == 0 {
+		return nil, fmt.Errorf("no path pattern specified")
+	}
+
+	if len(bundle.User) != 0 {
+		CloneOpts.Auth = &http2.BasicAuth{
+			Username: bundle.User,
+			Password: bundle.Password,
+		}
+	}
+
+	_, err := git.Clone(memory.NewStorage(), fs, CloneOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	return bundle.loadPath(bundle.URL, "/", fs)
+}
+
+func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem) ([]Resource, error) {
+	logrus.Tracef("Enter directory %s", path)
+	finfos, err := fs.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+	ret := make([]Resource, 0)
+	for _, finfo := range finfos {
+		fulPath := fmt.Sprintf("%s/%s", path, finfo.Name())
+		if path == "/" && finfo.IsDir() {
+			fulPath = fmt.Sprintf("/%s", finfo.Name())
+		}
+		if finfo.IsDir() {
+			gres, err := bundle.loadPath(url, fulPath, fs)
+			if err != nil {
+				return nil, err
+			}
+			ret = append(ret, gres...)
+		} else {
+			for _, pattern := range bundle.PathPattern {
+				matched, err := doublestar.Match(pattern, fulPath)
+				if err != nil {
+					return nil, err
+				}
+				if matched {
+					logrus.Debugf("Loading git file %s", fulPath)
+					f, err := fs.Open(fulPath)
+					if err != nil {
+						return nil, err
+					}
+					bytes, err := ioutil.ReadAll(f)
+					if err != nil {
+						return nil, err
+					}
+					gress := &GITResource{
+						URL:   url,
+						Path:  fulPath,
+						Bytes: bytes,
+					}
+					ret = append(ret, gress)
+					break
+				}
+			}
+		}
+	}
+	return ret, nil
+}
+
+// MustLoad is the same as Load, the difference is it will panic if an error is raised during fetching resources.
+func (bundle *GITResourceBundle) MustLoad() []Resource {
+	resources, err := bundle.Load()
+	if err != nil {
+		panic(err)
+	}
+	return resources
+}
+
+// GITResource resource implementation that loaded from GIT
+type GITResource struct {
+	URL   string
+	Path  string
+	Bytes []byte
+}
+
+// String will state the resource url.
+func (res *GITResource) String() string {
+	return fmt.Sprintf("From GIT URL [%s] %s", res.URL, res.Path)
+}
+
+// Load will load the resource into byte array. This implementation will no re-load resources from git when this method
+// is called, it simply return the loaded data.
+func (res *GITResource) Load() ([]byte, error) {
 	return res.Bytes, nil
 }
