@@ -54,3 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for bitwise OR and AND operator
 - Operator precedence support
 - RETE optimization to ensure reset of ExpressionAtom only happen if a known variable were changed
+
+### [1.2.3] - 2020-02-14
+
+#### Added
+
+- Resource bundling, to load multiple DRL files by file path pattern
+- Load DRL resources from GIT
+- Resource bundling, to load multiple DRL files from GIT by the file path patteern
+

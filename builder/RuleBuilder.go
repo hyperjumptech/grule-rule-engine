@@ -42,6 +42,20 @@ func (builder *RuleBuilder) MustBuildRuleFromResource(resource pkg.Resource) {
 	}
 }
 
+// BuildRulesFromBundle will load rules from a bundle into knowledge base.
+func (builder *RuleBuilder) BuildRulesFromBundle(bundle pkg.ResouceBundle) error {
+	bundles, err := bundle.Load()
+	if err != nil {
+		return err
+	}
+	return builder.BuildRuleFromResources(bundles)
+}
+
+// MustBuildRulesFromBundle is the same with BuildRulesFromBundle but it will panic if any error arises during loading resource and inserting it to knowledgebase
+func (builder *RuleBuilder) MustBuildRulesFromBundle(bundle pkg.ResouceBundle) {
+	builder.MustBuildRuleFromResources(bundle.MustLoad())
+}
+
 // BuildRuleFromResources will load rules from multiple resources. It will return an error if it encounter an error on the first script it found.
 func (builder *RuleBuilder) BuildRuleFromResources(resource []pkg.Resource) error {
 	for _, v := range resource {

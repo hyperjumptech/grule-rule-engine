@@ -23,7 +23,7 @@ func TestNewBytesResource(t *testing.T) {
 }
 
 func TestNewURLResource(t *testing.T) {
-	urlResource := NewURLResource("https://www.apache.org/licenses/LICENSE-2.0.txt")
+	urlResource := NewURLResource("https://raw.githubusercontent.com/hyperjumptech/grule-rule-engine/master/LICENSE-2.0.txt")
 	loadedURL, err := urlResource.Load()
 	if err != nil {
 		t.Error("Failed to load url resource", err)
@@ -39,5 +39,25 @@ func TestNewURLResource(t *testing.T) {
 	if !reflect.DeepEqual(loadedURL, loadedFile) {
 		t.Error("Loaded array are not equal to origin array")
 		t.Fail()
+	}
+}
+
+func TestGitResource(t *testing.T) {
+	gitRb := &GITResourceBundle{
+		URL: "https://github.com/hyperjumptech/grule-rule-engine.git",
+		PathPattern: []string{
+			"/antlr/*.grl",
+		},
+	}
+	resources := gitRb.MustLoad()
+	if len(resources) != 2 {
+		t.Logf("Expected 2 drl but %d", len(resources))
+	}
+	for _, r := range resources {
+		bytes, _ := r.Load()
+		t.Logf("Loaded %s . %d bytes", r.String(), len(bytes))
+		if len(bytes) == 0 {
+			t.FailNow()
+		}
 	}
 }
