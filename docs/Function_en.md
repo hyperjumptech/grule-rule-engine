@@ -428,7 +428,7 @@ when
     Pogo.GetStringLength(some.variable) < 100
 then
     some.variable = Pogo.AppendString(some.variable, "Groooling");
-
+```
 
 ### Important Thing you must know about Custom Function in Grule
 
