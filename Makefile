@@ -6,9 +6,14 @@ build:
 	export GO111MODULE on; \
 	go build ./...
 
-test: build
-	go test ./... -v -covermode=count -coverprofile=coverage.out
+lint: build
 	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/.
+
+test-short: lint
+	go test ./... -v -covermode=count -coverprofile=coverage.out -short
+
+test: lint
+	go test ./... -v -covermode=count -coverprofile=coverage.out
 
 test-coverage: test
 	go tool cover -html=coverage.out

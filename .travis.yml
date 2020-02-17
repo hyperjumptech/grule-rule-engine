@@ -5,4 +5,4 @@ go:
 
 script:
   - go get -u golang.org/x/lint/golint
-  - make test
+  - make test-short
