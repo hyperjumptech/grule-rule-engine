@@ -55,6 +55,20 @@ func NewFileResource(path string) Resource {
 	}
 }
 
+// NewFileResourceBundle creates new instance of FileResourceBundle struct
+// basePath denotes the directory location where the file is located.
+// pathPattern are list of paths that filters the files. Its important that
+// the pattern will include the base path as it filter.
+// For example, if the base path is "/some/base/path"
+// The pattern to accept all GRL file is "/some/base/path/**/*.grl".
+// This will accept all *.grl files under /some/base/path and its directories.
+func NewFileResourceBundle(basePath string, pathPattern ...string) *FileResourceBundle {
+	return &FileResourceBundle{
+		BasePath:    basePath,
+		PathPattern: pathPattern,
+	}
+}
+
 // FileResourceBundle is a helper struct to load multiple files all at once by specifying
 // the root location of the file and the file pattern to look for.
 // It will look into sub-directories for the file with pattern matching.
@@ -213,6 +227,16 @@ func (res *URLResource) Load() ([]byte, error) {
 	}
 	res.Bytes = data
 	return res.Bytes, nil
+}
+
+// NewGITResourceBundle will create a new instance of GITResourceBundle
+// url is the GIT http/https url.
+// pathPattern are list of file pattern (glob) to filter files located in the repository
+func NewGITResourceBundle(url string, pathPattern ...string) *GITResourceBundle {
+	return &GITResourceBundle{
+		URL:         url,
+		PathPattern: pathPattern,
+	}
 }
 
 // GITResourceBundle is a helper struct to load multiple files from GIT all at once by specifying

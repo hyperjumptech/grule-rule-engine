@@ -23,6 +23,9 @@ func TestNewBytesResource(t *testing.T) {
 }
 
 func TestNewURLResource(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping URL resource test in short mode")
+	}
 	urlResource := NewURLResource("https://raw.githubusercontent.com/hyperjumptech/grule-rule-engine/master/LICENSE-2.0.txt")
 	loadedURL, err := urlResource.Load()
 	if err != nil {
@@ -43,6 +46,9 @@ func TestNewURLResource(t *testing.T) {
 }
 
 func TestGitResource(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping GIT resource test in short mode")
+	}
 	gitRb := &GITResourceBundle{
 		URL: "https://github.com/hyperjumptech/grule-rule-engine.git",
 		PathPattern: []string{
