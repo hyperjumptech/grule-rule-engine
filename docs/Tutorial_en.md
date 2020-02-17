@@ -131,6 +131,19 @@ if err != nil {
 }
 ```
 
+or if you want to get file resource by their pattern
+
+```go
+bundle := grule.pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
+resources := bundle.MustLoad()
+for _, res := range resources {
+    err := ruleBuilder.BuildRuleFromResource(res)
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
 #### From String or ByteArray
 
 ```go
@@ -148,6 +161,19 @@ urlRes := grule.pkg.NewUrlResource("http://host.com/path/to/rule.grl")
 err := ruleBuilder.BuildRuleFromResource(urlRes)
 if err != nil {
     panic(err)
+}
+```
+
+#### From GIT
+
+```go
+bundle := grule.pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+resources := bundle.MustLoad()
+for _, res := range resources {
+    err := ruleBuilder.BuildRuleFromResource(res)
+    if err != nil {
+        panic(err)
+    }
 }
 ```
 

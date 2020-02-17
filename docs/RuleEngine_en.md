@@ -186,7 +186,7 @@ Rule 2 - Priority 10
 ...
 ```
 
-By default, all rule will be assigned a salience of 10.
+By default, all rule will be assigned a salience of 0.
 
 This way, its easy for the engine to pick which rule to execute when there are multiple
 conflicting rules. If there are still multiple rule have the top equals priority, the engine
