@@ -215,7 +215,7 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		case OpAdd:
 			val, opErr = pkg.EvaluateAddition(lval, rval)
 		case OpSub:
-			val, opErr = pkg.EvaluateSubstraction(lval, rval)
+			val, opErr = pkg.EvaluateSubtraction(lval, rval)
 		case OpBitAnd:
 			val, opErr = pkg.EvaluateBitAnd(lval, rval)
 		case OpBitOr:

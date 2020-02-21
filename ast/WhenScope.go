@@ -55,7 +55,7 @@ func (e *WhenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *WhenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" var ")
+	buff.WriteString(" when ")
 	buff.WriteString(e.Expression.GetSnapshot())
 	return buff.String()
 }
