@@ -22,7 +22,7 @@ func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(float64(lv) * rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not multiply data type of %s", right.Kind().String())
 		}
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		lv := left.Uint()
@@ -37,7 +37,7 @@ func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(float64(lv) * rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not multiply data type of %s", right.Kind().String())
 		}
 	case reflect.Float32, reflect.Float64:
 		lv := left.Float()
@@ -52,10 +52,10 @@ func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(lv * rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not multiply data type of %s", right.Kind().String())
 		}
 	default:
-		return reflect.ValueOf(nil), fmt.Errorf("can not multipy data type of %s", left.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not multiply data type of %s", left.Kind().String())
 	}
 }
 
@@ -231,8 +231,8 @@ func EvaluateAddition(left, right reflect.Value) (reflect.Value, error) {
 	}
 }
 
-// EvaluateSubstraction will evaluate substraction operation over two value
-func EvaluateSubstraction(left, right reflect.Value) (reflect.Value, error) {
+// EvaluateSubtraction will evaluate subtraction operation over two value
+func EvaluateSubtraction(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -247,7 +247,7 @@ func EvaluateSubstraction(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(float64(lv) - rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in subtraction", right.Kind().String())
 		}
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		lv := left.Uint()
@@ -262,7 +262,7 @@ func EvaluateSubstraction(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(float64(lv) - rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in subtraction", right.Kind().String())
 		}
 	case reflect.Float32, reflect.Float64:
 		lv := left.Float()
@@ -277,10 +277,10 @@ func EvaluateSubstraction(left, right reflect.Value) (reflect.Value, error) {
 			rv := right.Float()
 			return reflect.ValueOf(lv - rv), nil
 		default:
-			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", right.Kind().String())
+			return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in subtraction", right.Kind().String())
 		}
 	default:
-		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in substraction", left.Kind().String())
+		return reflect.ValueOf(nil), fmt.Errorf("can not use data type of %s in subtraction", left.Kind().String())
 	}
 }
 

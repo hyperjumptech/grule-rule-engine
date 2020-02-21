@@ -264,7 +264,10 @@ func (s *GruleV2ParserListener) ExitExpression(ctx *parser2.ExpressionContext) {
 		return
 	}
 	expr := s.Stack.Pop().(*ast.Expression)
-	nexper := s.WorkingMemory.Add(expr)
+	nexper, added := s.WorkingMemory.Add(expr)
+	if LoggerV2.Level == logrus.TraceLevel {
+		LoggerV2.Tracef("expression %s added to working memory : %v", nexper.GetSnapshot(), added)
+	}
 	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
 	err := exprRec.AcceptExpression(nexper)
 	if err != nil {

@@ -38,6 +38,30 @@ var (
 
 	valuesA = []reflect.Value{intVal, int8Val, int16Val, int32Val, int64Val, uintVal, uint8Val, uint16Val, uint32Val, uint64Val, float32Val, float64Val}
 	valuesB = []reflect.Value{intVal2, int8Val2, int16Val2, int32Val2, int64Val2, uintVal2, uint8Val2, uint16Val2, uint32Val2, uint64Val2, float32Val2, float64Val2}
+
+	intVal3   = reflect.ValueOf(0x55)
+	int8Val3  = reflect.ValueOf(int8(0x55))
+	int16Val3 = reflect.ValueOf(int16(0x55))
+	int32Val3 = reflect.ValueOf(int32(0x55))
+	int64Val3 = reflect.ValueOf(int64(0x55))
+
+	uintVal3   = reflect.ValueOf(uint(0x55))
+	uint8Val3  = reflect.ValueOf(uint8(0x55))
+	uint16Val3 = reflect.ValueOf(uint16(0x55))
+	uint32Val3 = reflect.ValueOf(uint32(0x55))
+	uint64Val3 = reflect.ValueOf(uint64(0x55))
+
+	intVal4   = reflect.ValueOf(0x7F)
+	int8Val4  = reflect.ValueOf(int8(0x7F))
+	int16Val4 = reflect.ValueOf(int16(0x7F))
+	int32Val4 = reflect.ValueOf(int32(0x7F))
+	int64Val4 = reflect.ValueOf(int64(0x7F))
+
+	uintVal4   = reflect.ValueOf(uint(0x7F))
+	uint8Val4  = reflect.ValueOf(uint8(0x7F))
+	uint16Val4 = reflect.ValueOf(uint16(0x7F))
+	uint32Val4 = reflect.ValueOf(uint32(0x7F))
+	uint64Val4 = reflect.ValueOf(uint64(0x7F))
 )
 
 func TestValueAdd(t *testing.T) {
@@ -105,7 +129,7 @@ func TestValueAdd(t *testing.T) {
 func TestValueSub(t *testing.T) {
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
-			vc, err := EvaluateSubstraction(va, vb)
+			vc, err := EvaluateSubtraction(va, vb)
 			if err != nil {
 				t.Errorf("Error %v", err)
 			}
@@ -140,7 +164,7 @@ func TestValueSub(t *testing.T) {
 			}
 		}
 		stringVal := reflect.ValueOf("Text")
-		_, err := EvaluateSubstraction(va, stringVal)
+		_, err := EvaluateSubtraction(va, stringVal)
 		if err == nil {
 			t.Errorf("Subtracting with string should raise an error, but its not.")
 		}
@@ -235,6 +259,165 @@ func TestValueDiv(t *testing.T) {
 		_, err := EvaluateDivision(va, stringVal)
 		if err == nil {
 			t.Errorf("Division with string should raise an error, but its not.")
+		}
+	}
+}
+
+func TestEvaluateModulo(t *testing.T) {
+	valuesMA := []reflect.Value{intVal, int8Val, int16Val, int32Val, int64Val, uintVal, uint8Val, uint16Val, uint32Val, uint64Val}
+	valuesMB := []reflect.Value{intVal2, int8Val2, int16Val2, int32Val2, int64Val2, uintVal2, uint8Val2, uint16Val2, uint32Val2, uint64Val2}
+
+	for _, va := range valuesMA {
+		for _, vb := range valuesMB {
+			vc, err := EvaluateModulo(va, vb)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Int() != 0 {
+				t.Errorf("12 mod 3 not 0")
+			}
+		}
+	}
+}
+
+func TestEvaluateBitAnd(t *testing.T) {
+	valuesMA := []reflect.Value{intVal3, int8Val3, int16Val3, int32Val3, int64Val3, uintVal3, uint8Val3, uint16Val3, uint32Val3, uint64Val3}
+	valuesMB := []reflect.Value{intVal4, int8Val4, int16Val4, int32Val4, int64Val4, uintVal4, uint8Val4, uint16Val4, uint32Val4, uint64Val4}
+
+	for _, va := range valuesMA {
+		for _, vb := range valuesMB {
+			vc, err := EvaluateBitAnd(va, vb)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() == reflect.Uint64 && vc.Uint() != 0x55 {
+				t.Errorf("0x55 & 0x7F != 0x55 but %d", vc.Uint())
+			}
+			if vc.Kind() == reflect.Int64 && vc.Int() != 0x55 {
+				t.Errorf("0x55 & 0x7F != 0x55 but %d", vc.Int())
+			}
+		}
+	}
+}
+
+func TestEvaluateBitOr(t *testing.T) {
+	valuesMA := []reflect.Value{intVal3, int8Val3, int16Val3, int32Val3, int64Val3, uintVal3, uint8Val3, uint16Val3, uint32Val3, uint64Val3}
+	valuesMB := []reflect.Value{intVal4, int8Val4, int16Val4, int32Val4, int64Val4, uintVal4, uint8Val4, uint16Val4, uint32Val4, uint64Val4}
+
+	for _, va := range valuesMA {
+		for _, vb := range valuesMB {
+			vc, err := EvaluateBitOr(va, vb)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() == reflect.Uint64 && vc.Uint() != 0x7F {
+				t.Errorf("0x55 & 0x7F != 0x7F but %d", vc.Uint())
+			}
+			if vc.Kind() == reflect.Int64 && vc.Int() != 0x7F {
+				t.Errorf("0x55 & 0x7F != 0x7F but %d", vc.Int())
+			}
+		}
+	}
+}
+
+func TestEvaluateGreaterThan(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesB {
+			vc, err := EvaluateGreaterThan(va, vb)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("12 > 3 == false")
+			}
+		}
+	}
+}
+
+func TestEvaluateLesserThan(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesB {
+			vc, err := EvaluateLesserThan(vb, va)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("3 < 12 == false")
+			}
+		}
+	}
+}
+
+func TestEvaluateGreaterThanEqual(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesB {
+			vc, err := EvaluateGreaterThanEqual(va, vb)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("12 > 3 == false")
+			}
+		}
+	}
+}
+
+func TestEvaluateLesserThanEqual(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesB {
+			vc, err := EvaluateLesserThanEqual(vb, va)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("3 < 12 == false")
+			}
+		}
+	}
+}
+
+func TestEvaluateEqual(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesA {
+			vc, err := EvaluateEqual(vb, va)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("3 == 3 == false")
+			}
+		}
+	}
+}
+
+func TestEvaluateNotEqual(t *testing.T) {
+	for _, va := range valuesA {
+		for _, vb := range valuesB {
+			vc, err := EvaluateNotEqual(vb, va)
+
+			if err != nil {
+				t.Errorf("Error %v", err)
+			}
+
+			if vc.Kind() != reflect.Bool || vc.Bool() == false {
+				t.Errorf("3 != 12 == false")
+			}
 		}
 	}
 }
