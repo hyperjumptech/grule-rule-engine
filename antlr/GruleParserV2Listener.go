@@ -106,8 +106,12 @@ func (s *GruleV2ParserListener) ExitRuleEntry(ctx *parser2.RuleEntryContext) {
 	}
 	entry := s.Stack.Pop().(*ast.RuleEntry)
 	knowledgeBase := s.Stack.Peek().(*ast.KnowledgeBase)
-	knowledgeBase.RuleEntries = append(knowledgeBase.RuleEntries, entry)
-	LoggerV2.Debugf("Added RuleEntry : %s", entry.Name)
+	err := knowledgeBase.AddRuleEntry(entry)
+	if err != nil {
+		s.ErrorCallback(err)
+	} else {
+		LoggerV2.Debugf("Added RuleEntry : %s", entry.Name)
+	}
 }
 
 // EnterSalience is called when production salience is entered.

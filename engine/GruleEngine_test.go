@@ -1,9 +1,12 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"reflect"
@@ -127,6 +130,14 @@ func TestGrule_Execute(t *testing.T) {
 	}
 }
 
+func getTypeOf(i interface{}) string {
+	t := reflect.TypeOf(i)
+	if t.Kind() == reflect.Ptr {
+		return fmt.Sprintf("*%s", t.Elem().Name())
+	}
+	return t.Name()
+}
+
 func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 	logrus.SetLevel(logrus.InfoLevel)
 	tc := &TestCar{
@@ -148,9 +159,35 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := func(r *ast.RuleEntry) {
-		log.Debugf("Now executing rule %s", r.Name)
-	}
+	ruleEntrySubscriber := eventbus.DefaultBrooker.GetSubscriber(events.RuleEntryEventTopic, func(i interface{}) error {
+		if i != nil && getTypeOf(i) == "*RuleEntryEvent" {
+			event := i.(*events.RuleEntryEvent)
+			if event.EventType == events.RuleEntryExecuteStartEvent {
+				log.Infof("Rule executed %s", event.RuleName)
+			}
+		} else if i != nil {
+			log.Infof("RuleEntry Subscriber, Receive type is %s ", getTypeOf(i))
+		}
+		return nil
+	})
+	ruleEntrySubscriber.Subscribe()
+
+	ruleEngineSubscriber := eventbus.DefaultBrooker.GetSubscriber(events.RuleEngineEventTopic, func(i interface{}) error {
+		if i != nil && getTypeOf(i) == "*RuleEngineEvent" {
+			event := i.(*events.RuleEngineEvent)
+			if event.EventType == events.RuleEngineEndEvent {
+				log.Infof("Engine finished in %d cycles", event.Cycle)
+			}
+		} else if i != nil {
+			log.Infof("RuleEngine Subscriber, Receive type is %s ", getTypeOf(i))
+		}
+		return nil
+	})
+	ruleEngineSubscriber.Subscribe()
+
+	//f := func(r *ast.RuleEntry) {
+	//	log.Debugf("Now executing rule %s", r.Name)
+	//}
 
 	memory := ast.NewWorkingMemory()
 	kb := ast.NewKnowledgeBase("Test", "0.1.1")
@@ -161,8 +198,6 @@ func TestGrule_ExecuteWithSubscribers(t *testing.T) {
 		t.FailNow()
 	} else {
 		engine := NewGruleEngine()
-		//engine.MaxCycle = 5
-		engine.Subscribe(f)
 
 		start := time.Now()
 		err = engine.Execute(dctx, kb, memory)

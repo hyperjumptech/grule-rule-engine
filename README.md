@@ -116,6 +116,7 @@ Since business rules are actually treated as data. Adjusting the rule according 
 * [GRL](docs/GRL_en.md). A bit more in-depth about GRL structures and syntax.
 * [RETE Algorithm](docs/RETE_en.md). Explain how RETE algorithm implemented in Grule.
 * [Functions](docs/Function_en.md). List of built-in function and how to to call your own function from GRL.
+* [Grule Events](docs/GruleEvent_en.md). Grule's internal event bus. If you interested to listen to Grule rule events.
 
 # Tasks and Help Wanted.
 
