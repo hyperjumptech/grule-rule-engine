@@ -2,6 +2,8 @@ package engine
 
 import (
 	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/events"
+	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 	"sort"
@@ -20,32 +22,27 @@ var (
 // It will set the max cycle to 5000
 func NewGruleEngine() *GruleEngine {
 	return &GruleEngine{
-		MaxCycle:    5000,
-		subscribers: make([]func(*ast.RuleEntry), 0),
+		MaxCycle: 5000,
 	}
 }
 
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
-	MaxCycle    uint64
-	subscribers []func(*ast.RuleEntry)
-}
-
-// Subscribe adds custom func to subscribers slice
-func (g *GruleEngine) Subscribe(f func(*ast.RuleEntry)) {
-	g.subscribers = append(g.subscribers, f)
-}
-
-// Notify all subscribers
-func (g *GruleEngine) notifySubscribers(r *ast.RuleEntry) {
-	for _, f := range g.subscribers {
-		go f(r)
-	}
+	MaxCycle uint64
 }
 
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase, memory *ast.WorkingMemory) error {
+	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
+	RuleEntryPublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic)
+
+	// emit engine start event
+	RuleEnginePublisher.Publish(&events.RuleEngineEvent{
+		EventType: events.RuleEngineStartEvent,
+		Cycle:     0,
+	})
+
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	knowledge.WorkingMemory = memory
@@ -79,10 +76,28 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 		// add the cycle counter
 		cycle++
+
+		// emit engine cycle event
+		RuleEnginePublisher.Publish(&events.RuleEngineEvent{
+			EventType: events.RuleEngineCycleEvent,
+			Cycle:     cycle,
+		})
+
 		log.Debugf("Cycle #%d", cycle)
 		// if cycle is above the maximum allowed cycle, returnan error indicated the cycle has ended.
 		if cycle > g.MaxCycle {
-			return errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
+
+			// create the error
+			err := errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
+
+			// emit engine error event
+			RuleEnginePublisher.Publish(&events.RuleEngineEvent{
+				EventType: events.RuleEngineErrorEvent,
+				Cycle:     cycle,
+				Error:     err,
+			})
+
+			return err
 		}
 
 		// Select all rule entry that can be executed.
@@ -120,14 +135,24 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 				// reset the counter to 0 to detect if there are variable change.
 				dataCtx.VariableChangeCount = 0
 				log.Debugf("Executing rule : %s. Salience %d", r.Name, r.Salience)
+
+				// emit rule execute start event
+				RuleEntryPublisher.Publish(&events.RuleEntryEvent{
+					EventType: events.RuleEntryExecuteStartEvent,
+					RuleName:  r.Name,
+				})
+
 				err := r.Execute()
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
 					return errors.Trace(err)
 				}
 
-				// notify subscribers about executed rule
-				g.notifySubscribers(r)
+				// emit rule execute end event
+				RuleEntryPublisher.Publish(&events.RuleEntryEvent{
+					EventType: events.RuleEntryExecuteEndEvent,
+					RuleName:  r.Name,
+				})
 
 				//if there is a variable change, restart the cycle.
 				if dataCtx.VariableChangeCount > 0 {
@@ -146,5 +171,12 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 		}
 	}
 	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Milliseconds())
+
+	// emit engine finish event
+	RuleEnginePublisher.Publish(&events.RuleEngineEvent{
+		EventType: events.RuleEngineEndEvent,
+		Cycle:     cycle,
+	})
+
 	return nil
 }

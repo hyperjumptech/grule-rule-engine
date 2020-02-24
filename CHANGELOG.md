@@ -63,3 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Load DRL resources from GIT
 - Resource bundling, to load multiple DRL files from GIT by the file path patteern
 
+### [1.2.4] - 2020-02-24
+
+#### Added
+
+- EventBus implementation for Grule's internal event messaging now replaces the previous simple subscriber approach.
+- Added documentation regarding this EventBus implementation
