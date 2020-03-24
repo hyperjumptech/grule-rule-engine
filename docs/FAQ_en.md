@@ -102,9 +102,9 @@ There are so many database can potentially store Rule Entries. Creating adapter 
 
 ---
 
-## 3. Maximum number of rule in one knowledgebase
+## 3. Maximum number of rule in one knowledge-base
 
 **Question** : How many rule entry can be inserted into knowledgebase ?
 
-**Answer** : You can have as many rule entries you want. But it should be at least one minimum.
+**Answer** : You can have as many rule entries you want. But there should be at least one minimum.
 
