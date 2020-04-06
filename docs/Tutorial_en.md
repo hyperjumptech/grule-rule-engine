@@ -16,12 +16,12 @@ From your `go` you can import Grule.
 
 ```go
 import (
-    "github.com/hyperjumptech/grule-rule-engine/ast"
-    "github.com/hyperjumptech/grule-rule-engine/builder"
-    "github.com/hyperjumptech/grule-rule-engine/engine"
-    "github.com/hyperjumptech/grule-rule-engine/pkg"
-)
-```
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+) 
+``` 
 
 ## Creating Fact Structure
 
@@ -187,7 +187,7 @@ To execute the rules, we need to create an instance of `GruleEngine` and with it
 we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
-engine := engine.NewGruleEngine()
+engine = engine.NewGruleEngine()
 err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
     panic(err)
