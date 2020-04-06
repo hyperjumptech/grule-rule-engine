@@ -15,7 +15,12 @@ $ go get github.com/hyperjumptech/grule-rule-engine
 From your `go` you can import Grule.
 
 ```go
-import grule "github.com/hyperjumptech/grule-rule-engine"
+import (
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+) 
 ``` 
 
 ## Creating Fact Structure
@@ -74,7 +79,7 @@ You can create as many fact as you wish.
 Now, you have prepare a `DataContext` and add your instance(s) of fact into it.
 
 ```go
-dataCtx := grule.ast.NewDataContext()
+dataCtx := ast.NewDataContext()
 err := dataCtx.Add("MF", myFact)
 if err != nil {
     panic(err)
@@ -92,9 +97,9 @@ used to build those rules.
 Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBuilder` to build the rule into prepared `KnowledgeBase`
 
 ```go
-workingMemory := grule.ast.NewWorkingMemory()
-knowledgeBase := grule.ast.NewKnowledgeBase("tutorial", "1.0.0")
-ruleBuilder := grule.builder.NewRuleBuilder(knowledgeBase, workingMemory)
+workingMemory := ast.NewWorkingMemory()
+knowledgeBase := ast.NewKnowledgeBase("tutorial", "1.0.0")
+ruleBuilder := builder.NewRuleBuilder(knowledgeBase, workingMemory)
 ```
 
 Now we can add rules (defined within a GRL)
@@ -109,7 +114,7 @@ rule CheckValues "Check the default values" salience 10 {
         Retract("CheckValues);
 }
 `
-byteArr := grule.pkg.NewBytesResource([]byte(drls))
+byteArr := pkg.NewBytesResource([]byte(drls))
 err := ruleBuilder.BuildRuleFromResource(byteArr)
 if err != nil {
     panic(err)
@@ -124,7 +129,7 @@ You can always load a GRL from multiple sources.
 #### From File
 
 ```go
-fileRes := grule.pkg.NewFileResource("/path/to/rules.grl")
+fileRes := pkg.NewFileResource("/path/to/rules.grl")
 err := ruleBuilder.BuildRuleFromResource(fileRes)
 if err != nil {
     panic(err)
@@ -134,7 +139,7 @@ if err != nil {
 or if you want to get file resource by their pattern
 
 ```go
-bundle := grule.pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
+bundle := pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource(res)
@@ -147,7 +152,7 @@ for _, res := range resources {
 #### From String or ByteArray
 
 ```go
-byteArr := grule.pkg.NewBytesResource([]byte(rules))
+byteArr := pkg.NewBytesResource([]byte(rules))
 err := ruleBuilder.BuildRuleFromResource(byteArr)
 if err != nil {
     panic(err)
@@ -157,7 +162,7 @@ if err != nil {
 #### From URL
 
 ```go
-urlRes := grule.pkg.NewUrlResource("http://host.com/path/to/rule.grl")
+urlRes := pkg.NewUrlResource("http://host.com/path/to/rule.grl")
 err := ruleBuilder.BuildRuleFromResource(urlRes)
 if err != nil {
     panic(err)
@@ -167,7 +172,7 @@ if err != nil {
 #### From GIT
 
 ```go
-bundle := grule.pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource(res)
@@ -183,7 +188,7 @@ To execute the rules, we need to create an instance of `GruleEngine` and with it
 we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
-engine = grule.engine.NewGruleEngine()
+engine = engine.NewGruleEngine()
 err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
     panic(err)
