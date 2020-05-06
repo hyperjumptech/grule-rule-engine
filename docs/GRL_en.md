@@ -122,3 +122,6 @@ rule SetTime "When Distance Recorder time not set, set it." {
 		DistanceRecord.TestTime = now();
 }
 ```
+
+#### IDE Support
+##### Visual Studio Code: https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax
