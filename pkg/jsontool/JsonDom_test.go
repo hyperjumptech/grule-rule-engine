@@ -171,3 +171,67 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestJsonData_IsValidPath(t *testing.T) {
+	jdata, err := NewJsonData([]byte(bigJson))
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+	if !jdata.IsValidPath("fullname") {
+		t.Logf("fullname is a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("fullname.") {
+		t.Logf("fullname. is not a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("fullname.abc") {
+		t.Logf("fullname.abc is not a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("fullname[]") {
+		t.Logf("fullname[] is not a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("abc") {
+		t.Logf("abs is not a valid path")
+		t.Fail()
+	}
+	if !jdata.IsValidPath("") {
+		t.Logf("empty string is a valid path")
+		t.Fail()
+	}
+	if !jdata.IsValidPath("address.street1") {
+		t.Logf("\"address.street1\" is a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("address.street5") {
+		t.Logf("\"address.street5\" is NOT a valid path")
+		t.Fail()
+	}
+	if !jdata.IsValidPath("friends") {
+		t.Logf("\"friends\" is a valid path")
+		t.Fail()
+	}
+	if !jdata.IsValidPath("friends[1]") {
+		t.Logf("\"friends[1]\" is a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("friends[]") {
+		t.Logf("\"friends[]\" is NOT a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("friends[10]") {
+		t.Logf("\"friends[10]\" is NOT a valid path")
+		t.Fail()
+	}
+	if !jdata.IsValidPath("friends[1].address.street1") {
+		t.Logf("\"friends[1].address.street1\" is a valid path")
+		t.Fail()
+	}
+	if jdata.IsValidPath("friends[1].abc.street1") {
+		t.Logf("\"friends[1].abc.street1\" is a valid path")
+		t.Fail()
+	}
+}
