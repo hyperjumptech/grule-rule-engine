@@ -186,6 +186,147 @@ func (jo *JsonData) validPathCheck(pathArr []string, node *JsonNode) bool {
 }
 
 func (jo *JsonData) Get(path string) *JsonNode {
-	return nil
-	// TODO resolve this
+	if len(path) == 0 {
+		return jo.GetRootNode()
+	}
+	pathArr := strings.Split(path, ".")
+	return jo.getByPath(pathArr, jo.GetRootNode())
+}
+
+func (jo *JsonData) getByPath(pathArr []string, node *JsonNode) *JsonNode {
+	if len(pathArr) == 0 && (node.IsString() || node.IsInt() || node.IsFloat() || node.IsBool()) {
+		return node
+	}
+	p := pathArr[0]
+	if len(p) == 0 {
+		panic("Not a valid path")
+	}
+	if p[:1] == "[" && p[len(p)-1:] == "]" {
+		if node.IsArray() {
+			pn := p[1 : len(p)-1]
+			if len(pn) == 0 {
+				panic("Not a valid path - array do not contain offset number")
+			}
+			n, err := strconv.Atoi(pn)
+			if err != nil {
+				panic("Not a valid path - array offset not number")
+			}
+			if n < 0 || n >= node.Len() {
+				panic("Not a valid path - array offset < 0 or >= length")
+			}
+			nNode := node.NodeAt(n)
+			nPathArr := pathArr[1:]
+			return jo.getByPath(nPathArr, nNode)
+		}
+		panic("Not a valid path - not an array")
+	}
+	if node.IsMap() {
+		if strings.Contains(p, "[") {
+			k := p[:strings.Index(p, "[")]
+			if !node.HaveKey(k) {
+				panic("Not a valid path - key not exist")
+			}
+			nNode := node.Get(k)
+			nPathArr := []string{p[strings.Index(p, "["):]}
+			nPathArr = append(nPathArr, pathArr[1:]...)
+			return jo.getByPath(nPathArr, nNode)
+		}
+		if node.HaveKey(p) {
+			nNode := node.Get(p)
+			nPathArr := pathArr[1:]
+			return jo.getByPath(nPathArr, nNode)
+		}
+		panic("Not a valid path - key not exist")
+	}
+	panic("Not a valid path")
+}
+
+func (n *JsonData) GetString(path string) (string, error) {
+	b, err := n.IsString(path)
+	if err != nil {
+		return "", err
+	}
+	if !b {
+		return "", fmt.Errorf("%s is not a string", path)
+	}
+	node := n.Get(path)
+	return node.GetString(), nil
+}
+
+func (n *JsonData) GetBool(path string) (bool, error) {
+	b, err := n.IsBool(path)
+	if err != nil {
+		return false, err
+	}
+	if !b {
+		return false, fmt.Errorf("%s is not a boolean", path)
+	}
+	node := n.Get(path)
+	return node.GetBool(), nil
+}
+
+func (n *JsonData) GetFloat(path string) (float64, error) {
+	b, err := n.IsFloat(path)
+	if err != nil {
+		return 0, err
+	}
+	if !b {
+		return 0, fmt.Errorf("%s is not a float", path)
+	}
+	node := n.Get(path)
+	return node.GetFloat(), nil
+}
+
+func (n *JsonData) GetInt(path string) (int, error) {
+	b, err := n.IsInt(path)
+	if err != nil {
+		return 0, err
+	}
+	if !b {
+		return 0, fmt.Errorf("%s is not an int", path)
+	}
+	node := n.Get(path)
+	return node.GetInt(), nil
+}
+
+func (n *JsonData) IsArray(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsArray(), nil
+}
+
+func (n *JsonData) IsMap(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsMap(), nil
+}
+
+func (n *JsonData) IsString(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsString(), nil
+}
+
+func (n *JsonData) IsBool(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsBool(), nil
+}
+
+func (n *JsonData) IsFloat(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsFloat(), nil
+}
+
+func (n *JsonData) IsInt(path string) (bool, error) {
+	if !n.IsValidPath(path) {
+		return false, fmt.Errorf("%s is not a valid path", path)
+	}
+	return n.Get(path).IsInt(), nil
 }
