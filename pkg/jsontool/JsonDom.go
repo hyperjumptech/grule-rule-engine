@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strconv"
+	"strings"
 )
 
 func NewJsonData(jsonData []byte) (*JsonData, error) {
@@ -130,8 +132,57 @@ func (jo *JsonData) IsValidPath(path string) bool {
 	if len(path) == 0 {
 		return true
 	}
+	pathArr := strings.Split(path, ".")
+	node := jo.GetRootNode()
+	return jo.validPathCheck(pathArr, node)
+}
+
+func (jo *JsonData) validPathCheck(pathArr []string, node *JsonNode) bool {
+	if len(pathArr) == 0 && (node.IsString() || node.IsInt() || node.IsFloat() || node.IsBool()) {
+		return true
+	}
+	p := pathArr[0]
+	if len(p) == 0 {
+		return false
+	}
+	if p[:1] == "[" && p[len(p)-1:] == "]" {
+		if node.IsArray() {
+			pn := p[1 : len(p)-1]
+			if len(pn) == 0 {
+				return false
+			}
+			n, err := strconv.Atoi(pn)
+			if err != nil {
+				return false
+			}
+			if n < 0 || n >= node.Len() {
+				return false
+			}
+			nNode := node.NodeAt(n)
+			nPathArr := pathArr[1:]
+			return jo.validPathCheck(nPathArr, nNode)
+		}
+		return false
+	}
+	if node.IsMap() {
+		if strings.Contains(p, "[") {
+			k := p[:strings.Index(p, "[")]
+			if !node.HaveKey(k) {
+				return false
+			}
+			nNode := node.Get(k)
+			nPathArr := []string{p[strings.Index(p, "["):]}
+			nPathArr = append(nPathArr, pathArr[1:]...)
+			return jo.validPathCheck(nPathArr, nNode)
+		}
+		if node.HaveKey(p) {
+			nNode := node.Get(p)
+			nPathArr := pathArr[1:]
+			return jo.validPathCheck(nPathArr, nNode)
+		}
+		return false
+	}
 	return false
-	// TODO resolve this
 }
 
 func (jo *JsonData) Get(path string) *JsonNode {
