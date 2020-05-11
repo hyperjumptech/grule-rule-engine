@@ -177,6 +177,16 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Logf("fail validate address.street1")
 		t.Fail()
 	}
+
+	m, err := jdata.IsMap("address")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if !m {
+		t.Logf("address is a map")
+		t.Fail()
+	}
+
 	s, err = jdata.GetString("address.street1")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -199,7 +209,7 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if !jdata.GetRootNode().Get("friends").NodeAt(1).Get("fullname").IsString() {
+	if !jdata.GetRootNode().Get("friends").GetNodeAt(1).Get("fullname").IsString() {
 		t.Logf("fail validate friends[1].fullname type")
 		t.Fail()
 	}
@@ -212,7 +222,7 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if jdata.GetRootNode().Get("friends").NodeAt(1).Get("fullname").GetString() != "Lara Croft" {
+	if jdata.GetRootNode().Get("friends").GetNodeAt(1).Get("fullname").GetString() != "Lara Croft" {
 		t.Logf("fail validate friends[1].fullname value")
 		t.Fail()
 	}
