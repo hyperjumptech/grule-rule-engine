@@ -188,7 +188,7 @@ To execute the rules, we need to create an instance of `GruleEngine` and with it
 we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
 
 ```go
-engine = engine.NewGruleEngine()
+engine := engine.NewGruleEngine()
 err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
 if err != nil {
     panic(err)
