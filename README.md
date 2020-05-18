@@ -3,20 +3,20 @@ __"Gopher Holds The Rules"__
 
 # Grule
 
-```
+```golang
 import "github.com/hyperjumptech/grule-rule-engine"
 ```
 
 ## Rule Engine for Go
 
 
-**Grule** is a Rule Engine library for Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
+**Grule** is a Rule Engine library for the Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
 
 Like **Drools**, **Grule** have its own *DSL* comparable as follows.
 
 Drools's DRL be like :
 
-```
+```drool
 rule "SpeedUp"
     salience 10
     when
@@ -32,7 +32,7 @@ end
 
 And Grule's GRL be like :
 
-```
+```go
 rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10  {
     when
         TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
@@ -42,14 +42,13 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 }
 ```
 
-# What is RuleEngine?
----
+# What is RuleEngine
 
-There are no better explanation compared to the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
+There isn't a better explanation than the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
 
-Taken from **TutorialsPoint** website (with very slight modification), 
+Taken from **TutorialsPoint** website (with slight modifications),
 
-**Grule** is Rule Engine or a Production Rule System that uses the rule-based approach to implement and Expert System. Expert Systems are knowledge-based systems that use knowledge representation to process acquired knowledge into a knowledge base that can be used for reasoning.
+**Grule** Rule Engine is a Production Rule System that uses the rule-based approach to implement an Expert System. Expert Systems are knowledge-based systems that use knowledge representations to process acquired knowledge into a knowledge base that can be used for reasoning.
 
 A Production Rule System is Turing complete with a focus on knowledge representation to express propositional and first-order logic in a concise, non-ambiguous and declarative manner.
 
@@ -65,16 +64,16 @@ A Rule Engine allows you to define **“What to Do”** and not **“How to do i
 
 Rules are pieces of knowledge often expressed as, "When some conditions occur, then do some tasks."
 
-```
+```go
 When
    <Condition is true>
 Then
    <Take desired Action>
 ```
 
-The most important part of a Rule is its when part. If the **when** part is satisfied, the **then** part is triggered.
+The most important part of a Rule is its "when" part. If the **when** part is satisfied, the **then** part is triggered.
 
-```
+```go
 rule  <rule_name> <rule_description>
    <attribute> <value> {
    when
@@ -89,7 +88,7 @@ rule  <rule_name> <rule_description>
 
 ### Declarative Programming
 
-Rules make it easy to express solutions to difficult problems and get the solutions verified as well. Unlike codes, Rules are written in less complex language; Business Analysts can easily read and verify a set of rules.
+Rules make it easy to express solutions to difficult problems and get the verifications as well. Unlike codes, Rules are written with less complex language; Business Analysts can easily read and verify a set of rules.
 
 ### Logic and Data Separation
 
@@ -121,8 +120,8 @@ rule <RuleName> <RuleDescription> [salience <priority>] {
 }
 ```
 
-**RuleName** identify a speciffic rule. The name should be unique in the entire knowledge base, consist of one word thus 
-it should not contains white-spece. 
+**RuleName** identify a speciffic rule. The name should be unique in the entire knowledge base, consist of one word thus
+it should not contains white-spece.
 
 **RuleDescription** describes the rule. The description should be enclosed with a double-quote.
 
@@ -135,12 +134,12 @@ Salience is one way of hinting the rule engine of which rule have more importanc
 **Boolean Expression** is an expression that will be used by rule engine to identify if that speciffic rule
 are a candidate for execution for the current facts.
 
-**Assignment or Operation Expression** contains list of expressions (each expression should be ended with ";" symbol.) 
+**Assignment or Operation Expression** contains list of expressions (each expression should be ended with ";" symbol.)
 The expression are designed to modify the current fact values, making calculation, make some logging, etc.
 
-#### Boolean Expression 
+#### Boolean Expression
 
-Boolean expression comes natural for java or golang developer in GRL. 
+Boolean expression comes natural for java or golang developer in GRL.
 
 ```go
 when
@@ -149,6 +148,7 @@ when
 then
      ...
 ```
+
 #### Constants and Literalss
 
 | Literal | Description | Example |
@@ -158,8 +158,9 @@ then
 | Real | Hold a real value | `234.4553`, `-234.3` |
 | Boolean | Hold a boolean value | `true`, `TRUE`, `False` |
 
-Math operator such as `+`, `-`, `/`, `*`; Logical `&&` and `||`; Comparison 
+Math operator such as `+`, `-`, `/`, `*`; Logical `&&` and `||`; Comparison
 `<`,`<=`,`>`,`>=`,`==`,`!=` all are supported by the language.
+
 #### Comments
 
 You can always put a comment inside your GRL script. Such as :
@@ -183,7 +184,7 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed."  {
         TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
     then
         TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement;
-		DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+        DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
 }
 
 rule StartSpeedDown "When testcar is speeding up and over max speed we change to speed down."  {
@@ -191,7 +192,7 @@ rule StartSpeedDown "When testcar is speeding up and over max speed we change to
         TestCar.SpeedUp == true && TestCar.Speed >= TestCar.MaxSpeed
     then
         TestCar.SpeedUp = false;
-		log("Now we slow down");
+        log("Now we slow down");
 }
 
 rule SlowDown "When testcar is slowing down we keep decreasing the speed."  {
@@ -199,15 +200,15 @@ rule SlowDown "When testcar is slowing down we keep decreasing the speed."  {
         TestCar.SpeedUp == false && TestCar.Speed > 0
     then
         TestCar.Speed = TestCar.Speed - TestCar.SpeedIncrement;
-		DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+        DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
 }
 
 rule SetTime "When Distance Recorder time not set, set it." {
-	when
-		isNil(DistanceRecord.TestTime)
-	then
-		log("Set the test time");
-		DistanceRecord.TestTime = now();
+    when
+        isNil(DistanceRecord.TestTime)
+    then
+        log("Set the test time");
+    DistanceRecord.TestTime = now();
 }
 ```
 
@@ -262,15 +263,15 @@ Suppose you have the following `struct`.
 
 ```go
 type TestCar struct {
-	SpeedUp        bool
-	Speed          int
-	MaxSpeed       int
-	SpeedIncrement int
+    SpeedUp        bool
+    Speed          int
+    MaxSpeed       int
+    SpeedIncrement int
 }
 
 type DistanceRecorder struct {
-	TotalDistance int
-	TestTime      time.Time
+    TotalDistance int
+    TestTime      time.Time
 }
 ```
 
@@ -313,8 +314,9 @@ if err != nil {
     t.Log(dr.TotalDistance)
 }
 ```
-The rule engine will use loaded knowledgebase to work upon sets of 
-fact data in data context. 
+
+The rule engine will use loaded knowledgebase to work upon sets of
+fact data in data context.
 
 ## Calling Function in Grule
 
@@ -336,7 +338,7 @@ func (p *MyPoGo) AppendString(aString, subString string) string {
 }
 ```
 
-And add the struct into knowledge base 
+And add the struct into knowledge base
 
 ```go
 dctx := context.NewDataContext()
@@ -356,20 +358,20 @@ then
 
 All functions defined in `model/GruleFunctions.go` are built-in functions.
 This means, that you can call the function straight away without having to mention the
-instance name as it automatically added by the engine.
+instance name as they are automatically added by the engine.
 
 I don't maintain list of built in function as you can look into the Go source code directly.
 (the `model/GruleFunctions.go`)
 
 ### Important Thing you must know about Custom Function in Grule
 
-When you make your own function to be called from rule engine, you need to know the following rules.
+When you design your own function to be called from the rule engine, you need to know the following rules.
 
-1. The function must be visible. Public function convention should start with capital letter. Private functions cant be executed.
+1. The function must be visible. Public function convention should start with capital letter. Private functions cannot be executed.
 2. The function must only return 1 type. Returning multiple variable from function are not acceptable, the rule execution will fail if there are multiple return variable.
-3. The way number literal were treated in Grule's DRL is; **decimal** will always taken as `int64` and **real** as `float64`, thus always consider to define your function argument and returns between `int64` and `float64` when your function works with numbers.
+3. The way number literal are treated in Grule's DRL is; **decimal** will always be taken as `int64` and **real** as `float64`, thus always consider to define your function argument and returns between `int64` and `float64` when your function work with numbers.
 
-# Tasks and Help Wanted.
+# Tasks and Help Wanted
 
 * Need to do more and more and more test.
 * Better code coverage test.

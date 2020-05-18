@@ -2,9 +2,10 @@ package context
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 	"testing"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 type TestAStruct struct {
@@ -59,6 +60,19 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	_, err = ctx.ExecMethod("C.EchoMethods", []reflect.Value{})
 	if err == nil {
 		t.Fatal("Error should be raised since method argument not provided")
+	}
+
+	ctx.Retract("C")
+	if len(ctx.Retracted) == 0 {
+		t.Error("Error, Retract failed")
+	}
+	if !ctx.IsRetracted("C") {
+		t.Fatal("Error, should fail")
+	}
+
+	ctx.Reset()
+	if len(ctx.Retracted) != 0 {
+		t.Error("Error, Reset failed")
 	}
 }
 

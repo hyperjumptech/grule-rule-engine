@@ -134,4 +134,7 @@ fabric.properties
 .antlr
 .antlr/
 
+### Sonarqube scanners ###
+.scannerwork
+
 # End of https://www.gitignore.io/api/go,git,intellij,visualstudiocode

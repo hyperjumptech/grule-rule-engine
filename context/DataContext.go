@@ -2,10 +2,11 @@ package context
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/juju/errors"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/juju/errors"
 )
 
 var (
@@ -45,8 +46,8 @@ func (ctx *DataContext) Add(key string, obj interface{}) error {
 	return nil
 }
 
-// IsRestracted checks if a key fact is currently retracted.
-func (ctx *DataContext) IsRestracted(key string) bool {
+// IsRetracted checks if a key fact is currently retracted.
+func (ctx *DataContext) IsRetracted(key string) bool {
 	for _, v := range ctx.Retracted {
 		if v == key {
 			return true
@@ -64,7 +65,7 @@ func (ctx *DataContext) Reset() {
 func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error) {
 	varArray := strings.Split(methodName, ".")
 	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRestracted(varArray[0]) {
+		if !ctx.IsRetracted(varArray[0]) {
 			return traceMethod(val, varArray[1:], args)
 		}
 		return reflect.ValueOf(nil), ErrFactRetracted
@@ -76,7 +77,7 @@ func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (ref
 func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
 	varArray := strings.Split(variable, ".")
 	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRestracted(varArray[0]) {
+		if !ctx.IsRetracted(varArray[0]) {
 			return traceType(val, varArray[1:])
 		}
 		return nil, ErrFactRetracted
@@ -89,7 +90,7 @@ func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
 func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
 	varArray := strings.Split(variable, ".")
 	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRestracted(varArray[0]) {
+		if !ctx.IsRetracted(varArray[0]) {
 			vval, err := traceValue(val, varArray[1:])
 			if err != nil {
 				fmt.Printf("blah %s = %v\n", variable, vval)
@@ -105,7 +106,7 @@ func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
 func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error {
 	varArray := strings.Split(variable, ".")
 	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRestracted(varArray[0]) {
+		if !ctx.IsRetracted(varArray[0]) {
 			err := traceSetValue(val, varArray[1:], newValue)
 			if err == nil {
 				ctx.VariableChangeCount++
