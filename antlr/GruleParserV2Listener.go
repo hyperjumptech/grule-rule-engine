@@ -2,14 +2,15 @@ package antlr
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/golang-collections/collections/stack"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
-	"reflect"
-	"strconv"
-	"strings"
 )
 
 var (
@@ -21,12 +22,12 @@ var (
 )
 
 // NewGruleV2ParserListener create new instance of GruleV2ParserListener
-func NewGruleV2ParserListener(knowleedgeBase *ast.KnowledgeBase, memory *ast.WorkingMemory, errorCallBack func(e error)) *GruleV2ParserListener {
+func NewGruleV2ParserListener(knowledgeBase *ast.KnowledgeBase, memory *ast.WorkingMemory, errorCallBack func(e error)) *GruleV2ParserListener {
 	return &GruleV2ParserListener{
 		PreviousNode:  make([]string, 0),
 		VarNames:      make([]string, 0),
 		ErrorCallback: errorCallBack,
-		KnowledgeBase: knowleedgeBase,
+		KnowledgeBase: knowledgeBase,
 		WorkingMemory: memory,
 	}
 }
