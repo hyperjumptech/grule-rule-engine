@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	JsonText = [...]string{
+	JSONText = [...]string{
 		`{
 	"stringAttr":"stringVal", 
 	"intAttr":123, 
@@ -29,7 +29,7 @@ var (
 		`false`,
 	}
 
-	JsonType = [...]string{
+	JSONType = [...]string{
 		"obj",
 		"arr",
 		"arr",
@@ -43,7 +43,7 @@ var (
 		"bool",
 	}
 
-	bigJson = `
+	bigJSON = `
 {
 	"fullname" : "Bruce Wayne",
 	"address" : {
@@ -88,8 +88,8 @@ var (
 )
 
 func TestNewJsonObject(t *testing.T) {
-	for i, v := range JsonText {
-		jobj, err := NewJsonData([]byte(v))
+	for i, v := range JSONText {
+		jobj, err := NewJSONData([]byte(v))
 		if err != nil {
 			t.Logf("Error : %d - %s. Got %s", i, v, err.Error())
 			t.Fail()
@@ -97,7 +97,7 @@ func TestNewJsonObject(t *testing.T) {
 			typ := reflect.TypeOf(jobj.jsonRoot)
 			t.Logf("Data : %d - %s. Type is : %s ", i, v, typ.String())
 			node := jobj.GetRootNode()
-			switch JsonType[i] {
+			switch JSONType[i] {
 			case "obj":
 				if !node.IsMap() {
 					t.Logf("Error : %d - %s. Is not map", i, v)
@@ -141,7 +141,7 @@ func TestNewJsonObject(t *testing.T) {
 }
 
 func TestJsonNodeOperations(t *testing.T) {
-	jdata, err := NewJsonData([]byte(bigJson))
+	jdata, err := NewJSONData([]byte(bigJSON))
 	if err != nil {
 		t.Logf("Got error %s", err.Error())
 		t.FailNow()
@@ -237,7 +237,7 @@ func TestJsonNodeOperations(t *testing.T) {
 }
 
 func TestJsonData_IsValidPath(t *testing.T) {
-	jdata, err := NewJsonData([]byte(bigJson))
+	jdata, err := NewJSONData([]byte(bigJSON))
 	if err != nil {
 		t.Logf("Got error %s", err.Error())
 		t.FailNow()
