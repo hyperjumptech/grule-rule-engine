@@ -10,19 +10,19 @@ __"Gopher Holds The Rules"__
 
 # Grule
 
-```
+```go
 import "github.com/hyperjumptech/grule-rule-engine"
 ```
 
 ## Rule Engine for Go
 
-**Grule** is a Rule Engine library for Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
+**Grule** is a Rule Engine library for the Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
 
 Like **Drools**, **Grule** have its own *DSL* comparable as follows.
 
 Drools's DRL be like :
 
-```
+```drool
 rule "SpeedUp"
     salience 10
     when
@@ -38,7 +38,7 @@ end
 
 And Grule's GRL be like :
 
-```
+```go
 rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10  {
     when
         TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
@@ -48,14 +48,13 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 }
 ```
 
-# What is RuleEngine?
----
+# What is RuleEngine
 
-There are no better explanation compared to the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
+There isn't a better explanation than the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
 
-Taken from **TutorialsPoint** website (with very slight modification), 
+Taken from **TutorialsPoint** website (with slight modifications),
 
-**Grule** is Rule Engine or a Production Rule System that uses the rule-based approach to implement and Expert System. Expert Systems are knowledge-based systems that use knowledge representation to process acquired knowledge into a knowledge base that can be used for reasoning.
+**Grule** Rule Engine is a Production Rule System that uses the rule-based approach to implement an Expert System. Expert Systems are knowledge-based systems that use knowledge representations to process acquired knowledge into a knowledge base that can be used for reasoning.
 
 A Production Rule System is Turing complete with a focus on knowledge representation to express propositional and first-order logic in a concise, non-ambiguous and declarative manner.
 
@@ -65,13 +64,13 @@ A Production Rule is a two-part structure that uses first-order logic for reason
 
 A Rule Engine allows you to define **“What to Do”** and not **“How to do it.”**
 
-## What is a Rule?
+## What is a Rule
 
 *(also taken from TutorialsPoint)*
 
 Rules are pieces of knowledge often expressed as, "When some conditions occur, then do some tasks."
 
-```
+```go
 When
    <Condition is true>
 Then
@@ -80,7 +79,7 @@ Then
 
 The most important part of a Rule is its when part. If the **when** part is satisfied, the **then** part is triggered.
 
-```
+```go
 rule  <rule_name> <rule_description>
    <attribute> <value> {
    when
@@ -95,7 +94,7 @@ rule  <rule_name> <rule_description>
 
 ### Declarative Programming
 
-Rules make it easy to express solutions to difficult problems and get the solutions verified as well. Unlike codes, Rules are written in less complex language; Business Analysts can easily read and verify a set of rules.
+Rules make it easy to express solutions to difficult problems and get the verifications as well. Unlike codes, Rules are written with less complex language; Business Analysts can easily read and verify a set of rules.
 
 ### Logic and Data Separation
 
@@ -118,11 +117,11 @@ Since business rules are actually treated as data. Adjusting the rule according 
 * [Functions](docs/Function_en.md). List of built-in function and how to to call your own function from GRL.
 * [Grule Events](docs/GruleEvent_en.md). Grule's internal event bus. If you interested to listen to Grule rule events.
 
-# Tasks and Help Wanted.
+# Tasks and Help Wanted
 
-Yes. We need contributor to make Grule even better and useful to Open Source Community.
+Yes. We need contributors to make Grule even better and useful to the Open Source Community.
 
-* Need to do more and more and more test.
+* Need to do more and more and more tests.
 * Better code coverage test.
 * Better commenting for go doc best practice.
 * Improve function argument handling to be more fluid and intuitive.

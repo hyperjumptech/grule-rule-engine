@@ -9,25 +9,25 @@ Please note that Grule is using Go 1.13
 To import Grule into your project you can simply import it.
 
 ```text
-$ go get github.com/hyperjumptech/grule-rule-engine
+$go get github.com/hyperjumptech/grule-rule-engine
 ```
 
 From your `go` you can import Grule.
 
 ```go
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
-) 
-``` 
+    "github.com/hyperjumptech/grule-rule-engine/ast"
+    "github.com/hyperjumptech/grule-rule-engine/builder"
+    "github.com/hyperjumptech/grule-rule-engine/engine"
+    "github.com/hyperjumptech/grule-rule-engine/pkg"
+)
+```
 
 ## Creating Fact Structure
 
 A `fact` in grule is a mere **pointer** to an instance of a `struct`.
-This struct may contains properties just like any normal Golang struct, as well
-as `function` or usually, in *OOP*, we call them `method` 
+This struct may contains properties like any normal Golang struct, as well
+as `function` or usually, in *OOP*, we call them `method`
 
 ```go
 type MyFact struct {
@@ -39,10 +39,10 @@ type MyFact struct {
     WhatToSay          string
 }
 
-``` 
+```
 
-Just like normal Golang convention, only **visible** attribute can be accessible
-from Grule rule engine. those with capital first letter.
+Just like normal Golang conventions, only **visible** attributes can be accessible
+from the Grule rule engine, those with capital first letter.
 
 Grule can also call Fact's functions.
 
@@ -52,11 +52,11 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 ```
 
-Please note, that there are some convention though.
+Please note, that there are some conventions.
 
 * Member function must be **Visible**, have capital first letter.
 * If the function have returns, there must be only 1 return.
-* Arguments and return, if its an `int`, `uint` or `float`, must be on their 64 bit variant. Eg. `int64`, `uint64`, `float64`.
+* Arguments and return, if it is an `int`, `uint` or `float`, must be their 64-bit variant. Eg. `int64`, `uint64`, `float64`.
 * The function are not encouraged to change the Fact's member attribute, this cause RETE's working memory detection impossible.
 If you **MUST** change some variable, you have to notify Grule using `Changed(varname string)` built-in function.
 
@@ -76,7 +76,7 @@ myFact := &MyFact{
 
 You can create as many fact as you wish.
 
-Now, you have prepare a `DataContext` and add your instance(s) of fact into it.
+Next, you have to prepare a `DataContext` and add your instance(s) of facts into it.
 
 ```go
 dataCtx := ast.NewDataContext()
@@ -91,7 +91,7 @@ if err != nil {
 A `KnowledgeBase` is basically collection of many rules sourced from rule definitions
 loaded from multiple sources.
 
-The DRL, can be in the form of simple string, stored on a file or some where on the internet, are
+The DRL, can be in the form of simple string, stored in a file or somewhere from the internet can each be
 used to build those rules.
 
 Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBuilder` to build the rule into prepared `KnowledgeBase`
@@ -124,7 +124,6 @@ if err != nil {
 ### Resources
 
 You can always load a GRL from multiple sources.
-
 
 #### From File
 
@@ -197,7 +196,7 @@ if err != nil {
 
 ## Obtaining Result
 
-If you see, on the rule's GRL above, 
+If you see, on the rule's GRL above,
 
 ```go
 rule CheckValues "Check the default values" salience 10 {
@@ -209,7 +208,7 @@ rule CheckValues "Check the default values" salience 10 {
 }
 ```
 
-The rule modify attribute `MF.WhatToSay` where this is revering to the `WhatToSay` in the 
+The rule modify attribute `MF.WhatToSay` where this is revering to the `WhatToSay` in the
 `MyFact` struct. So simply access that member variable to get the result.
 
 ```go
