@@ -113,12 +113,12 @@ func TestDataContext_GetType(t *testing.T) {
 	}
 	_, err = ctx.GetType("ta.BStruct.CStruct.Str")
 	if err == nil {
-		t.Fatal("Error, fact is retracted, shouldn't be able to GetTpe")
+		t.Fatal("Error, fact is retracted, shouldn't be able to GetType")
 	}
 
 	_, err = ctx.GetType("nonexistent")
 	if err == nil {
-		t.Fatal("Error, fact is nonexistent, should not be GetType")
+		t.Fatal("Error, fact is nonexistent, should not be able to GetType")
 	}
 }
 
