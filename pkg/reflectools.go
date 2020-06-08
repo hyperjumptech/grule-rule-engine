@@ -23,9 +23,9 @@ func GetFunctionList(obj interface{}) ([]string, error) {
 }
 
 // GetFunctionParameterTypes get list of parameter types of specific function in a struct instance
-func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Type, error) {
+func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Type, bool, error) {
 	if !IsStruct(obj) {
-		return nil, errors.Errorf("param is not a struct")
+		return nil, false, errors.Errorf("param is not a struct")
 	}
 	ret := make([]reflect.Type, 0)
 	objType := reflect.TypeOf(obj)
@@ -44,9 +44,9 @@ func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Ty
 		for i := 1; i < x.NumIn(); i++ {
 			ret = append(ret, x.In(i))
 		}
-		return ret, nil
+		return ret, meth.Type.IsVariadic(), nil
 	}
-	return nil, errors.Errorf("function %s not found", methodName)
+	return nil, false, errors.Errorf("function %s not found", methodName)
 }
 
 // GetFunctionReturnTypes get list of return types of specific function in a struct instance
