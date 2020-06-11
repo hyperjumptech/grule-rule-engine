@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -23,6 +24,13 @@ type TestCStruct struct {
 
 func (tcs *TestCStruct) EchoMethod(s string) {
 	fmt.Println(s)
+}
+
+func (tcs *TestCStruct) EchoVariad(ss ...string) int {
+	for _, s := range ss {
+		fmt.Println(s)
+	}
+	return len(ss)
 }
 
 func TestDataContext_ExecMethod(t *testing.T) {
@@ -84,6 +92,36 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	if len(ctx.Retracted) != 0 {
 		t.Error("Error, Reset failed")
 	}
+
+	v, err := ctx.ExecMethod("C.EchoVariad", []reflect.Value{
+		reflect.ValueOf("Weeeeee!"),
+		reflect.ValueOf("Woooooo!"),
+		reflect.ValueOf("Waaaaaa!"),
+	})
+	if err != nil {
+		t.Fatal("Error calling variadic function.")
+	}
+	if v.Interface().(int) != 3 {
+		t.Fatal("Error, variadic function should have returned 3 but got " + strconv.Itoa(v.Interface().(int)))
+	}
+
+	v, err = ctx.ExecMethod("C.EchoVariad", []reflect.Value{})
+	if err != nil {
+		t.Fatal("Error calling variadic function.")
+	}
+	if v.Interface().(int) != 0 {
+		t.Fatal("Error, variadic function should have returned 0 but got " + strconv.Itoa(v.Interface().(int)))
+	}
+
+	v, err = ctx.ExecMethod("C.EchoVariad", []reflect.Value{
+		reflect.ValueOf("Weeeeee!"),
+		reflect.ValueOf(42),
+		reflect.ValueOf("Waaaaaa!"),
+	})
+	if err == nil {
+		t.Fatal("Error, calling variadic function with inconsistent args should raise an error")
+	}
+
 }
 
 func TestDataContext_GetType(t *testing.T) {

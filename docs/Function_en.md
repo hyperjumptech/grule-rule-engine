@@ -415,13 +415,64 @@ dctx := grule.context.NewDataContext()
 dctx.Add("Pogo", &MyPoGo{})
 ```
 
-You can call the fuction within the rule
+You can call the function within the rule
 
 ```go
 when
     Pogo.GetStringLength(some.variable) < 100
 then
     some.variable = Pogo.AppendString(some.variable, "Groooling");
+```
+
+### Variadic Function Arguments
+
+Variadic arguments are supported for custom functions.
+
+```go
+func (p *MyPoGo) GetLongestString(strs... string) string {
+    var longestStr string
+    for _, s := range strs {
+        if len(s) > len(longestStr) {
+            longestStr = s
+        }
+    }
+    return longestStr
+}
+```
+
+This function can then be called from within a rule with zero or more values supplied for the variadic argument
+
+```go
+when
+    Pogo.GetStringLength(some.variable) < 100
+then
+    some.longest = Pogo.GetLongestString(some.stringA, some.stringB, some.stringC);
+```
+
+Since it is possible to provide zero values to satisfy a variadic argument, they can also be used to simulate optional parameters.
+
+```go
+func (p *MyPoGo) AddTax(cost int64, optionalTaxRate... float64) int64 {
+    var taxRate float64 = 0.2
+    if len(optionalTaxRate) > 0 {
+        taxRate = optionalTaxRate[0]
+    }
+    return cost * (1+taxRate)
+}
+```
+
+```go
+when
+    Pogo.IsTaxApplied() == false
+then
+    some.cost = Pogo.AddTax(come.cost);
+
+//or
+
+when
+    Pogo.IsTaxApplied() == false
+then
+    some.cost = Pogo.AddTax(come.cost, 0.15);
 ```
 
 ### Important Thing you must know about Custom Function in Grule

@@ -160,26 +160,40 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 	switch length := len(path); {
 	case length == 1:
 		// this obj is reflect.Value... it should not.
-		types, err := pkg.GetFunctionParameterTypes(obj, path[0])
+		types, variad, err := pkg.GetFunctionParameterTypes(obj, path[0])
 		if err != nil {
 			return reflect.ValueOf(nil),
 				errors.Errorf("error while fetching function %s() parameter types. Got %v", path[0], err)
 		}
-		if len(types) != len(args) {
+
+		if len(types) != len(args) && !variad {
 			return reflect.ValueOf(nil),
 				errors.Errorf("invalid argument count for function %s(). need %d argument while there are %d", path[0], len(types), len(args))
 		}
-		iargs := make([]interface{}, 0)
+		iargs := make([]interface{}, len(args))
 		for i, t := range types {
+			if variad && i == len(types)-1 {
+				break
+			}
 			if t.Kind() != args[i].Kind() {
 				if t.Kind() == reflect.Interface {
-					iargs = append(iargs, pkg.ValueToInterface(args[i]))
+					iargs[i] = pkg.ValueToInterface(args[i])
 				} else {
 					return reflect.ValueOf(nil),
 						errors.Errorf("invalid argument types for function %s(). argument #%d, require %s but %s", path[0], i, t.Kind().String(), args[i].Kind().String())
 				}
 			} else {
-				iargs = append(iargs, pkg.ValueToInterface(args[i]))
+				iargs[i] = pkg.ValueToInterface(args[i])
+			}
+		}
+		if variad {
+			typ := types[len(types)-1].Elem().Kind()
+			for i := len(types) - 1; i < len(args); i++ {
+				if args[i].Kind() != typ {
+					return reflect.ValueOf(nil),
+						errors.Errorf("invalid variadic argument types for function %s(). argument #%d, require %s but %s", path[0], i, typ.String(), args[i].Kind().String())
+				}
+				iargs[i] = pkg.ValueToInterface(args[i])
 			}
 		}
 		rets, err := pkg.InvokeFunction(obj, path[0], iargs)
