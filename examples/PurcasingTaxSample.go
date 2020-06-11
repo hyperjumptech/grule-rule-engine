@@ -109,21 +109,19 @@ type CashFlowCalculator struct {
 func (cf *CashFlowCalculator) CalculatePurchases() {
 	cashFlow := &CashFlow{}
 
-	mem := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("Purchase Calculator", "0.0.1")
-	rb := builder.NewRuleBuilder(kb, mem)
-	err := rb.BuildRuleFromResource(pkg.NewFileResource("CashFlowRule.grl"))
-	if err != nil {
-		panic(err)
-	}
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err := rb.BuildRuleFromResource("Purchase Calculator", "0.0.1", pkg.NewFileResource("CashFlowRule.grl"))
 
 	engine := engine2.NewGruleEngine()
+
+	kb := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
 
 	for _, purchase := range Purchases {
 		dctx := ast.NewDataContext()
 		dctx.Add("CashFlow", cashFlow)
 		dctx.Add("Purchase", purchase)
-		err = engine.Execute(dctx, kb, mem)
+		err = engine.Execute(dctx, kb)
 		if err != nil {
 			panic(err)
 		}

@@ -52,16 +52,16 @@ func TestMethodCall_Issue4(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mem := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("Test", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, mem)
-
-	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(Rule4)))
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(Rule4)))
 	if err != nil {
 		t.Fatal(err)
 	} else {
+		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
 		eng1 := &engine.GruleEngine{MaxCycle: 3}
-		err := eng1.Execute(dataContext, knowledgeBase, mem)
+		err := eng1.Execute(dataContext, kb)
 		if err != nil {
 			t.Fatal(err)
 		}

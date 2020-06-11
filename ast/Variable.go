@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -23,6 +24,18 @@ type Variable struct {
 
 	Name  string
 	Value reflect.Value
+}
+
+// Clone will clone this Variable. The new clone will have an identical structure
+func (e Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
+	clone := &Variable{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+		Name:          e.Name,
+	}
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

@@ -68,6 +68,59 @@ type Expression struct {
 	Evaluated bool
 }
 
+// Clone will clone this Expression. The new clone will have an identical structure
+func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
+	clone := &Expression{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+		Operator:      e.Operator,
+	}
+
+	if e.LeftExpression != nil {
+		if cloneTable.IsCloned(e.LeftExpression.AstID) {
+			clone.LeftExpression = cloneTable.Records[e.LeftExpression.AstID].CloneInstance.(*Expression)
+		} else {
+			cloned := e.LeftExpression.Clone(cloneTable)
+			clone.LeftExpression = cloned
+			cloneTable.MarkCloned(e.LeftExpression.AstID, cloned.AstID, e.LeftExpression, cloned)
+		}
+	}
+
+	if e.RightExpression != nil {
+		if cloneTable.IsCloned(e.RightExpression.AstID) {
+			clone.RightExpression = cloneTable.Records[e.RightExpression.AstID].CloneInstance.(*Expression)
+		} else {
+			cloned := e.RightExpression.Clone(cloneTable)
+			clone.RightExpression = cloned
+			cloneTable.MarkCloned(e.RightExpression.AstID, cloned.AstID, e.RightExpression, cloned)
+		}
+	}
+
+	if e.SingleExpression != nil {
+		if cloneTable.IsCloned(e.SingleExpression.AstID) {
+			clone.SingleExpression = cloneTable.Records[e.SingleExpression.AstID].CloneInstance.(*Expression)
+		} else {
+			cloned := e.SingleExpression.Clone(cloneTable)
+			clone.SingleExpression = cloned
+			cloneTable.MarkCloned(e.SingleExpression.AstID, cloned.AstID, e.SingleExpression, cloned)
+		}
+	}
+
+	if e.ExpressionAtom != nil {
+		if cloneTable.IsCloned(e.ExpressionAtom.AstID) {
+			clone.ExpressionAtom = cloneTable.Records[e.ExpressionAtom.AstID].CloneInstance.(*ExpressionAtom)
+		} else {
+			cloned := e.ExpressionAtom.Clone(cloneTable)
+			clone.ExpressionAtom = cloned
+			cloneTable.MarkCloned(e.ExpressionAtom.AstID, cloned.AstID, e.ExpressionAtom, cloned)
+		}
+	}
+
+	return clone
+}
+
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
 func (e *Expression) InitializeContext(dataCtx *DataContext, memory *WorkingMemory) {
 	e.DataContext = dataCtx

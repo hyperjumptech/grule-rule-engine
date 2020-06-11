@@ -99,16 +99,19 @@ func TestSalience(t *testing.T) {
 		},
 	}
 
-	workingMemory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("Tutorial", "0.0.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, workingMemory)
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
 	byteArr := pkg.NewBytesResource([]byte(SalienceDRL))
-	err := ruleBuilder.BuildRuleFromResource(byteArr)
+	err := rb.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
+
 	if err != nil {
 		panic(err)
 	}
 
 	engine := engine.NewGruleEngine()
+
+	knowledgeBase := lib.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
 
 	for _, td := range testData {
 		dataCtx := ast.NewDataContext()
@@ -117,7 +120,7 @@ func TestSalience(t *testing.T) {
 			panic(err)
 		}
 
-		err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
+		err = engine.Execute(dataCtx, knowledgeBase)
 		if err != nil {
 			panic(err)
 		}

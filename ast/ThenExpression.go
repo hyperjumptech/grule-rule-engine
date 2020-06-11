@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenExpression create new instance of ThenExpression
@@ -23,6 +24,48 @@ type ThenExpression struct {
 	Assignment   *Assignment
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
+}
+
+// Clone will clone this ThenExpression. The new clone will have an identical structure
+func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
+	clone := &ThenExpression{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+
+	if e.Assignment != nil {
+		if cloneTable.IsCloned(e.Assignment.AstID) {
+			clone.Assignment = cloneTable.Records[e.Assignment.AstID].CloneInstance.(*Assignment)
+		} else {
+			cloned := e.Assignment.Clone(cloneTable)
+			clone.Assignment = cloned
+			cloneTable.MarkCloned(e.Assignment.AstID, cloned.AstID, e.Assignment, cloned)
+		}
+	}
+
+	if e.FunctionCall != nil {
+		if cloneTable.IsCloned(e.FunctionCall.AstID) {
+			clone.FunctionCall = cloneTable.Records[e.FunctionCall.AstID].CloneInstance.(*FunctionCall)
+		} else {
+			cloned := e.FunctionCall.Clone(cloneTable)
+			clone.FunctionCall = cloned
+			cloneTable.MarkCloned(e.FunctionCall.AstID, cloned.AstID, e.FunctionCall, cloned)
+		}
+	}
+
+	if e.MethodCall != nil {
+		if cloneTable.IsCloned(e.MethodCall.AstID) {
+			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
+		} else {
+			cloned := e.MethodCall.Clone(cloneTable)
+			clone.MethodCall = cloned
+			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
+		}
+	}
+
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

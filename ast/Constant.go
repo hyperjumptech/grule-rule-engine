@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -22,6 +23,19 @@ type Constant struct {
 	DataContext   *DataContext
 	WorkingMemory *WorkingMemory
 	Value         reflect.Value
+}
+
+// Clone will clone this Constant. The new clone will have an identical structure
+func (e Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
+	clone := &Constant{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+		Value:         e.Value,
+	}
+
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

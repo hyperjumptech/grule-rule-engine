@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -22,6 +23,28 @@ type WhenScope struct {
 	WorkingMemory *WorkingMemory
 
 	Expression *Expression
+}
+
+// Clone will clone this Clone. The new clone will have an identical structure
+func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
+	clone := &WhenScope{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+
+	if e.Expression != nil {
+		if cloneTable.IsCloned(e.Expression.AstID) {
+			clone.Expression = cloneTable.Records[e.Expression.AstID].CloneInstance.(*Expression)
+		} else {
+			cloned := e.Expression.Clone(cloneTable)
+			clone.Expression = cloned
+			cloneTable.MarkCloned(e.Expression.AstID, cloned.AstID, e.Expression, cloned)
+		}
+	}
+
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

@@ -60,14 +60,16 @@ func (cf *ItemPriceChecker) CheckPrices() {
 		Price: 110,
 	})
 
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+
 	// Prepare knowledgebase and load it with our rule.
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("PriceCheck", "0.0.1")
-	rb := builder.NewRuleBuilder(kb, memory)
-	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule1)))
+	err := rb.BuildRuleFromResource("PriceCheck", "0.0.1", pkg.NewBytesResource([]byte(PriceCheckRule1)))
 	if err != nil {
 		panic(err)
 	}
+
+	kb := lib.NewKnowledgeBaseInstance("PriceCheck", "0.0.1")
 
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
@@ -81,7 +83,7 @@ func (cf *ItemPriceChecker) CheckPrices() {
 		if err != nil {
 			panic(err)
 		}
-		err = eng.Execute(dctx, kb, memory)
+		err = eng.Execute(dctx, kb)
 		if err != nil {
 			panic(err)
 		}
@@ -146,14 +148,15 @@ func (cf *ItemPriceChecker) CheckCart() {
 	})
 	cart := &ItemCart{Items: items}
 
-	// Prepare knowledgebase and load it with our rule.
-	mem := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("Cart Check Rules", "0.0.1")
-	rb := builder.NewRuleBuilder(kb, mem)
-	err := rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(PriceCheckRule2)))
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err := rb.BuildRuleFromResource("Cart Check Rules", "0.0.1", pkg.NewBytesResource([]byte(PriceCheckRule2)))
 	if err != nil {
 		panic(err)
 	}
+
+	kb := lib.NewKnowledgeBaseInstance("Cart Check Rules", "0.0.1")
 
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
@@ -163,7 +166,7 @@ func (cf *ItemPriceChecker) CheckCart() {
 	if err != nil {
 		panic(err)
 	}
-	err = eng.Execute(dctx, kb, mem)
+	err = eng.Execute(dctx, kb)
 	if err != nil {
 		panic(err)
 	}
