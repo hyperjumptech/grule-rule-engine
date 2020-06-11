@@ -454,17 +454,17 @@ And another`
 	err := dctx.Add("ESTest", es)
 	assert.NoError(t, err)
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("Test", "0.0.1")
-	rb := builder.NewRuleBuilder(kb, memory)
-	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(escapedRules)))
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(escapedRules)))
 	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
 
 	assert.False(t, es.Result1)
 	assert.False(t, es.Result2)
 
 	engine := NewGruleEngine()
-	err = engine.Execute(dctx, kb, memory)
+	err = engine.Execute(dctx, kb)
 	assert.NoError(t, err)
 
 	assert.True(t, es.Result1)
