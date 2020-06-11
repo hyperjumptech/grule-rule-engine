@@ -25,7 +25,7 @@ func TestWorkingMemory_Add(t *testing.T) {
 		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.d"}}},
 		Operator:        OpMul,
 	}
-	wm := NewWorkingMemory()
+	wm := NewWorkingMemory("T", "1")
 	_, added := wm.Add(expr1)
 	if !added {
 		t.Fatalf("Expression not added on the first expression")

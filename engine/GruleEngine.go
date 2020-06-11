@@ -33,7 +33,7 @@ type GruleEngine struct {
 
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
-func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase, memory *ast.WorkingMemory) error {
+func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase) error {
 	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
 	RuleEntryPublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic)
 
@@ -45,15 +45,13 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
-	knowledge.WorkingMemory = memory
-
 	// Prepare the timer, we need to measure the processing time in debug mode.
 	startTime := time.Now()
 
 	// Prepare the build-in function and add to datacontext.
 	defunc := &ast.BuildInFunctions{
 		Knowledge:     knowledge,
-		WorkingMemory: memory,
+		WorkingMemory: knowledge.WorkingMemory,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
@@ -63,7 +61,7 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 	// Initialize all AST with datacontext and working memory
 	log.Debugf("Initializing Context")
-	knowledge.InitializeContext(dataCtx, memory)
+	knowledge.InitializeContext(dataCtx)
 
 	var cycle uint64
 

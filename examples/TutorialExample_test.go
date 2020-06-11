@@ -39,9 +39,9 @@ func TestTutorial(t *testing.T) {
 		panic(err)
 	}
 
-	workingMemory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("Tutorial", "0.0.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, workingMemory)
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
 
 	drls := `
 rule CheckValues "Check the default values" salience 10 {
@@ -52,14 +52,16 @@ rule CheckValues "Check the default values" salience 10 {
 		Retract("CheckValues");
 }
 `
-	byteArr := pkg.NewBytesResource([]byte(drls))
-	err = ruleBuilder.BuildRuleFromResource(byteArr)
+
+	err = rb.BuildRuleFromResource("Tutorial", "0.0.1", pkg.NewBytesResource([]byte(drls)))
 	if err != nil {
 		panic(err)
 	}
 
+	knowledgeBase := lib.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+
 	engine := engine.NewGruleEngine()
-	err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
+	err = engine.Execute(dataCtx, knowledgeBase)
 	if err != nil {
 		panic(err)
 	}

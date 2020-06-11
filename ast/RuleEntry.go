@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -29,6 +30,40 @@ type RuleEntry struct {
 	ThenScope   *ThenScope
 
 	Retracted bool
+}
+
+// Clone will clone this RuleEntry. The new clone will have an identical structure
+func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
+	clone := &RuleEntry{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+		Name:          e.Name,
+		Description:   e.Description,
+		Salience:      e.Salience,
+		Retracted:     false,
+	}
+	if e.WhenScope != nil {
+		if cloneTable.IsCloned(e.WhenScope.AstID) {
+			clone.WhenScope = cloneTable.Records[e.WhenScope.AstID].CloneInstance.(*WhenScope)
+		} else {
+			clonedWhenScope := e.WhenScope.Clone(cloneTable)
+			clone.WhenScope = clonedWhenScope
+			cloneTable.MarkCloned(e.WhenScope.AstID, clonedWhenScope.AstID, e.WhenScope, clonedWhenScope)
+		}
+	}
+
+	if e.ThenScope != nil {
+		if cloneTable.IsCloned(e.ThenScope.AstID) {
+			clone.ThenScope = cloneTable.Records[e.ThenScope.AstID].CloneInstance.(*ThenScope)
+		} else {
+			clonedThenScope := e.ThenScope.Clone(cloneTable)
+			clone.ThenScope = clonedThenScope
+			cloneTable.MarkCloned(e.ThenScope.AstID, clonedThenScope.AstID, e.ThenScope, clonedThenScope)
+		}
+	}
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

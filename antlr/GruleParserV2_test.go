@@ -5,6 +5,8 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/events"
+	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -47,8 +49,15 @@ func TestV2Parser(t *testing.T) {
 
 		var parseError error
 
-		memory := ast.NewWorkingMemory()
-		kb := ast.NewKnowledgeBase("KB", "1.0.0")
+		memory := ast.NewWorkingMemory("T", "1")
+		kb := &ast.KnowledgeBase{
+			Name:          "T",
+			Version:       "1",
+			DataContext:   nil,
+			WorkingMemory: memory,
+			RuleEntries:   make(map[string]*ast.RuleEntry),
+			Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+		}
 
 		listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 			parseError = e
@@ -136,8 +145,15 @@ func TestV2Parser2(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("T", "1")
+	kb := &ast.KnowledgeBase{
+		Name:          "T",
+		Version:       "1",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e

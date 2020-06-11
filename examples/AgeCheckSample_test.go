@@ -47,16 +47,16 @@ func TestMyPoGo_GetStringLength(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	memory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("Test", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, memory)
+	lib := ast.NewKnowledgeLibrary()
+	ruleBuilder := builder.NewRuleBuilder(lib)
 
-	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule2)))
+	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule2)))
 	if err != nil {
 		t.Fatal(err)
 	} else {
+		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
 		eng1 := &engine.GruleEngine{MaxCycle: 1}
-		err := eng1.Execute(dataContext, knowledgeBase, memory)
+		err := eng1.Execute(dataContext, kb)
 		if err != nil {
 			t.Fatalf("Got error %v", err)
 		} else {
@@ -82,16 +82,16 @@ func TestMyPoGo_Compare(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	memory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("Test", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, memory)
+	lib := ast.NewKnowledgeLibrary()
+	ruleBuilder := builder.NewRuleBuilder(lib)
 
-	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule3)))
+	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule3)))
 	if err != nil {
-		t.Log(err)
+		t.Fatal(err)
 	} else {
+		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
 		eng1 := &engine.GruleEngine{MaxCycle: 100}
-		err := eng1.Execute(dataContext, knowledgeBase, memory)
+		err := eng1.Execute(dataContext, kb)
 		if err != nil {
 			t.Fatalf("Got error %v", err)
 		} else {
