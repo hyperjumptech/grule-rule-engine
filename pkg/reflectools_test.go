@@ -139,7 +139,7 @@ func TestGetFunctionList(t *testing.T) {
 
 func TestGetFunctionParameterTypes(t *testing.T) {
 	to := &TestObject{}
-	types, err := GetFunctionParameterTypes(to, "FunctionC")
+	types, _, err := GetFunctionParameterTypes(to, "FunctionC")
 	if err != nil {
 		t.Errorf("Error : %v", err)
 		t.FailNow()
