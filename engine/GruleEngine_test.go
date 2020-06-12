@@ -420,3 +420,53 @@ func TestEngine_OperatorPrecedence(t *testing.T) {
 
 	assert.Equal(t, int64(3), ts.Result)
 }
+
+type ESTest struct {
+	Var1    string
+	Var2    string
+	Result1 bool
+	Result2 bool
+}
+
+const escapedRules = `rule EscapedRuleA "test string escaping" salience 10 {
+    when
+        ESTest.Var1 == "C:\\Windows\\System32\\ntdll.dll"
+    then
+        ESTest.Result1 = true;
+		Retract("EscapedRuleA");
+}
+
+rule EscapedRuleB "test string escaping" salience 10 {
+    when
+        ESTest.Var2 == "some \"escaped\" string value\nAnd another"
+    then
+        ESTest.Result2 = true;
+		Retract("EscapedRuleB");
+}`
+
+func TestEngine_EscapedStrings(t *testing.T) {
+	es := &ESTest{}
+	es.Var1 = `C:\Windows\System32\ntdll.dll`
+	es.Var2 = `some "escaped" string value
+And another`
+
+	dctx := ast.NewDataContext()
+	err := dctx.Add("ESTest", es)
+	assert.NoError(t, err)
+
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("Test", "0.0.1")
+	rb := builder.NewRuleBuilder(kb, memory)
+	err = rb.BuildRuleFromResource(pkg.NewBytesResource([]byte(escapedRules)))
+	assert.NoError(t, err)
+
+	assert.False(t, es.Result1)
+	assert.False(t, es.Result2)
+
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb, memory)
+	assert.NoError(t, err)
+
+	assert.True(t, es.Result1)
+	assert.True(t, es.Result2)
+}

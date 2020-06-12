@@ -103,6 +103,26 @@ rule SetTime "When Distance Recorder time not set, set it." {
 
 }
 `
+	invalidEscapeRule = `rule SetTime "When Distance Recorder time not set, set it." {
+	when
+		IsZero(DistanceRecord.TestTime)
+	then
+		ABC.abc = "abc\cde";
+		Log("Set the test time");
+		DistanceRecord.TestTime = Now();
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+
+}`
+	validEscapeRule = `rule SetTime "When Distance Recorder time not set, set it." {
+	when
+		IsZero(DistanceRecord.TestTime)
+	then
+		ABC.abc = "abc\\cde";
+		Log("Set the test time");
+		DistanceRecord.TestTime = Now();
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+
+}`
 )
 
 func TestV2Parser2(t *testing.T) {
@@ -131,5 +151,55 @@ func TestV2Parser2(t *testing.T) {
 	if parseError != nil {
 		t.Log(parseError)
 		t.FailNow()
+	}
+}
+
+func TestV2ParserEscapedStringInvalid(t *testing.T) {
+	logrus.SetLevel(logrus.DebugLevel)
+
+	is := antlr.NewInputStream(invalidEscapeRule)
+	lexer := parser.Newgrulev2Lexer(is)
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	var parseError error
+
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+
+	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+		parseError = e
+	})
+
+	psr := parser.Newgrulev2Parser(stream)
+	psr.BuildParseTrees = true
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+
+	if parseError == nil {
+		t.Fatal("Successfully parsed invalid string literal, should have gotten an error")
+	}
+}
+
+func TestV2ParserEscapedStringValid(t *testing.T) {
+	logrus.SetLevel(logrus.DebugLevel)
+
+	is := antlr.NewInputStream(validEscapeRule)
+	lexer := parser.Newgrulev2Lexer(is)
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	var parseError error
+
+	memory := ast.NewWorkingMemory()
+	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+
+	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+		parseError = e
+	})
+
+	psr := parser.Newgrulev2Parser(stream)
+	psr.BuildParseTrees = true
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+
+	if parseError != nil {
+		t.Fatal("Failed to parse rule with escaped string constant")
 	}
 }
