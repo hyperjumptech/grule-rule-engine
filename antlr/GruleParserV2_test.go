@@ -179,8 +179,15 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("KB", "1.0.0")
+	kb := &ast.KnowledgeBase{
+		Name:          "KB",
+		Version:       "1.0.0",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e
@@ -204,8 +211,15 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("KB", "1.0.0")
+	kb := &ast.KnowledgeBase{
+		Name:          "KB",
+		Version:       "1.0.0",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e
