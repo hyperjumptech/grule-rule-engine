@@ -3,18 +3,51 @@ package ast
 import (
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/events"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"sync"
 )
 
-// NewKnowledgeBase create a new instance of KnowledgeBase
-func NewKnowledgeBase(name, version string) *KnowledgeBase {
-	return &KnowledgeBase{
-		Name:        name,
-		Version:     version,
-		RuleEntries: make(map[string]*RuleEntry),
-		Publisher:   eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic),
+// NewKnowledgeLibrary create a new instance KnowledgeLibrary
+func NewKnowledgeLibrary() *KnowledgeLibrary {
+	return &KnowledgeLibrary{
+		Library: make(map[string]*KnowledgeBase),
 	}
+}
+
+// KnowledgeLibrary is a knowledgebase store.
+type KnowledgeLibrary struct {
+	Library map[string]*KnowledgeBase
+}
+
+// GetKnowledgeBase will get the actual KnowledgeBase blue print that will be used to create instances.
+// Although this KnowledgeBase blueprint works, It SHOULD NOT be used directly in the engine.
+// You should obtain KnowledgeBase instance by calling NewKnowledgeBaseInstance
+func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBase {
+	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	if ok {
+		return kb
+	}
+	kb = &KnowledgeBase{
+		Name:          name,
+		Version:       version,
+		RuleEntries:   make(map[string]*RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic),
+		WorkingMemory: NewWorkingMemory(name, version),
+	}
+	lib.Library[fmt.Sprintf("%s:%s", name, version)] = kb
+	return kb
+}
+
+// NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
+// identified by its name and version
+func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
+	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	if ok {
+		cTable := pkg.NewCloneTable()
+		return kb.Clone(cTable)
+	}
+	return nil
 }
 
 // KnowledgeBase is a collection of RuleEntries. It has a name and version.
@@ -26,6 +59,32 @@ type KnowledgeBase struct {
 	WorkingMemory *WorkingMemory
 	RuleEntries   map[string]*RuleEntry
 	Publisher     *eventbus.Publisher
+}
+
+// Clone will clone this instance of KnowledgeBase and produce another (structure wise) identical instance.
+func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
+	clone := &KnowledgeBase{
+		Name:        e.Name,
+		Version:     e.Version,
+		RuleEntries: make(map[string]*RuleEntry),
+		Publisher:   eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic),
+	}
+	if e.RuleEntries != nil {
+		for k, entry := range e.RuleEntries {
+			clone.RuleEntries[k] = entry.Clone(cloneTable)
+			if cloneTable.IsCloned(entry.AstID) {
+				clone.RuleEntries[k] = cloneTable.Records[entry.AstID].CloneInstance.(*RuleEntry)
+			} else {
+				cloned := entry.Clone(cloneTable)
+				clone.RuleEntries[k] = cloned
+				cloneTable.MarkCloned(entry.AstID, cloned.AstID, entry, cloned)
+			}
+		}
+	}
+	if e.WorkingMemory != nil {
+		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
+	}
+	return clone
 }
 
 // AddRuleEntry add ruleentry into this knowledge base.
@@ -70,12 +129,11 @@ func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *KnowledgeBase) InitializeContext(dataCtx *DataContext, memory *WorkingMemory) {
+func (e *KnowledgeBase) InitializeContext(dataCtx *DataContext) {
 	e.DataContext = dataCtx
-	e.WorkingMemory = memory
 	if e.RuleEntries != nil {
 		for _, re := range e.RuleEntries {
-			re.InitializeContext(dataCtx, memory)
+			re.InitializeContext(dataCtx, e.WorkingMemory)
 		}
 	}
 }

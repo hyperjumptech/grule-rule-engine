@@ -1,10 +1,11 @@
 package antlr
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/events"
+	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -27,14 +28,13 @@ func TestV2Lexer(t *testing.T) {
 			if nt.GetTokenType() == antlr.TokenEOF {
 				break
 			}
-			fmt.Println(nt.GetText())
 		}
 	}
 
 }
 
 func TestV2Parser(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 	data, err := ioutil.ReadFile("./sample2.grl")
 	if err != nil {
 		t.Fatal(err)
@@ -47,8 +47,15 @@ func TestV2Parser(t *testing.T) {
 
 		var parseError error
 
-		memory := ast.NewWorkingMemory()
-		kb := ast.NewKnowledgeBase("KB", "1.0.0")
+		memory := ast.NewWorkingMemory("T", "1")
+		kb := &ast.KnowledgeBase{
+			Name:          "T",
+			Version:       "1",
+			DataContext:   nil,
+			WorkingMemory: memory,
+			RuleEntries:   make(map[string]*ast.RuleEntry),
+			Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+		}
 
 		listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 			parseError = e
@@ -126,7 +133,7 @@ rule SetTime "When Distance Recorder time not set, set it." {
 )
 
 func TestV2Parser2(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 
 	sdata := rules
 
@@ -136,8 +143,15 @@ func TestV2Parser2(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("T", "1")
+	kb := &ast.KnowledgeBase{
+		Name:          "T",
+		Version:       "1",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e
@@ -163,8 +177,15 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("KB", "1.0.0")
+	kb := &ast.KnowledgeBase{
+		Name:          "KB",
+		Version:       "1.0.0",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e
@@ -188,8 +209,15 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory()
-	kb := ast.NewKnowledgeBase("KB", "1.0.0")
+	memory := ast.NewWorkingMemory("KB", "1.0.0")
+	kb := &ast.KnowledgeBase{
+		Name:          "KB",
+		Version:       "1.0.0",
+		DataContext:   nil,
+		WorkingMemory: memory,
+		RuleEntries:   make(map[string]*ast.RuleEntry),
+		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
+	}
 
 	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
 		parseError = e

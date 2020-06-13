@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -24,6 +25,35 @@ type Assignment struct {
 
 	Variable   *Variable
 	Expression *Expression
+}
+
+// Clone will clone this Assignment. The new clone will have an identical structure
+func (e Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
+	clone := &Assignment{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+	if e.Variable != nil {
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
+	}
+	if e.Expression != nil {
+		if cloneTable.IsCloned(e.Expression.AstID) {
+			clone.Expression = cloneTable.Records[e.Expression.AstID].CloneInstance.(*Expression)
+		} else {
+			cloned := e.Expression.Clone(cloneTable)
+			clone.Expression = cloned
+			cloneTable.MarkCloned(e.Expression.AstID, cloned.AstID, e.Expression, cloned)
+		}
+	}
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

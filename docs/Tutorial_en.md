@@ -16,12 +16,12 @@ From your `go` you can import Grule.
 
 ```go
 import (
-    "github.com/hyperjumptech/grule-rule-engine/ast"
-    "github.com/hyperjumptech/grule-rule-engine/builder"
-    "github.com/hyperjumptech/grule-rule-engine/engine"
-    "github.com/hyperjumptech/grule-rule-engine/pkg"
-)
-```
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+) 
+``` 
 
 ## Creating Fact Structure
 
@@ -86,25 +86,27 @@ if err != nil {
 }
 ```
 
-## Creating KnowledgeBase and Adding Rules
+## Creating KnowledgeLibrary and Add Rules Into It
 
-A `KnowledgeBase` is basically collection of many rules sourced from rule definitions
+A `KnowledgeLibrary` is basically collection of `KnowledgeBase` blue prints. 
+And `KnowledgeBase` is a collection of many rules sourced from rule definitions
 loaded from multiple sources.
+We use `RuleBuilder` to build `KnowledgeBase` and add it into `KnowledgeLibrary`
 
 The DRL, can be in the form of simple string, stored in a file or somewhere from the internet can each be
 used to build those rules.
 
-Now lets create the `KnowledgeBase`, `WorkingMemory` and then create new `RuleBuilder` to build the rule into prepared `KnowledgeBase`
+Now lets create the `KnowledgeLibrary` and `RuleBuilder` to build the rule into prepared `KnowledgeLibrary`
 
 ```go
-workingMemory := ast.NewWorkingMemory()
-knowledgeBase := ast.NewKnowledgeBase("tutorial", "1.0.0")
-ruleBuilder := builder.NewRuleBuilder(knowledgeBase, workingMemory)
+knowledgeLibrary := ast.NewKnowledgeLibrary()
+ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 ```
 
 Now we can add rules (defined within a GRL)
 
 ```go
+// lets prepare a rule definition
 drls := `
 rule CheckValues "Check the default values" salience 10 {
     when 
@@ -114,8 +116,10 @@ rule CheckValues "Check the default values" salience 10 {
         Retract("CheckValues);
 }
 `
+
+// Add the rule definition above into the library and name it 'TutorialRules'  version '0.0.1'
 byteArr := pkg.NewBytesResource([]byte(drls))
-err := ruleBuilder.BuildRuleFromResource(byteArr)
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", byteArr)
 if err != nil {
     panic(err)
 }
@@ -129,7 +133,7 @@ You can always load a GRL from multiple sources.
 
 ```go
 fileRes := pkg.NewFileResource("/path/to/rules.grl")
-err := ruleBuilder.BuildRuleFromResource(fileRes)
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", fileRes)
 if err != nil {
     panic(err)
 }
@@ -141,7 +145,7 @@ or if you want to get file resource by their pattern
 bundle := pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
-    err := ruleBuilder.BuildRuleFromResource(res)
+    err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
     if err != nil {
         panic(err)
     }
@@ -152,7 +156,7 @@ for _, res := range resources {
 
 ```go
 byteArr := pkg.NewBytesResource([]byte(rules))
-err := ruleBuilder.BuildRuleFromResource(byteArr)
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", byteArr)
 if err != nil {
     panic(err)
 }
@@ -162,7 +166,7 @@ if err != nil {
 
 ```go
 urlRes := pkg.NewUrlResource("http://host.com/path/to/rule.grl")
-err := ruleBuilder.BuildRuleFromResource(urlRes)
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", urlRes)
 if err != nil {
     panic(err)
 }
@@ -174,21 +178,32 @@ if err != nil {
 bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
-    err := ruleBuilder.BuildRuleFromResource(res)
+    err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
     if err != nil {
         panic(err)
     }
 }
 ```
 
+Now, in the `KnowledgeLibrary` we have a `KnowledgeBase` named `TutorialRules` with version `0.0.1`. To execute this particular rule, you have to obtain an instance of it from the `KnowledgeLibrary`. This will be explained on the next section.
+
 ## Executing Grule Rule Engine
 
-To execute the rules, we need to create an instance of `GruleEngine` and with it,
-we execute evaluate our `KnowledgeBase` upon the facts in `DataContext`
+To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase` from `KnowledgeLibrary` 
 
 ```go
-engine := engine.NewGruleEngine()
-err = engine.Execute(dataCtx, knowledgeBase, workingMemory)
+knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+```
+
+Each instance you obtained from knowledgeLibrary is a *clone* from the underlying `KnowledgeBase` *blue-print*. Its entirely different instance that makes it *thread-safe* for execution. Each *instance* also carries its own `WorkingMemory`. This is very useful when you want to have a multithreaded execution of rule engine (eg. In a web-server to serve each request using a rule).
+
+Its a significant performance improvement boost since you don't have to "recreate" a `KnowledgeBase` from GRL everytime you start another thread. The `KnowledgeLibrary` will clone the `AST` structure of `KnowledgeBase` into a new instance.
+
+Ok, now lets execute the `KnowledgeBase` instance using the prepared `DataContext`.
+
+```go
+engine = engine.NewGruleEngine()
+err = engine.Execute(dataCtx, knowledgeBase)
 if err != nil {
     panic(err)
 }

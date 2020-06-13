@@ -33,10 +33,11 @@ func TestItemPriceChecker_TestParser(t *testing.T) {
 	lexer := parser2.Newgrulev2Lexer(nis)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	mem := ast.NewWorkingMemory()
+	lib := ast.NewKnowledgeLibrary()
+	kb := lib.GetKnowledgeBase("Test", "0.1.1")
 
 	var parseError error
-	listener := antlr2.NewGruleV2ParserListener(ast.NewKnowledgeBase("Test", "0.1.1"), mem, func(e error) {
+	listener := antlr2.NewGruleV2ParserListener(kb, kb.WorkingMemory, func(e error) {
 		parseError = e
 	})
 

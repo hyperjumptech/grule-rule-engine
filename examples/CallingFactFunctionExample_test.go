@@ -69,16 +69,16 @@ func TestCallingFactFunction(t *testing.T) {
 		panic(err)
 	}
 
-	memory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("CallingFactFunction", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, memory)
-
-	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(CallFactFuncDRL)))
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	ruleBuilder := builder.NewRuleBuilder(lib)
+	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncDRL)))
+	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")
 	if err != nil {
 		panic(err)
 	} else {
 		eng1 := &engine.GruleEngine{MaxCycle: 500}
-		err := eng1.Execute(dataContext, knowledgeBase, memory)
+		err := eng1.Execute(dataContext, knowledgeBase)
 		if err != nil {
 			t.Fatalf("Got error %v", err)
 		}

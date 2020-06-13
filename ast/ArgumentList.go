@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -23,6 +24,29 @@ type ArgumentList struct {
 	WorkingMemory *WorkingMemory
 
 	Arguments []*Expression
+}
+
+// Clone will clone this ArgumentList. The new clone will have an identical structure
+func (e ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
+	clone := &ArgumentList{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+	if e.Arguments != nil {
+		clone.Arguments = make([]*Expression, len(e.Arguments))
+		for k, expr := range e.Arguments {
+			if cloneTable.IsCloned(expr.AstID) {
+				clone.Arguments[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
+			} else {
+				clonedExpr := expr.Clone(cloneTable)
+				clone.Arguments[k] = clonedExpr
+				cloneTable.MarkCloned(expr.AstID, clonedExpr.AstID, expr, clonedExpr)
+			}
+		}
+	}
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

@@ -41,7 +41,7 @@ func TestNewWhenScope(t *testing.T) {
 		t.Fatalf("Not Error when second time time accept expression")
 	}
 
-	wm := NewWorkingMemory()
+	wm := NewWorkingMemory("T", "1")
 	dt := NewDataContext()
 	test := &TestStructShenScope{
 		StringA: "abc",

@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenExpressionList creates new instance of ThenExpressionList
@@ -21,6 +22,31 @@ type ThenExpressionList struct {
 	WorkingMemory *WorkingMemory
 
 	ThenExpressions []*ThenExpression
+}
+
+// Clone will clone this ThenExpressionList. The new clone will have an identical structure
+func (e ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionList {
+	clone := &ThenExpressionList{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+
+	if e.ThenExpressions != nil {
+		clone.ThenExpressions = make([]*ThenExpression, len(e.ThenExpressions))
+		for k, expr := range e.ThenExpressions {
+			if cloneTable.IsCloned(expr.AstID) {
+				clone.ThenExpressions[k] = cloneTable.Records[expr.AstID].CloneInstance.(*ThenExpression)
+			} else {
+				cloned := expr.Clone(cloneTable)
+				clone.ThenExpressions[k] = cloned
+				cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
+			}
+		}
+	}
+
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

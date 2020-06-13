@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	log "github.com/sirupsen/logrus"
 	"reflect"
 )
@@ -26,6 +27,28 @@ type FunctionCall struct {
 	FunctionName string
 	ArgumentList *ArgumentList
 	Value        reflect.Value
+}
+
+// Clone will clone this FunctionCall. The new clone will have an identical structure
+func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
+	clone := &FunctionCall{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+		FunctionName:  e.FunctionName,
+	}
+
+	if e.ArgumentList != nil {
+		if cloneTable.IsCloned(e.ArgumentList.AstID) {
+			clone.ArgumentList = cloneTable.Records[e.ArgumentList.AstID].CloneInstance.(*ArgumentList)
+		} else {
+			cloned := e.ArgumentList.Clone(cloneTable)
+			clone.ArgumentList = cloned
+			cloneTable.MarkCloned(e.ArgumentList.AstID, cloned.AstID, e.ArgumentList, cloned)
+		}
+	}
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.

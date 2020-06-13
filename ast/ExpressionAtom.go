@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
 
@@ -26,6 +27,46 @@ type ExpressionAtom struct {
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
 	Value        reflect.Value
+}
+
+// Clone will clone this ExpressionAtom. The new clone will have an identical structure
+func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
+	clone := &ExpressionAtom{
+		AstID:         uuid.New().String(),
+		GrlText:       e.GrlText,
+		DataContext:   nil,
+		WorkingMemory: nil,
+	}
+
+	if e.Constant != nil {
+		clone.Constant = e.Constant.Clone(cloneTable)
+	}
+
+	if e.Variable != nil {
+		clone.Variable = e.Variable.Clone(cloneTable)
+	}
+
+	if e.FunctionCall != nil {
+		if cloneTable.IsCloned(e.FunctionCall.AstID) {
+			clone.FunctionCall = cloneTable.Records[e.FunctionCall.AstID].CloneInstance.(*FunctionCall)
+		} else {
+			cloned := e.FunctionCall.Clone(cloneTable)
+			clone.FunctionCall = cloned
+			cloneTable.MarkCloned(e.FunctionCall.AstID, cloned.AstID, e.FunctionCall, cloned)
+		}
+	}
+
+	if e.MethodCall != nil {
+		if cloneTable.IsCloned(e.MethodCall.AstID) {
+			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
+		} else {
+			cloned := e.MethodCall.Clone(cloneTable)
+			clone.MethodCall = cloned
+			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
+		}
+	}
+
+	return clone
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
