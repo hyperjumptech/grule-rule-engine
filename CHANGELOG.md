@@ -69,3 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - EventBus implementation for Grule's internal event messaging now replaces the previous simple subscriber approach.
 - Added documentation regarding this EventBus implementation
+
+### [1.3.0] - 2020-06-11
+
+#### Added
+
+- Variadic function calling
