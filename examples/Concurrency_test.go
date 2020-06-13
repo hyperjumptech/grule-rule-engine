@@ -6,6 +6,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/sirupsen/logrus"
 	"sync"
 	"testing"
 	"time"
@@ -39,6 +40,11 @@ var (
 
 	// syncD is a mutex object to protect threadFinishMap from concurrent map read/write
 	syncD = sync.Mutex{}
+
+	concurrencyTestlog = logrus.WithFields(logrus.Fields{
+		"lib":  "grule",
+		"file": "examples/Concurrency_test.go",
+	})
 )
 
 // Vibonaci our model
@@ -76,7 +82,7 @@ func isAllThreadFinished() bool {
 }
 
 func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
-	t.Logf("Beginning thread %s", threadName)
+	concurrencyTestlog.Tracef("Beginning thread %s", threadName)
 
 	// Register this thread into our simple finish map check
 	startThread(threadName)
@@ -119,10 +125,12 @@ func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
 	}
 
 	// We are done.
-	t.Logf("Finishing thread %s, Count:%d, A:%d,B:%d,C:%d", threadName, vibo.Count, vibo.A, vibo.B, vibo.C)
+	concurrencyTestlog.Tracef("Finishing thread %s, Count:%d, A:%d,B:%d,C:%d", threadName, vibo.Count, vibo.A, vibo.B, vibo.C)
 }
 
 func TestConcurrency(t *testing.T) {
+	logrus.SetLevel(logrus.InfoLevel)
+
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)

@@ -1,7 +1,6 @@
 package antlr
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
@@ -29,14 +28,13 @@ func TestV2Lexer(t *testing.T) {
 			if nt.GetTokenType() == antlr.TokenEOF {
 				break
 			}
-			fmt.Println(nt.GetText())
 		}
 	}
 
 }
 
 func TestV2Parser(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 	data, err := ioutil.ReadFile("./sample2.grl")
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +133,7 @@ rule SetTime "When Distance Recorder time not set, set it." {
 )
 
 func TestV2Parser2(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 
 	sdata := rules
 
