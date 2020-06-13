@@ -47,10 +47,12 @@ then
 
 | Literal | Description                                                            | Example                          |
 | ------- | ---------------------------------------------------------------------- | -------------------------------- |
-| String  | Hold string literal, enclosed a string with double quote symbol &quot; or a single quote | "This is a string" or 'this is a string' |
-| Decimal | Hold a decimal value, may preceeded with negative symbol -             | `1` or `34` or `42344` or `-553` |
+| String  | Hold string literal, enclosed a string with double quote symbol &quot; or a single quote ' | "This is a string" or 'this is a string' |
+| Decimal | Hold a decimal value, may preceded with negative symbol -             | `1` or `34` or `42344` or `-553` |
 | Real    | Hold a real value                                                      | `234.4553`, `-234.3` , `314E-2`, `.32` , `12.32E12`  |
 | Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
+
+Note: Strings are escaped following the same rules used for standard Go strings. Backtick strings are not supported.
 
 Operators supported :
 
