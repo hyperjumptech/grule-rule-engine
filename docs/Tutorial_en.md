@@ -113,7 +113,7 @@ rule CheckValues "Check the default values" salience 10 {
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
-        Retract("CheckValues);
+        Retract("CheckValues");
 }
 `
 
