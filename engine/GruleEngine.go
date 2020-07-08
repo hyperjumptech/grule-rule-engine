@@ -1,13 +1,14 @@
 package engine
 
 import (
+	"sort"
+	"time"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
-	"sort"
-	"time"
 )
 
 var (
@@ -49,7 +50,7 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 	startTime := time.Now()
 
 	// Prepare the build-in function and add to datacontext.
-	defunc := &ast.BuildInFunctions{
+	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
 	}
