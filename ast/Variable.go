@@ -2,9 +2,10 @@ package ast
 
 import (
 	"bytes"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewVariable create new instance of Variable
@@ -19,7 +20,7 @@ func NewVariable(name string) *Variable {
 type Variable struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Name  string
@@ -39,7 +40,7 @@ func (e Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Variable) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *Variable) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 }

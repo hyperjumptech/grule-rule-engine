@@ -55,7 +55,7 @@ func NewExpression() *Expression {
 type Expression struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	LeftExpression   *Expression
@@ -122,7 +122,7 @@ func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Expression) InitializeContext(dataCtx *DataContext, memory *WorkingMemory) {
+func (e *Expression) InitializeContext(dataCtx IDataContext, memory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = memory
 	if e.LeftExpression != nil {

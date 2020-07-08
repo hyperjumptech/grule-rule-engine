@@ -17,3 +17,6 @@ test: lint
 
 test-coverage: test
 	go tool cover -html=coverage.out
+
+mocks:
+	go generate ./...

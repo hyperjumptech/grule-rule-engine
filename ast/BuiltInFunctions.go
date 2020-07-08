@@ -36,7 +36,7 @@ func (gf *BuiltInFunctions) MakeTime(year, month, day, hour, minute, second int6
 // function if the variable got changed from your internal struct logic.
 func (gf *BuiltInFunctions) Changed(variableName string) {
 	gf.WorkingMemory.Reset(variableName)
-	gf.Knowledge.DataContext.VariableChangeCount++
+	gf.Knowledge.DataContext.IncrementVariableChangeCount()
 }
 
 // Now is an extension tn time.Now().

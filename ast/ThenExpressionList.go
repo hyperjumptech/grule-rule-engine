@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -18,7 +19,7 @@ func NewThenExpressionList() *ThenExpressionList {
 type ThenExpressionList struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	ThenExpressions []*ThenExpression
@@ -50,7 +51,7 @@ func (e ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionLis
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenExpressionList) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *ThenExpressionList) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.ThenExpressions != nil {

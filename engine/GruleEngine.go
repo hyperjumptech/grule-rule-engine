@@ -34,7 +34,7 @@ type GruleEngine struct {
 
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
-func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.KnowledgeBase) error {
+func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
 	RuleEntryPublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic)
 
@@ -132,7 +132,7 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 
 			for _, r := range runnable {
 				// reset the counter to 0 to detect if there are variable change.
-				dataCtx.VariableChangeCount = 0
+				dataCtx.ResetVariableChangeCount()
 				log.Debugf("Executing rule : %s. Salience %d", r.Name, r.Salience)
 
 				// emit rule execute start event
@@ -154,7 +154,7 @@ func (g *GruleEngine) Execute(dataCtx *ast.DataContext, knowledge *ast.Knowledge
 				})
 
 				//if there is a variable change, restart the cycle.
-				if dataCtx.VariableChangeCount > 0 {
+				if dataCtx.HasVariableChange() {
 					cycleDone = false
 					break
 				}

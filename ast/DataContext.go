@@ -1,5 +1,7 @@
 package ast
 
+//go:generate mockgen -destination=../mocks/ast/DataContext.go -package=mocksAst . IDataContext
+
 import (
 	"fmt"
 	"reflect"
@@ -10,23 +12,57 @@ import (
 )
 
 // NewDataContext will create a new DataContext instance
-func NewDataContext() *DataContext {
+func NewDataContext() IDataContext {
 	return &DataContext{
 		ObjectStore: make(map[string]interface{}),
-		Retracted:   make([]string, 0),
+
+		retracted:           make([]string, 0),
+		variableChangeCount: 0,
 	}
 }
 
 // DataContext holds all structs instance to be used in rule execution environment.
 type DataContext struct {
-	ObjectStore         map[string]interface{}
-	Retracted           []string
-	VariableChangeCount uint64
+	ObjectStore map[string]interface{}
+
+	retracted           []string
+	variableChangeCount uint64
 }
 
-// Retract temporary retract a fact from data context, making it unavailable for evaluation or modification.
-func (ctx *DataContext) Retract(key string) {
-	ctx.Retracted = append(ctx.Retracted, key)
+// IDataContext is the interface for the DataContext struct.
+type IDataContext interface {
+	ResetVariableChangeCount()
+	IncrementVariableChangeCount()
+	HasVariableChange() bool
+
+	Add(key string, obj interface{}) error
+
+	Retract(key string)
+	IsRetracted(key string) bool
+	Retracted() []string
+	Reset()
+
+	ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error)
+
+	GetType(variable string) (reflect.Type, error)
+
+	GetValue(variable string) (reflect.Value, error)
+	SetValue(variable string, newValue reflect.Value) error
+}
+
+// ResetVariableChangeCount will reset the variable change count
+func (ctx *DataContext) ResetVariableChangeCount() {
+	ctx.variableChangeCount = 0
+}
+
+// IncrementVariableChangeCount will increment the variable change count
+func (ctx *DataContext) IncrementVariableChangeCount() {
+	ctx.variableChangeCount++
+}
+
+// HasVariableChange returns true if there are variable changes
+func (ctx *DataContext) HasVariableChange() bool {
+	return ctx.variableChangeCount > 0
 }
 
 // Add will add struct instance into rule execution context
@@ -39,9 +75,14 @@ func (ctx *DataContext) Add(key string, obj interface{}) error {
 	return nil
 }
 
+// Retract temporary retract a fact from data context, making it unavailable for evaluation or modification.
+func (ctx *DataContext) Retract(key string) {
+	ctx.retracted = append(ctx.retracted, key)
+}
+
 // IsRetracted checks if a key fact is currently retracted.
 func (ctx *DataContext) IsRetracted(key string) bool {
-	for _, v := range ctx.Retracted {
+	for _, v := range ctx.retracted {
 		if v == key {
 			return true
 		}
@@ -49,9 +90,14 @@ func (ctx *DataContext) IsRetracted(key string) bool {
 	return false
 }
 
+// Retracted returns list of retracted key facts.
+func (ctx *DataContext) Retracted() []string {
+	return ctx.retracted
+}
+
 // Reset will un-retract all fact, making them available for evaluation and modification.
 func (ctx *DataContext) Reset() {
-	ctx.Retracted = make([]string, 0)
+	ctx.retracted = make([]string, 0)
 }
 
 // ExecMethod will execute instance member variable using the supplied arguments.
@@ -102,7 +148,7 @@ func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error 
 		if !ctx.IsRetracted(varArray[0]) {
 			err := traceSetValue(val, varArray[1:], newValue)
 			if err == nil {
-				ctx.VariableChangeCount++
+				ctx.variableChangeCount++
 			}
 			return err
 		}

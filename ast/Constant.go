@@ -3,9 +3,10 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewConstant will create new instance of Constant
@@ -20,7 +21,7 @@ type Constant struct {
 	AstID         string
 	GrlText       string
 	Snapshot      string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 	Value         reflect.Value
 }
@@ -39,7 +40,7 @@ func (e Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Constant) InitializeContext(dataCtx *DataContext, memory *WorkingMemory) {
+func (e *Constant) InitializeContext(dataCtx IDataContext, memory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = memory
 }

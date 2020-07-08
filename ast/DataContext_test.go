@@ -71,7 +71,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	}
 
 	ctx.Retract("C")
-	if len(ctx.Retracted) == 0 {
+	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed")
 	}
 	if !ctx.IsRetracted("C") {
@@ -89,7 +89,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	}
 
 	ctx.Reset()
-	if len(ctx.Retracted) != 0 {
+	if len(ctx.Retracted()) != 0 {
 		t.Error("Error, Reset failed")
 	}
 
@@ -146,7 +146,7 @@ func TestDataContext_GetType(t *testing.T) {
 	}
 
 	ctx.Retract("ta")
-	if len(ctx.Retracted) == 0 {
+	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
 	}
 	_, err = ctx.GetType("ta.BStruct.CStruct.Str")
@@ -182,7 +182,7 @@ func TestDataContext_GetValue(t *testing.T) {
 	}
 
 	ctx.Retract("ta")
-	if len(ctx.Retracted) == 0 {
+	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
 	}
 
@@ -221,7 +221,7 @@ func TestDataContext_SetValue(t *testing.T) {
 	}
 
 	ctx.Retract("C")
-	if len(ctx.Retracted) == 0 {
+	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
 	}
 	err = ctx.SetValue("C.It", reflect.ValueOf(2))

@@ -3,9 +3,10 @@ package ast
 import (
 	"bytes"
 	"errors"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewWhenScope creates new instance of WhenScope
@@ -19,7 +20,7 @@ func NewWhenScope() *WhenScope {
 type WhenScope struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Expression *Expression
@@ -48,7 +49,7 @@ func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *WhenScope) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *WhenScope) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.Expression != nil {
