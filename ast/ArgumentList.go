@@ -2,9 +2,10 @@ package ast
 
 import (
 	"bytes"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewArgumentList create a new instance of ArgumentList
@@ -20,7 +21,7 @@ type ArgumentList struct {
 	AstID   string
 	GrlText string
 
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Arguments []*Expression
@@ -50,7 +51,7 @@ func (e ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ArgumentList) InitializeContext(dataCtx *DataContext, workingMemory *WorkingMemory) {
+func (e *ArgumentList) InitializeContext(dataCtx IDataContext, workingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = workingMemory
 	if e.Arguments != nil && len(e.Arguments) > 0 {

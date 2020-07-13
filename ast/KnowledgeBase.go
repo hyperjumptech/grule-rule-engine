@@ -2,10 +2,11 @@ package ast
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
-	"sync"
 )
 
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
@@ -55,7 +56,7 @@ type KnowledgeBase struct {
 	lock          sync.Mutex
 	Name          string
 	Version       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 	RuleEntries   map[string]*RuleEntry
 	Publisher     *eventbus.Publisher
@@ -129,7 +130,7 @@ func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *KnowledgeBase) InitializeContext(dataCtx *DataContext) {
+func (e *KnowledgeBase) InitializeContext(dataCtx IDataContext) {
 	e.DataContext = dataCtx
 	if e.RuleEntries != nil {
 		for _, re := range e.RuleEntries {

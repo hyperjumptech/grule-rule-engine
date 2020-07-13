@@ -3,9 +3,10 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewRuleEntry create new instance of RuleEntry
@@ -20,7 +21,7 @@ func NewRuleEntry() *RuleEntry {
 type RuleEntry struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Name        string
@@ -67,7 +68,7 @@ func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *RuleEntry) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *RuleEntry) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.WhenScope != nil {

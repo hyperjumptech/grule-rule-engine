@@ -3,10 +3,11 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	log "github.com/sirupsen/logrus"
-	"reflect"
 )
 
 // NewFunctionCall creates new instance of FunctionCall
@@ -21,7 +22,7 @@ func NewFunctionCall() *FunctionCall {
 type FunctionCall struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	FunctionName string
@@ -52,7 +53,7 @@ func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *FunctionCall) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *FunctionCall) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.ArgumentList != nil {

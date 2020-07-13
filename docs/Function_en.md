@@ -4,7 +4,7 @@
 
 ## Built-In Functions
 
-Built-in functions are all defined within the `ast/BuildInFunctions.go` file. As of now, they are :
+Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As of now, they are :
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time
 
@@ -121,7 +121,7 @@ rule CheckEducation "Check candidate's education fact" {
 
 `IsZero` will check any variable in the argument for its `Zero` status value. Zero means
 that the variable is newly defined and have not been assigned with any value.
-This is usually applied to types like `string`, `int64`, `uint64`, `bool`, `time.Time`, etc. 
+This is usually applied to types like `string`, `int64`, `uint64`, `bool`, `time.Time`, etc.
 
 #### Arguments
 
@@ -322,7 +322,7 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 * True if the `before` time value is before the `time` value.
 * False if the `before` time value is not before the `time` value.
-  
+
 #### Example
 
 ```text
@@ -348,7 +348,7 @@ rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is
 
 * True if the `after` time value is after the `time` value.
 * False if the `after` time value is not after the `time` value.
-  
+
 #### Example
 
 ```text
@@ -374,7 +374,7 @@ For layout format, you can [read this article](https://yourbasic.org/golang/form
 #### Returns
 
 * String contains the formatted time
-  
+
 #### Example
 
 ```text

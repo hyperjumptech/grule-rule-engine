@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -17,7 +18,7 @@ func NewThenScope() *ThenScope {
 type ThenScope struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	ThenExpressionList *ThenExpressionList
@@ -46,7 +47,7 @@ func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenScope) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *ThenScope) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.ThenExpressionList != nil {

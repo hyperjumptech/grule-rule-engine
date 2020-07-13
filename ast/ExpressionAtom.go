@@ -3,9 +3,10 @@ package ast
 import (
 	"bytes"
 	"errors"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewExpressionAtom create new instance of ExpressionAtom
@@ -19,7 +20,7 @@ func NewExpressionAtom() *ExpressionAtom {
 type ExpressionAtom struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Constant     *Constant
@@ -70,7 +71,7 @@ func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ExpressionAtom) InitializeContext(dataCtx *DataContext, WorkingMemory *WorkingMemory) {
+func (e *ExpressionAtom) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = WorkingMemory
 	if e.Constant != nil {

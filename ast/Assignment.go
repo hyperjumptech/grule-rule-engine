@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"reflect"
+
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"reflect"
 )
 
 // NewAssignment will create new instance of Assignment AST Node
@@ -20,7 +21,7 @@ func NewAssignment() *Assignment {
 type Assignment struct {
 	AstID         string
 	GrlText       string
-	DataContext   *DataContext
+	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
 	Variable   *Variable
@@ -57,7 +58,7 @@ func (e Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Assignment) InitializeContext(dataCtx *DataContext, workingMemory *WorkingMemory) {
+func (e *Assignment) InitializeContext(dataCtx IDataContext, workingMemory *WorkingMemory) {
 	e.DataContext = dataCtx
 	e.WorkingMemory = workingMemory
 	e.Variable.InitializeContext(dataCtx, workingMemory)
