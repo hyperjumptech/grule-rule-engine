@@ -2,10 +2,11 @@ package ast
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/juju/errors"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/juju/errors"
 )
 
 // NewDataContext will create a new DataContext instance
@@ -31,7 +32,7 @@ func (ctx *DataContext) Retract(key string) {
 // Add will add struct instance into rule execution context
 func (ctx *DataContext) Add(key string, obj interface{}) error {
 	objVal := reflect.ValueOf(obj)
-	if objVal.Kind() != reflect.Ptr && objVal.Elem().Kind() != reflect.Struct {
+	if objVal.Kind() != reflect.Ptr || objVal.Elem().Kind() != reflect.Struct {
 		return errors.New(fmt.Sprintf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String()))
 	}
 	ctx.ObjectStore[key] = obj

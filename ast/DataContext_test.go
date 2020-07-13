@@ -229,3 +229,17 @@ func TestDataContext_SetValue(t *testing.T) {
 		t.Error("error, should not have succeed, retracted")
 	}
 }
+
+func TestDataContext_Add(t *testing.T) {
+
+	fail := "FAIL"
+
+	ctx := NewDataContext()
+	err := ctx.Add("C", &fail)
+	if err == nil {
+		t.Error("error, should not succeed, pointer not to struct.")
+	}
+	if err.Error() != "you can only insert a pointer to struct as fact. objVal = ptr" {
+		t.Error("error not expected.")
+	}
+}
