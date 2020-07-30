@@ -147,6 +147,11 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 					return errors.Trace(err)
 				}
 
+				if dataCtx.IsComplete() {
+					cycleDone = true
+					break
+				}
+
 				// emit rule execute end event
 				RuleEntryPublisher.Publish(&events.RuleEntryEvent{
 					EventType: events.RuleEntryExecuteEndEvent,

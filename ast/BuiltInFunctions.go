@@ -22,6 +22,12 @@ var (
 type BuiltInFunctions struct {
 	Knowledge     *KnowledgeBase
 	WorkingMemory *WorkingMemory
+	DataContext   IDataContext
+}
+
+// Complete will cause the engine to stop processing further rules in the current cycle.
+func (gf *BuiltInFunctions) Complete() {
+	gf.DataContext.Complete()
 }
 
 // MakeTime will create a Time struct according to the argument values.
