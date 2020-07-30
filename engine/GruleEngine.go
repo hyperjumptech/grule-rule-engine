@@ -53,6 +53,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
@@ -145,6 +146,11 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
 					return errors.Trace(err)
+				}
+
+				if dataCtx.IsComplete() {
+					cycleDone = true
+					break
 				}
 
 				// emit rule execute end event
