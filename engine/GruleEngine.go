@@ -53,6 +53,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
@@ -152,6 +153,11 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 					EventType: events.RuleEntryExecuteEndEvent,
 					RuleName:  r.Name,
 				})
+
+				if dataCtx.IsComplete() {
+					cycleDone = true
+					break
+				}
 
 				//if there is a variable change, restart the cycle.
 				if dataCtx.HasVariableChange() {
