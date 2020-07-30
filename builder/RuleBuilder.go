@@ -2,6 +2,8 @@ package builder
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
@@ -9,7 +11,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/juju/errors"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
@@ -103,11 +104,11 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	dur := time.Now().Sub(startTime)
 
 	if parseError != nil {
-		log.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Milliseconds())
+		log.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
 		return errors.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
 
-	log.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Milliseconds())
+	log.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
 
 	return nil
 }
