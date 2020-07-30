@@ -1,7 +1,7 @@
 package antlr
 
 type (
-	Stack struct {
+	stack struct {
 		top    *node
 		length int
 	}
@@ -12,17 +12,17 @@ type (
 )
 
 // Create a new stack
-func NewStack() *Stack {
-	return &Stack{nil, 0}
+func newStack() *stack {
+	return &stack{nil, 0}
 }
 
-// Return the number of items in the stack
-func (s *Stack) Len() int {
+// Len return the number of items in the stack
+func (s *stack) Len() int {
 	return s.length
 }
 
-// View the top item on the stack
-func (s *Stack) Peek() interface{} {
+// Peek views the top item on the stack
+func (s *stack) Peek() interface{} {
 	if s.length == 0 {
 		return nil
 	}
@@ -30,7 +30,7 @@ func (s *Stack) Peek() interface{} {
 }
 
 // Pop the top item of the stack and return it
-func (s *Stack) Pop() interface{} {
+func (s *stack) Pop() interface{} {
 	if s.length == 0 {
 		return nil
 	}
@@ -42,7 +42,7 @@ func (s *Stack) Pop() interface{} {
 }
 
 // Push a value onto the top of the stack
-func (s *Stack) Push(value interface{}) {
+func (s *stack) Push(value interface{}) {
 	n := &node{value, s.top}
 	s.top = n
 	s.length++

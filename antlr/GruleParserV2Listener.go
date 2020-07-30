@@ -41,7 +41,7 @@ type GruleV2ParserListener struct {
 
 	WorkingMemory *ast.WorkingMemory
 	KnowledgeBase *ast.KnowledgeBase
-	Stack         *Stack
+	Stack         *stack
 	StopParse     bool
 	ErrorCallback func(e error)
 }
@@ -72,7 +72,7 @@ func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterRoot is called when production root is entered.
 func (s *GruleV2ParserListener) EnterRoot(ctx *parser2.RootContext) {
-	s.Stack = NewStack()
+	s.Stack = newStack()
 	s.Stack.Push(s.KnowledgeBase)
 }
 
