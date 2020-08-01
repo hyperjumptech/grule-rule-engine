@@ -2,10 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/juju/errors"
-	"github.com/sirupsen/logrus"
+	"math"
 	"reflect"
 	"time"
+
+	"github.com/juju/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // GetFunctionList get list of functions in a struct instance
@@ -395,9 +397,45 @@ func IsAttributeNilOrZero(obj interface{}, fieldName string) (bool, error) {
 		return fieldVal.Bool() == false, nil
 	}
 	if fieldVal.Type().Kind() == reflect.Map || fieldVal.Type().Kind() == reflect.Array || fieldVal.Type().Kind() == reflect.Slice {
-		return fieldVal.IsNil() || fieldVal.IsZero(), nil
+		return fieldVal.IsNil() || reflectIsZero(fieldVal), nil
 	}
 	return false, nil
+}
+
+func reflectIsZero(v reflect.Value) bool {
+	switch v.Kind() {
+	case reflect.Bool:
+		return !v.Bool()
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return v.Int() == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return v.Uint() == 0
+	case reflect.Float32, reflect.Float64:
+		return math.Float64bits(v.Float()) == 0
+	case reflect.Complex64, reflect.Complex128:
+		c := v.Complex()
+		return math.Float64bits(real(c)) == 0 && math.Float64bits(imag(c)) == 0
+	case reflect.Array:
+		for i := 0; i < v.Len(); i++ {
+			if !reflectIsZero(v.Index(i)) {
+				return false
+			}
+		}
+		return true
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
+		return v.IsNil()
+	case reflect.String:
+		return v.Len() == 0
+	case reflect.Struct:
+		for i := 0; i < v.NumField(); i++ {
+			if !reflectIsZero(v.Field(i)) {
+				return false
+			}
+		}
+		return true
+	default:
+		panic(&reflect.ValueError{Method: "reflect.Value.IsZero", Kind: v.Kind()})
+	}
 }
 
 // GetAttributeStringValue will try to obtain member variable's string value

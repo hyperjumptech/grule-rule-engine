@@ -8,7 +8,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/golang-collections/collections/stack"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
@@ -42,7 +41,7 @@ type GruleV2ParserListener struct {
 
 	WorkingMemory *ast.WorkingMemory
 	KnowledgeBase *ast.KnowledgeBase
-	Stack         *stack.Stack
+	Stack         *stack
 	StopParse     bool
 	ErrorCallback func(e error)
 }
@@ -73,7 +72,7 @@ func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterRoot is called when production root is entered.
 func (s *GruleV2ParserListener) EnterRoot(ctx *parser2.RootContext) {
-	s.Stack = stack.New()
+	s.Stack = newStack()
 	s.Stack.Push(s.KnowledgeBase)
 }
 
