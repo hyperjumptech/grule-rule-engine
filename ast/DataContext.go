@@ -27,6 +27,17 @@ type DataContext struct {
 
 	retracted           []string
 	variableChangeCount uint64
+	complete            bool
+}
+
+// Complete marks the DataContext as completed, telling the engine to stop processing rules
+func (ctx *DataContext) Complete() {
+	ctx.complete = true
+}
+
+// IsComplete checks whether the DataContext has been completed
+func (ctx *DataContext) IsComplete() bool {
+	return ctx.complete
 }
 
 // IDataContext is the interface for the DataContext struct.
@@ -39,6 +50,8 @@ type IDataContext interface {
 
 	Retract(key string)
 	IsRetracted(key string) bool
+	Complete()
+	IsComplete() bool
 	Retracted() []string
 	Reset()
 

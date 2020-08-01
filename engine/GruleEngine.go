@@ -53,6 +53,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
@@ -153,6 +154,11 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 					RuleName:  r.Name,
 				})
 
+				if dataCtx.IsComplete() {
+					cycleDone = true
+					break
+				}
+
 				//if there is a variable change, restart the cycle.
 				if dataCtx.HasVariableChange() {
 					cycleDone = false
@@ -169,7 +175,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 			break
 		}
 	}
-	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Milliseconds())
+	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Nanoseconds()/1e6)
 
 	// emit engine finish event
 	RuleEnginePublisher.Publish(&events.RuleEngineEvent{
