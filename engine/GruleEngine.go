@@ -2,13 +2,13 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
-	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,11 +33,13 @@ type GruleEngine struct {
 	MaxCycle uint64
 }
 
+// Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
 }
 
-// Execute function will execute a knowledge evaluation and action against data context.
+// ExecuteWithContext function will execute a knowledge evaluation and action against data context.
+// The engine will evaluate context cancelation status in each cycle.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
@@ -107,7 +109,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		if cycle > g.MaxCycle {
 
 			// create the error
-			err := errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
+			err := fmt.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
 
 			// emit engine error event
 			RuleEnginePublisher.Publish(&events.RuleEngineEvent{
@@ -164,7 +166,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				err := r.Execute()
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
-					return errors.Trace(err)
+					return err
 				}
 
 				// emit rule execute end event

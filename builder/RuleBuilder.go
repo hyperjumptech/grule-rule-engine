@@ -9,7 +9,6 @@ import (
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/juju/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -61,7 +60,7 @@ func (builder *RuleBuilder) BuildRuleFromResources(name, version string, resourc
 	for _, v := range resource {
 		err := builder.BuildRuleFromResource(name, version, v)
 		if err != nil {
-			return errors.Trace(err)
+			return err
 		}
 	}
 	return nil
@@ -75,7 +74,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	// Load the resource
 	data, err := resource.Load()
 	if err != nil {
-		return errors.Trace(err)
+		return err
 	}
 	sdata := string(data)
 
@@ -105,7 +104,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	if parseError != nil {
 		log.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
-		return errors.Errorf("error were found before builder bailing out. Got %v", parseError)
+		return fmt.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
 
 	log.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
