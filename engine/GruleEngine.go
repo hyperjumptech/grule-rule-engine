@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"sort"
 	"time"
 
@@ -32,11 +33,26 @@ type GruleEngine struct {
 	MaxCycle uint64
 }
 
+func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
+}
+
 // Execute function will execute a knowledge evaluation and action against data context.
 // The engine also do conflict resolution of which rule to execute.
-func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
 	RuleEntryPublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic)
+
+	var contextError error
+	var contextCanceled bool
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			contextError = ctx.Err()
+			contextCanceled = true
+		}
+	}()
 
 	// emit engine start event
 	RuleEnginePublisher.Publish(&events.RuleEngineEvent{
@@ -73,6 +89,9 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 		data context which makes rules to get executed again and again.
 	*/
 	for {
+		if contextCanceled {
+			return contextError
+		}
 
 		// add the cycle counter
 		cycle++
