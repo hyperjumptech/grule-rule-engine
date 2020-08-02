@@ -185,6 +185,10 @@ for _, res := range resources {
 }
 ```
 
+#### From JSON
+
+You can now build rules from JSON!,  [Read how it works](GRL_JSON_en.md) 
+
 Now, in the `KnowledgeLibrary` we have a `KnowledgeBase` named `TutorialRules` with version `0.0.1`. To execute this particular rule, you have to obtain an instance of it from the `KnowledgeLibrary`. This will be explained on the next section.
 
 ## Executing Grule Rule Engine
