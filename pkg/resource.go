@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/bmatcuk/doublestar"
-	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/src-d/go-billy.v4"
 )
@@ -153,7 +152,7 @@ func (res *FileResource) Load() ([]byte, error) {
 	}
 	data, err := ioutil.ReadFile(res.Path)
 	if err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 	res.Bytes = data
 	return res.Bytes, nil
@@ -214,12 +213,12 @@ func (res *URLResource) Load() ([]byte, error) {
 	}
 	resp, err := http.Get(res.URL)
 	if err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 	res.Bytes = data
 	return res.Bytes, nil

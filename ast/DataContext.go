@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/juju/errors"
 )
 
 // NewDataContext will create a new DataContext instance
@@ -82,7 +81,7 @@ func (ctx *DataContext) HasVariableChange() bool {
 func (ctx *DataContext) Add(key string, obj interface{}) error {
 	objVal := reflect.ValueOf(obj)
 	if objVal.Kind() != reflect.Ptr || objVal.Elem().Kind() != reflect.Struct {
-		return errors.New(fmt.Sprintf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String()))
+		return fmt.Errorf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String())
 	}
 	ctx.ObjectStore[key] = obj
 	return nil
@@ -120,7 +119,7 @@ func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (ref
 		if !ctx.IsRetracted(varArray[0]) {
 			return traceMethod(val, varArray[1:], args)
 		}
-		return reflect.ValueOf(nil), errors.New("fact is retracted")
+		return reflect.ValueOf(nil), fmt.Errorf("fact is retracted")
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while execute method", varArray[0])
 }
@@ -132,7 +131,7 @@ func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
 		if !ctx.IsRetracted(varArray[0]) {
 			return traceType(val, varArray[1:])
 		}
-		return nil, errors.New("fact is retracted")
+		return nil, fmt.Errorf("fact is retracted")
 	}
 	return nil, fmt.Errorf("fact [%s] not found while obtaining type", variable)
 }
@@ -149,7 +148,7 @@ func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
 			}
 			return vval, err
 		}
-		return reflect.ValueOf(nil), errors.New("fact is retracted")
+		return reflect.ValueOf(nil), fmt.Errorf("fact is retracted")
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while retrieving value", varArray[0])
 }
@@ -165,7 +164,7 @@ func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error 
 			}
 			return err
 		}
-		return errors.New("fact is retracted")
+		return fmt.Errorf("fact is retracted")
 	}
 	return fmt.Errorf("fact [%s] not found while setting value", varArray[0])
 }
@@ -177,7 +176,7 @@ func traceType(obj interface{}, path []string) (reflect.Type, error) {
 	case length > 1:
 		objVal, err := pkg.GetAttributeValue(obj, path[0])
 		if err != nil {
-			return nil, errors.Trace(err)
+			return nil, err
 		}
 		return traceType(pkg.ValueToInterface(objVal), path[1:])
 	default:
@@ -192,7 +191,7 @@ func traceValue(obj interface{}, path []string) (reflect.Value, error) {
 	case length > 1:
 		objVal, err := pkg.GetAttributeValue(obj, path[0])
 		if err != nil {
-			return objVal, errors.Trace(err)
+			return objVal, err
 		}
 		return traceValue(pkg.ValueToInterface(objVal), path[1:])
 	default:
@@ -207,11 +206,11 @@ func traceSetValue(obj interface{}, path []string, newValue reflect.Value) error
 	case length > 1:
 		objVal, err := pkg.GetAttributeValue(obj, path[0])
 		if err != nil {
-			return errors.Trace(err)
+			return err
 		}
 		return traceSetValue(objVal, path[1:], newValue)
 	default:
-		return errors.Errorf("no attribute path specified")
+		return fmt.Errorf("no attribute path specified")
 	}
 }
 
@@ -223,12 +222,12 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 		types, variad, err := pkg.GetFunctionParameterTypes(obj, path[0])
 		if err != nil {
 			return reflect.ValueOf(nil),
-				errors.Errorf("error while fetching function %s() parameter types. Got %v", path[0], err)
+				fmt.Errorf("error while fetching function %s() parameter types. Got %v", path[0], err)
 		}
 
 		if len(types) != len(args) && !variad {
 			return reflect.ValueOf(nil),
-				errors.Errorf("invalid argument count for function %s(). need %d argument while there are %d", path[0], len(types), len(args))
+				fmt.Errorf("invalid argument count for function %s(). need %d argument while there are %d", path[0], len(types), len(args))
 		}
 		iargs := make([]interface{}, len(args))
 		for i, t := range types {
@@ -240,7 +239,7 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 					iargs[i] = pkg.ValueToInterface(args[i])
 				} else {
 					return reflect.ValueOf(nil),
-						errors.Errorf("invalid argument types for function %s(). argument #%d, require %s but %s", path[0], i, t.Kind().String(), args[i].Kind().String())
+						fmt.Errorf("invalid argument types for function %s(). argument #%d, require %s but %s", path[0], i, t.Kind().String(), args[i].Kind().String())
 				}
 			} else {
 				iargs[i] = pkg.ValueToInterface(args[i])
@@ -251,7 +250,7 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 			for i := len(types) - 1; i < len(args); i++ {
 				if args[i].Kind() != typ {
 					return reflect.ValueOf(nil),
-						errors.Errorf("invalid variadic argument types for function %s(). argument #%d, require %s but %s", path[0], i, typ.String(), args[i].Kind().String())
+						fmt.Errorf("invalid variadic argument types for function %s(). argument #%d, require %s but %s", path[0], i, typ.String(), args[i].Kind().String())
 				}
 				iargs[i] = pkg.ValueToInterface(args[i])
 			}
@@ -262,7 +261,7 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 		}
 		switch retLen := len(rets); {
 		case retLen > 1:
-			return reflect.ValueOf(rets[0]), errors.Errorf("multiple return value for function %s(). ", path[0])
+			return reflect.ValueOf(rets[0]), fmt.Errorf("multiple return value for function %s(). ", path[0])
 		case retLen == 1:
 			return reflect.ValueOf(rets[0]), nil
 		default:
@@ -271,10 +270,10 @@ func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.
 	case length > 1:
 		objVal, err := pkg.GetAttributeValue(obj, path[0])
 		if err != nil {
-			return reflect.ValueOf(nil), errors.Trace(err)
+			return reflect.ValueOf(nil), err
 		}
 		return traceMethod(objVal, path[1:], args)
 	default:
-		return reflect.ValueOf(nil), errors.Errorf("no function path specified")
+		return reflect.ValueOf(nil), fmt.Errorf("no function path specified")
 	}
 }
