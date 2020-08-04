@@ -12,7 +12,7 @@
 panic: GruleEngine successfully selected rule candidate for execution after 5000 cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries "When" and "Then" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.
 ```
 
-**Answer** : The rule engine is done evaluating rule entries for choosing which one to execute in the 5000th time (5000 it the maximum execution cycle). You can change specify any positive number but if you doubt, you an leave it to 5000. When the rule set were evaluated that many times more to this number (the nax cycle) it will panic. To fix this issue, have to understand how rule engine works. The following simulation should help you understand the problem and know how to mitigate it.
+**Answer** : The rule engine is done evaluating rule entries for choosing which one to execute in the 5000th time (5000 it the maximum execution cycle). You can change specify any positive number but if you doubt, you can leave it to 5000. When the rule set were evaluated that many times more to this number (the max cycle) it will panic. To fix this issue, have to understand how rule engine works. The following simulation should help you understand the problem and know how to mitigate it.
 
 Consider this fact.
 

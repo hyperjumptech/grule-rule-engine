@@ -83,3 +83,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `escape` character in string literal
 - `RuleBuilder` is now to build rules in GRLs into `KnowledgeLibrary`
 - Now you should obtain a `KnowledgeBase` instance from `KnowledgeLibrary`. This enable concurrency model in Grule. See `examples/Concurrency_test.go` to know how it works. 
+
+### [1.5.0] - 2020-08-02
+
+#### Added
+
+- Support to build rule from JSON.
+- Engine support for `context.Context` using `ExecuteWithContext` function. 

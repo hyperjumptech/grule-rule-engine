@@ -107,7 +107,7 @@ rule ... {
 Grule will try to remember all of the `Expression` defined within rule's `when` scope of all rules
 in the KnowledgeBase.
 
-First, It will try its best to make sure none of the `v` AST (Abstract Syntax Tree) node get duplicated.
+First, It will try its best to make sure none of the AST (Abstract Syntax Tree) node get duplicated.
 
 Second, each of this AST node can only be evaluated once, until it's relevant `variable` get changed. For example :
 

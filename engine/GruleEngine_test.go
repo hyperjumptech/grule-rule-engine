@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -469,4 +470,48 @@ And another`
 
 	assert.True(t, es.Result1)
 	assert.True(t, es.Result2)
+}
+
+type Sleeper struct {
+	Count int
+}
+
+func (s *Sleeper) SleepMore() {
+	time.Sleep(1 * time.Second)
+}
+
+func TestGruleEngine_ExecuteWithContext(t *testing.T) {
+	logrus.SetLevel(logrus.DebugLevel)
+	defer logrus.SetLevel(logrus.InfoLevel)
+	ts := &Sleeper{}
+
+	dctx := ast.NewDataContext()
+	err := dctx.Add("TS", ts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("TestTimer", "0.1.1", pkg.NewBytesResource([]byte(`
+rule KeepSleep "test string escaping" salience 10 {
+    when
+        TS.Count < 4
+    then
+        TS.Count = TS.Count + 1;
+		TS.SleepMore();
+}
+`)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("TestTimer", "0.1.1")
+	engine := NewGruleEngine()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	err = engine.ExecuteWithContext(ctx, dctx, kb)
+	if err == nil {
+		t.Logf("Should have failed since its was timeout")
+		t.Fail()
+	} else {
+		t.Logf("got %s", err.Error())
+	}
 }

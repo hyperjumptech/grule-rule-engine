@@ -1,13 +1,14 @@
 package engine
 
 import (
+	"context"
+	"fmt"
 	"sort"
 	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
-	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,11 +33,28 @@ type GruleEngine struct {
 	MaxCycle uint64
 }
 
-// Execute function will execute a knowledge evaluation and action against data context.
-// The engine also do conflict resolution of which rule to execute.
+// Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
+}
+
+// ExecuteWithContext function will execute a knowledge evaluation and action against data context.
+// The engine will evaluate context cancelation status in each cycle.
+// The engine also do conflict resolution of which rule to execute.
+func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	RuleEnginePublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic)
 	RuleEntryPublisher := eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic)
+
+	var contextError error
+	var contextCanceled bool
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			contextError = ctx.Err()
+			contextCanceled = true
+		}
+	}()
 
 	// emit engine start event
 	RuleEnginePublisher.Publish(&events.RuleEngineEvent{
@@ -53,6 +71,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
 	}
 	dataCtx.Add("DEFUNC", defunc)
 
@@ -72,6 +91,9 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 		data context which makes rules to get executed again and again.
 	*/
 	for {
+		if contextCanceled {
+			return contextError
+		}
 
 		// add the cycle counter
 		cycle++
@@ -87,7 +109,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 		if cycle > g.MaxCycle {
 
 			// create the error
-			err := errors.Errorf("GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.", g.MaxCycle)
+			err := fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
 
 			// emit engine error event
 			RuleEnginePublisher.Publish(&events.RuleEngineEvent{
@@ -144,7 +166,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 				err := r.Execute()
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
-					return errors.Trace(err)
+					return err
 				}
 
 				// emit rule execute end event
@@ -152,6 +174,11 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 					EventType: events.RuleEntryExecuteEndEvent,
 					RuleName:  r.Name,
 				})
+
+				if dataCtx.IsComplete() {
+					cycleDone = true
+					break
+				}
 
 				//if there is a variable change, restart the cycle.
 				if dataCtx.HasVariableChange() {
@@ -169,7 +196,7 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 			break
 		}
 	}
-	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Milliseconds())
+	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Nanoseconds()/1e6)
 
 	// emit engine finish event
 	RuleEnginePublisher.Publish(&events.RuleEngineEvent{

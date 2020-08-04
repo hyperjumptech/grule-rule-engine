@@ -5,9 +5,13 @@
 package mocksAst
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 )
+
+var _ ast.IDataContext = &MockIDataContext{}
 
 // MockIDataContext is a mock of IDataContext interface
 type MockIDataContext struct {
@@ -193,4 +197,30 @@ func (m *MockIDataContext) SetValue(arg0 string, arg1 reflect.Value) error {
 func (mr *MockIDataContextMockRecorder) SetValue(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetValue", reflect.TypeOf((*MockIDataContext)(nil).SetValue), arg0, arg1)
+}
+
+// Complete mocks base method
+func (m *MockIDataContext) Complete() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Complete")
+}
+
+// Complete indicates an expected call of Complete
+func (mr *MockIDataContextMockRecorder) Complete() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Complete", reflect.TypeOf((*MockIDataContext)(nil).Complete))
+}
+
+// IsComplete mocks base method
+func (m *MockIDataContext) IsComplete() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsComplete")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsComplete indicates an expected call of IsComplete
+func (mr *MockIDataContextMockRecorder) IsComplete() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsComplete", reflect.TypeOf((*MockIDataContext)(nil).IsComplete))
 }

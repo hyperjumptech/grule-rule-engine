@@ -386,6 +386,23 @@ rule LogPurchaseDate  "Log the purchase date." {
 }
 ```
 
+### Complete()
+
+`Complete` will cause the engine to stop processign further rules in its current cycle. This is useful if you want to terminate further rukle evaluation under a set condition.
+
+#### Example
+
+```text
+rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
+    when
+        (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
+        GetTimeMinute(Now()) == 30 && GetTimeSecond(Now()) == 0
+    then
+        CiCd.BuildDaily();
+        Complete();
+}
+```
+
 ## Custom Functions
 
 All functions which are invocable from the DataContext is **Invocable** from within the rule,
