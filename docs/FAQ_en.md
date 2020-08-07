@@ -8,7 +8,7 @@
 
 **Question** : I got the following panic message when Grule engine is executed.
 
-```
+```Shell
 panic: GruleEngine successfully selected rule candidate for execution after 5000 cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries "When" and "Then" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.
 ```
 
@@ -25,7 +25,7 @@ type Fact struct {
 
 The following rules defined.
 
-```text
+```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
     When 
          F.Payment > 100
@@ -63,7 +63,7 @@ You should notice Grule execute the same rule again and again because the **WHEN
 
 One way for this solution is to change "GiveCashback" rule to something like :
 
-```text
+```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
     When 
          F.Payment > 100 &&
@@ -76,7 +76,7 @@ rule GiveCashback "Give cashback if payment is above 100" {
 This way, after the 1st execution, the rule's WHEN is become invalid and not get executed again.
 Or ...
 
-```text
+```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
     When 
          F.Payment > 100

@@ -25,7 +25,7 @@ Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As
 
 #### Example
 
-```text
+```Shell
 rule SetExpire "Set the expire date for Fact created before 2020" {
     when
        Fact.CreateTime < MakeTime(2020,1,1,0,0,0)
@@ -44,7 +44,7 @@ rule SetExpire "Set the expire date for Fact created before 2020" {
 
 #### Example
 
-```text
+```Shell
 rule SetExpire "Set new expire date" {
     when
         IsZero(Fact.ExpireTime)
@@ -64,7 +64,7 @@ rule SetExpire "Set new expire date" {
 
 #### Example
 
-```text
+```Shell
 rule ResetTime "Reset the lastUpdate time" {
     when
         Fact.LastUpdate < Now()
@@ -83,7 +83,7 @@ rule ResetTime "Reset the lastUpdate time" {
 
 #### Example
 
-```text
+```Shell
 rule SomeRule "Log candidate name if he is bellow 17 years old" {
     when
         Candidate.Age < 17
@@ -107,7 +107,7 @@ rule SomeRule "Log candidate name if he is bellow 17 years old" {
 
 #### Example
 
-```text
+```Shell
 rule CheckEducation "Check candidate's education fact" {
     when
         IsNil(Candidate.Education) == false &&
@@ -134,7 +134,7 @@ This is usually applied to types like `string`, `int64`, `uint64`, `bool`, `time
 
 #### Example
 
-```text
+```Shell
 rule CheckStartTime "Check device's starting time." {
     when
         IsZero(Device.StartTime) == true
@@ -155,7 +155,7 @@ again, all the retracted status of all rules will be restored.
 
 #### Example
 
-```text
+```Shell
 rule CheckStartTime "Check device's starting time." salience 1000 {
     when
         IsZero(Device.StartTime) == true
@@ -179,7 +179,7 @@ rule CheckStartTime "Check device's starting time." salience 1000 {
 
 #### Example
 
-```text
+```Shell
 rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
     when
         GetTimeYear(Now()) != GL.FinancialYear
@@ -202,7 +202,7 @@ rule StartNewYearProcess "Check if its a new year to restart new FinancialYear."
 
 #### Example
 
-```text
+```Shell
 rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
     when
         isZero(Process.Month)
@@ -225,7 +225,7 @@ rule StartNewYearProcess "Check if its a new year to restart new FinancialYear."
 
 #### Example
 
-```text
+```Shell
 rule GreetEveryDay "Log a greeting every day." salience 1000 {
     when
         Greeting.Day != GetTimeDay(Now())
@@ -249,7 +249,7 @@ rule GreetEveryDay "Log a greeting every day." salience 1000 {
 
 #### Example
 
-```text
+```Shell
 rule DailyCheckBuild "Execute build every 6AM and 6PM." {
     when
         GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18
@@ -273,7 +273,7 @@ rule DailyCheckBuild "Execute build every 6AM and 6PM." {
 
 #### Example
 
-```text
+```Shell
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
@@ -298,7 +298,7 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 #### Example
 
-```text
+```Shell
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
@@ -325,7 +325,7 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 #### Example
 
-```text
+```Shell
 rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is not due." {
     when
         IsTimeBefore(Now(), Promotion.ExpireDateTime)
@@ -351,7 +351,7 @@ rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is
 
 #### Example
 
-```text
+```Shell
 rule AdditionalTax  "Apply additional tax if purchase after date specified." {
     when
         IsTimeAfter(Purchase.TransactionTime, TaxRegulation.StartSince)
@@ -377,7 +377,7 @@ For layout format, you can [read this article](https://yourbasic.org/golang/form
 
 #### Example
 
-```text
+```Shell
 rule LogPurchaseDate  "Log the purchase date." {
     when
         IsZero(Purchase.TransactionDate) == false
@@ -392,7 +392,7 @@ rule LogPurchaseDate  "Log the purchase date." {
 
 #### Example
 
-```text
+```Shell
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&

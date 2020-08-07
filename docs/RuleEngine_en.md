@@ -19,7 +19,7 @@ Database, triggered process, point of sales, reports, etc.
 If you still can't picture it, it would be much easier to just look
 into an example or fact. Suppose we have a fact
 
-```text
+```Text
 Purchase Transaction
     Item Name     : Computer Monitor
     Quantity      : 10

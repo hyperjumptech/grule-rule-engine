@@ -7,7 +7,7 @@ to be used for defining rule evaluation criterias and actions to be executed if 
 
 Generally, the language have the following structure :
 
-```text
+```Shell
 rule <RuleName> <RuleDescription> [salience <priority>] {
     when
         <boolean expression>
@@ -31,7 +31,7 @@ is a candidate for execution with the current facts.
 **Assignment or Operation Expression** contains list of expressions (each expression should be ended with ";" character).
 The expression are designed to modify the current fact values, making calculation, make some logging, etc.
 
-#### Boolean Expression
+### Boolean Expression
 
 Boolean expression comes naturally for java or golang developer in GRL.
 
@@ -43,7 +43,7 @@ then
      ...
 ```
 
-#### Constants and Literals
+### Constants and Literals
 
 | Literal | Description                                                            | Example                          |
 | ------- | ---------------------------------------------------------------------- | -------------------------------- |
@@ -54,14 +54,16 @@ then
 
 Note: Strings are escaped following the same rules used for standard Go strings. Backtick strings are not supported.
 
-Operators supported :
+### Operators supported 
 
-* Math operators : `+`, `-`, `/`, `*`, `%`
-* Bit-wise operators : `|`, `&`
-* Logical operators : `&&` and `||`
-* Comparison operators : `<`,`<=`,`>`,`>=`,`==`,`!=` 
+| Type | Operator                                                            |
+| ------- | ---------------------------------------------------------------------- |
+| Math |  `+`, `-`, `/`, `*`, `%` |
+| Bit-wise operators | `\|`, `&` |
+| Logical operators | `&&` and `\|\|` |
+| Comparison operators | `<`, `<=`, `>`, `>=`, `==`, `!=`  |
 
-Operator precedence :
+### Operator precedence
 
 Grule follows operator precedence in Golang.
 
@@ -73,7 +75,7 @@ Grule follows operator precedence in Golang.
 |    2       |      `&&`  |
 |    1       |      `\|\|`  |
 
-#### Comments
+### Comments
 
 You can always put a comment inside your GRL script. Such as :
 
@@ -124,5 +126,6 @@ rule SetTime "When Distance Recorder time not set, set it." {
 }
 ```
 
-#### IDE Support
-##### Visual Studio Code: https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax
+### IDE Support
+
+Visual Studio Code: [https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax](https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax)

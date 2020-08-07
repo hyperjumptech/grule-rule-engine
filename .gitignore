@@ -2,6 +2,7 @@
 # Created by https://www.gitignore.io/api/go,git,intellij,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=go,git,intellij,visualstudiocode
 
+previewdocs_linux_amd64
 ### Git ###
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
