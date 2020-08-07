@@ -18,7 +18,7 @@ Like **Drools**, **Grule** have its own *DSL* comparable as follows.
 
 Drools's DRL be like :
 
-```drool
+```go
 rule "SpeedUp"
     salience 10
     when

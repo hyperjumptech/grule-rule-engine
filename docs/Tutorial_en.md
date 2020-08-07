@@ -8,7 +8,7 @@ Please note that Grule is using Go 1.13
 
 To import Grule into your project you can simply import it.
 
-```text
+```Shell
 $go get github.com/hyperjumptech/grule-rule-engine
 ```
 
