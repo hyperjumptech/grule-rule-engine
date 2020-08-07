@@ -113,14 +113,14 @@ Second, each of this AST node can only be evaluated once, until it's relevant `v
 
 Boolean Expression :
 
-```text
+```Shell
     when
     Fact.A == Fact.B + Fact.Func(Fact.C) - 20
 ```
 
 This expression will be broken down into the following Expressions.
 
-```text
+```Shell
 Expression "Fact.A" --> A variable
 Expression "Fact.B" --> A variable
 Expression "Fact.C" --> A variable
@@ -136,7 +136,7 @@ as their remembered value will immediately returned.
 
 If one of this Variable got altered inside the rule's `then` scope, for example
 
-```text
+```Shell
     then
         Fact.B = Fact.A * 20
 ```
@@ -144,7 +144,7 @@ If one of this Variable got altered inside the rule's `then` scope, for example
 We can see `Fact.B` value is changed, then all Expression containing `Fact.B` will
 be removed from Working memory:
 
-```text
+```Shell
 Expression "Fact.B"
 Expression "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable; Fact.B and Fact.C
 Expression "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
