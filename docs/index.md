@@ -1,9 +1,4 @@
 
-[![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
-
-
-__"Gopher Holds The Rules"__
-
 # Grule
 
 ```go
@@ -103,24 +98,3 @@ By using Rules, you create a repository of knowledge (a knowledge base) which is
 ### Agility To Change
 
 Since business rules are actually treated as data. Adjusting the rule according to business dynamic nature become trivial. No need to re-build codes, deploy as normal software development do, you only need to roll out sets of rule and apply them to knowledge repository.
-
-### Docs
-
-* [Tutorial](Tutorial_en.md). Follow this simple tutorial to use Grule ASAP
-* [Rule Engine](RuleEngine_en.md). For those who want to know how Rule Engine works
-* [GRL](GRL_en.md). A bit more in-depth about GRL structures and syntax.
-* [RETE Algorithm](RETE_en.md). Explain how RETE algorithm implemented in Grule.
-* [Functions](Function_en.md). List of built-in function and how to to call your own function from GRL.
-* [Grule Events](GruleEvent_en.md). Grule's internal event bus. If you interested to listen to Grule rule events.
-
-# Tasks and Help Wanted
-
-Yes. We need contributors to make Grule even better and useful to the Open Source Community.
-
-* Need to do more and more and more tests.
-* Better code coverage test.
-* Better commenting for go doc best practice.
-* Improve function argument handling to be more fluid and intuitive.
-
-If you really want to help us, simply `Fork` the project and apply for Pull Request.
-Please read our [Contribution Manual](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCTS.md)
