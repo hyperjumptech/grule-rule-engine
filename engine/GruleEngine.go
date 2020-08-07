@@ -206,3 +206,81 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 
 	return nil
 }
+
+func (g *GruleEngine) RuleMatch(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
+
+	var contextError error
+	var contextCanceled bool
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			contextError = ctx.Err()
+			contextCanceled = true
+		}
+	}()
+
+	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
+
+	// Prepare the build-in function and add to datacontext.
+	defunc := &ast.BuiltInFunctions{
+		Knowledge:     knowledge,
+		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
+	}
+	dataCtx.Add("DEFUNC", defunc)
+
+	// Working memory need to be resetted. all Expression will be set as not evaluated.
+	log.Debugf("Resetting Working memory")
+	knowledge.WorkingMemory.ResetAll()
+
+	// Initialize all AST with datacontext and working memory
+	log.Debugf("Initializing Context")
+	knowledge.InitializeContext(dataCtx)
+
+	var cycle uint64
+	runnable := make([]*ast.RuleEntry, 0)
+	/*
+		Un-limitted loop as long as there are rule to execute.
+		We need to add safety mechanism to detect unlimitted loop as there are posibility executed rule are not changing
+		data context which makes rules to get executed again and again.
+	*/
+	for {
+		if contextCanceled {
+			return nil, contextError
+		}
+
+		// add the cycle counter
+		cycle++
+
+		log.Debugf("Cycle #%d", cycle)
+		// if cycle is above the maximum allowed cycle, returnan error indicated the cycle has ended.
+		if cycle > g.MaxCycle {
+
+			// create the error
+			err := fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
+
+			return nil, err
+		}
+
+		// Select all rule entry that can be executed.
+		log.Tracef("Select all rule entry that can be executed.")
+		for _, v := range knowledge.RuleEntries {
+			// test if this rule entry v can execute.
+			can, err := v.Evaluate()
+			if err != nil {
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.Name, err)
+				// No longer return error, since unavailability of variable or fact in context might be intentional.
+			}
+			// if can, add into runnable array
+			if can {
+				runnable = append(runnable, v)
+			}
+		}
+
+		// disabled to test the rete's variable change detection.
+		// knowledge.RuleContextReset()
+		log.Tracef("Selected rules %d.", len(runnable))
+		return runnable, nil
+	}
+}
