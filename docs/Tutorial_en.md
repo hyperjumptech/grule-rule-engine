@@ -285,8 +285,6 @@ Then
 All the above rules are duplicate ones but with diff salience except `UniqueRule5`, as we all know rule with higher salience will take more priority and get executed if there is a conflict set.
 
 
-If you want to fetch all the matching rule entries that matches against the below fact
-
 ```go
 fact := &Fact{
 		Distance:          6000,
