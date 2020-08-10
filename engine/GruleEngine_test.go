@@ -523,7 +523,7 @@ type Fact struct {
 	Result    bool
 }
 
-const conflictRules = `rule  DuplicateRule1  "Duplicate Rule 1"  salience 10 {
+const duplicateRules = `rule  DuplicateRule1  "Duplicate Rule 1"  salience 10 {
 when
 (Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
 Then
@@ -578,7 +578,7 @@ func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
 	}
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(conflictRules)))
+	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRules)))
 	assert.NoError(t, err)
 	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
 
