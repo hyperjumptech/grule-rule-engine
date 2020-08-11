@@ -1,5 +1,5 @@
 ## Fetch Matching Rules (Order by Salience)
-`FetchMatchingRules` in `GruleEngine.go` fetches all the matching rules against a fact and returns list of `ast.RuleEntry` order by salience property.
+`FetchMatchingRules` in `GruleEngine.go` fetches all the rules valid for a given fact and returns list of `ast.RuleEntry` order by salience property.
 
 ##### Rules:
 ```go
