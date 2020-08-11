@@ -108,6 +108,7 @@ There are so many database can potentially store Rule Entries. Creating adapter 
 
 **Answer** : You can have as many rule entries you want. But there should be at least one minimum.
 
+---
 
 ## 4. Fetch all rules valid for a given fact
 
