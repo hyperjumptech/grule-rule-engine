@@ -1,7 +1,6 @@
 package examples
 
 import (
-	"context"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
@@ -80,7 +79,7 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 
 	//When
 	e := engine.NewGruleEngine()
-	ruleEntries, err := e.FetchMatchingRules(context.Background(), dctx, kb)
+	ruleEntries, err := e.FetchMatchingRules(dctx, kb)
 
 	//Then
 	assert.NoError(t, err)

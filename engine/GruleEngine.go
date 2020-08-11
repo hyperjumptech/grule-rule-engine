@@ -209,7 +209,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 
 // FetchMatchingRules function is responsible to fetch all the rules that matches to a fact against all rule entries
 // Returns []*ast.RuleEntry order by salience
-func (g *GruleEngine) FetchMatchingRules(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
+func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
 	log.Debugf("Starting rule matching using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 	// Prepare the build-in function and add to datacontext.
 	defunc := &ast.BuiltInFunctions{
