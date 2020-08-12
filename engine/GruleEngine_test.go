@@ -679,8 +679,11 @@ Then
 }`
 
 /**
-Evaluation must be done this way if you follow logical operator precedence (identify parentheses arrangement)
+Evaluation must be done below way if you follow logical operator precedence (identify parentheses arrangement)
 (Fact.Distance > 5000  ||   Fact.Duration > 120 || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true))
+Result:
+Logical Operator Precedence: true
+No precedence: false
 **/
 type LogicalOperatorRuleFact struct {
 	Distance           int32
