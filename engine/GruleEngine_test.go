@@ -662,3 +662,60 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	assert.Equal(t, 6, ruleEntries[2].Salience)
 	assert.Equal(t, 5, ruleEntries[3].Salience)
 }
+
+//This TestCase is to test whether grule-rule-engine follows logical operator precedence
+// ! - Highest Priority
+// && - Medium Priority
+// || - Lowest Priority
+// Credits: https://chortle.ccsu.edu/java5/Notes/chap40/ch40_16.html
+const logicalOperatorPrecedenceRules = `
+rule  ComplicatedLogicalOperatorRule  "Complicated logical operator rule" {
+when
+Fact.Distance > 5000  ||   Fact.Duration > 120 || Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}`
+
+/**
+Evaluation must be done this way if you follow logical operator precedence (identify parentheses arrangement)
+(Fact.Distance > 5000  ||   Fact.Duration > 120 || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true))
+**/
+type LogicalOperatorRuleFact struct {
+	Distance           int32
+	Duration           int32
+	RideType           string
+	IsFrequentCustomer bool
+	Result             bool
+	NetAmount          float32
+}
+
+func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
+	//Given
+	fact := &LogicalOperatorRuleFact{
+		Distance:           2000,
+		Duration:           121,
+		RideType:           "Pre-Booked",
+		IsFrequentCustomer: true,
+	}
+	dctx := ast.NewDataContext()
+	err := dctx.Add("Fact", fact)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("logical_operator_rules_test", "0.1.1", pkg.NewBytesResource([]byte(logicalOperatorPrecedenceRules)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("logical_operator_rules_test", "0.1.1")
+
+	//When
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb)
+
+	//Then
+	assert.NoError(t, err)
+	assert.Equal(t, fact.Result, true)
+	assert.Equal(t, fact.NetAmount, float32(143.32))
+}
