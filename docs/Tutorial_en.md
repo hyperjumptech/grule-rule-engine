@@ -196,7 +196,7 @@ Now, in the `KnowledgeLibrary` we have a `KnowledgeBase` named `TutorialRules` w
 To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase` from `KnowledgeLibrary` 
 
 ```go
-knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
 ```
 
 Each instance you obtained from knowledgeLibrary is a *clone* from the underlying `KnowledgeBase` *blue-print*. Its entirely different instance that makes it *thread-safe* for execution. Each *instance* also carries its own `WorkingMemory`. This is very useful when you want to have a multithreaded execution of rule engine (eg. In a web-server to serve each request using a rule).
