@@ -18,7 +18,7 @@ var (
 	})
 )
 
-// BuiltInFunctions strucr hosts the built-in functions ready to invoke from the rule engine execution.
+// BuiltInFunctions struct hosts the built-in functions ready to invoke from the rule engine execution.
 type BuiltInFunctions struct {
 	Knowledge     *KnowledgeBase
 	WorkingMemory *WorkingMemory

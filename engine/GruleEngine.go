@@ -206,3 +206,47 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 
 	return nil
 }
+
+// FetchMatchingRules function is responsible to fetch all the rules that matches to a fact against all rule entries
+// Returns []*ast.RuleEntry order by salience
+func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
+	log.Debugf("Starting rule matching using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
+	// Prepare the build-in function and add to datacontext.
+	defunc := &ast.BuiltInFunctions{
+		Knowledge:     knowledge,
+		WorkingMemory: knowledge.WorkingMemory,
+		DataContext:   dataCtx,
+	}
+	dataCtx.Add("DEFUNC", defunc)
+
+	// Working memory need to be resetted. all Expression will be set as not evaluated.
+	log.Debugf("Resetting Working memory")
+	knowledge.WorkingMemory.ResetAll()
+
+	// Initialize all AST with datacontext and working memory
+	log.Debugf("Initializing Context")
+	knowledge.InitializeContext(dataCtx)
+
+	runnable := make([]*ast.RuleEntry, 0)
+
+	//Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
+	for _, v := range knowledge.RuleEntries {
+		// test if this rule entry v can execute.
+		can, err := v.Evaluate()
+		if err != nil {
+			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.Name, err)
+			// No longer return error, since unavailability of variable or fact in context might be intentional.
+		}
+		// if can, add into runnable array
+		if can {
+			runnable = append(runnable, v)
+		}
+	}
+	log.Debugf("Matching rules length %d.", len(runnable))
+	if len(runnable) > 1 {
+		sort.SliceStable(runnable, func(i, j int) bool {
+			return runnable[i].Salience > runnable[j].Salience
+		})
+	}
+	return runnable, nil
+}

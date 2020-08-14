@@ -110,12 +110,16 @@ Since business rules are actually treated as data. Adjusting the rule according 
 
 ### Docs
 
-* [Tutorial](docs/Tutorial_en.md). Follow this simple tutorial to use Grule ASAP
-* [Rule Engine](docs/RuleEngine_en.md). For those who want to know how Rule Engine works
-* [GRL](docs/GRL_en.md). A bit more in-depth about GRL structures and syntax.
-* [RETE Algorithm](docs/RETE_en.md). Explain how RETE algorithm implemented in Grule.
-* [Functions](docs/Function_en.md). List of built-in function and how to to call your own function from GRL.
-* [Grule Events](docs/GruleEvent_en.md). Grule's internal event bus. If you interested to listen to Grule rule events.
+Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
+
+### Benchmark
+
+You can read the [detail report here](docs/Benchmarking_en.md)
+
+To load `100` rules into knowledgeBase it took `37549279 ns/op` (took the highest value) that is equal to `37.5ms` and (`8871417 B/op`) `8.8MB` memory per operation
+
+To load `1000` rules into knowledgeBase it took `211954473 ns/op` (took the highest value) that is equal to `~211ms` and `88MB` memory per operation
+
 
 # Tasks and Help Wanted
 

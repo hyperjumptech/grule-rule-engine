@@ -515,3 +515,210 @@ rule KeepSleep "test string escaping" salience 10 {
 		t.Logf("got %s", err.Error())
 	}
 }
+
+type Fact struct {
+	NetAmount float32
+	Distance  int32
+	Duration  int32
+	Result    bool
+}
+
+const duplicateRules = `rule  DuplicateRule1  "Duplicate Rule 1"  salience 10 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+rule  DuplicateRule2  "Duplicate Rule 2"  salience 10 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule3  "Duplicate Rule 3"  salience 10 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule4  "Duplicate Rule 4"  salience 10 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule5  "Duplicate Rule 5"  salience 10 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Output.NetAmount=143.320007;
+   Fact.Result=true;
+}`
+
+func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
+	//Given
+	fact := &Fact{
+		Distance: 6000,
+		Duration: 123,
+	}
+	dctx := ast.NewDataContext()
+	err := dctx.Add("Fact", fact)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRules)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+
+	//When
+	engine := NewGruleEngine()
+	ruleEntries, err := engine.FetchMatchingRules(dctx, kb)
+
+	//Then
+	assert.NoError(t, err)
+	assert.Equal(t, 5, len(ruleEntries))
+}
+
+const duplicateRulesWithDiffSalience = `rule  DuplicateRule1  "Duplicate Rule 1"  salience 5 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+rule  DuplicateRule2  "Duplicate Rule 2"  salience 6 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule3  "Duplicate Rule 3"  salience 7 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule4  "Duplicate Rule 4"  salience 8 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}
+
+
+rule  DuplicateRule5  "Duplicate Rule 5"  salience 9 {
+when
+(Fact.Distance > 5000  &&   Fact.Duration == 120) && (Fact.Result == false)
+Then
+   Output.NetAmount=143.320007;
+   Fact.Result=true;
+}`
+
+func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
+	//Given
+	fact := &Fact{
+		Distance: 6000,
+		Duration: 121,
+	}
+	dctx := ast.NewDataContext()
+	err := dctx.Add("Fact", fact)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+
+	//When
+	engine := NewGruleEngine()
+	ruleEntries, err := engine.FetchMatchingRules(dctx, kb)
+
+	//Then
+	assert.NoError(t, err)
+	assert.Equal(t, 4, len(ruleEntries))
+	assert.Equal(t, 8, ruleEntries[0].Salience)
+	assert.Equal(t, 7, ruleEntries[1].Salience)
+	assert.Equal(t, 6, ruleEntries[2].Salience)
+	assert.Equal(t, 5, ruleEntries[3].Salience)
+}
+
+//This TestCase is to test whether grule-rule-engine follows logical operator precedence
+// ! - Highest Priority
+// && - Medium Priority
+// || - Lowest Priority
+// Credits: https://chortle.ccsu.edu/java5/Notes/chap40/ch40_16.html
+const logicalOperatorPrecedenceRules = `
+rule  ComplicatedLogicalOperatorRule  "Complicated logical operator rule" {
+when
+Fact.Distance > 5000  ||   Fact.Duration > 120 || Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}`
+
+/**
+Evaluation must be done below way if you follow logical operator precedence (identify parentheses arrangement)
+(Fact.Distance > 5000  ||   Fact.Duration > 120 || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true))
+Result:
+Logical Operator Precedence: true
+No precedence: false
+**/
+type LogicalOperatorRuleFact struct {
+	Distance           int32
+	Duration           int32
+	RideType           string
+	IsFrequentCustomer bool
+	Result             bool
+	NetAmount          float32
+}
+
+func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
+	//Given
+	fact := &LogicalOperatorRuleFact{
+		Distance:           2000,
+		Duration:           121,
+		RideType:           "Pre-Booked",
+		IsFrequentCustomer: true,
+	}
+	dctx := ast.NewDataContext()
+	err := dctx.Add("Fact", fact)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("logical_operator_rules_test", "0.1.1", pkg.NewBytesResource([]byte(logicalOperatorPrecedenceRules)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("logical_operator_rules_test", "0.1.1")
+
+	//When
+	engine := NewGruleEngine()
+	err = engine.Execute(dctx, kb)
+
+	//Then
+	assert.NoError(t, err)
+	assert.Equal(t, fact.Result, true)
+	assert.Equal(t, fact.NetAmount, float32(143.32))
+}

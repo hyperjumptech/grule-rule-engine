@@ -108,3 +108,11 @@ There are so many database can potentially store Rule Entries. Creating adapter 
 
 **Answer** : You can have as many rule entries you want. But there should be at least one minimum.
 
+---
+
+## 4. Fetch all rules valid for a given fact
+
+**Question** : How can I test which of rules I define is valid for a given Facts?
+
+**Answer** : You can use `engine.FetchMatchingRule` function, refer this [Matching Rules Doc](MatchingRules_en.md) for more info
+
