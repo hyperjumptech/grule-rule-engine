@@ -113,7 +113,7 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 			ret = append(ret, gres...)
 		} else {
 			for _, pattern := range bundle.PathPattern {
-				matched, err := doublestar.Match(pattern, fulPath)
+				matched, err := doublestar.PathMatch(pattern, fulPath)
 				if err != nil {
 					return nil, err
 				}
