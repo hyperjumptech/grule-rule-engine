@@ -5,7 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-        "path/filepath"
+	"path/filepath"
 
 	"github.com/bmatcuk/doublestar"
 	"github.com/sirupsen/logrus"
