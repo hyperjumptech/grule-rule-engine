@@ -1,0 +1,1009 @@
+
+rule  DuplicateRule1  "Duplicate Rule-1"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule11  "Duplicate Rule-11"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule21  "Duplicate Rule-21"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule31  "Duplicate Rule-31"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule41  "Duplicate Rule-41"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule51  "Duplicate Rule-51"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule61  "Duplicate Rule-61"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule71  "Duplicate Rule-71"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule81  "Duplicate Rule-81"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule91  "Duplicate Rule-91"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule101  "Duplicate Rule-101"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule111  "Duplicate Rule-111"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule121  "Duplicate Rule-121"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule131  "Duplicate Rule-131"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule141  "Duplicate Rule-141"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule151  "Duplicate Rule-151"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule161  "Duplicate Rule-161"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule171  "Duplicate Rule-171"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule181  "Duplicate Rule-181"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule191  "Duplicate Rule-191"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule201  "Duplicate Rule-201"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule211  "Duplicate Rule-211"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule221  "Duplicate Rule-221"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule231  "Duplicate Rule-231"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule241  "Duplicate Rule-241"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule251  "Duplicate Rule-251"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule261  "Duplicate Rule-261"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule271  "Duplicate Rule-271"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule281  "Duplicate Rule-281"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule291  "Duplicate Rule-291"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule301  "Duplicate Rule-301"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule311  "Duplicate Rule-311"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule321  "Duplicate Rule-321"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule331  "Duplicate Rule-331"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule341  "Duplicate Rule-341"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule351  "Duplicate Rule-351"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule361  "Duplicate Rule-361"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule371  "Duplicate Rule-371"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule381  "Duplicate Rule-381"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule391  "Duplicate Rule-391"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule401  "Duplicate Rule-401"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule411  "Duplicate Rule-411"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule421  "Duplicate Rule-421"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule431  "Duplicate Rule-431"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule441  "Duplicate Rule-441"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule451  "Duplicate Rule-451"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule461  "Duplicate Rule-461"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule471  "Duplicate Rule-471"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule481  "Duplicate Rule-481"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule491  "Duplicate Rule-491"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule501  "Duplicate Rule-501"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule511  "Duplicate Rule-511"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule521  "Duplicate Rule-521"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule531  "Duplicate Rule-531"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule541  "Duplicate Rule-541"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule551  "Duplicate Rule-551"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule561  "Duplicate Rule-561"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule571  "Duplicate Rule-571"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule581  "Duplicate Rule-581"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule591  "Duplicate Rule-591"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule601  "Duplicate Rule-601"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule611  "Duplicate Rule-611"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule621  "Duplicate Rule-621"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule631  "Duplicate Rule-631"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule641  "Duplicate Rule-641"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule651  "Duplicate Rule-651"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule661  "Duplicate Rule-661"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule671  "Duplicate Rule-671"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule681  "Duplicate Rule-681"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule691  "Duplicate Rule-691"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule701  "Duplicate Rule-701"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule711  "Duplicate Rule-711"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule721  "Duplicate Rule-721"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule731  "Duplicate Rule-731"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule741  "Duplicate Rule-741"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule751  "Duplicate Rule-751"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule761  "Duplicate Rule-761"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule771  "Duplicate Rule-771"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule781  "Duplicate Rule-781"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule791  "Duplicate Rule-791"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule801  "Duplicate Rule-801"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule811  "Duplicate Rule-811"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule821  "Duplicate Rule-821"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule831  "Duplicate Rule-831"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule841  "Duplicate Rule-841"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule851  "Duplicate Rule-851"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule861  "Duplicate Rule-861"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule871  "Duplicate Rule-871"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule881  "Duplicate Rule-881"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule891  "Duplicate Rule-891"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule901  "Duplicate Rule-901"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule911  "Duplicate Rule-911"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule921  "Duplicate Rule-921"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule931  "Duplicate Rule-931"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule941  "Duplicate Rule-941"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule951  "Duplicate Rule-951"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule961  "Duplicate Rule-961"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule971  "Duplicate Rule-971"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule981  "Duplicate Rule-981"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  DuplicateRule991  "Duplicate Rule-991"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}
+
+
+rule  HigherSalienceRule  "This will ignore all the duplicate rules and match this rule because of higher salience"  salience 11 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=153;
+   Fact.Result=true;
+   Complete();
+}
