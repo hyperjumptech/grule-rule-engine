@@ -1,13 +1,56 @@
 package pkg
 
 import (
+	"os"
 	"reflect"
+	"runtime"
+	"strings"
 	"testing"
 )
 
 const (
 	loremipsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`
 )
+
+
+func TestFileResourceBundle_Load(t *testing.T) {
+	path, err := os.Getwd()
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	t.Logf("OS is : %s", runtime.GOOS)
+	t.Logf("Path : %s", path)
+	var frb *FileResourceBundle
+	if runtime.GOOS == "windows" {
+		frb = NewFileResourceBundle(path, "**\\*.grl")
+	} else {
+		frb = NewFileResourceBundle(path, "/**/*.grl")
+	}
+	resources := frb.MustLoad()
+	if len(resources) != 6 {
+		t.Errorf("Expected 6 but get %d", len(resources) )
+		t.FailNow()
+	}
+	if !strings.HasSuffix(resources[0].String(), "GrlFile11.grl") {
+		t.Errorf("Expect [0] to have suffix GrlFile11.grl. But %s", resources[0].String())
+	}
+	if !strings.HasSuffix(resources[1].String(), "GrlFile12.grl") {
+		t.Errorf("Expect [1] to have suffix GrlFile12.grl. But %s", resources[0].String())
+	}
+	if !strings.HasSuffix(resources[2].String(), "GrlFile21.grl") {
+		t.Errorf("Expect [2] to have suffix GrlFile11.grl. But %s", resources[0].String())
+	}
+	if !strings.HasSuffix(resources[3].String(), "GrlFile22.grl") {
+		t.Errorf("Expect [3] to have suffix GrlFile11.grl. But %s", resources[0].String())
+	}
+	if !strings.HasSuffix(resources[4].String(), "GrlFile211.grl") {
+		t.Errorf("Expect [4] to have suffix GrlFile11.grl. But %s", resources[0].String())
+	}
+	if !strings.HasSuffix(resources[5].String(), "GrlFile212.grl") {
+		t.Errorf("Expect [5] to have suffix GrlFile11.grl. But %s", resources[0].String())
+	}
+}
 
 func TestNewBytesResource(t *testing.T) {
 	resource := NewBytesResource([]byte(loremipsum))

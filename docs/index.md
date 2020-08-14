@@ -1,4 +1,9 @@
 
+[![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+
+
+__"Gopher Holds The Rules"__
+
 # Grule
 
 ```go
@@ -98,3 +103,4 @@ By using Rules, you create a repository of knowledge (a knowledge base) which is
 ### Agility To Change
 
 Since business rules are actually treated as data. Adjusting the rule according to business dynamic nature become trivial. No need to re-build codes, deploy as normal software development do, you only need to roll out sets of rule and apply them to knowledge repository.
+
