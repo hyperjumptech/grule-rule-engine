@@ -112,6 +112,15 @@ Since business rules are actually treated as data. Adjusting the rule according 
 
 Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
 
+### Benchmark
+
+You can read the [detail report here](docs/Benchmarking_en.md)
+
+To load `100` rules into knowledgeBase it took `37549279 ns/op` (took the highest value) that is equal to `37.5ms` and (`8871417 B/op`) `8.8MB` memory per operation
+
+To load `1000` rules into knowledgeBase it took `211954473 ns/op` (took the highest value) that is equal to `~211ms` and `88MB` memory per operation
+
+
 # Tasks and Help Wanted
 
 Yes. We need contributors to make Grule even better and useful to the Open Source Community.
