@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 
 	"github.com/bmatcuk/doublestar"
 	"github.com/sirupsen/logrus"
@@ -102,9 +103,7 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 	ret := make([]Resource, 0)
 	for _, finfo := range finfos {
 		fulPath := fmt.Sprintf("%s/%s", path, finfo.Name())
-		if path == "/" && finfo.IsDir() {
-			fulPath = fmt.Sprintf("/%s", finfo.Name())
-		}
+		fulPath, _ = filepath.Abs(fulPath)
 		if finfo.IsDir() {
 			gres, err := bundle.loadPath(fulPath)
 			if err != nil {
@@ -113,7 +112,7 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 			ret = append(ret, gres...)
 		} else {
 			for _, pattern := range bundle.PathPattern {
-				matched, err := doublestar.Match(pattern, fulPath)
+				matched, err := doublestar.PathMatch(pattern, fulPath)
 				if err != nil {
 					return nil, err
 				}
