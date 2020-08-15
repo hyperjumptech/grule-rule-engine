@@ -1,0 +1,7 @@
+rule GrlFile11 "This is dummy rule" {
+    when
+        true
+    then
+        Log("Nice");
+        Complete();
+}
