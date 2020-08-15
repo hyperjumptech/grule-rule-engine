@@ -6,6 +6,8 @@ import (
 )
 
 var (
+	stringVal = reflect.ValueOf("z12")
+
 	intVal   = reflect.ValueOf(12)
 	int8Val  = reflect.ValueOf(int8(12))
 	int16Val = reflect.ValueOf(int16(12))
@@ -20,6 +22,8 @@ var (
 
 	float32Val = reflect.ValueOf(float32(12))
 	float64Val = reflect.ValueOf(float64(12))
+
+	stringVal2 = reflect.ValueOf("a3")
 
 	intVal2   = reflect.ValueOf(3)
 	int8Val2  = reflect.ValueOf(int8(3))
@@ -65,6 +69,16 @@ var (
 )
 
 func TestValueAdd(t *testing.T) {
+	vc, err := EvaluateAddition(stringVal, stringVal2)
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+	if vc.Kind() == reflect.String {
+		if vc.String() != "z12a3" {
+			t.Errorf("Expected string \"z12a3\" but \"%s\"", vc.String())
+		}
+	}
+
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
 			vc, err := EvaluateAddition(va, vb)
@@ -327,6 +341,16 @@ func TestEvaluateBitOr(t *testing.T) {
 }
 
 func TestEvaluateGreaterThan(t *testing.T) {
+	vc, err := EvaluateGreaterThan(stringVal, stringVal2)
+
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+
+	if vc.Kind() != reflect.Bool || vc.Bool() == false {
+		t.Errorf("\"z12\" > \"a3\" == false")
+	}
+
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
 			vc, err := EvaluateGreaterThan(va, vb)
@@ -343,6 +367,16 @@ func TestEvaluateGreaterThan(t *testing.T) {
 }
 
 func TestEvaluateLesserThan(t *testing.T) {
+	vc, err := EvaluateLesserThan(stringVal2, stringVal)
+
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+
+	if vc.Kind() != reflect.Bool || vc.Bool() == false {
+		t.Errorf("\"a3\" < \"z12\" == false")
+	}
+
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
 			vc, err := EvaluateLesserThan(vb, va)
@@ -359,6 +393,16 @@ func TestEvaluateLesserThan(t *testing.T) {
 }
 
 func TestEvaluateGreaterThanEqual(t *testing.T) {
+	vc, err := EvaluateGreaterThanEqual(stringVal, stringVal2)
+
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+
+	if vc.Kind() != reflect.Bool || vc.Bool() == false {
+		t.Errorf("\"z12\" >= \"a3\" == false")
+	}
+
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
 			vc, err := EvaluateGreaterThanEqual(va, vb)
@@ -368,13 +412,23 @@ func TestEvaluateGreaterThanEqual(t *testing.T) {
 			}
 
 			if vc.Kind() != reflect.Bool || vc.Bool() == false {
-				t.Errorf("12 > 3 == false")
+				t.Errorf("12 >= 3 == false")
 			}
 		}
 	}
 }
 
 func TestEvaluateLesserThanEqual(t *testing.T) {
+	vc, err := EvaluateLesserThanEqual(stringVal2, stringVal)
+
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+
+	if vc.Kind() != reflect.Bool || vc.Bool() == false {
+		t.Errorf("\"a3\" <= \"z12\" == false")
+	}
+
 	for _, va := range valuesA {
 		for _, vb := range valuesB {
 			vc, err := EvaluateLesserThanEqual(vb, va)
@@ -384,7 +438,7 @@ func TestEvaluateLesserThanEqual(t *testing.T) {
 			}
 
 			if vc.Kind() != reflect.Bool || vc.Bool() == false {
-				t.Errorf("3 < 12 == false")
+				t.Errorf("3 <= 12 == false")
 			}
 		}
 	}
