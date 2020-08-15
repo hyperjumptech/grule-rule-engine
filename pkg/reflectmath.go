@@ -3,6 +3,7 @@ package pkg
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -351,6 +352,15 @@ func EvaluateBitOr(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateGreaterThan will evaluate GreaterThan operation over two value
 func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(strings.Compare(lv, rv) > 0), nil
+		default:
+			return reflect.ValueOf(false), fmt.Errorf("\"greather than\" string comparison can only be done toward a string")
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -409,6 +419,15 @@ func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateLesserThan will evaluate LesserThan operation over two value
 func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(strings.Compare(lv, rv) < 0), nil
+		default:
+			return reflect.ValueOf(false), fmt.Errorf("\"lesser than\" string comparison can only be done toward a string")
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -467,6 +486,15 @@ func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateGreaterThanEqual will evaluate GreaterThanEqual operation over two value
 func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(strings.Compare(lv, rv) >= 0), nil
+		default:
+			return reflect.ValueOf(false), fmt.Errorf("\"greather than or equal\" string comparison can only be done toward a string")
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -525,6 +553,15 @@ func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) 
 // EvaluateLesserThanEqual will evaluate LesserThanEqual operation over two value
 func EvaluateLesserThanEqual(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(strings.Compare(lv, rv) <= 0), nil
+		default:
+			return reflect.ValueOf(false), fmt.Errorf("\"lesser than or equal\" string comparison can only be done toward a string")
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
