@@ -13,7 +13,7 @@ test-short: lint
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
 
 test: lint
-	go test ./... -v -covermode=count -coverprofile=coverage.out
+	go test ./... -covermode=count -coverprofile=coverage.out
 
 test-coverage: test
 	go tool cover -html=coverage.out

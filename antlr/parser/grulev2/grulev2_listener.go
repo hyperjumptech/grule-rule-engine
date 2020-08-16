@@ -1,7 +1,6 @@
-// Generated from grulev2.g4/ by ANTLR 4.7.
+// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
-package parser // grulev2
-
+package grulev2 // grulev2
 import "github.com/antlr/antlr4/runtime/Go/antlr"
 
 // grulev2Listener is a complete listener for a parse tree produced by grulev2Parser.
