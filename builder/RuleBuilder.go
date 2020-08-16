@@ -6,7 +6,7 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	log "github.com/sirupsen/logrus"

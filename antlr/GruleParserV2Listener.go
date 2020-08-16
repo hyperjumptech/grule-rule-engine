@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
 )

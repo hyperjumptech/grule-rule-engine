@@ -1,7 +1,6 @@
-// Generated from grulev2.g4/ by ANTLR 4.7.
+// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
-package parser // grulev2
-
+package grulev2 // grulev2
 import (
 	"fmt"
 	"reflect"
@@ -15,118 +14,119 @@ var _ = fmt.Printf
 var _ = reflect.Copy
 var _ = strconv.Itoa
 
+
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 42, 206,
-	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
-	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
-	9, 13, 4, 14, 9, 14, 4, 15, 9, 15, 4, 16, 9, 16, 4, 17, 9, 17, 4, 18, 9,
-	18, 4, 19, 9, 19, 4, 20, 9, 20, 4, 21, 9, 21, 4, 22, 9, 22, 4, 23, 9, 23,
-	4, 24, 9, 24, 4, 25, 9, 25, 4, 26, 9, 26, 4, 27, 9, 27, 3, 2, 7, 2, 56,
-	10, 2, 12, 2, 14, 2, 59, 11, 2, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 5, 3, 66,
-	10, 3, 3, 3, 5, 3, 69, 10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4,
-	3, 4, 3, 5, 3, 5, 3, 6, 3, 6, 3, 7, 3, 7, 3, 7, 3, 8, 3, 8, 3, 8, 3, 9,
-	6, 9, 90, 10, 9, 13, 9, 14, 9, 91, 3, 10, 3, 10, 3, 10, 3, 10, 3, 10, 3,
-	10, 3, 10, 3, 10, 3, 10, 5, 10, 103, 10, 10, 3, 11, 3, 11, 3, 11, 3, 11,
-	3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 5, 12, 115, 10, 12, 3, 12, 3,
-	12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12,
-	3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 7, 12, 137, 10,
-	12, 12, 12, 14, 12, 140, 11, 12, 3, 13, 3, 13, 3, 14, 3, 14, 3, 15, 3,
-	15, 3, 16, 3, 16, 3, 17, 3, 17, 3, 18, 3, 18, 3, 18, 3, 18, 5, 18, 156,
-	10, 18, 3, 19, 3, 19, 3, 19, 5, 19, 161, 10, 19, 3, 19, 3, 19, 3, 20, 3,
-	20, 3, 20, 5, 20, 168, 10, 20, 3, 20, 3, 20, 3, 21, 3, 21, 3, 21, 7, 21,
-	175, 10, 21, 12, 21, 14, 21, 178, 11, 21, 3, 22, 3, 22, 3, 23, 3, 23, 3,
-	23, 3, 23, 3, 23, 5, 23, 187, 10, 23, 3, 23, 5, 23, 190, 10, 23, 3, 24,
-	5, 24, 193, 10, 24, 3, 24, 3, 24, 3, 25, 5, 25, 198, 10, 25, 3, 25, 3,
-	25, 3, 26, 3, 26, 3, 27, 3, 27, 3, 27, 2, 3, 22, 28, 2, 4, 6, 8, 10, 12,
-	14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48,
-	50, 52, 2, 8, 3, 2, 36, 37, 3, 2, 18, 20, 4, 2, 16, 17, 28, 29, 4, 2, 21,
-	21, 23, 27, 3, 2, 14, 15, 3, 2, 9, 10, 2, 204, 2, 57, 3, 2, 2, 2, 4, 62,
-	3, 2, 2, 2, 6, 75, 3, 2, 2, 2, 8, 78, 3, 2, 2, 2, 10, 80, 3, 2, 2, 2, 12,
-	82, 3, 2, 2, 2, 14, 85, 3, 2, 2, 2, 16, 89, 3, 2, 2, 2, 18, 102, 3, 2,
-	2, 2, 20, 104, 3, 2, 2, 2, 22, 114, 3, 2, 2, 2, 24, 141, 3, 2, 2, 2, 26,
-	143, 3, 2, 2, 2, 28, 145, 3, 2, 2, 2, 30, 147, 3, 2, 2, 2, 32, 149, 3,
-	2, 2, 2, 34, 155, 3, 2, 2, 2, 36, 157, 3, 2, 2, 2, 38, 164, 3, 2, 2, 2,
-	40, 171, 3, 2, 2, 2, 42, 179, 3, 2, 2, 2, 44, 189, 3, 2, 2, 2, 46, 192,
-	3, 2, 2, 2, 48, 197, 3, 2, 2, 2, 50, 201, 3, 2, 2, 2, 52, 203, 3, 2, 2,
-	2, 54, 56, 5, 4, 3, 2, 55, 54, 3, 2, 2, 2, 56, 59, 3, 2, 2, 2, 57, 55,
-	3, 2, 2, 2, 57, 58, 3, 2, 2, 2, 58, 60, 3, 2, 2, 2, 59, 57, 3, 2, 2, 2,
-	60, 61, 7, 2, 2, 3, 61, 3, 3, 2, 2, 2, 62, 63, 7, 4, 2, 2, 63, 65, 5, 8,
-	5, 2, 64, 66, 5, 10, 6, 2, 65, 64, 3, 2, 2, 2, 65, 66, 3, 2, 2, 2, 66,
-	68, 3, 2, 2, 2, 67, 69, 5, 6, 4, 2, 68, 67, 3, 2, 2, 2, 68, 69, 3, 2, 2,
-	2, 69, 70, 3, 2, 2, 2, 70, 71, 7, 31, 2, 2, 71, 72, 5, 12, 7, 2, 72, 73,
-	5, 14, 8, 2, 73, 74, 7, 32, 2, 2, 74, 5, 3, 2, 2, 2, 75, 76, 7, 13, 2,
-	2, 76, 77, 5, 46, 24, 2, 77, 7, 3, 2, 2, 2, 78, 79, 7, 14, 2, 2, 79, 9,
-	3, 2, 2, 2, 80, 81, 9, 2, 2, 2, 81, 11, 3, 2, 2, 2, 82, 83, 7, 5, 2, 2,
-	83, 84, 5, 22, 12, 2, 84, 13, 3, 2, 2, 2, 85, 86, 7, 6, 2, 2, 86, 87, 5,
-	16, 9, 2, 87, 15, 3, 2, 2, 2, 88, 90, 5, 18, 10, 2, 89, 88, 3, 2, 2, 2,
-	90, 91, 3, 2, 2, 2, 91, 89, 3, 2, 2, 2, 91, 92, 3, 2, 2, 2, 92, 17, 3,
-	2, 2, 2, 93, 94, 5, 20, 11, 2, 94, 95, 7, 30, 2, 2, 95, 103, 3, 2, 2, 2,
-	96, 97, 5, 36, 19, 2, 97, 98, 7, 30, 2, 2, 98, 103, 3, 2, 2, 2, 99, 100,
-	5, 38, 20, 2, 100, 101, 7, 30, 2, 2, 101, 103, 3, 2, 2, 2, 102, 93, 3,
-	2, 2, 2, 102, 96, 3, 2, 2, 2, 102, 99, 3, 2, 2, 2, 103, 19, 3, 2, 2, 2,
-	104, 105, 5, 42, 22, 2, 105, 106, 7, 22, 2, 2, 106, 107, 5, 22, 12, 2,
-	107, 21, 3, 2, 2, 2, 108, 109, 8, 12, 1, 2, 109, 110, 7, 33, 2, 2, 110,
-	111, 5, 22, 12, 2, 111, 112, 7, 34, 2, 2, 112, 115, 3, 2, 2, 2, 113, 115,
-	5, 34, 18, 2, 114, 108, 3, 2, 2, 2, 114, 113, 3, 2, 2, 2, 115, 138, 3,
-	2, 2, 2, 116, 117, 12, 9, 2, 2, 117, 118, 5, 24, 13, 2, 118, 119, 5, 22,
-	12, 10, 119, 137, 3, 2, 2, 2, 120, 121, 12, 8, 2, 2, 121, 122, 5, 26, 14,
-	2, 122, 123, 5, 22, 12, 9, 123, 137, 3, 2, 2, 2, 124, 125, 12, 7, 2, 2,
-	125, 126, 5, 28, 15, 2, 126, 127, 5, 22, 12, 8, 127, 137, 3, 2, 2, 2, 128,
-	129, 12, 6, 2, 2, 129, 130, 5, 30, 16, 2, 130, 131, 5, 22, 12, 7, 131,
-	137, 3, 2, 2, 2, 132, 133, 12, 5, 2, 2, 133, 134, 5, 32, 17, 2, 134, 135,
-	5, 22, 12, 6, 135, 137, 3, 2, 2, 2, 136, 116, 3, 2, 2, 2, 136, 120, 3,
-	2, 2, 2, 136, 124, 3, 2, 2, 2, 136, 128, 3, 2, 2, 2, 136, 132, 3, 2, 2,
-	2, 137, 140, 3, 2, 2, 2, 138, 136, 3, 2, 2, 2, 138, 139, 3, 2, 2, 2, 139,
-	23, 3, 2, 2, 2, 140, 138, 3, 2, 2, 2, 141, 142, 9, 3, 2, 2, 142, 25, 3,
-	2, 2, 2, 143, 144, 9, 4, 2, 2, 144, 27, 3, 2, 2, 2, 145, 146, 9, 5, 2,
-	2, 146, 29, 3, 2, 2, 2, 147, 148, 7, 7, 2, 2, 148, 31, 3, 2, 2, 2, 149,
-	150, 7, 8, 2, 2, 150, 33, 3, 2, 2, 2, 151, 156, 5, 44, 23, 2, 152, 156,
-	5, 42, 22, 2, 153, 156, 5, 38, 20, 2, 154, 156, 5, 36, 19, 2, 155, 151,
-	3, 2, 2, 2, 155, 152, 3, 2, 2, 2, 155, 153, 3, 2, 2, 2, 155, 154, 3, 2,
-	2, 2, 156, 35, 3, 2, 2, 2, 157, 158, 7, 15, 2, 2, 158, 160, 7, 33, 2, 2,
-	159, 161, 5, 40, 21, 2, 160, 159, 3, 2, 2, 2, 160, 161, 3, 2, 2, 2, 161,
-	162, 3, 2, 2, 2, 162, 163, 7, 34, 2, 2, 163, 37, 3, 2, 2, 2, 164, 165,
-	7, 14, 2, 2, 165, 167, 7, 33, 2, 2, 166, 168, 5, 40, 21, 2, 167, 166, 3,
-	2, 2, 2, 167, 168, 3, 2, 2, 2, 168, 169, 3, 2, 2, 2, 169, 170, 7, 34, 2,
-	2, 170, 39, 3, 2, 2, 2, 171, 176, 5, 22, 12, 2, 172, 173, 7, 3, 2, 2, 173,
-	175, 5, 22, 12, 2, 174, 172, 3, 2, 2, 2, 175, 178, 3, 2, 2, 2, 176, 174,
-	3, 2, 2, 2, 176, 177, 3, 2, 2, 2, 177, 41, 3, 2, 2, 2, 178, 176, 3, 2,
-	2, 2, 179, 180, 9, 6, 2, 2, 180, 43, 3, 2, 2, 2, 181, 190, 5, 50, 26, 2,
-	182, 190, 5, 46, 24, 2, 183, 190, 5, 52, 27, 2, 184, 190, 5, 48, 25, 2,
-	185, 187, 7, 12, 2, 2, 186, 185, 3, 2, 2, 2, 186, 187, 3, 2, 2, 2, 187,
-	188, 3, 2, 2, 2, 188, 190, 7, 11, 2, 2, 189, 181, 3, 2, 2, 2, 189, 182,
-	3, 2, 2, 2, 189, 183, 3, 2, 2, 2, 189, 184, 3, 2, 2, 2, 189, 186, 3, 2,
-	2, 2, 190, 45, 3, 2, 2, 2, 191, 193, 7, 17, 2, 2, 192, 191, 3, 2, 2, 2,
-	192, 193, 3, 2, 2, 2, 193, 194, 3, 2, 2, 2, 194, 195, 7, 38, 2, 2, 195,
-	47, 3, 2, 2, 2, 196, 198, 7, 17, 2, 2, 197, 196, 3, 2, 2, 2, 197, 198,
-	3, 2, 2, 2, 198, 199, 3, 2, 2, 2, 199, 200, 7, 39, 2, 2, 200, 49, 3, 2,
-	2, 2, 201, 202, 9, 2, 2, 2, 202, 51, 3, 2, 2, 2, 203, 204, 9, 7, 2, 2,
-	204, 53, 3, 2, 2, 2, 18, 57, 65, 68, 91, 102, 114, 136, 138, 155, 160,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 42, 206, 
+	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7, 
+	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13, 
+	9, 13, 4, 14, 9, 14, 4, 15, 9, 15, 4, 16, 9, 16, 4, 17, 9, 17, 4, 18, 9, 
+	18, 4, 19, 9, 19, 4, 20, 9, 20, 4, 21, 9, 21, 4, 22, 9, 22, 4, 23, 9, 23, 
+	4, 24, 9, 24, 4, 25, 9, 25, 4, 26, 9, 26, 4, 27, 9, 27, 3, 2, 7, 2, 56, 
+	10, 2, 12, 2, 14, 2, 59, 11, 2, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 5, 3, 66, 
+	10, 3, 3, 3, 5, 3, 69, 10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 
+	3, 4, 3, 5, 3, 5, 3, 6, 3, 6, 3, 7, 3, 7, 3, 7, 3, 8, 3, 8, 3, 8, 3, 9, 
+	6, 9, 90, 10, 9, 13, 9, 14, 9, 91, 3, 10, 3, 10, 3, 10, 3, 10, 3, 10, 3, 
+	10, 3, 10, 3, 10, 3, 10, 5, 10, 103, 10, 10, 3, 11, 3, 11, 3, 11, 3, 11, 
+	3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 5, 12, 115, 10, 12, 3, 12, 3, 
+	12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 
+	3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 7, 12, 137, 10, 
+	12, 12, 12, 14, 12, 140, 11, 12, 3, 13, 3, 13, 3, 14, 3, 14, 3, 15, 3, 
+	15, 3, 16, 3, 16, 3, 17, 3, 17, 3, 18, 3, 18, 3, 18, 3, 18, 5, 18, 156, 
+	10, 18, 3, 19, 3, 19, 3, 19, 5, 19, 161, 10, 19, 3, 19, 3, 19, 3, 20, 3, 
+	20, 3, 20, 5, 20, 168, 10, 20, 3, 20, 3, 20, 3, 21, 3, 21, 3, 21, 7, 21, 
+	175, 10, 21, 12, 21, 14, 21, 178, 11, 21, 3, 22, 3, 22, 3, 23, 3, 23, 3, 
+	23, 3, 23, 3, 23, 5, 23, 187, 10, 23, 3, 23, 5, 23, 190, 10, 23, 3, 24, 
+	5, 24, 193, 10, 24, 3, 24, 3, 24, 3, 25, 5, 25, 198, 10, 25, 3, 25, 3, 
+	25, 3, 26, 3, 26, 3, 27, 3, 27, 3, 27, 2, 3, 22, 28, 2, 4, 6, 8, 10, 12, 
+	14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 
+	50, 52, 2, 8, 3, 2, 36, 37, 3, 2, 18, 20, 4, 2, 16, 17, 28, 29, 4, 2, 21, 
+	21, 23, 27, 3, 2, 14, 15, 3, 2, 9, 10, 2, 204, 2, 57, 3, 2, 2, 2, 4, 62, 
+	3, 2, 2, 2, 6, 75, 3, 2, 2, 2, 8, 78, 3, 2, 2, 2, 10, 80, 3, 2, 2, 2, 12, 
+	82, 3, 2, 2, 2, 14, 85, 3, 2, 2, 2, 16, 89, 3, 2, 2, 2, 18, 102, 3, 2, 
+	2, 2, 20, 104, 3, 2, 2, 2, 22, 114, 3, 2, 2, 2, 24, 141, 3, 2, 2, 2, 26, 
+	143, 3, 2, 2, 2, 28, 145, 3, 2, 2, 2, 30, 147, 3, 2, 2, 2, 32, 149, 3, 
+	2, 2, 2, 34, 155, 3, 2, 2, 2, 36, 157, 3, 2, 2, 2, 38, 164, 3, 2, 2, 2, 
+	40, 171, 3, 2, 2, 2, 42, 179, 3, 2, 2, 2, 44, 189, 3, 2, 2, 2, 46, 192, 
+	3, 2, 2, 2, 48, 197, 3, 2, 2, 2, 50, 201, 3, 2, 2, 2, 52, 203, 3, 2, 2, 
+	2, 54, 56, 5, 4, 3, 2, 55, 54, 3, 2, 2, 2, 56, 59, 3, 2, 2, 2, 57, 55, 
+	3, 2, 2, 2, 57, 58, 3, 2, 2, 2, 58, 60, 3, 2, 2, 2, 59, 57, 3, 2, 2, 2, 
+	60, 61, 7, 2, 2, 3, 61, 3, 3, 2, 2, 2, 62, 63, 7, 4, 2, 2, 63, 65, 5, 8, 
+	5, 2, 64, 66, 5, 10, 6, 2, 65, 64, 3, 2, 2, 2, 65, 66, 3, 2, 2, 2, 66, 
+	68, 3, 2, 2, 2, 67, 69, 5, 6, 4, 2, 68, 67, 3, 2, 2, 2, 68, 69, 3, 2, 2, 
+	2, 69, 70, 3, 2, 2, 2, 70, 71, 7, 31, 2, 2, 71, 72, 5, 12, 7, 2, 72, 73, 
+	5, 14, 8, 2, 73, 74, 7, 32, 2, 2, 74, 5, 3, 2, 2, 2, 75, 76, 7, 13, 2, 
+	2, 76, 77, 5, 46, 24, 2, 77, 7, 3, 2, 2, 2, 78, 79, 7, 14, 2, 2, 79, 9, 
+	3, 2, 2, 2, 80, 81, 9, 2, 2, 2, 81, 11, 3, 2, 2, 2, 82, 83, 7, 5, 2, 2, 
+	83, 84, 5, 22, 12, 2, 84, 13, 3, 2, 2, 2, 85, 86, 7, 6, 2, 2, 86, 87, 5, 
+	16, 9, 2, 87, 15, 3, 2, 2, 2, 88, 90, 5, 18, 10, 2, 89, 88, 3, 2, 2, 2, 
+	90, 91, 3, 2, 2, 2, 91, 89, 3, 2, 2, 2, 91, 92, 3, 2, 2, 2, 92, 17, 3, 
+	2, 2, 2, 93, 94, 5, 20, 11, 2, 94, 95, 7, 30, 2, 2, 95, 103, 3, 2, 2, 2, 
+	96, 97, 5, 36, 19, 2, 97, 98, 7, 30, 2, 2, 98, 103, 3, 2, 2, 2, 99, 100, 
+	5, 38, 20, 2, 100, 101, 7, 30, 2, 2, 101, 103, 3, 2, 2, 2, 102, 93, 3, 
+	2, 2, 2, 102, 96, 3, 2, 2, 2, 102, 99, 3, 2, 2, 2, 103, 19, 3, 2, 2, 2, 
+	104, 105, 5, 42, 22, 2, 105, 106, 7, 22, 2, 2, 106, 107, 5, 22, 12, 2, 
+	107, 21, 3, 2, 2, 2, 108, 109, 8, 12, 1, 2, 109, 110, 7, 33, 2, 2, 110, 
+	111, 5, 22, 12, 2, 111, 112, 7, 34, 2, 2, 112, 115, 3, 2, 2, 2, 113, 115, 
+	5, 34, 18, 2, 114, 108, 3, 2, 2, 2, 114, 113, 3, 2, 2, 2, 115, 138, 3, 
+	2, 2, 2, 116, 117, 12, 9, 2, 2, 117, 118, 5, 24, 13, 2, 118, 119, 5, 22, 
+	12, 10, 119, 137, 3, 2, 2, 2, 120, 121, 12, 8, 2, 2, 121, 122, 5, 26, 14, 
+	2, 122, 123, 5, 22, 12, 9, 123, 137, 3, 2, 2, 2, 124, 125, 12, 7, 2, 2, 
+	125, 126, 5, 28, 15, 2, 126, 127, 5, 22, 12, 8, 127, 137, 3, 2, 2, 2, 128, 
+	129, 12, 6, 2, 2, 129, 130, 5, 30, 16, 2, 130, 131, 5, 22, 12, 7, 131, 
+	137, 3, 2, 2, 2, 132, 133, 12, 5, 2, 2, 133, 134, 5, 32, 17, 2, 134, 135, 
+	5, 22, 12, 6, 135, 137, 3, 2, 2, 2, 136, 116, 3, 2, 2, 2, 136, 120, 3, 
+	2, 2, 2, 136, 124, 3, 2, 2, 2, 136, 128, 3, 2, 2, 2, 136, 132, 3, 2, 2, 
+	2, 137, 140, 3, 2, 2, 2, 138, 136, 3, 2, 2, 2, 138, 139, 3, 2, 2, 2, 139, 
+	23, 3, 2, 2, 2, 140, 138, 3, 2, 2, 2, 141, 142, 9, 3, 2, 2, 142, 25, 3, 
+	2, 2, 2, 143, 144, 9, 4, 2, 2, 144, 27, 3, 2, 2, 2, 145, 146, 9, 5, 2, 
+	2, 146, 29, 3, 2, 2, 2, 147, 148, 7, 7, 2, 2, 148, 31, 3, 2, 2, 2, 149, 
+	150, 7, 8, 2, 2, 150, 33, 3, 2, 2, 2, 151, 156, 5, 44, 23, 2, 152, 156, 
+	5, 42, 22, 2, 153, 156, 5, 38, 20, 2, 154, 156, 5, 36, 19, 2, 155, 151, 
+	3, 2, 2, 2, 155, 152, 3, 2, 2, 2, 155, 153, 3, 2, 2, 2, 155, 154, 3, 2, 
+	2, 2, 156, 35, 3, 2, 2, 2, 157, 158, 7, 15, 2, 2, 158, 160, 7, 33, 2, 2, 
+	159, 161, 5, 40, 21, 2, 160, 159, 3, 2, 2, 2, 160, 161, 3, 2, 2, 2, 161, 
+	162, 3, 2, 2, 2, 162, 163, 7, 34, 2, 2, 163, 37, 3, 2, 2, 2, 164, 165, 
+	7, 14, 2, 2, 165, 167, 7, 33, 2, 2, 166, 168, 5, 40, 21, 2, 167, 166, 3, 
+	2, 2, 2, 167, 168, 3, 2, 2, 2, 168, 169, 3, 2, 2, 2, 169, 170, 7, 34, 2, 
+	2, 170, 39, 3, 2, 2, 2, 171, 176, 5, 22, 12, 2, 172, 173, 7, 3, 2, 2, 173, 
+	175, 5, 22, 12, 2, 174, 172, 3, 2, 2, 2, 175, 178, 3, 2, 2, 2, 176, 174, 
+	3, 2, 2, 2, 176, 177, 3, 2, 2, 2, 177, 41, 3, 2, 2, 2, 178, 176, 3, 2, 
+	2, 2, 179, 180, 9, 6, 2, 2, 180, 43, 3, 2, 2, 2, 181, 190, 5, 50, 26, 2, 
+	182, 190, 5, 46, 24, 2, 183, 190, 5, 52, 27, 2, 184, 190, 5, 48, 25, 2, 
+	185, 187, 7, 12, 2, 2, 186, 185, 3, 2, 2, 2, 186, 187, 3, 2, 2, 2, 187, 
+	188, 3, 2, 2, 2, 188, 190, 7, 11, 2, 2, 189, 181, 3, 2, 2, 2, 189, 182, 
+	3, 2, 2, 2, 189, 183, 3, 2, 2, 2, 189, 184, 3, 2, 2, 2, 189, 186, 3, 2, 
+	2, 2, 190, 45, 3, 2, 2, 2, 191, 193, 7, 17, 2, 2, 192, 191, 3, 2, 2, 2, 
+	192, 193, 3, 2, 2, 2, 193, 194, 3, 2, 2, 2, 194, 195, 7, 38, 2, 2, 195, 
+	47, 3, 2, 2, 2, 196, 198, 7, 17, 2, 2, 197, 196, 3, 2, 2, 2, 197, 198, 
+	3, 2, 2, 2, 198, 199, 3, 2, 2, 2, 199, 200, 7, 39, 2, 2, 200, 49, 3, 2, 
+	2, 2, 201, 202, 9, 2, 2, 2, 202, 51, 3, 2, 2, 2, 203, 204, 9, 7, 2, 2, 
+	204, 53, 3, 2, 2, 2, 18, 57, 65, 68, 91, 102, 114, 136, 138, 155, 160, 
 	167, 176, 186, 189, 192, 197,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "','", "", "", "", "'&&'", "'||'", "", "", "", "", "", "", "", "'+'",
-	"'-'", "'/'", "'*'", "'%'", "'=='", "'='", "'>'", "'<'", "'>='", "'<='",
+	"", "','", "", "", "", "'&&'", "'||'", "", "", "", "", "", "", "", "'+'", 
+	"'-'", "'/'", "'*'", "'%'", "'=='", "'='", "'>'", "'<'", "'>='", "'<='", 
 	"'!='", "'&'", "'|'", "';'", "'{'", "'}'", "'('", "')'", "'.'",
 }
 var symbolicNames = []string{
-	"", "", "RULE", "WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NULL_LITERAL",
-	"NOT", "SALIENCE", "SIMPLENAME", "DOTTEDNAME", "PLUS", "MINUS", "DIV",
-	"MUL", "MOD", "EQUALS", "ASSIGN", "GT", "LT", "GTE", "LTE", "NOTEQUALS",
-	"BITAND", "BITOR", "SEMICOLON", "LR_BRACE", "RR_BRACE", "LR_BRACKET", "RR_BRACKET",
-	"DOT", "DQUOTA_STRING", "SQUOTA_STRING", "DECIMAL_LITERAL", "REAL_LITERAL",
+	"", "", "RULE", "WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NULL_LITERAL", 
+	"NOT", "SALIENCE", "SIMPLENAME", "DOTTEDNAME", "PLUS", "MINUS", "DIV", 
+	"MUL", "MOD", "EQUALS", "ASSIGN", "GT", "LT", "GTE", "LTE", "NOTEQUALS", 
+	"BITAND", "BITOR", "SEMICOLON", "LR_BRACE", "RR_BRACE", "LR_BRACKET", "RR_BRACKET", 
+	"DOT", "DQUOTA_STRING", "SQUOTA_STRING", "DECIMAL_LITERAL", "REAL_LITERAL", 
 	"SPACE", "COMMENT", "LINE_COMMENT",
 }
 
 var ruleNames = []string{
-	"root", "ruleEntry", "salience", "ruleName", "ruleDescription", "whenScope",
-	"thenScope", "thenExpressionList", "thenExpression", "assignment", "expression",
-	"mulDivOperators", "addMinusOperators", "comparisonOperator", "andLogicOperator",
-	"orLogicOperator", "expressionAtom", "methodCall", "functionCall", "argumentList",
-	"variable", "constant", "decimalLiteral", "realLiteral", "stringLiteral",
+	"root", "ruleEntry", "salience", "ruleName", "ruleDescription", "whenScope", 
+	"thenScope", "thenExpressionList", "thenExpression", "assignment", "expression", 
+	"mulDivOperators", "addMinusOperators", "comparisonOperator", "andLogicOperator", 
+	"orLogicOperator", "expressionAtom", "methodCall", "functionCall", "argumentList", 
+	"variable", "constant", "decimalLiteral", "realLiteral", "stringLiteral", 
 	"booleanLiteral",
 }
 var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
@@ -157,77 +157,77 @@ func Newgrulev2Parser(input antlr.TokenStream) *grulev2Parser {
 
 // grulev2Parser tokens.
 const (
-	grulev2ParserEOF             = antlr.TokenEOF
-	grulev2ParserT__0            = 1
-	grulev2ParserRULE            = 2
-	grulev2ParserWHEN            = 3
-	grulev2ParserTHEN            = 4
-	grulev2ParserAND             = 5
-	grulev2ParserOR              = 6
-	grulev2ParserTRUE            = 7
-	grulev2ParserFALSE           = 8
-	grulev2ParserNULL_LITERAL    = 9
-	grulev2ParserNOT             = 10
-	grulev2ParserSALIENCE        = 11
-	grulev2ParserSIMPLENAME      = 12
-	grulev2ParserDOTTEDNAME      = 13
-	grulev2ParserPLUS            = 14
-	grulev2ParserMINUS           = 15
-	grulev2ParserDIV             = 16
-	grulev2ParserMUL             = 17
-	grulev2ParserMOD             = 18
-	grulev2ParserEQUALS          = 19
-	grulev2ParserASSIGN          = 20
-	grulev2ParserGT              = 21
-	grulev2ParserLT              = 22
-	grulev2ParserGTE             = 23
-	grulev2ParserLTE             = 24
-	grulev2ParserNOTEQUALS       = 25
-	grulev2ParserBITAND          = 26
-	grulev2ParserBITOR           = 27
-	grulev2ParserSEMICOLON       = 28
-	grulev2ParserLR_BRACE        = 29
-	grulev2ParserRR_BRACE        = 30
-	grulev2ParserLR_BRACKET      = 31
-	grulev2ParserRR_BRACKET      = 32
-	grulev2ParserDOT             = 33
-	grulev2ParserDQUOTA_STRING   = 34
-	grulev2ParserSQUOTA_STRING   = 35
+	grulev2ParserEOF = antlr.TokenEOF
+	grulev2ParserT__0 = 1
+	grulev2ParserRULE = 2
+	grulev2ParserWHEN = 3
+	grulev2ParserTHEN = 4
+	grulev2ParserAND = 5
+	grulev2ParserOR = 6
+	grulev2ParserTRUE = 7
+	grulev2ParserFALSE = 8
+	grulev2ParserNULL_LITERAL = 9
+	grulev2ParserNOT = 10
+	grulev2ParserSALIENCE = 11
+	grulev2ParserSIMPLENAME = 12
+	grulev2ParserDOTTEDNAME = 13
+	grulev2ParserPLUS = 14
+	grulev2ParserMINUS = 15
+	grulev2ParserDIV = 16
+	grulev2ParserMUL = 17
+	grulev2ParserMOD = 18
+	grulev2ParserEQUALS = 19
+	grulev2ParserASSIGN = 20
+	grulev2ParserGT = 21
+	grulev2ParserLT = 22
+	grulev2ParserGTE = 23
+	grulev2ParserLTE = 24
+	grulev2ParserNOTEQUALS = 25
+	grulev2ParserBITAND = 26
+	grulev2ParserBITOR = 27
+	grulev2ParserSEMICOLON = 28
+	grulev2ParserLR_BRACE = 29
+	grulev2ParserRR_BRACE = 30
+	grulev2ParserLR_BRACKET = 31
+	grulev2ParserRR_BRACKET = 32
+	grulev2ParserDOT = 33
+	grulev2ParserDQUOTA_STRING = 34
+	grulev2ParserSQUOTA_STRING = 35
 	grulev2ParserDECIMAL_LITERAL = 36
-	grulev2ParserREAL_LITERAL    = 37
-	grulev2ParserSPACE           = 38
-	grulev2ParserCOMMENT         = 39
-	grulev2ParserLINE_COMMENT    = 40
+	grulev2ParserREAL_LITERAL = 37
+	grulev2ParserSPACE = 38
+	grulev2ParserCOMMENT = 39
+	grulev2ParserLINE_COMMENT = 40
 )
 
 // grulev2Parser rules.
 const (
-	grulev2ParserRULE_root               = 0
-	grulev2ParserRULE_ruleEntry          = 1
-	grulev2ParserRULE_salience           = 2
-	grulev2ParserRULE_ruleName           = 3
-	grulev2ParserRULE_ruleDescription    = 4
-	grulev2ParserRULE_whenScope          = 5
-	grulev2ParserRULE_thenScope          = 6
+	grulev2ParserRULE_root = 0
+	grulev2ParserRULE_ruleEntry = 1
+	grulev2ParserRULE_salience = 2
+	grulev2ParserRULE_ruleName = 3
+	grulev2ParserRULE_ruleDescription = 4
+	grulev2ParserRULE_whenScope = 5
+	grulev2ParserRULE_thenScope = 6
 	grulev2ParserRULE_thenExpressionList = 7
-	grulev2ParserRULE_thenExpression     = 8
-	grulev2ParserRULE_assignment         = 9
-	grulev2ParserRULE_expression         = 10
-	grulev2ParserRULE_mulDivOperators    = 11
-	grulev2ParserRULE_addMinusOperators  = 12
+	grulev2ParserRULE_thenExpression = 8
+	grulev2ParserRULE_assignment = 9
+	grulev2ParserRULE_expression = 10
+	grulev2ParserRULE_mulDivOperators = 11
+	grulev2ParserRULE_addMinusOperators = 12
 	grulev2ParserRULE_comparisonOperator = 13
-	grulev2ParserRULE_andLogicOperator   = 14
-	grulev2ParserRULE_orLogicOperator    = 15
-	grulev2ParserRULE_expressionAtom     = 16
-	grulev2ParserRULE_methodCall         = 17
-	grulev2ParserRULE_functionCall       = 18
-	grulev2ParserRULE_argumentList       = 19
-	grulev2ParserRULE_variable           = 20
-	grulev2ParserRULE_constant           = 21
-	grulev2ParserRULE_decimalLiteral     = 22
-	grulev2ParserRULE_realLiteral        = 23
-	grulev2ParserRULE_stringLiteral      = 24
-	grulev2ParserRULE_booleanLiteral     = 25
+	grulev2ParserRULE_andLogicOperator = 14
+	grulev2ParserRULE_orLogicOperator = 15
+	grulev2ParserRULE_expressionAtom = 16
+	grulev2ParserRULE_methodCall = 17
+	grulev2ParserRULE_functionCall = 18
+	grulev2ParserRULE_argumentList = 19
+	grulev2ParserRULE_variable = 20
+	grulev2ParserRULE_constant = 21
+	grulev2ParserRULE_decimalLiteral = 22
+	grulev2ParserRULE_realLiteral = 23
+	grulev2ParserRULE_stringLiteral = 24
+	grulev2ParserRULE_booleanLiteral = 25
 )
 
 // IRootContext is an interface to support dynamic dispatch.
@@ -303,6 +303,7 @@ func (s *RootContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) s
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *RootContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterRoot(s)
@@ -315,10 +316,24 @@ func (s *RootContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RootContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitRoot(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) Root() (localctx IRootContext) {
 	localctx = NewRootContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 0, grulev2ParserRULE_root)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -341,11 +356,13 @@ func (p *grulev2Parser) Root() (localctx IRootContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	for _la == grulev2ParserRULE {
 		{
 			p.SetState(52)
 			p.RuleEntry()
 		}
+
 
 		p.SetState(57)
 		p.GetErrorHandler().Sync(p)
@@ -356,8 +373,11 @@ func (p *grulev2Parser) Root() (localctx IRootContext) {
 		p.Match(grulev2ParserEOF)
 	}
 
+
+
 	return localctx
 }
+
 
 // IRuleEntryContext is an interface to support dynamic dispatch.
 type IRuleEntryContext interface {
@@ -467,6 +487,7 @@ func (s *RuleEntryContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *RuleEntryContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterRuleEntry(s)
@@ -479,10 +500,24 @@ func (s *RuleEntryContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RuleEntryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitRuleEntry(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) RuleEntry() (localctx IRuleEntryContext) {
 	localctx = NewRuleEntryContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 2, grulev2ParserRULE_ruleEntry)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -513,6 +548,7 @@ func (p *grulev2Parser) RuleEntry() (localctx IRuleEntryContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	if _la == grulev2ParserDQUOTA_STRING || _la == grulev2ParserSQUOTA_STRING {
 		{
 			p.SetState(62)
@@ -523,6 +559,7 @@ func (p *grulev2Parser) RuleEntry() (localctx IRuleEntryContext) {
 	p.SetState(66)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
+
 
 	if _la == grulev2ParserSALIENCE {
 		{
@@ -548,8 +585,11 @@ func (p *grulev2Parser) RuleEntry() (localctx IRuleEntryContext) {
 		p.Match(grulev2ParserRR_BRACE)
 	}
 
+
+
 	return localctx
 }
+
 
 // ISalienceContext is an interface to support dynamic dispatch.
 type ISalienceContext interface {
@@ -611,6 +651,7 @@ func (s *SalienceContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *SalienceContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterSalience(s)
@@ -622,6 +663,19 @@ func (s *SalienceContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitSalience(s)
 	}
 }
+
+func (s *SalienceContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitSalience(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) Salience() (localctx ISalienceContext) {
 	localctx = NewSalienceContext(p, p.GetParserRuleContext(), p.GetState())
@@ -653,8 +707,11 @@ func (p *grulev2Parser) Salience() (localctx ISalienceContext) {
 		p.DecimalLiteral()
 	}
 
+
+
 	return localctx
 }
+
 
 // IRuleNameContext is an interface to support dynamic dispatch.
 type IRuleNameContext interface {
@@ -706,6 +763,7 @@ func (s *RuleNameContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *RuleNameContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterRuleName(s)
@@ -717,6 +775,19 @@ func (s *RuleNameContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitRuleName(s)
 	}
 }
+
+func (s *RuleNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitRuleName(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) RuleName() (localctx IRuleNameContext) {
 	localctx = NewRuleNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -744,8 +815,11 @@ func (p *grulev2Parser) RuleName() (localctx IRuleNameContext) {
 		p.Match(grulev2ParserSIMPLENAME)
 	}
 
+
+
 	return localctx
 }
+
 
 // IRuleDescriptionContext is an interface to support dynamic dispatch.
 type IRuleDescriptionContext interface {
@@ -801,6 +875,7 @@ func (s *RuleDescriptionContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *RuleDescriptionContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterRuleDescription(s)
@@ -813,10 +888,24 @@ func (s *RuleDescriptionContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RuleDescriptionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitRuleDescription(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) RuleDescription() (localctx IRuleDescriptionContext) {
 	localctx = NewRuleDescriptionContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 8, grulev2ParserRULE_ruleDescription)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -835,18 +924,23 @@ func (p *grulev2Parser) RuleDescription() (localctx IRuleDescriptionContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(78)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(78)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(_la == grulev2ParserDQUOTA_STRING || _la == grulev2ParserSQUOTA_STRING) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(_la == grulev2ParserDQUOTA_STRING || _la == grulev2ParserSQUOTA_STRING) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IWhenScopeContext is an interface to support dynamic dispatch.
 type IWhenScopeContext interface {
@@ -908,6 +1002,7 @@ func (s *WhenScopeContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *WhenScopeContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterWhenScope(s)
@@ -919,6 +1014,19 @@ func (s *WhenScopeContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitWhenScope(s)
 	}
 }
+
+func (s *WhenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitWhenScope(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) WhenScope() (localctx IWhenScopeContext) {
 	localctx = NewWhenScopeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -950,8 +1058,11 @@ func (p *grulev2Parser) WhenScope() (localctx IWhenScopeContext) {
 		p.expression(0)
 	}
 
+
+
 	return localctx
 }
+
 
 // IThenScopeContext is an interface to support dynamic dispatch.
 type IThenScopeContext interface {
@@ -1013,6 +1124,7 @@ func (s *ThenScopeContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ThenScopeContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterThenScope(s)
@@ -1024,6 +1136,19 @@ func (s *ThenScopeContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitThenScope(s)
 	}
 }
+
+func (s *ThenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitThenScope(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) ThenScope() (localctx IThenScopeContext) {
 	localctx = NewThenScopeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1055,8 +1180,11 @@ func (p *grulev2Parser) ThenScope() (localctx IThenScopeContext) {
 		p.ThenExpressionList()
 	}
 
+
+
 	return localctx
 }
+
 
 // IThenExpressionListContext is an interface to support dynamic dispatch.
 type IThenExpressionListContext interface {
@@ -1127,6 +1255,7 @@ func (s *ThenExpressionListContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ThenExpressionListContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterThenExpressionList(s)
@@ -1139,10 +1268,24 @@ func (s *ThenExpressionListContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ThenExpressionListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitThenExpressionList(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) ThenExpressionList() (localctx IThenExpressionListContext) {
 	localctx = NewThenExpressionListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 14, grulev2ParserRULE_thenExpressionList)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -1165,19 +1308,24 @@ func (p *grulev2Parser) ThenExpressionList() (localctx IThenExpressionListContex
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	for ok := true; ok; ok = _la == grulev2ParserSIMPLENAME || _la == grulev2ParserDOTTEDNAME {
 		{
 			p.SetState(86)
 			p.ThenExpression()
 		}
 
+
 		p.SetState(89)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
 
+
+
 	return localctx
 }
+
 
 // IThenExpressionContext is an interface to support dynamic dispatch.
 type IThenExpressionContext interface {
@@ -1259,6 +1407,7 @@ func (s *ThenExpressionContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ThenExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterThenExpression(s)
@@ -1270,6 +1419,19 @@ func (s *ThenExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitThenExpression(s)
 	}
 }
+
+func (s *ThenExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitThenExpression(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) ThenExpression() (localctx IThenExpressionContext) {
 	localctx = NewThenExpressionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1305,6 +1467,7 @@ func (p *grulev2Parser) ThenExpression() (localctx IThenExpressionContext) {
 			p.Match(grulev2ParserSEMICOLON)
 		}
 
+
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
@@ -1315,6 +1478,7 @@ func (p *grulev2Parser) ThenExpression() (localctx IThenExpressionContext) {
 			p.SetState(95)
 			p.Match(grulev2ParserSEMICOLON)
 		}
+
 
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
@@ -1329,8 +1493,10 @@ func (p *grulev2Parser) ThenExpression() (localctx IThenExpressionContext) {
 
 	}
 
+
 	return localctx
 }
+
 
 // IAssignmentContext is an interface to support dynamic dispatch.
 type IAssignmentContext interface {
@@ -1402,6 +1568,7 @@ func (s *AssignmentContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *AssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterAssignment(s)
@@ -1413,6 +1580,19 @@ func (s *AssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitAssignment(s)
 	}
 }
+
+func (s *AssignmentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitAssignment(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) Assignment() (localctx IAssignmentContext) {
 	localctx = NewAssignmentContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1448,8 +1628,11 @@ func (p *grulev2Parser) Assignment() (localctx IAssignmentContext) {
 		p.expression(0)
 	}
 
+
+
 	return localctx
 }
+
 
 // IExpressionContext is an interface to support dynamic dispatch.
 type IExpressionContext interface {
@@ -1588,6 +1771,7 @@ func (s *ExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterExpression(s)
@@ -1599,6 +1783,20 @@ func (s *ExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitExpression(s)
 	}
 }
+
+func (s *ExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitExpression(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 
 func (p *grulev2Parser) Expression() (localctx IExpressionContext) {
 	return p.expression(0)
@@ -1650,11 +1848,14 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 			p.Match(grulev2ParserRR_BRACKET)
 		}
 
+
 	case grulev2ParserTRUE, grulev2ParserFALSE, grulev2ParserNULL_LITERAL, grulev2ParserNOT, grulev2ParserSIMPLENAME, grulev2ParserDOTTEDNAME, grulev2ParserMINUS, grulev2ParserDQUOTA_STRING, grulev2ParserSQUOTA_STRING, grulev2ParserDECIMAL_LITERAL, grulev2ParserREAL_LITERAL:
 		{
 			p.SetState(111)
 			p.ExpressionAtom()
 		}
+
+
 
 	default:
 		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
@@ -1690,6 +1891,7 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 					p.expression(8)
 				}
 
+
 			case 2:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, grulev2ParserRULE_expression)
@@ -1706,6 +1908,7 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 					p.SetState(120)
 					p.expression(7)
 				}
+
 
 			case 3:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
@@ -1724,6 +1927,7 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 					p.expression(6)
 				}
 
+
 			case 4:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, grulev2ParserRULE_expression)
@@ -1740,6 +1944,7 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 					p.SetState(128)
 					p.expression(5)
 				}
+
 
 			case 5:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
@@ -1766,8 +1971,11 @@ func (p *grulev2Parser) expression(_p int) (localctx IExpressionContext) {
 		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext())
 	}
 
+
+
 	return localctx
 }
+
 
 // IMulDivOperatorsContext is an interface to support dynamic dispatch.
 type IMulDivOperatorsContext interface {
@@ -1827,6 +2035,7 @@ func (s *MulDivOperatorsContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *MulDivOperatorsContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterMulDivOperators(s)
@@ -1839,10 +2048,24 @@ func (s *MulDivOperatorsContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *MulDivOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitMulDivOperators(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
 	localctx = NewMulDivOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 22, grulev2ParserRULE_mulDivOperators)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -1861,18 +2084,23 @@ func (p *grulev2Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(139)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(139)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserDIV)|(1<<grulev2ParserMUL)|(1<<grulev2ParserMOD))) != 0) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !((((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << grulev2ParserDIV) | (1 << grulev2ParserMUL) | (1 << grulev2ParserMOD))) != 0)) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IAddMinusOperatorsContext is an interface to support dynamic dispatch.
 type IAddMinusOperatorsContext interface {
@@ -1936,6 +2164,7 @@ func (s *AddMinusOperatorsContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *AddMinusOperatorsContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterAddMinusOperators(s)
@@ -1948,10 +2177,24 @@ func (s *AddMinusOperatorsContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *AddMinusOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitAddMinusOperators(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext) {
 	localctx = NewAddMinusOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 24, grulev2ParserRULE_addMinusOperators)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -1970,18 +2213,23 @@ func (p *grulev2Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext)
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(141)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(141)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserPLUS)|(1<<grulev2ParserMINUS)|(1<<grulev2ParserBITAND)|(1<<grulev2ParserBITOR))) != 0) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !((((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << grulev2ParserPLUS) | (1 << grulev2ParserMINUS) | (1 << grulev2ParserBITAND) | (1 << grulev2ParserBITOR))) != 0)) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IComparisonOperatorContext is an interface to support dynamic dispatch.
 type IComparisonOperatorContext interface {
@@ -2053,6 +2301,7 @@ func (s *ComparisonOperatorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ComparisonOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterComparisonOperator(s)
@@ -2065,10 +2314,24 @@ func (s *ComparisonOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ComparisonOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitComparisonOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) ComparisonOperator() (localctx IComparisonOperatorContext) {
 	localctx = NewComparisonOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 26, grulev2ParserRULE_comparisonOperator)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -2087,18 +2350,23 @@ func (p *grulev2Parser) ComparisonOperator() (localctx IComparisonOperatorContex
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(143)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(143)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserEQUALS)|(1<<grulev2ParserGT)|(1<<grulev2ParserLT)|(1<<grulev2ParserGTE)|(1<<grulev2ParserLTE)|(1<<grulev2ParserNOTEQUALS))) != 0) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !((((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << grulev2ParserEQUALS) | (1 << grulev2ParserGT) | (1 << grulev2ParserLT) | (1 << grulev2ParserGTE) | (1 << grulev2ParserLTE) | (1 << grulev2ParserNOTEQUALS))) != 0)) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IAndLogicOperatorContext is an interface to support dynamic dispatch.
 type IAndLogicOperatorContext interface {
@@ -2150,6 +2418,7 @@ func (s *AndLogicOperatorContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *AndLogicOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterAndLogicOperator(s)
@@ -2161,6 +2430,19 @@ func (s *AndLogicOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitAndLogicOperator(s)
 	}
 }
+
+func (s *AndLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitAndLogicOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) AndLogicOperator() (localctx IAndLogicOperatorContext) {
 	localctx = NewAndLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2188,8 +2470,11 @@ func (p *grulev2Parser) AndLogicOperator() (localctx IAndLogicOperatorContext) {
 		p.Match(grulev2ParserAND)
 	}
 
+
+
 	return localctx
 }
+
 
 // IOrLogicOperatorContext is an interface to support dynamic dispatch.
 type IOrLogicOperatorContext interface {
@@ -2241,6 +2526,7 @@ func (s *OrLogicOperatorContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *OrLogicOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterOrLogicOperator(s)
@@ -2252,6 +2538,19 @@ func (s *OrLogicOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitOrLogicOperator(s)
 	}
 }
+
+func (s *OrLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitOrLogicOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) OrLogicOperator() (localctx IOrLogicOperatorContext) {
 	localctx = NewOrLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2279,8 +2578,11 @@ func (p *grulev2Parser) OrLogicOperator() (localctx IOrLogicOperatorContext) {
 		p.Match(grulev2ParserOR)
 	}
 
+
+
 	return localctx
 }
+
 
 // IExpressionAtomContext is an interface to support dynamic dispatch.
 type IExpressionAtomContext interface {
@@ -2368,6 +2670,7 @@ func (s *ExpressionAtomContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ExpressionAtomContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterExpressionAtom(s)
@@ -2379,6 +2682,19 @@ func (s *ExpressionAtomContext) ExitRule(listener antlr.ParseTreeListener) {
 		listenerT.ExitExpressionAtom(s)
 	}
 }
+
+func (s *ExpressionAtomContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitExpressionAtom(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
 
 func (p *grulev2Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	localctx = NewExpressionAtomContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2410,6 +2726,7 @@ func (p *grulev2Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 			p.Constant()
 		}
 
+
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
@@ -2417,12 +2734,14 @@ func (p *grulev2Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 			p.Variable()
 		}
 
+
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(151)
 			p.FunctionCall()
 		}
+
 
 	case 4:
 		p.EnterOuterAlt(localctx, 4)
@@ -2433,8 +2752,10 @@ func (p *grulev2Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 
 	}
 
+
 	return localctx
 }
+
 
 // IMethodCallContext is an interface to support dynamic dispatch.
 type IMethodCallContext interface {
@@ -2478,6 +2799,14 @@ func (s *MethodCallContext) DOTTEDNAME() antlr.TerminalNode {
 	return s.GetToken(grulev2ParserDOTTEDNAME, 0)
 }
 
+func (s *MethodCallContext) LR_BRACKET() antlr.TerminalNode {
+	return s.GetToken(grulev2ParserLR_BRACKET, 0)
+}
+
+func (s *MethodCallContext) RR_BRACKET() antlr.TerminalNode {
+	return s.GetToken(grulev2ParserRR_BRACKET, 0)
+}
+
 func (s *MethodCallContext) ArgumentList() IArgumentListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArgumentListContext)(nil)).Elem(), 0)
 
@@ -2496,6 +2825,7 @@ func (s *MethodCallContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *MethodCallContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterMethodCall(s)
@@ -2508,10 +2838,24 @@ func (s *MethodCallContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *MethodCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitMethodCall(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) MethodCall() (localctx IMethodCallContext) {
 	localctx = NewMethodCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 34, grulev2ParserRULE_methodCall)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -2542,7 +2886,8 @@ func (p *grulev2Parser) MethodCall() (localctx IMethodCallContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if ((_la-7)&-(0x1f+1)) == 0 && ((1<<uint((_la-7)))&((1<<(grulev2ParserTRUE-7))|(1<<(grulev2ParserFALSE-7))|(1<<(grulev2ParserNULL_LITERAL-7))|(1<<(grulev2ParserNOT-7))|(1<<(grulev2ParserSIMPLENAME-7))|(1<<(grulev2ParserDOTTEDNAME-7))|(1<<(grulev2ParserMINUS-7))|(1<<(grulev2ParserLR_BRACKET-7))|(1<<(grulev2ParserDQUOTA_STRING-7))|(1<<(grulev2ParserSQUOTA_STRING-7))|(1<<(grulev2ParserDECIMAL_LITERAL-7))|(1<<(grulev2ParserREAL_LITERAL-7)))) != 0 {
+
+	if ((((_la - 7)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 7))) & ((1 << (grulev2ParserTRUE - 7)) | (1 << (grulev2ParserFALSE - 7)) | (1 << (grulev2ParserNULL_LITERAL - 7)) | (1 << (grulev2ParserNOT - 7)) | (1 << (grulev2ParserSIMPLENAME - 7)) | (1 << (grulev2ParserDOTTEDNAME - 7)) | (1 << (grulev2ParserMINUS - 7)) | (1 << (grulev2ParserLR_BRACKET - 7)) | (1 << (grulev2ParserDQUOTA_STRING - 7)) | (1 << (grulev2ParserSQUOTA_STRING - 7)) | (1 << (grulev2ParserDECIMAL_LITERAL - 7)) | (1 << (grulev2ParserREAL_LITERAL - 7)))) != 0) {
 		{
 			p.SetState(157)
 			p.ArgumentList()
@@ -2554,8 +2899,11 @@ func (p *grulev2Parser) MethodCall() (localctx IMethodCallContext) {
 		p.Match(grulev2ParserRR_BRACKET)
 	}
 
+
+
 	return localctx
 }
+
 
 // IFunctionCallContext is an interface to support dynamic dispatch.
 type IFunctionCallContext interface {
@@ -2599,6 +2947,14 @@ func (s *FunctionCallContext) SIMPLENAME() antlr.TerminalNode {
 	return s.GetToken(grulev2ParserSIMPLENAME, 0)
 }
 
+func (s *FunctionCallContext) LR_BRACKET() antlr.TerminalNode {
+	return s.GetToken(grulev2ParserLR_BRACKET, 0)
+}
+
+func (s *FunctionCallContext) RR_BRACKET() antlr.TerminalNode {
+	return s.GetToken(grulev2ParserRR_BRACKET, 0)
+}
+
 func (s *FunctionCallContext) ArgumentList() IArgumentListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArgumentListContext)(nil)).Elem(), 0)
 
@@ -2617,6 +2973,7 @@ func (s *FunctionCallContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *FunctionCallContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterFunctionCall(s)
@@ -2629,10 +2986,24 @@ func (s *FunctionCallContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *FunctionCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitFunctionCall(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) FunctionCall() (localctx IFunctionCallContext) {
 	localctx = NewFunctionCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 36, grulev2ParserRULE_functionCall)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -2663,7 +3034,8 @@ func (p *grulev2Parser) FunctionCall() (localctx IFunctionCallContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if ((_la-7)&-(0x1f+1)) == 0 && ((1<<uint((_la-7)))&((1<<(grulev2ParserTRUE-7))|(1<<(grulev2ParserFALSE-7))|(1<<(grulev2ParserNULL_LITERAL-7))|(1<<(grulev2ParserNOT-7))|(1<<(grulev2ParserSIMPLENAME-7))|(1<<(grulev2ParserDOTTEDNAME-7))|(1<<(grulev2ParserMINUS-7))|(1<<(grulev2ParserLR_BRACKET-7))|(1<<(grulev2ParserDQUOTA_STRING-7))|(1<<(grulev2ParserSQUOTA_STRING-7))|(1<<(grulev2ParserDECIMAL_LITERAL-7))|(1<<(grulev2ParserREAL_LITERAL-7)))) != 0 {
+
+	if ((((_la - 7)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 7))) & ((1 << (grulev2ParserTRUE - 7)) | (1 << (grulev2ParserFALSE - 7)) | (1 << (grulev2ParserNULL_LITERAL - 7)) | (1 << (grulev2ParserNOT - 7)) | (1 << (grulev2ParserSIMPLENAME - 7)) | (1 << (grulev2ParserDOTTEDNAME - 7)) | (1 << (grulev2ParserMINUS - 7)) | (1 << (grulev2ParserLR_BRACKET - 7)) | (1 << (grulev2ParserDQUOTA_STRING - 7)) | (1 << (grulev2ParserSQUOTA_STRING - 7)) | (1 << (grulev2ParserDECIMAL_LITERAL - 7)) | (1 << (grulev2ParserREAL_LITERAL - 7)))) != 0) {
 		{
 			p.SetState(164)
 			p.ArgumentList()
@@ -2675,8 +3047,11 @@ func (p *grulev2Parser) FunctionCall() (localctx IFunctionCallContext) {
 		p.Match(grulev2ParserRR_BRACKET)
 	}
 
+
+
 	return localctx
 }
+
 
 // IArgumentListContext is an interface to support dynamic dispatch.
 type IArgumentListContext interface {
@@ -2747,6 +3122,7 @@ func (s *ArgumentListContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ArgumentListContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterArgumentList(s)
@@ -2759,10 +3135,24 @@ func (s *ArgumentListContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitArgumentList(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) ArgumentList() (localctx IArgumentListContext) {
 	localctx = NewArgumentListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 38, grulev2ParserRULE_argumentList)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -2789,6 +3179,7 @@ func (p *grulev2Parser) ArgumentList() (localctx IArgumentListContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	for _la == grulev2ParserT__0 {
 		{
 			p.SetState(170)
@@ -2799,13 +3190,17 @@ func (p *grulev2Parser) ArgumentList() (localctx IArgumentListContext) {
 			p.expression(0)
 		}
 
+
 		p.SetState(176)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
 
+
+
 	return localctx
 }
+
 
 // IVariableContext is an interface to support dynamic dispatch.
 type IVariableContext interface {
@@ -2861,6 +3256,7 @@ func (s *VariableContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *VariableContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterVariable(s)
@@ -2873,10 +3269,24 @@ func (s *VariableContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *VariableContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitVariable(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) Variable() (localctx IVariableContext) {
 	localctx = NewVariableContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 40, grulev2ParserRULE_variable)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -2895,18 +3305,23 @@ func (p *grulev2Parser) Variable() (localctx IVariableContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(177)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(177)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(_la == grulev2ParserSIMPLENAME || _la == grulev2ParserDOTTEDNAME) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(_la == grulev2ParserSIMPLENAME || _la == grulev2ParserDOTTEDNAME) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IConstantContext is an interface to support dynamic dispatch.
 type IConstantContext interface {
@@ -3002,6 +3417,7 @@ func (s *ConstantContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *ConstantContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterConstant(s)
@@ -3014,10 +3430,24 @@ func (s *ConstantContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ConstantContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitConstant(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) Constant() (localctx IConstantContext) {
 	localctx = NewConstantContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 42, grulev2ParserRULE_constant)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -3045,12 +3475,14 @@ func (p *grulev2Parser) Constant() (localctx IConstantContext) {
 			p.StringLiteral()
 		}
 
+
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(180)
 			p.DecimalLiteral()
 		}
+
 
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
@@ -3059,6 +3491,7 @@ func (p *grulev2Parser) Constant() (localctx IConstantContext) {
 			p.BooleanLiteral()
 		}
 
+
 	case 4:
 		p.EnterOuterAlt(localctx, 4)
 		{
@@ -3066,11 +3499,13 @@ func (p *grulev2Parser) Constant() (localctx IConstantContext) {
 			p.RealLiteral()
 		}
 
+
 	case 5:
 		p.EnterOuterAlt(localctx, 5)
 		p.SetState(184)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
+
 
 		if _la == grulev2ParserNOT {
 			{
@@ -3086,8 +3521,10 @@ func (p *grulev2Parser) Constant() (localctx IConstantContext) {
 
 	}
 
+
 	return localctx
 }
+
 
 // IDecimalLiteralContext is an interface to support dynamic dispatch.
 type IDecimalLiteralContext interface {
@@ -3143,6 +3580,7 @@ func (s *DecimalLiteralContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *DecimalLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterDecimalLiteral(s)
@@ -3155,10 +3593,24 @@ func (s *DecimalLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *DecimalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitDecimalLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) DecimalLiteral() (localctx IDecimalLiteralContext) {
 	localctx = NewDecimalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 44, grulev2ParserRULE_decimalLiteral)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -3181,6 +3633,7 @@ func (p *grulev2Parser) DecimalLiteral() (localctx IDecimalLiteralContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	if _la == grulev2ParserMINUS {
 		{
 			p.SetState(189)
@@ -3193,8 +3646,11 @@ func (p *grulev2Parser) DecimalLiteral() (localctx IDecimalLiteralContext) {
 		p.Match(grulev2ParserDECIMAL_LITERAL)
 	}
 
+
+
 	return localctx
 }
+
 
 // IRealLiteralContext is an interface to support dynamic dispatch.
 type IRealLiteralContext interface {
@@ -3250,6 +3706,7 @@ func (s *RealLiteralContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *RealLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterRealLiteral(s)
@@ -3262,10 +3719,24 @@ func (s *RealLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RealLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitRealLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) RealLiteral() (localctx IRealLiteralContext) {
 	localctx = NewRealLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 46, grulev2ParserRULE_realLiteral)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -3288,6 +3759,7 @@ func (p *grulev2Parser) RealLiteral() (localctx IRealLiteralContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
+
 	if _la == grulev2ParserMINUS {
 		{
 			p.SetState(194)
@@ -3300,8 +3772,11 @@ func (p *grulev2Parser) RealLiteral() (localctx IRealLiteralContext) {
 		p.Match(grulev2ParserREAL_LITERAL)
 	}
 
+
+
 	return localctx
 }
+
 
 // IStringLiteralContext is an interface to support dynamic dispatch.
 type IStringLiteralContext interface {
@@ -3357,6 +3832,7 @@ func (s *StringLiteralContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *StringLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterStringLiteral(s)
@@ -3369,10 +3845,24 @@ func (s *StringLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *StringLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitStringLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) StringLiteral() (localctx IStringLiteralContext) {
 	localctx = NewStringLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 48, grulev2ParserRULE_stringLiteral)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -3391,18 +3881,23 @@ func (p *grulev2Parser) StringLiteral() (localctx IStringLiteralContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(199)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(199)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(_la == grulev2ParserDQUOTA_STRING || _la == grulev2ParserSQUOTA_STRING) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(_la == grulev2ParserDQUOTA_STRING || _la == grulev2ParserSQUOTA_STRING) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
+
 
 // IBooleanLiteralContext is an interface to support dynamic dispatch.
 type IBooleanLiteralContext interface {
@@ -3458,6 +3953,7 @@ func (s *BooleanLiteralContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+
 func (s *BooleanLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(grulev2Listener); ok {
 		listenerT.EnterBooleanLiteral(s)
@@ -3470,10 +3966,24 @@ func (s *BooleanLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *BooleanLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev2Visitor:
+		return t.VisitBooleanLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
 func (p *grulev2Parser) BooleanLiteral() (localctx IBooleanLiteralContext) {
 	localctx = NewBooleanLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 50, grulev2ParserRULE_booleanLiteral)
 	var _la int
+
 
 	defer func() {
 		p.ExitRule()
@@ -3492,27 +4002,31 @@ func (p *grulev2Parser) BooleanLiteral() (localctx IBooleanLiteralContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(201)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(201)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(_la == grulev2ParserTRUE || _la == grulev2ParserFALSE) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(_la == grulev2ParserTRUE || _la == grulev2ParserFALSE) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
+
+
 
 	return localctx
 }
 
+
 func (p *grulev2Parser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex int) bool {
 	switch ruleIndex {
 	case 10:
-		var t *ExpressionContext = nil
-		if localctx != nil {
-			t = localctx.(*ExpressionContext)
-		}
-		return p.Expression_Sempred(t, predIndex)
+			var t *ExpressionContext = nil
+			if localctx != nil { t = localctx.(*ExpressionContext) }
+			return p.Expression_Sempred(t, predIndex)
+
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(ruleIndex))
@@ -3522,21 +4036,22 @@ func (p *grulev2Parser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex
 func (p *grulev2Parser) Expression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 0:
-		return p.Precpred(p.GetParserRuleContext(), 7)
+			return p.Precpred(p.GetParserRuleContext(), 7)
 
 	case 1:
-		return p.Precpred(p.GetParserRuleContext(), 6)
+			return p.Precpred(p.GetParserRuleContext(), 6)
 
 	case 2:
-		return p.Precpred(p.GetParserRuleContext(), 5)
+			return p.Precpred(p.GetParserRuleContext(), 5)
 
 	case 3:
-		return p.Precpred(p.GetParserRuleContext(), 4)
+			return p.Precpred(p.GetParserRuleContext(), 4)
 
 	case 4:
-		return p.Precpred(p.GetParserRuleContext(), 3)
+			return p.Precpred(p.GetParserRuleContext(), 3)
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
 	}
 }
+

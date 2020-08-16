@@ -2,7 +2,7 @@ package antlr
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
