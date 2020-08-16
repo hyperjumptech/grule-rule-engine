@@ -64,16 +64,16 @@ var (
 	uint64Val4 = reflect.ValueOf(uint64(0x7F))
 
 	StrCompareTest = []*StrCompare{
-		&StrCompare{"A", "A", true, false, false, true, false, true},
-		&StrCompare{"AA", "A", false, true, true, true, false, false},
-		&StrCompare{"A", "AA", false, true, false, false, true, true},
-		&StrCompare{" ", "  ", false, true, false, false, true, true},
-		&StrCompare{" ", "A", false, true, false, false, true, true},
-		&StrCompare{"A", " ", false, true, true, true, false, false},
-		&StrCompare{"A", "aa", false, true, false, false, true, true},
-		&StrCompare{"aa", "A", false, true, true, true, false, false},
-		&StrCompare{"a", "AA", false, true, true, true, false, false},
-		&StrCompare{"AA", "a", false, true, false, false, true, true},
+		{"A", "A", true, false, false, true, false, true},
+		{"AA", "A", false, true, true, true, false, false},
+		{"A", "AA", false, true, false, false, true, true},
+		{" ", "  ", false, true, false, false, true, true},
+		{" ", "A", false, true, false, false, true, true},
+		{"A", " ", false, true, true, true, false, false},
+		{"A", "aa", false, true, false, false, true, true},
+		{"aa", "A", false, true, true, true, false, false},
+		{"a", "AA", false, true, true, true, false, false},
+		{"AA", "a", false, true, false, false, true, true},
 	}
 )
 
