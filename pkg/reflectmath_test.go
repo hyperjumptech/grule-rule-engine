@@ -62,7 +62,83 @@ var (
 	uint16Val4 = reflect.ValueOf(uint16(0x7F))
 	uint32Val4 = reflect.ValueOf(uint32(0x7F))
 	uint64Val4 = reflect.ValueOf(uint64(0x7F))
+
+	StrCompareTest = []*StrCompare{
+		{"A", "A", true, false, false, true, false, true},
+		{"AA", "A", false, true, true, true, false, false},
+		{"A", "AA", false, true, false, false, true, true},
+		{" ", "  ", false, true, false, false, true, true},
+		{" ", "A", false, true, false, false, true, true},
+		{"A", " ", false, true, true, true, false, false},
+		{"A", "aa", false, true, false, false, true, true},
+		{"aa", "A", false, true, true, true, false, false},
+		{"a", "AA", false, true, true, true, false, false},
+		{"AA", "a", false, true, false, false, true, true},
+	}
 )
+
+type StrCompare struct {
+	A   string
+	B   string
+	Eq  bool
+	Neq bool
+	Gt  bool
+	Gte bool
+	Lt  bool
+	Lte bool
+}
+
+func TestStringComparison(t *testing.T) {
+	for i, v := range StrCompareTest {
+		val, err := EvaluateEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Eq {
+			t.Errorf("%d Expect \"%s\" and \"%s\" EQ expect %v but %v", i, v.A, v.B, v.Eq, !v.Eq)
+		}
+
+		val, err = EvaluateNotEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Neq {
+			t.Errorf("%d Expect \"%s\" and \"%s\" NEQ expect %v but %v", i, v.A, v.B, v.Neq, !v.Neq)
+		}
+
+		val, err = EvaluateGreaterThan(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Gt {
+			t.Errorf("%d Expect \"%s\" and \"%s\" GT expect %v but %v", i, v.A, v.B, v.Gt, !v.Gt)
+		}
+
+		val, err = EvaluateGreaterThanEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Gte {
+			t.Errorf("%d Expect \"%s\" and \"%s\" GTE expect %v but %v", i, v.A, v.B, v.Gte, !v.Gte)
+		}
+
+		val, err = EvaluateLesserThan(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Lt {
+			t.Errorf("%d Expect \"%s\" and \"%s\" LT expect %v but %v", i, v.A, v.B, v.Lt, !v.Lt)
+		}
+
+		val, err = EvaluateLesserThanEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
+		if err != nil {
+			t.Errorf(err.Error())
+			t.Fail()
+		} else if val.Bool() != v.Lte {
+			t.Errorf("%d Expect \"%s\" and \"%s\" LTE expect %v but %v", i, v.A, v.B, v.Lte, !v.Lte)
+		}
+	}
+}
 
 func TestValueAdd(t *testing.T) {
 	for _, va := range valuesA {
@@ -368,7 +444,7 @@ func TestEvaluateGreaterThanEqual(t *testing.T) {
 			}
 
 			if vc.Kind() != reflect.Bool || vc.Bool() == false {
-				t.Errorf("12 > 3 == false")
+				t.Errorf("12 >= 3 == false")
 			}
 		}
 	}
@@ -384,7 +460,7 @@ func TestEvaluateLesserThanEqual(t *testing.T) {
 			}
 
 			if vc.Kind() != reflect.Bool || vc.Bool() == false {
-				t.Errorf("3 < 12 == false")
+				t.Errorf("3 <= 12 == false")
 			}
 		}
 	}

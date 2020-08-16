@@ -351,6 +351,15 @@ func EvaluateBitOr(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateGreaterThan will evaluate GreaterThan operation over two value
 func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(lv > rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not compare data type of string to %s in GT comparison", right.Kind().String())
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -409,6 +418,15 @@ func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateLesserThan will evaluate LesserThan operation over two value
 func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(lv < rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not compare data type of string to %s in LT comparison", right.Kind().String())
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -467,6 +485,15 @@ func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
 // EvaluateGreaterThanEqual will evaluate GreaterThanEqual operation over two value
 func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(lv >= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not compare data type of string to %s in GTE comparison", right.Kind().String())
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
@@ -525,6 +552,15 @@ func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) 
 // EvaluateLesserThanEqual will evaluate LesserThanEqual operation over two value
 func EvaluateLesserThanEqual(left, right reflect.Value) (reflect.Value, error) {
 	switch left.Kind() {
+	case reflect.String:
+		lv := left.String()
+		switch right.Kind() {
+		case reflect.String:
+			rv := right.String()
+			return reflect.ValueOf(lv <= rv), nil
+		default:
+			return reflect.ValueOf(nil), fmt.Errorf("can not compare data type of string to %s in LTE comparison", right.Kind().String())
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
 		switch right.Kind() {
