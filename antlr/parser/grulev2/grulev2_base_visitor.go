@@ -91,6 +91,10 @@ func (v *Basegrulev2Visitor) VisitVariable(ctx *VariableContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *Basegrulev2Visitor) VisitMapVar(ctx *MapVarContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *Basegrulev2Visitor) VisitConstant(ctx *ConstantContext) interface{} {
 	return v.VisitChildren(ctx)
 }

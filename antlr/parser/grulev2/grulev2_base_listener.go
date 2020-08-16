@@ -146,6 +146,12 @@ func (s *Basegrulev2Listener) EnterVariable(ctx *VariableContext) {}
 // ExitVariable is called when production variable is exited.
 func (s *Basegrulev2Listener) ExitVariable(ctx *VariableContext) {}
 
+// EnterMapVar is called when production mapVar is entered.
+func (s *Basegrulev2Listener) EnterMapVar(ctx *MapVarContext) {}
+
+// ExitMapVar is called when production mapVar is exited.
+func (s *Basegrulev2Listener) ExitMapVar(ctx *MapVarContext) {}
+
 // EnterConstant is called when production constant is entered.
 func (s *Basegrulev2Listener) EnterConstant(ctx *ConstantContext) {}
 

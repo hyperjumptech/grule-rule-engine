@@ -70,6 +70,9 @@ type grulev2Listener interface {
 	// EnterVariable is called when entering the variable production.
 	EnterVariable(c *VariableContext)
 
+	// EnterMapVar is called when entering the mapVar production.
+	EnterMapVar(c *MapVarContext)
+
 	// EnterConstant is called when entering the constant production.
 	EnterConstant(c *ConstantContext)
 
@@ -147,6 +150,9 @@ type grulev2Listener interface {
 
 	// ExitVariable is called when exiting the variable production.
 	ExitVariable(c *VariableContext)
+
+	// ExitMapVar is called when exiting the mapVar production.
+	ExitMapVar(c *MapVarContext)
 
 	// ExitConstant is called when exiting the constant production.
 	ExitConstant(c *ConstantContext)

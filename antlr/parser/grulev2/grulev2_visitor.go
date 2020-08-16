@@ -69,6 +69,9 @@ type grulev2Visitor interface {
 	// Visit a parse tree produced by grulev2Parser#variable.
 	VisitVariable(ctx *VariableContext) interface{}
 
+	// Visit a parse tree produced by grulev2Parser#mapVar.
+	VisitMapVar(ctx *MapVarContext) interface{}
+
 	// Visit a parse tree produced by grulev2Parser#constant.
 	VisitConstant(ctx *ConstantContext) interface{}
 

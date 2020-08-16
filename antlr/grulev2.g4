@@ -42,7 +42,7 @@ thenExpression
     ;
 
 assignment
-    : variable ASSIGN expression
+    : (variable | mapVar) ASSIGN expression
     ;
 
 expression
@@ -78,6 +78,7 @@ orLogicOperator
 expressionAtom
     : constant
     | variable
+    | mapVar
     | functionCall
     | methodCall
     ;
@@ -98,6 +99,9 @@ variable
     : SIMPLENAME | DOTTEDNAME
     ;
 
+mapVar
+    : variable LR_SQUARE (decimalLiteral | stringLiteral | variable) RR_SQUARE
+    ;
 
 constant
     : stringLiteral
@@ -189,6 +193,8 @@ LR_BRACE                    : '{';
 RR_BRACE                    : '}';
 LR_BRACKET                  : '(';
 RR_BRACKET                  : ')';
+LR_SQUARE                   : '[';
+RR_SQUARE                   : ']';
 DOT                         : '.' ;
 DQUOTA_STRING               : '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 SQUOTA_STRING               : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';
