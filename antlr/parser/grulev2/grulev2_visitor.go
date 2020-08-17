@@ -6,8 +6,8 @@ import "github.com/antlr/antlr4/runtime/Go/antlr"
 type grulev2Visitor interface {
 	antlr.ParseTreeVisitor
 
-	// Visit a parse tree produced by grulev2Parser#root.
-	VisitRoot(ctx *RootContext) interface{}
+	// Visit a parse tree produced by grulev2Parser#grl.
+	VisitGrl(ctx *GrlContext) interface{}
 
 	// Visit a parse tree produced by grulev2Parser#ruleEntry.
 	VisitRuleEntry(ctx *RuleEntryContext) interface{}
@@ -57,8 +57,8 @@ type grulev2Visitor interface {
 	// Visit a parse tree produced by grulev2Parser#expressionAtom.
 	VisitExpressionAtom(ctx *ExpressionAtomContext) interface{}
 
-	// Visit a parse tree produced by grulev2Parser#methodCall.
-	VisitMethodCall(ctx *MethodCallContext) interface{}
+	// Visit a parse tree produced by grulev2Parser#arrayMapSelector.
+	VisitArrayMapSelector(ctx *ArrayMapSelectorContext) interface{}
 
 	// Visit a parse tree produced by grulev2Parser#functionCall.
 	VisitFunctionCall(ctx *FunctionCallContext) interface{}

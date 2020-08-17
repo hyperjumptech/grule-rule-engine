@@ -158,6 +158,11 @@ type ExpressionReceiver interface {
 	AcceptExpression(exp *Expression) error
 }
 
+func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
+	e.ExpressionAtom = atom
+	return nil
+}
+
 // GetAstID get the UUID asigned for this AST graph node
 func (e *Expression) GetAstID() string {
 	return e.AstID

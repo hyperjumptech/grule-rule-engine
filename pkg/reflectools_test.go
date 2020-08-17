@@ -439,3 +439,55 @@ func TestIsAttributeNilOrZero(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGetMapArrayValue(t *testing.T) {
+	amap := make(map[string]string)
+	amap["abc"] = "ABC"
+
+	ret, err := GetMapArrayValue(amap, "abc")
+	if err != nil {
+		t.Errorf("got %s", err.Error())
+		t.Fail()
+	} else {
+		if ret.(string) != "ABC" {
+			t.Errorf("expect ABC but %s", ret.(string))
+			t.Fail()
+		}
+	}
+	ret, err = GetMapArrayValue(amap, "cba")
+	if err == nil {
+		t.Errorf("key not exist but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+	ret, err = GetMapArrayValue(amap, 123)
+	if err == nil {
+		t.Errorf("key different type but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+
+	aarr := make([]string, 0)
+	aarr = append(aarr, "ABC")
+	ret, err = GetMapArrayValue(aarr, 0)
+	if err != nil {
+		t.Errorf("got %s", err.Error())
+		t.Fail()
+	} else {
+		if ret.(string) != "ABC" {
+			t.Errorf("expect ABC but %s", ret.(string))
+			t.Fail()
+		}
+	}
+	ret, err = GetMapArrayValue(aarr, 3)
+	if err == nil {
+		t.Errorf("key out of bound but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+	ret, err = GetMapArrayValue(aarr, uint(0))
+	if err != nil {
+		t.Errorf("key out of bound but no error")
+		t.Fail()
+	}
+}

@@ -28,6 +28,10 @@ type Assignment struct {
 	Expression *Expression
 }
 
+type AssignmentReceiver interface {
+	AcceptAssignment(assignment *Assignment) error
+}
+
 // Clone will clone this Assignment. The new clone will have an identical structure
 func (e Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 	clone := &Assignment{

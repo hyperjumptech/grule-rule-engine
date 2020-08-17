@@ -26,6 +26,10 @@ type WhenScope struct {
 	Expression *Expression
 }
 
+type WhenScopeReceiver interface {
+	AcceptWhenScope(whenScope *WhenScope) error
+}
+
 // Clone will clone this Clone. The new clone will have an identical structure
 func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 	clone := &WhenScope{

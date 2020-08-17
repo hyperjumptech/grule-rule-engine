@@ -25,6 +25,18 @@ type ThenExpressionList struct {
 	ThenExpressions []*ThenExpression
 }
 
+type ThenExpressionListReceiver interface {
+	AcceptThenExpressionList(list *ThenExpressionList) error
+}
+
+func (e ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
+	if e.ThenExpressions == nil {
+		e.ThenExpressions = make([]*ThenExpression, 0)
+	}
+	e.ThenExpressions = append(e.ThenExpressions, expr)
+	return nil
+}
+
 // Clone will clone this ThenExpressionList. The new clone will have an identical structure
 func (e ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionList {
 	clone := &ThenExpressionList{

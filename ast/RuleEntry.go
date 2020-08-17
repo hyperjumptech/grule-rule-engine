@@ -13,7 +13,7 @@ import (
 func NewRuleEntry() *RuleEntry {
 	return &RuleEntry{
 		AstID:    uuid.New().String(),
-		Salience: 0,
+		Salience: NewSalience(0),
 	}
 }
 
@@ -24,26 +24,30 @@ type RuleEntry struct {
 	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 
-	Name        string
-	Description string
-	Salience    int
-	WhenScope   *WhenScope
-	ThenScope   *ThenScope
+	RuleName        *RuleName
+	RuleDescription *RuleDescription
+	Salience        *Salience
+	WhenScope       *WhenScope
+	ThenScope       *ThenScope
 
 	Retracted bool
+}
+
+type RuleEntryReceiver interface {
+	ReceiveRuleEntry(entry *RuleEntry) error
 }
 
 // Clone will clone this RuleEntry. The new clone will have an identical structure
 func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	clone := &RuleEntry{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Name:          e.Name,
-		Description:   e.Description,
-		Salience:      e.Salience,
-		Retracted:     false,
+		AstID:           uuid.New().String(),
+		GrlText:         e.GrlText,
+		DataContext:     nil,
+		WorkingMemory:   nil,
+		RuleName:        e.RuleName,
+		RuleDescription: e.RuleDescription,
+		Salience:        e.Salience,
+		Retracted:       false,
 	}
 	if e.WhenScope != nil {
 		if cloneTable.IsCloned(e.WhenScope.AstID) {
@@ -79,6 +83,31 @@ func (e *RuleEntry) InitializeContext(dataCtx IDataContext, WorkingMemory *Worki
 	}
 }
 
+func (e *RuleEntry) AcceptRuleName(ruleName *RuleName) error {
+	e.RuleName = ruleName
+	return nil
+}
+
+func (e *RuleEntry) AcceptRuleDescription(ruleDescription *RuleDescription) error {
+	e.RuleDescription = ruleDescription
+	return nil
+}
+
+func (e *RuleEntry) AcceptSalience(salience *Salience) error {
+	e.Salience = salience
+	return nil
+}
+
+func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
+	e.WhenScope = when
+	return nil
+}
+
+func (e *RuleEntry) AcceptThenScope(then *ThenScope) error {
+	e.ThenScope = then
+	return nil
+}
+
 // GetAstID get the UUID asigned for this AST graph node
 func (e *RuleEntry) GetAstID() string {
 	return e.AstID
@@ -92,7 +121,7 @@ func (e *RuleEntry) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *RuleEntry) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(fmt.Sprintf("rule %s \"%s\" salience %d {%s%s}", e.Name, e.Description, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
+	buff.WriteString(fmt.Sprintf("rule %s \"%s\" salience %d {%s%s}", e.RuleName.SimpleName, e.RuleDescription.Text, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
 	return buff.String()
 }
 
@@ -109,7 +138,7 @@ func (e *RuleEntry) Evaluate() (bool, error) {
 	}
 	val, err := e.WhenScope.Evaluate()
 	if err != nil {
-		AstLog.Errorf("Error while evaluating rule %s, got %v", e.Name, err)
+		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName.SimpleName, err)
 		return false, err
 	}
 	if val.Kind() != reflect.Bool {

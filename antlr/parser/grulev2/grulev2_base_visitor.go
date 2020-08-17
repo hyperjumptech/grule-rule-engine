@@ -7,7 +7,7 @@ type Basegrulev2Visitor struct {
 	*antlr.BaseParseTreeVisitor
 }
 
-func (v *Basegrulev2Visitor) VisitRoot(ctx *RootContext) interface{} {
+func (v *Basegrulev2Visitor) VisitGrl(ctx *GrlContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -75,7 +75,7 @@ func (v *Basegrulev2Visitor) VisitExpressionAtom(ctx *ExpressionAtomContext) int
 	return v.VisitChildren(ctx)
 }
 
-func (v *Basegrulev2Visitor) VisitMethodCall(ctx *MethodCallContext) interface{} {
+func (v *Basegrulev2Visitor) VisitArrayMapSelector(ctx *ArrayMapSelectorContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

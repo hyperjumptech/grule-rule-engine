@@ -128,7 +128,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// test if this rule entry v can execute.
 			can, err := v.Evaluate()
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.Name, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
 				// No longer return error, since unavailability of variable or fact in context might be intentional.
 			}
 			// if can, add into runnable array
@@ -145,7 +145,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		if len(runnable) > 0 {
 			if len(runnable) > 1 {
 				sort.SliceStable(runnable, func(i, j int) bool {
-					return runnable[i].Salience > runnable[j].Salience
+					return runnable[i].Salience.SalienceValue > runnable[j].Salience.SalienceValue
 				})
 			}
 			// Start rule execution cycle.
@@ -155,24 +155,24 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			for _, r := range runnable {
 				// reset the counter to 0 to detect if there are variable change.
 				dataCtx.ResetVariableChangeCount()
-				log.Debugf("Executing rule : %s. Salience %d", r.Name, r.Salience)
+				log.Debugf("Executing rule : %s. Salience %d", r.RuleName.SimpleName, r.Salience)
 
 				// emit rule execute start event
 				RuleEntryPublisher.Publish(&events.RuleEntryEvent{
 					EventType: events.RuleEntryExecuteStartEvent,
-					RuleName:  r.Name,
+					RuleName:  r.RuleName.SimpleName,
 				})
 
 				err := r.Execute()
 				if err != nil {
-					log.Errorf("Failed execution rule : %s. Got error %v", r.Name, err)
+					log.Errorf("Failed execution rule : %s. Got error %v", r.RuleName.SimpleName, err)
 					return err
 				}
 
 				// emit rule execute end event
 				RuleEntryPublisher.Publish(&events.RuleEntryEvent{
 					EventType: events.RuleEntryExecuteEndEvent,
-					RuleName:  r.Name,
+					RuleName:  r.RuleName.SimpleName,
 				})
 
 				if dataCtx.IsComplete() {
@@ -234,7 +234,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 		// test if this rule entry v can execute.
 		can, err := v.Evaluate()
 		if err != nil {
-			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.Name, err)
+			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
 			// No longer return error, since unavailability of variable or fact in context might be intentional.
 		}
 		// if can, add into runnable array
@@ -245,7 +245,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
-			return runnable[i].Salience > runnable[j].Salience
+			return runnable[i].Salience.SalienceValue > runnable[j].Salience.SalienceValue
 		})
 	}
 	return runnable, nil

@@ -63,7 +63,7 @@ func TestV2Parser(t *testing.T) {
 
 		psr := parser.Newgrulev2Parser(stream)
 		psr.BuildParseTrees = true
-		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 		if parseError != nil {
 			t.Log(parseError)
@@ -160,7 +160,7 @@ func TestV2Parser2(t *testing.T) {
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError != nil {
 		t.Log(parseError)
@@ -193,7 +193,7 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError == nil {
 		t.Fatal("Successfully parsed invalid string literal, should have gotten an error")
@@ -225,7 +225,7 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError != nil {
 		t.Fatal("Failed to parse rule with escaped string constant")

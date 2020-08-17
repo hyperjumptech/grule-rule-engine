@@ -102,7 +102,7 @@ func (e *ArgumentList) SetGrlText(grlText string) {
 
 // ArgumentListReceiver will accept an ArgumentList AST graph into this ast graph
 type ArgumentListReceiver interface {
-	AcceptArgumentList(argList *ArgumentList)
+	AcceptArgumentList(argList *ArgumentList) error
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
