@@ -78,13 +78,15 @@ func TestNewWhenScope(t *testing.T) {
 
 }
 
-func TestNewWhenScopeEvaluat(t *testing.T) {
+func TestNewWhenScopeEvaluate(t *testing.T) {
 	expr1 := &Expression{
 		AstID: "abc",
 		SingleExpression: &Expression{
 			ExpressionAtom: &ExpressionAtom{
-				Constant: &Constant{
-					Value: reflect.ValueOf(123),
+				Variable: &Variable{
+					Constant: &Constant{
+						Value: reflect.ValueOf(123),
+					},
 				},
 			},
 		},

@@ -22,6 +22,8 @@ type ArrayMapSelector struct {
 	WorkingMemory *WorkingMemory
 
 	Expression *Expression
+
+	Value reflect.Value
 }
 
 type ArrayMapSelectorReceiver interface {
@@ -38,7 +40,7 @@ func (e ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 		Expression:    nil,
 	}
 	if e.Expression != nil {
-		if cloneTable.IsCloned(e.AstID) {
+		if cloneTable.IsCloned(e.Expression.AstID) {
 			clone.Expression = cloneTable.Records[e.Expression.AstID].CloneInstance.(*Expression)
 		} else {
 			clonedExpr := e.Expression.Clone(cloneTable)
@@ -95,7 +97,12 @@ func (e *ArrayMapSelector) SetGrlText(grlText string) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *ArrayMapSelector) Evaluate() (reflect.Value, error) {
 	if e.Expression != nil {
-		return e.Expression.Evaluate()
+		val, err := e.Expression.Evaluate()
+		if err != nil {
+			return val, err
+		}
+		e.Value = val
+		return val, err
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("array Map Selector contains no selector expression")
 }

@@ -176,50 +176,56 @@ func (e *Expression) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Expression) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString("expr(")
 	if e.SingleExpression != nil {
+		buff.WriteString("single:(")
 		buff.WriteString(e.SingleExpression.GetSnapshot())
+		buff.WriteString(")")
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
-		buff.WriteString("(")
+		buff.WriteString("left:(")
 		buff.WriteString(e.LeftExpression.GetSnapshot())
+		buff.WriteString(")")
 		switch e.Operator {
 		case OpMul:
-			buff.WriteString(" x ")
+			buff.WriteString("*")
 		case OpDiv:
-			buff.WriteString(" / ")
+			buff.WriteString("/")
 		case OpMod:
-			buff.WriteString(" % ")
+			buff.WriteString("%")
 		case OpAdd:
-			buff.WriteString(" + ")
+			buff.WriteString("+")
 		case OpSub:
-			buff.WriteString(" - ")
+			buff.WriteString("-")
 		case OpBitAnd:
-			buff.WriteString(" & ")
+			buff.WriteString("&")
 		case OpBitOr:
-			buff.WriteString(" | ")
+			buff.WriteString("|")
 		case OpGT:
-			buff.WriteString(" > ")
+			buff.WriteString(">")
 		case OpLT:
-			buff.WriteString(" < ")
+			buff.WriteString("<")
 		case OpGTE:
-			buff.WriteString(" >= ")
+			buff.WriteString(">=")
 		case OpLTE:
-			buff.WriteString(" <= ")
+			buff.WriteString("<=")
 		case OpEq:
-			buff.WriteString(" == ")
+			buff.WriteString("==")
 		case OpNEq:
-			buff.WriteString(" != ")
+			buff.WriteString("!=")
 		case OpAnd:
-			buff.WriteString(" && ")
+			buff.WriteString("&&")
 		case OpOr:
-			buff.WriteString(" || ")
+			buff.WriteString("||")
 		}
+		buff.WriteString("right:(")
 		buff.WriteString(e.RightExpression.GetSnapshot())
 		buff.WriteString(")")
 	}
 	if e.ExpressionAtom != nil {
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 

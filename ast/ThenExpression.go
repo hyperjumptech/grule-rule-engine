@@ -24,6 +24,7 @@ type ThenExpression struct {
 
 	Assignment   *Assignment
 	FunctionCall *FunctionCall
+	Variable     *Variable
 }
 
 type ThenExpressionReceiver interface {
@@ -98,14 +99,21 @@ func (e *ThenExpression) GetGrlText() string {
 	return e.GrlText
 }
 
+func (e *ThenExpression) AcceptVariable(vari *Variable) error {
+	e.Variable = vari
+	return nil
+}
+
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString("thenExp(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
 	} else if e.FunctionCall != nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -125,6 +133,10 @@ func (e *ThenExpression) Execute() error {
 		if err == nil {
 			_, err = e.FunctionCall.Evaluate(val)
 		}
+		return err
+	}
+	if e.Variable != nil {
+		_, err := e.Variable.Evaluate()
 		return err
 	}
 	return nil

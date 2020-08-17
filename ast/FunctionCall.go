@@ -80,14 +80,13 @@ func (e *FunctionCall) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *FunctionCall) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(fmt.Sprintf("func-%s(", e.FunctionName))
 	if e.ArgumentList == nil {
 		log.Errorf("Argument is nil")
 	} else {
-		if e.ArgumentList.Arguments == nil {
-			log.Errorf("Argument.Argumeent array is nil")
-		}
+		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}
-	buff.WriteString(fmt.Sprintf("func->%s%s", e.FunctionName, e.ArgumentList.GetSnapshot()))
+	buff.WriteString(")")
 	return buff.String()
 }
 

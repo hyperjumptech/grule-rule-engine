@@ -83,14 +83,14 @@ func (e *ArgumentList) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ArgumentList) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("(")
+	buff.WriteString("argList[")
 	for i, v := range e.Arguments {
 		if i > 0 {
 			buff.WriteString(",")
 		}
 		buff.WriteString(v.GetSnapshot())
 	}
-	buff.WriteString(")")
+	buff.WriteString("]")
 	return buff.String()
 }
 

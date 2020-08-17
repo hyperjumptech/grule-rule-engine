@@ -38,6 +38,7 @@ thenExpressionList
 thenExpression
     : assignment SEMICOLON
     | functionCall SEMICOLON
+    | variable SEMICOLON
     ;
 
 assignment

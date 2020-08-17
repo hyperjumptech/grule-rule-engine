@@ -24,8 +24,9 @@ var (
 // NewGruleV2ParserListener create new instance of GruleV2ParserListener
 func NewGruleV2ParserListener(errorCallBack func(e error)) *GruleV2ParserListener {
 	return &GruleV2ParserListener{
-		PreviousNode:  make([]string, 0),
-		ErrorCallback: errorCallBack,
+		PreviousNode:        make([]string, 0),
+		ErrorCallback:       errorCallBack,
+		VariableSnapshotMap: make(map[string]*ast.Variable),
 	}
 }
 
@@ -35,10 +36,11 @@ type GruleV2ParserListener struct {
 	grulev2.Basegrulev2Listener
 	PreviousNode []string
 
-	Grl           *ast.Grl
-	Stack         *stack
-	StopParse     bool
-	ErrorCallback func(e error)
+	Grl                 *ast.Grl
+	Stack               *stack
+	StopParse           bool
+	ErrorCallback       func(e error)
+	VariableSnapshotMap map[string]*ast.Variable
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -493,7 +495,10 @@ func (s *GruleV2ParserListener) EnterVariable(ctx *grulev2.VariableContext) {
 		return
 	}
 	varName := ctx.GetText()
-	vari := ast.NewVariable(varName)
+	vari := ast.NewVariable()
+	if ctx.SIMPLENAME() != nil && len(ctx.SIMPLENAME().GetText()) > 0 {
+		vari.Name = ctx.SIMPLENAME().GetText()
+	}
 	vari.GrlText = varName
 	s.Stack.Push(vari)
 }
@@ -505,7 +510,19 @@ func (s *GruleV2ParserListener) ExitVariable(ctx *grulev2.VariableContext) {
 	}
 	vari := s.Stack.Pop().(*ast.Variable)
 	variRec := s.Stack.Peek().(ast.VariableReceiver)
-	err := variRec.AcceptVariable(vari)
+	var err error
+	snapshot := vari.GetSnapshot()
+	if snapshot == "var()" {
+		LoggerV2.Tracef("Empty snapshot with text : %s", ctx.GetText())
+	}
+	if v, ok := s.VariableSnapshotMap[snapshot]; ok {
+		LoggerV2.Tracef("Reused snapshot [%s]", snapshot)
+		err = variRec.AcceptVariable(v)
+	} else {
+		s.VariableSnapshotMap[snapshot] = vari
+		LoggerV2.Tracef("Added  snapshot [%s]", snapshot)
+		err = variRec.AcceptVariable(vari)
+	}
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)

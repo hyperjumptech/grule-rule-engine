@@ -77,8 +77,9 @@ func (e *ThenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" THEN ")
+	buff.WriteString("thenScope(")
 	buff.WriteString(e.ThenExpressionList.GetSnapshot())
+	buff.WriteString(")")
 	return buff.String()
 }
 

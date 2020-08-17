@@ -102,11 +102,13 @@ func (e *ExpressionAtom) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ExpressionAtom) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString("atom(")
 	if e.Variable != nil {
 		buff.WriteString(e.Variable.GetSnapshot())
 	} else if e.FunctionCall != nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
