@@ -350,6 +350,89 @@ func IsAttributeArray(obj interface{}, fieldName string) (bool, error) {
 	return fieldVal.Type().Kind() == reflect.Array || fieldVal.Type().Kind() == reflect.Slice, nil
 }
 
+func SetMapArrayValue(mapArray, selector interface{}, newValue reflect.Value) (err error) {
+	if mapArray == nil {
+		return fmt.Errorf("nil map, array or slice")
+	}
+	objVal := reflect.ValueOf(mapArray)
+	if objVal.Type().Kind() == reflect.Map {
+		objVal.SetMapIndex(reflect.ValueOf(selector), newValue)
+		return nil
+	}
+	if objVal.Type().Kind() == reflect.Array || objVal.Type().Kind() == reflect.Slice {
+		defer func() {
+			if errPanic := recover(); errPanic != nil {
+				err = fmt.Errorf("index %d is out of bound", selector.(int))
+			}
+		}()
+
+		idx := 0
+		switch GetBaseKind(reflect.ValueOf(selector)) {
+		case reflect.Int64:
+			idx = int(reflect.ValueOf(selector).Int())
+		case reflect.Uint64:
+			idx = int(reflect.ValueOf(selector).Uint())
+		case reflect.Float32:
+			idx = int(reflect.ValueOf(selector).Float())
+		default:
+			return fmt.Errorf("array selector can only be numeric type")
+		}
+
+		retVal := objVal.Index(idx)
+		retVal.Set(newValue)
+		return nil
+	}
+	return fmt.Errorf("argument is not an array, slice nor map")
+}
+
+func GetMapArrayValue(mapArray, selector interface{}) (ret interface{}, err error) {
+	if mapArray == nil {
+		return nil, fmt.Errorf("nil map, array or slice")
+	}
+	objVal := reflect.ValueOf(mapArray)
+	if objVal.Type().Kind() == reflect.Map {
+		if objVal.Type().Key() == reflect.TypeOf(selector) {
+			defer func() {
+				if errPanic := recover(); errPanic != nil {
+					ret = nil
+					err = fmt.Errorf("map key not exist")
+				}
+			}()
+			retVal := objVal.MapIndex(reflect.ValueOf(selector))
+			if retVal.IsZero() {
+				return nil, fmt.Errorf("selector not exist in map key")
+			}
+			return ValueToInterface(retVal), nil
+		} else {
+			return nil, fmt.Errorf("map requires key of type %s, found %s", objVal.Type().Key().String(), reflect.TypeOf(selector).String())
+		}
+	}
+	if objVal.Type().Kind() == reflect.Array || objVal.Type().Kind() == reflect.Slice {
+		defer func() {
+			if errPanic := recover(); errPanic != nil {
+				ret = nil
+				err = fmt.Errorf("index %d is out of bound", selector.(int))
+			}
+		}()
+
+		idx := 0
+		switch GetBaseKind(reflect.ValueOf(selector)) {
+		case reflect.Int64:
+			idx = int(reflect.ValueOf(selector).Int())
+		case reflect.Uint64:
+			idx = int(reflect.ValueOf(selector).Uint())
+		case reflect.Float32:
+			idx = int(reflect.ValueOf(selector).Float())
+		default:
+			return nil, fmt.Errorf("array selector can only be numeric type")
+		}
+
+		retVal := objVal.Index(idx)
+		return ValueToInterface(retVal), nil
+	}
+	return nil, fmt.Errorf("argument is not an array, slice nor map")
+}
+
 // IsAttributeMap validate if a member variable is a map.
 func IsAttributeMap(obj interface{}, fieldName string) (bool, error) {
 	if !IsStruct(obj) {

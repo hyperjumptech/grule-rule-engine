@@ -1,13 +1,14 @@
-// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from C:/Users/User/Laboratory/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package grulev2 // grulev2
 import "github.com/antlr/antlr4/runtime/Go/antlr"
+
 // A complete Visitor for a parse tree produced by grulev2Parser.
 type grulev2Visitor interface {
 	antlr.ParseTreeVisitor
 
-	// Visit a parse tree produced by grulev2Parser#root.
-	VisitRoot(ctx *RootContext) interface{}
+	// Visit a parse tree produced by grulev2Parser#grl.
+	VisitGrl(ctx *GrlContext) interface{}
 
 	// Visit a parse tree produced by grulev2Parser#ruleEntry.
 	VisitRuleEntry(ctx *RuleEntryContext) interface{}
@@ -57,8 +58,8 @@ type grulev2Visitor interface {
 	// Visit a parse tree produced by grulev2Parser#expressionAtom.
 	VisitExpressionAtom(ctx *ExpressionAtomContext) interface{}
 
-	// Visit a parse tree produced by grulev2Parser#methodCall.
-	VisitMethodCall(ctx *MethodCallContext) interface{}
+	// Visit a parse tree produced by grulev2Parser#arrayMapSelector.
+	VisitArrayMapSelector(ctx *ArrayMapSelectorContext) interface{}
 
 	// Visit a parse tree produced by grulev2Parser#functionCall.
 	VisitFunctionCall(ctx *FunctionCallContext) interface{}
@@ -68,9 +69,6 @@ type grulev2Visitor interface {
 
 	// Visit a parse tree produced by grulev2Parser#variable.
 	VisitVariable(ctx *VariableContext) interface{}
-
-	// Visit a parse tree produced by grulev2Parser#mapVar.
-	VisitMapVar(ctx *MapVarContext) interface{}
 
 	// Visit a parse tree produced by grulev2Parser#constant.
 	VisitConstant(ctx *ConstantContext) interface{}
@@ -86,5 +84,4 @@ type grulev2Visitor interface {
 
 	// Visit a parse tree produced by grulev2Parser#booleanLiteral.
 	VisitBooleanLiteral(ctx *BooleanLiteralContext) interface{}
-
 }

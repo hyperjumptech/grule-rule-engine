@@ -1,4 +1,4 @@
-// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from C:/Users/User/Laboratory/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package grulev2 // grulev2
 import "github.com/antlr/antlr4/runtime/Go/antlr"
@@ -7,8 +7,8 @@ import "github.com/antlr/antlr4/runtime/Go/antlr"
 type grulev2Listener interface {
 	antlr.ParseTreeListener
 
-	// EnterRoot is called when entering the root production.
-	EnterRoot(c *RootContext)
+	// EnterGrl is called when entering the grl production.
+	EnterGrl(c *GrlContext)
 
 	// EnterRuleEntry is called when entering the ruleEntry production.
 	EnterRuleEntry(c *RuleEntryContext)
@@ -58,8 +58,8 @@ type grulev2Listener interface {
 	// EnterExpressionAtom is called when entering the expressionAtom production.
 	EnterExpressionAtom(c *ExpressionAtomContext)
 
-	// EnterMethodCall is called when entering the methodCall production.
-	EnterMethodCall(c *MethodCallContext)
+	// EnterArrayMapSelector is called when entering the arrayMapSelector production.
+	EnterArrayMapSelector(c *ArrayMapSelectorContext)
 
 	// EnterFunctionCall is called when entering the functionCall production.
 	EnterFunctionCall(c *FunctionCallContext)
@@ -69,9 +69,6 @@ type grulev2Listener interface {
 
 	// EnterVariable is called when entering the variable production.
 	EnterVariable(c *VariableContext)
-
-	// EnterMapVar is called when entering the mapVar production.
-	EnterMapVar(c *MapVarContext)
 
 	// EnterConstant is called when entering the constant production.
 	EnterConstant(c *ConstantContext)
@@ -88,8 +85,8 @@ type grulev2Listener interface {
 	// EnterBooleanLiteral is called when entering the booleanLiteral production.
 	EnterBooleanLiteral(c *BooleanLiteralContext)
 
-	// ExitRoot is called when exiting the root production.
-	ExitRoot(c *RootContext)
+	// ExitGrl is called when exiting the grl production.
+	ExitGrl(c *GrlContext)
 
 	// ExitRuleEntry is called when exiting the ruleEntry production.
 	ExitRuleEntry(c *RuleEntryContext)
@@ -139,8 +136,8 @@ type grulev2Listener interface {
 	// ExitExpressionAtom is called when exiting the expressionAtom production.
 	ExitExpressionAtom(c *ExpressionAtomContext)
 
-	// ExitMethodCall is called when exiting the methodCall production.
-	ExitMethodCall(c *MethodCallContext)
+	// ExitArrayMapSelector is called when exiting the arrayMapSelector production.
+	ExitArrayMapSelector(c *ArrayMapSelectorContext)
 
 	// ExitFunctionCall is called when exiting the functionCall production.
 	ExitFunctionCall(c *FunctionCallContext)
@@ -150,9 +147,6 @@ type grulev2Listener interface {
 
 	// ExitVariable is called when exiting the variable production.
 	ExitVariable(c *VariableContext)
-
-	// ExitMapVar is called when exiting the mapVar production.
-	ExitMapVar(c *MapVarContext)
 
 	// ExitConstant is called when exiting the constant production.
 	ExitConstant(c *ConstantContext)

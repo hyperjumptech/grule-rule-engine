@@ -1,4 +1,4 @@
-// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from C:/Users/User/Laboratory/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package grulev2 // grulev2
 import "github.com/antlr/antlr4/runtime/Go/antlr"
@@ -20,11 +20,11 @@ func (s *Basegrulev2Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 // ExitEveryRule is called when any rule is exited.
 func (s *Basegrulev2Listener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
-// EnterRoot is called when production root is entered.
-func (s *Basegrulev2Listener) EnterRoot(ctx *RootContext) {}
+// EnterGrl is called when production grl is entered.
+func (s *Basegrulev2Listener) EnterGrl(ctx *GrlContext) {}
 
-// ExitRoot is called when production root is exited.
-func (s *Basegrulev2Listener) ExitRoot(ctx *RootContext) {}
+// ExitGrl is called when production grl is exited.
+func (s *Basegrulev2Listener) ExitGrl(ctx *GrlContext) {}
 
 // EnterRuleEntry is called when production ruleEntry is entered.
 func (s *Basegrulev2Listener) EnterRuleEntry(ctx *RuleEntryContext) {}
@@ -122,11 +122,11 @@ func (s *Basegrulev2Listener) EnterExpressionAtom(ctx *ExpressionAtomContext) {}
 // ExitExpressionAtom is called when production expressionAtom is exited.
 func (s *Basegrulev2Listener) ExitExpressionAtom(ctx *ExpressionAtomContext) {}
 
-// EnterMethodCall is called when production methodCall is entered.
-func (s *Basegrulev2Listener) EnterMethodCall(ctx *MethodCallContext) {}
+// EnterArrayMapSelector is called when production arrayMapSelector is entered.
+func (s *Basegrulev2Listener) EnterArrayMapSelector(ctx *ArrayMapSelectorContext) {}
 
-// ExitMethodCall is called when production methodCall is exited.
-func (s *Basegrulev2Listener) ExitMethodCall(ctx *MethodCallContext) {}
+// ExitArrayMapSelector is called when production arrayMapSelector is exited.
+func (s *Basegrulev2Listener) ExitArrayMapSelector(ctx *ArrayMapSelectorContext) {}
 
 // EnterFunctionCall is called when production functionCall is entered.
 func (s *Basegrulev2Listener) EnterFunctionCall(ctx *FunctionCallContext) {}
@@ -145,12 +145,6 @@ func (s *Basegrulev2Listener) EnterVariable(ctx *VariableContext) {}
 
 // ExitVariable is called when production variable is exited.
 func (s *Basegrulev2Listener) ExitVariable(ctx *VariableContext) {}
-
-// EnterMapVar is called when production mapVar is entered.
-func (s *Basegrulev2Listener) EnterMapVar(ctx *MapVarContext) {}
-
-// ExitMapVar is called when production mapVar is exited.
-func (s *Basegrulev2Listener) ExitMapVar(ctx *MapVarContext) {}
 
 // EnterConstant is called when production constant is entered.
 func (s *Basegrulev2Listener) EnterConstant(ctx *ConstantContext) {}

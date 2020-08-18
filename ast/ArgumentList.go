@@ -83,14 +83,14 @@ func (e *ArgumentList) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ArgumentList) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("(")
+	buff.WriteString("argList[")
 	for i, v := range e.Arguments {
 		if i > 0 {
 			buff.WriteString(",")
 		}
 		buff.WriteString(v.GetSnapshot())
 	}
-	buff.WriteString(")")
+	buff.WriteString("]")
 	return buff.String()
 }
 
@@ -102,7 +102,7 @@ func (e *ArgumentList) SetGrlText(grlText string) {
 
 // ArgumentListReceiver will accept an ArgumentList AST graph into this ast graph
 type ArgumentListReceiver interface {
-	AcceptArgumentList(argList *ArgumentList)
+	AcceptArgumentList(argList *ArgumentList) error
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation

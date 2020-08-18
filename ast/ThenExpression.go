@@ -24,7 +24,11 @@ type ThenExpression struct {
 
 	Assignment   *Assignment
 	FunctionCall *FunctionCall
-	MethodCall   *MethodCall
+	Variable     *Variable
+}
+
+type ThenExpressionReceiver interface {
+	AcceptThenExpression(expr *ThenExpression) error
 }
 
 // Clone will clone this ThenExpression. The new clone will have an identical structure
@@ -56,16 +60,6 @@ func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 		}
 	}
 
-	if e.MethodCall != nil {
-		if cloneTable.IsCloned(e.MethodCall.AstID) {
-			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
-		} else {
-			cloned := e.MethodCall.Clone(cloneTable)
-			clone.MethodCall = cloned
-			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
-		}
-	}
-
 	return clone
 }
 
@@ -79,17 +73,10 @@ func (e *ThenExpression) InitializeContext(dataCtx IDataContext, WorkingMemory *
 	if e.FunctionCall != nil {
 		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
 	}
-	if e.MethodCall != nil {
-		e.MethodCall.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
-// AcceptMethodCall will accept an MethodCall AST graph into this ast graph
-func (e *ThenExpression) AcceptMethodCall(fun *MethodCall) error {
-	if e.MethodCall != nil {
-		return errors.New("constant for ThenExpression already assigned")
-	}
-	e.MethodCall = fun
+func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
+	e.Assignment = assignment
 	return nil
 }
 
@@ -112,16 +99,21 @@ func (e *ThenExpression) GetGrlText() string {
 	return e.GrlText
 }
 
+func (e *ThenExpression) AcceptVariable(vari *Variable) error {
+	e.Variable = vari
+	return nil
+}
+
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString("thenExp(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
-	} else if e.MethodCall != nil {
-		buff.WriteString(e.MethodCall.GetSnapshot())
 	} else if e.FunctionCall != nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -136,12 +128,15 @@ func (e *ThenExpression) Execute() error {
 	if e.Assignment != nil {
 		return e.Assignment.Execute()
 	}
-	if e.MethodCall != nil {
-		_, err := e.MethodCall.Evaluate()
+	if e.FunctionCall != nil {
+		val, err := e.DataContext.GetValue("DEFUNC")
+		if err == nil {
+			_, err = e.FunctionCall.Evaluate(val)
+		}
 		return err
 	}
-	if e.FunctionCall != nil {
-		_, err := e.FunctionCall.Evaluate()
+	if e.Variable != nil {
+		_, err := e.Variable.Evaluate()
 		return err
 	}
 	return nil

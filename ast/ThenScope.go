@@ -24,6 +24,10 @@ type ThenScope struct {
 	ThenExpressionList *ThenExpressionList
 }
 
+type ThenScopeReceiver interface {
+	AcceptThenScope(thenScope *ThenScope) error
+}
+
 // Clone will clone this ThenScope. The new clone will have an identical structure
 func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	clone := &ThenScope{
@@ -44,6 +48,11 @@ func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	}
 
 	return clone
+}
+
+func (e *ThenScope) AcceptThenExpressionList(list *ThenExpressionList) error {
+	e.ThenExpressionList = list
+	return nil
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
@@ -68,8 +77,9 @@ func (e *ThenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" THEN ")
+	buff.WriteString("thenScope(")
 	buff.WriteString(e.ThenExpressionList.GetSnapshot())
+	buff.WriteString(")")
 	return buff.String()
 }
 

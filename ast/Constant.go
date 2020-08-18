@@ -63,7 +63,7 @@ func (e *Constant) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Constant) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("const:")
+	buff.WriteString("const(")
 	buff.WriteString(e.Value.Kind().String())
 	buff.WriteString("->")
 	switch e.Value.Kind() {
@@ -78,6 +78,7 @@ func (e *Constant) GetSnapshot() string {
 	case reflect.Bool:
 		buff.WriteString(fmt.Sprintf("%v", e.Value.Bool()))
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 

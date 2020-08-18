@@ -1,4 +1,4 @@
-// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from C:/Users/User/Laboratory/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package grulev2 // grulev2
 import "github.com/antlr/antlr4/runtime/Go/antlr"
@@ -7,7 +7,7 @@ type Basegrulev2Visitor struct {
 	*antlr.BaseParseTreeVisitor
 }
 
-func (v *Basegrulev2Visitor) VisitRoot(ctx *RootContext) interface{} {
+func (v *Basegrulev2Visitor) VisitGrl(ctx *GrlContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -75,7 +75,7 @@ func (v *Basegrulev2Visitor) VisitExpressionAtom(ctx *ExpressionAtomContext) int
 	return v.VisitChildren(ctx)
 }
 
-func (v *Basegrulev2Visitor) VisitMethodCall(ctx *MethodCallContext) interface{} {
+func (v *Basegrulev2Visitor) VisitArrayMapSelector(ctx *ArrayMapSelectorContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -88,10 +88,6 @@ func (v *Basegrulev2Visitor) VisitArgumentList(ctx *ArgumentListContext) interfa
 }
 
 func (v *Basegrulev2Visitor) VisitVariable(ctx *VariableContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *Basegrulev2Visitor) VisitMapVar(ctx *MapVarContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

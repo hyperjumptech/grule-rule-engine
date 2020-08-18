@@ -3,9 +3,6 @@ package ast
 import (
 	"bytes"
 	"errors"
-	"fmt"
-	"reflect"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -26,6 +23,10 @@ type Assignment struct {
 
 	Variable   *Variable
 	Expression *Expression
+}
+
+type AssignmentReceiver interface {
+	AcceptAssignment(assignment *Assignment) error
 }
 
 // Clone will clone this Assignment. The new clone will have an identical structure
@@ -96,10 +97,11 @@ func (e *Assignment) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Assignment) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString("assign(")
 	buff.WriteString(e.Variable.GetSnapshot())
 	buff.WriteString("=")
 	buff.WriteString(e.Expression.GetSnapshot())
-	buff.WriteString(";")
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -111,257 +113,9 @@ func (e *Assignment) SetGrlText(grlText string) {
 
 // Execute will execute this graph in the Then scope
 func (e *Assignment) Execute() error {
-	varVal, err := e.Variable.Evaluate()
-	if err != nil {
-		return err
-	}
 	exprVal, err := e.Expression.Evaluate()
 	if err != nil {
 		return err
 	}
-	e.WorkingMemory.Reset(e.Variable.Name)
-	switch varVal.Kind() {
-	case reflect.Int:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			return e.DataContext.SetValue(e.Variable.Name, exprVal)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int(v)))
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int(v)))
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Int8:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= -128 && v <= 127 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v <= 127 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= -128 && v <= 127 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Int16:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= -32768 && v <= 32767 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v <= 32767 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= -32768 && v <= 32767 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Int32:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= -2147483648 && v <= 2147483647 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v <= 2147483647 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= -2147483648 && v <= 2147483647 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Int64:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(v))
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v <= 9223372036854775807 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int64(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= -9223372036854775808 && v <= 9223372036854775807 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(int64(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Uint:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= 0 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint(v)))
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= 0 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Uint8:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= 0 && v <= 255 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v >= 0 && v <= 255 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= 0 && v <= 255 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint8(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Uint16:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= 0 && v <= 65535 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v >= 0 && v <= 65535 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= 0 && v <= 65535 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint16(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Uint32:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= 0 && v <= 4294967295 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			if v >= 0 && v <= 4294967295 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= 0 && v <= 4294967295 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint32(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Uint64:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			if v >= 0 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint64(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %d", varVal.Kind().String(), v)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			return e.DataContext.SetValue(e.Variable.Name, exprVal)
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			if v >= 0 && v <= 18446744073709551615 {
-				return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(uint64(v)))
-			}
-			return fmt.Errorf("variable of type %s will be overflowed with value %f", varVal.Kind().String(), v)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Float32:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(float32(v)))
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(float32(v)))
-		case reflect.Float32, reflect.Float64:
-			v := exprVal.Float()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(float32(v)))
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	case reflect.Float64:
-		switch exprVal.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := exprVal.Int()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(float64(v)))
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := exprVal.Uint()
-			return e.DataContext.SetValue(e.Variable.Name, reflect.ValueOf(float64(v)))
-		case reflect.Float32, reflect.Float64:
-			return e.DataContext.SetValue(e.Variable.Name, exprVal)
-		default:
-			return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-		}
-	default:
-		if varVal.Kind() == exprVal.Kind() {
-			return e.DataContext.SetValue(e.Variable.Name, exprVal)
-		}
-		return fmt.Errorf("can not assign %s to %s", exprVal.Kind().String(), varVal.Kind().String())
-	}
+	return e.Variable.Assign(exprVal)
 }

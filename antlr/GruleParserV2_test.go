@@ -3,9 +3,6 @@ package antlr
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/events"
-	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -34,8 +31,8 @@ func TestV2Lexer(t *testing.T) {
 }
 
 func TestV2Parser(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
-	data, err := ioutil.ReadFile("./sample2.grl")
+	logrus.SetLevel(logrus.TraceLevel)
+	data, err := ioutil.ReadFile("./sample3.grl")
 	if err != nil {
 		t.Fatal(err)
 	} else {
@@ -47,23 +44,13 @@ func TestV2Parser(t *testing.T) {
 
 		var parseError error
 
-		memory := ast.NewWorkingMemory("T", "1")
-		kb := &ast.KnowledgeBase{
-			Name:          "T",
-			Version:       "1",
-			DataContext:   nil,
-			WorkingMemory: memory,
-			RuleEntries:   make(map[string]*ast.RuleEntry),
-			Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
-		}
-
-		listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+		listener := NewGruleV2ParserListener(func(e error) {
 			parseError = e
 		})
 
 		psr := parser.Newgrulev2Parser(stream)
 		psr.BuildParseTrees = true
-		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 		if parseError != nil {
 			t.Log(parseError)
@@ -143,24 +130,14 @@ func TestV2Parser2(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory("T", "1")
-	kb := &ast.KnowledgeBase{
-		Name:          "T",
-		Version:       "1",
-		DataContext:   nil,
-		WorkingMemory: memory,
-		RuleEntries:   make(map[string]*ast.RuleEntry),
-		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
-	}
-
-	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+	listener := NewGruleV2ParserListener(func(e error) {
 		parseError = e
 		panic(e)
 	})
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError != nil {
 		t.Log(parseError)
@@ -177,23 +154,13 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory("KB", "1.0.0")
-	kb := &ast.KnowledgeBase{
-		Name:          "KB",
-		Version:       "1.0.0",
-		DataContext:   nil,
-		WorkingMemory: memory,
-		RuleEntries:   make(map[string]*ast.RuleEntry),
-		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
-	}
-
-	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+	listener := NewGruleV2ParserListener(func(e error) {
 		parseError = e
 	})
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError == nil {
 		t.Fatal("Successfully parsed invalid string literal, should have gotten an error")
@@ -209,23 +176,13 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 
 	var parseError error
 
-	memory := ast.NewWorkingMemory("KB", "1.0.0")
-	kb := &ast.KnowledgeBase{
-		Name:          "KB",
-		Version:       "1.0.0",
-		DataContext:   nil,
-		WorkingMemory: memory,
-		RuleEntries:   make(map[string]*ast.RuleEntry),
-		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEngineEventTopic),
-	}
-
-	listener := NewGruleV2ParserListener(kb, memory, func(e error) {
+	listener := NewGruleV2ParserListener(func(e error) {
 		parseError = e
 	})
 
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError != nil {
 		t.Fatal("Failed to parse rule with escaped string constant")

@@ -93,11 +93,19 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV2ParserListener(kb, kb.WorkingMemory, errCall)
+	listener := antlr2.NewGruleV2ParserListener(errCall)
 
 	psr := parser2.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
+
+	grl := listener.Grl
+	for _, ruleEntry := range grl.RuleEntries {
+		err := kb.AddRuleEntry(ruleEntry)
+		if err != nil {
+			log.Errorf("error while adding rule entry : %s. got %s", ruleEntry.RuleName.SimpleName, err.Error())
+		}
+	}
 
 	// Get the loading duration.
 	dur := time.Now().Sub(startTime)

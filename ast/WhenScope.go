@@ -26,6 +26,10 @@ type WhenScope struct {
 	Expression *Expression
 }
 
+type WhenScopeReceiver interface {
+	AcceptWhenScope(whenScope *WhenScope) error
+}
+
 // Clone will clone this Clone. The new clone will have an identical structure
 func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 	clone := &WhenScope{
@@ -79,8 +83,9 @@ func (e *WhenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *WhenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" when ")
+	buff.WriteString("whenScope(")
 	buff.WriteString(e.Expression.GetSnapshot())
+	buff.WriteString(")")
 	return buff.String()
 }
 

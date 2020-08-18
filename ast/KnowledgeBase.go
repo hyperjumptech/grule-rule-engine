@@ -93,17 +93,17 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 func (e *KnowledgeBase) AddRuleEntry(entry *RuleEntry) error {
 	e.lock.Lock()
 	defer e.lock.Unlock()
-	if e.ContainsRuleEntry(entry.Name) {
-		return fmt.Errorf("rule entry %s already exist", entry.Name)
+	if e.ContainsRuleEntry(entry.RuleName.SimpleName) {
+		return fmt.Errorf("rule entry %s already exist", entry.RuleName.SimpleName)
 	}
-	e.RuleEntries[entry.Name] = entry
+	e.RuleEntries[entry.RuleName.SimpleName] = entry
 	if e.DataContext != nil && e.WorkingMemory != nil {
 		entry.InitializeContext(e.DataContext, e.WorkingMemory)
 	}
 
 	e.Publisher.Publish(&events.RuleEntryEvent{
 		EventType: events.RuleEntryAddedEvent,
-		RuleName:  entry.Name,
+		RuleName:  entry.RuleName.SimpleName,
 	})
 
 	return nil
@@ -142,7 +142,7 @@ func (e *KnowledgeBase) InitializeContext(dataCtx IDataContext) {
 // RetractRule will retract the selected rule for execution on the next cycle.
 func (e *KnowledgeBase) RetractRule(ruleName string) {
 	for _, re := range e.RuleEntries {
-		if re.Name == ruleName {
+		if re.RuleName.SimpleName == ruleName {
 			re.Retracted = true
 
 			// emit rule entry retract event
@@ -157,7 +157,7 @@ func (e *KnowledgeBase) RetractRule(ruleName string) {
 // IsRuleRetracted will check if a certain rule denoted by its rule name is currently retracted
 func (e *KnowledgeBase) IsRuleRetracted(ruleName string) bool {
 	for _, re := range e.RuleEntries {
-		if re.Name == ruleName {
+		if re.RuleName.SimpleName == ruleName {
 			return re.Retracted
 		}
 	}
@@ -173,7 +173,7 @@ func (e *KnowledgeBase) Reset() {
 			// emit rule entry reset event
 			e.Publisher.Publish(&events.RuleEntryEvent{
 				EventType: events.RuleEntryResetEvent,
-				RuleName:  re.Name,
+				RuleName:  re.RuleName.SimpleName,
 			})
 		}
 	}
