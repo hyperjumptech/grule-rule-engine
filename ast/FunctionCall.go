@@ -80,10 +80,12 @@ func (e *FunctionCall) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *FunctionCall) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(fmt.Sprintf("func-%s(", e.FunctionName))
+	buff.WriteString(FUNCTIONCALL)
+	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
 	if e.ArgumentList == nil {
 		log.Errorf("Argument is nil")
 	} else {
+		buff.WriteString(",")
 		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}
 	buff.WriteString(")")
@@ -109,87 +111,7 @@ func (e *FunctionCall) Evaluate(receiver reflect.Value) (reflect.Value, error) {
 	if err != nil {
 		return reflect.ValueOf(nil), err
 	}
-
-	switch pkg.GetBaseKind(receiver) {
-	case reflect.Int64, reflect.Uint64, reflect.Float64, reflect.Bool:
-		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for type %s", e.FunctionName, receiver.Type().String())
-	case reflect.String:
-		var strfunc func(string, []reflect.Value) (reflect.Value, error)
-		switch e.FunctionName {
-		case "Compare":
-			strfunc = StrCompare
-		case "Contains":
-			strfunc = StrContains
-		case "Count":
-			strfunc = StrCount
-		case "HasPrefix":
-			strfunc = StrHasPrefix
-		case "HasSuffix":
-			strfunc = StrHasSuffix
-		case "Index":
-			strfunc = StrIndex
-		case "LastIndex":
-			strfunc = StrLastIndex
-		case "Repeat":
-			strfunc = StrRepeat
-		case "Replace":
-			strfunc = StrReplace
-		case "Split":
-			strfunc = StrSplit
-		case "ToLower":
-			strfunc = StrToLower
-		case "ToUpper":
-			strfunc = StrToUpper
-		case "Trim":
-			strfunc = StrTrim
-		}
-		if strfunc != nil {
-			val, err := strfunc(receiver.String(), args)
-			if err != nil {
-				return reflect.ValueOf(nil), err
-			}
-			e.Value = val
-			return val, nil
-		}
-		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for string", e.FunctionName)
-	}
-
-	// this obj is reflect.Value... it should not.
-	types, variad, err := pkg.GetFunctionParameterTypes(receiver, e.FunctionName)
-	if err != nil {
-		return reflect.ValueOf(nil),
-			fmt.Errorf("error while fetching function %s() parameter types. Got %v", e.FunctionName, err)
-	}
-
-	if len(types) != len(args) && !variad {
-		return reflect.ValueOf(nil),
-			fmt.Errorf("invalid argument count for function %s(). need %d argument while there are %d", e.FunctionName, len(types), len(args))
-	}
-
-	iargs := make([]interface{}, len(args))
-	for i, t := range types {
-		if variad && i == len(types)-1 {
-			break
-		}
-		if t.Kind() != args[i].Kind() {
-			if t.Kind() == reflect.Interface {
-				iargs[i] = pkg.ValueToInterface(args[i])
-			} else {
-				return reflect.ValueOf(nil),
-					fmt.Errorf("invalid argument types for function %s(). argument #%d, require %s but %s", e.FunctionName, i, t.Kind().String(), args[i].Kind().String())
-			}
-		} else {
-			iargs[i] = pkg.ValueToInterface(args[i])
-		}
-	}
-
-	retVals, err := pkg.InvokeFunction(pkg.ValueToInterface(receiver), e.FunctionName, iargs)
-	//retVal, err := e.DataContext.ExecMethod(objName, args)
-	if err == nil {
-		e.Value = reflect.ValueOf(retVals[0])
-		return e.Value, nil
-	}
-	return reflect.ValueOf(nil), err
+	return e.DataContext.ExecMethod(receiver, e.FunctionName, args)
 }
 
 func StrCompare(str string, arg []reflect.Value) (reflect.Value, error) {

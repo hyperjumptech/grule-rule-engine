@@ -12,18 +12,10 @@ type TestStructShenScope struct {
 
 func TestNewWhenScope(t *testing.T) {
 
-	vara := NewVariable("Struct.StringA")
-	vara.SetGrlText("a == b")
-	if vara.GetGrlText() != "a == b" {
-		t.Fatalf("GRL text not equal")
-	}
-
-	varb := NewVariable("Struct.StringA")
-
 	expr1 := &Expression{
 		AstID:           "abc",
-		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: vara}},
-		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: varb}},
+		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}}},
+		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}}},
 		Operator:        OpEq,
 	}
 
@@ -66,11 +58,10 @@ func TestNewWhenScope(t *testing.T) {
 	}
 
 	t.Logf("%s Snapshot : %s", ws.GetAstID(), ws.GetSnapshot())
-	t.Logf("%s Snapshot : %s", vara.GetAstID(), vara.GetSnapshot())
 
 	val, err := ws.Evaluate()
 	if err != nil {
-		t.Fatalf("error while evaluating constant expression")
+		t.Fatalf("error while evaluating constant expression. got %s", err)
 	}
 	if !val.Bool() {
 		t.Fatalf("Value is not as expected.")

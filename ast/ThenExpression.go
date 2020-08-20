@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"errors"
+	"reflect"
 
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -107,7 +108,8 @@ func (e *ThenExpression) AcceptVariable(vari *Variable) error {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("thenExp(")
+	buff.WriteString(THENEXPRESSION)
+	buff.WriteString("(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
 	} else if e.FunctionCall != nil {
@@ -129,10 +131,8 @@ func (e *ThenExpression) Execute() error {
 		return e.Assignment.Execute()
 	}
 	if e.FunctionCall != nil {
-		val, err := e.DataContext.GetValue("DEFUNC")
-		if err == nil {
-			_, err = e.FunctionCall.Evaluate(val)
-		}
+		v := e.DataContext.Get("DEFUNC")
+		_, err := e.FunctionCall.Evaluate(reflect.ValueOf(v))
 		return err
 	}
 	if e.Variable != nil {

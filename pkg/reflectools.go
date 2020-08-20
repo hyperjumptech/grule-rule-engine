@@ -24,22 +24,17 @@ func GetFunctionList(obj interface{}) ([]string, error) {
 }
 
 // GetFunctionParameterTypes get list of parameter types of specific function in a struct instance
-func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Type, bool, error) {
-	if !IsStruct(obj) {
+func GetFunctionParameterTypes(obj reflect.Value, methodName string) ([]reflect.Type, bool, error) {
+	if !IsValueAStruct(obj) {
 		return nil, false, fmt.Errorf("param is not a struct")
 	}
 	ret := make([]reflect.Type, 0)
-	objType := reflect.TypeOf(obj)
+	objType := obj.Type()
 
 	var meth reflect.Method
 	var found bool
 
-	if objType.String() == "reflect.Value" {
-		val := obj.(reflect.Value)
-		meth, found = val.Type().MethodByName(methodName)
-	} else {
-		meth, found = objType.MethodByName(methodName)
-	}
+	meth, found = objType.MethodByName(methodName)
 	if found {
 		x := meth.Type
 		for i := 1; i < x.NumIn(); i++ {
@@ -71,33 +66,23 @@ func GetFunctionReturnTypes(obj interface{}, methodName string) ([]reflect.Type,
 }
 
 // InvokeFunction invokes a specific function in a struct instance, using parameters array
-func InvokeFunction(obj interface{}, methodName string, param []interface{}) ([]interface{}, error) {
-	if !IsStruct(obj) {
+func InvokeFunction(obj reflect.Value, methodName string, param []reflect.Value) (retval []reflect.Value, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("error when invoking function %s. got %s", methodName, r)
+		}
+	}()
+
+	if !IsValueAStruct(obj) {
 		return nil, fmt.Errorf("param is not a struct")
 	}
-	var objVal reflect.Value
-	if reflect.TypeOf(obj).Name() == "Value" {
-		objVal = obj.(reflect.Value)
-	} else {
-		objVal = reflect.ValueOf(obj)
-	}
-	funcVal := objVal.MethodByName(methodName)
+	funcVal := obj.MethodByName(methodName)
 
 	if !funcVal.IsValid() {
 		return nil, fmt.Errorf("invalid function %s", methodName)
 	}
-
-	argVals := make([]reflect.Value, len(param))
-	for idx, val := range param {
-		argVals[idx] = reflect.ValueOf(val)
-	}
-
-	retVals := funcVal.Call(argVals)
-	ret := make([]interface{}, len(retVals))
-	for idx, r := range retVals {
-		ret[idx] = ValueToInterface(r)
-	}
-	return ret, nil
+	retVals := funcVal.Call(param)
+	return retVals, nil
 }
 
 // IsValidField validates if an instance struct have a field with such name
@@ -128,6 +113,17 @@ func IsStruct(obj interface{}) bool {
 		return objType.Kind() == reflect.Struct
 	}
 	return objType.Elem().Kind() == reflect.Struct
+}
+
+func IsValueAStruct(val reflect.Value) bool {
+	if val.IsValid() {
+		typ := val.Type()
+		if typ.Kind() != reflect.Ptr {
+			return typ.Kind() == reflect.Struct
+		}
+		return typ.Elem().Kind() == reflect.Struct
+	}
+	return false
 }
 
 // ValueToInterface will try to obtain an interface to a speciffic value.
@@ -403,9 +399,8 @@ func GetMapArrayValue(mapArray, selector interface{}) (ret interface{}, err erro
 				return nil, fmt.Errorf("selector not exist in map key")
 			}
 			return ValueToInterface(retVal), nil
-		} else {
-			return nil, fmt.Errorf("map requires key of type %s, found %s", objVal.Type().Key().String(), reflect.TypeOf(selector).String())
 		}
+		return nil, fmt.Errorf("map requires key of type %s, found %s", objVal.Type().Key().String(), reflect.TypeOf(selector).String())
 	}
 	if objVal.Type().Kind() == reflect.Array || objVal.Type().Kind() == reflect.Slice {
 		defer func() {

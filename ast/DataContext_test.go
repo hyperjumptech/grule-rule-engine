@@ -45,27 +45,27 @@ func TestDataContext_ExecMethod(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethod", []reflect.Value{reflect.ValueOf("Yahooooo")})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoMethod", []reflect.Value{reflect.ValueOf("Yahooooo")})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethods", []reflect.Value{reflect.ValueOf("Yahooooo")})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoMethods", []reflect.Value{reflect.ValueOf("Yahooooo")})
 	if err == nil {
 		t.Fatal("Error should be raised since method not found")
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethods", []reflect.Value{reflect.ValueOf(1)})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoMethods", []reflect.Value{reflect.ValueOf(1)})
 	if err == nil {
 		t.Fatal("Error should be raised since argument type is not string")
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethods", []reflect.Value{reflect.ValueOf("Yahoooo"), reflect.ValueOf("Google")})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoMethods", []reflect.Value{reflect.ValueOf("Yahoooo"), reflect.ValueOf("Google")})
 	if err == nil {
 		t.Fatal("Error should be raised since argument count is not correct")
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethods", []reflect.Value{})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoMethods", []reflect.Value{})
 	if err == nil {
 		t.Fatal("Error should be raised since method argument not provided")
 	}
@@ -78,12 +78,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 		t.Fatal("Error, should fail")
 	}
 
-	_, err = ctx.ExecMethod("C.EchoMethod", []reflect.Value{reflect.ValueOf("Yahooooo")})
-	if err == nil {
-		t.Fatal("Error, context has been retracted, should not be able to execute")
-	}
-
-	_, err = ctx.ExecMethod("A.MethodNotExist", []reflect.Value{reflect.ValueOf("Yahooooo")})
+	_, err = ctx.ExecMethod(reflect.ValueOf(TCS), "MethodNotExist", []reflect.Value{reflect.ValueOf("Yahooooo")})
 	if err == nil {
 		t.Fatal("Error, method does not exist.")
 	}
@@ -93,7 +88,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 		t.Error("Error, Reset failed")
 	}
 
-	v, err := ctx.ExecMethod("C.EchoVariad", []reflect.Value{
+	v, err := ctx.ExecMethod(reflect.ValueOf(TCS), "EchoVariad", []reflect.Value{
 		reflect.ValueOf("Weeeeee!"),
 		reflect.ValueOf("Woooooo!"),
 		reflect.ValueOf("Waaaaaa!"),
@@ -101,11 +96,14 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error calling variadic function.")
 	}
-	if v.Interface().(int) != 3 {
+
+	t.Logf("Type %s", v.Type().String())
+
+	if v.Int() != 3 {
 		t.Fatal("Error, variadic function should have returned 3 but got " + strconv.Itoa(v.Interface().(int)))
 	}
 
-	v, err = ctx.ExecMethod("C.EchoVariad", []reflect.Value{})
+	v, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoVariad", []reflect.Value{})
 	if err != nil {
 		t.Fatal("Error calling variadic function.")
 	}
@@ -113,7 +111,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 		t.Fatal("Error, variadic function should have returned 0 but got " + strconv.Itoa(v.Interface().(int)))
 	}
 
-	v, err = ctx.ExecMethod("C.EchoVariad", []reflect.Value{
+	v, err = ctx.ExecMethod(reflect.ValueOf(TCS), "EchoVariad", []reflect.Value{
 		reflect.ValueOf("Weeeeee!"),
 		reflect.ValueOf(42),
 		reflect.ValueOf("Waaaaaa!"),
@@ -136,7 +134,7 @@ func TestDataContext_GetType(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	typ, err := ctx.GetType("ta.BStruct.CStruct.Str")
+	typ, err := ctx.GetType(reflect.ValueOf(TA.BStruct.CStruct), "Str")
 	if err != nil {
 		t.Errorf("Got error %v", err)
 		t.FailNow()
@@ -148,15 +146,6 @@ func TestDataContext_GetType(t *testing.T) {
 	ctx.Retract("ta")
 	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
-	}
-	_, err = ctx.GetType("ta.BStruct.CStruct.Str")
-	if err == nil {
-		t.Fatal("Error, fact is retracted, shouldn't be able to GetType")
-	}
-
-	_, err = ctx.GetType("nonexistent")
-	if err == nil {
-		t.Fatal("Error, fact is nonexistent, should not be able to GetType")
 	}
 }
 
@@ -172,7 +161,7 @@ func TestDataContext_GetValue(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	val, err := ctx.GetValue("ta.BStruct.CStruct.Str")
+	val, err := ctx.GetValue(reflect.ValueOf(TA.BStruct.CStruct), "Str")
 	if err != nil {
 		t.Errorf("Got error %v", err)
 		t.FailNow()
@@ -184,16 +173,6 @@ func TestDataContext_GetValue(t *testing.T) {
 	ctx.Retract("ta")
 	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
-	}
-
-	_, err = ctx.GetValue("ta.BStruct.CStruct.Str")
-	if err == nil {
-		t.Error("Error, should fail to getValue from retracted fact")
-	}
-
-	_, err = ctx.GetValue("nonexistent")
-	if err == nil {
-		t.Error("Error, should fail to getValue from nonexistent fact")
 	}
 }
 
@@ -210,36 +189,13 @@ func TestDataContext_SetValue(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = ctx.SetValue("C.It", reflect.ValueOf(77))
+	err = ctx.SetValue(reflect.ValueOf(TCS), "It", reflect.ValueOf(77))
 	if err != nil {
 		t.Error("error fail: ", err)
-	}
-
-	err = ctx.SetValue("B.It", reflect.ValueOf(71))
-	if err == nil {
-		t.Error("error, should not succeed, non existent.")
 	}
 
 	ctx.Retract("C")
 	if len(ctx.Retracted()) == 0 {
 		t.Error("Error, Retract failed, it should succeed")
-	}
-	err = ctx.SetValue("C.It", reflect.ValueOf(2))
-	if err == nil {
-		t.Error("error, should not have succeed, retracted")
-	}
-}
-
-func TestDataContext_Add(t *testing.T) {
-
-	fail := "FAIL"
-
-	ctx := NewDataContext()
-	err := ctx.Add("C", &fail)
-	if err == nil {
-		t.Error("error, should not succeed, pointer not to struct.")
-	}
-	if err.Error() != "you can only insert a pointer to struct as fact. objVal = ptr" {
-		t.Error("error not expected.")
 	}
 }

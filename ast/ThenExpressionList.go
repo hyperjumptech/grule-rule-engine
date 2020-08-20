@@ -86,12 +86,15 @@ func (e *ThenExpressionList) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpressionList) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("thenExpList[")
-	for _, es := range e.ThenExpressions {
+	buff.WriteString(THENEXPRESSIONLIST)
+	buff.WriteString("(")
+	for idx, es := range e.ThenExpressions {
+		if idx > 0 {
+			buff.WriteString(",")
+		}
 		buff.WriteString(es.GetSnapshot())
-		buff.WriteString("; ")
 	}
-	buff.WriteString("]")
+	buff.WriteString(")")
 	return buff.String()
 }
 

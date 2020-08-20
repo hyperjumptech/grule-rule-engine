@@ -4,10 +4,8 @@ package ast
 
 import (
 	"fmt"
-	"reflect"
-	"strings"
-
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"reflect"
 )
 
 // NewDataContext will create a new DataContext instance
@@ -46,6 +44,7 @@ type IDataContext interface {
 	HasVariableChange() bool
 
 	Add(key string, obj interface{}) error
+	Get(key string) interface{}
 
 	Retract(key string)
 	IsRetracted(key string) bool
@@ -54,12 +53,10 @@ type IDataContext interface {
 	Retracted() []string
 	Reset()
 
-	ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error)
-
-	GetType(variable string) (reflect.Type, error)
-
-	GetValue(variable string) (reflect.Value, error)
-	SetValue(variable string, newValue reflect.Value) error
+	ExecMethod(receiver reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error)
+	GetType(receiver reflect.Value, variable string) (reflect.Type, error)
+	GetValue(receiver reflect.Value, variable string) (reflect.Value, error)
+	SetValue(receiver reflect.Value, variable string, newValue reflect.Value) error
 }
 
 // ResetVariableChangeCount will reset the variable change count
@@ -79,11 +76,22 @@ func (ctx *DataContext) HasVariableChange() bool {
 
 // Add will add struct instance into rule execution context
 func (ctx *DataContext) Add(key string, obj interface{}) error {
-	objVal := reflect.ValueOf(obj)
-	if objVal.Kind() != reflect.Ptr || objVal.Elem().Kind() != reflect.Struct {
-		return fmt.Errorf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String())
-	}
+	// LETS experiment by disabling this. We can add non struct pointer as fact.
+	// Because now we can extract value directly into graph.
+	//
+	//objVal := reflect.ValueOf(obj)
+	//if objVal.Kind() != reflect.Ptr || objVal.Elem().Kind() != reflect.Struct {
+	//	return fmt.Errorf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String())
+	//}
 	ctx.ObjectStore[key] = obj
+	return nil
+}
+
+// Get will extract the struct instance
+func (ctx *DataContext) Get(key string) interface{} {
+	if v, ok := ctx.ObjectStore[key]; ok {
+		return v
+	}
 	return nil
 }
 
@@ -113,167 +121,84 @@ func (ctx *DataContext) Reset() {
 }
 
 // ExecMethod will execute instance member variable using the supplied arguments.
-func (ctx *DataContext) ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error) {
-	varArray := strings.Split(methodName, ".")
-	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRetracted(varArray[0]) {
-			return traceMethod(val, varArray[1:], args)
+func (ctx *DataContext) ExecMethod(receiver reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error) {
+	switch pkg.GetBaseKind(receiver) {
+	case reflect.Int64, reflect.Uint64, reflect.Float64, reflect.Bool:
+		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for type %s", methodName, receiver.Type().String())
+	case reflect.String:
+		var strfunc func(string, []reflect.Value) (reflect.Value, error)
+		switch methodName {
+		case "Compare":
+			strfunc = StrCompare
+		case "Contains":
+			strfunc = StrContains
+		case "Count":
+			strfunc = StrCount
+		case "HasPrefix":
+			strfunc = StrHasPrefix
+		case "HasSuffix":
+			strfunc = StrHasSuffix
+		case "Index":
+			strfunc = StrIndex
+		case "LastIndex":
+			strfunc = StrLastIndex
+		case "Repeat":
+			strfunc = StrRepeat
+		case "Replace":
+			strfunc = StrReplace
+		case "Split":
+			strfunc = StrSplit
+		case "ToLower":
+			strfunc = StrToLower
+		case "ToUpper":
+			strfunc = StrToUpper
+		case "Trim":
+			strfunc = StrTrim
 		}
-		return reflect.ValueOf(nil), fmt.Errorf("fact is retracted")
+		if strfunc != nil {
+			val, err := strfunc(receiver.String(), args)
+			if err != nil {
+				return reflect.ValueOf(nil), err
+			}
+			return val, nil
+		}
+		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for string", methodName)
 	}
-	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while execute method", varArray[0])
+
+	// this obj is reflect.Value... it should not.
+	types, variad, err := pkg.GetFunctionParameterTypes(receiver, methodName)
+	if err != nil {
+		return reflect.ValueOf(nil),
+			fmt.Errorf("error while fetching function %s() parameter types. Got %v", methodName, err)
+	}
+
+	if len(types) != len(args) && !variad {
+		return reflect.ValueOf(nil),
+			fmt.Errorf("invalid argument count for function %s(). need %d argument while there are %d", methodName, len(types), len(args))
+	}
+
+	retVals, err := pkg.InvokeFunction(receiver, methodName, args)
+	if err == nil {
+		if len(retVals) == 0 {
+			return reflect.ValueOf(nil), nil
+		}
+		return retVals[0], nil
+	}
+	return reflect.ValueOf(nil), err
 }
 
 // GetType will extract type information of data in this context.
-func (ctx *DataContext) GetType(variable string) (reflect.Type, error) {
-	varArray := strings.Split(variable, ".")
-	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRetracted(varArray[0]) {
-			return traceType(val, varArray[1:])
-		}
-		return nil, fmt.Errorf("fact is retracted")
-	}
-	return nil, fmt.Errorf("fact [%s] not found while obtaining type", variable)
+func (ctx *DataContext) GetType(receiver reflect.Value, variable string) (reflect.Type, error) {
+	return pkg.GetAttributeType(pkg.ValueToInterface(receiver), variable)
 }
 
 // GetValue will get member variables Value information.
 // Used by the rule execution to obtain variable value.
-func (ctx *DataContext) GetValue(variable string) (reflect.Value, error) {
-	varArray := strings.Split(variable, ".")
-	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRetracted(varArray[0]) {
-			vval, err := traceValue(val, varArray[1:])
-			if err != nil {
-				fmt.Printf("blah %s = %v\n", variable, vval)
-			}
-			return vval, err
-		}
-		return reflect.ValueOf(nil), fmt.Errorf("fact is retracted")
-	}
-	return reflect.ValueOf(nil), fmt.Errorf("fact [%s] not found while retrieving value", varArray[0])
+func (ctx *DataContext) GetValue(receiver reflect.Value, variable string) (reflect.Value, error) {
+	return pkg.GetAttributeValue(pkg.ValueToInterface(receiver), variable)
 }
 
 // SetValue will set variable value of an object instance in this data context, Used by rule script to set values.
-func (ctx *DataContext) SetValue(variable string, newValue reflect.Value) error {
-	varArray := strings.Split(variable, ".")
-	if val, ok := ctx.ObjectStore[varArray[0]]; ok {
-		if !ctx.IsRetracted(varArray[0]) {
-			err := traceSetValue(val, varArray[1:], newValue)
-			if err == nil {
-				ctx.variableChangeCount++
-			}
-			return err
-		}
-		return fmt.Errorf("fact is retracted")
-	}
-	return fmt.Errorf("fact [%s] not found while setting value", varArray[0])
-}
-
-func traceType(obj interface{}, path []string) (reflect.Type, error) {
-	switch length := len(path); {
-	case length == 1:
-		return pkg.GetAttributeType(obj, path[0])
-	case length > 1:
-		objVal, err := pkg.GetAttributeValue(obj, path[0])
-		if err != nil {
-			return nil, err
-		}
-		return traceType(pkg.ValueToInterface(objVal), path[1:])
-	default:
-		return reflect.TypeOf(obj), nil
-	}
-}
-
-func traceValue(obj interface{}, path []string) (reflect.Value, error) {
-	switch length := len(path); {
-	case length == 1:
-		return pkg.GetAttributeValue(obj, path[0])
-	case length > 1:
-		objVal, err := pkg.GetAttributeValue(obj, path[0])
-		if err != nil {
-			return objVal, err
-		}
-		return traceValue(pkg.ValueToInterface(objVal), path[1:])
-	default:
-		return reflect.ValueOf(obj), nil
-	}
-}
-
-func traceSetValue(obj interface{}, path []string, newValue reflect.Value) error {
-	switch length := len(path); {
-	case length == 1:
-		return pkg.SetAttributeValue(obj, path[0], newValue)
-	case length > 1:
-		objVal, err := pkg.GetAttributeValue(obj, path[0])
-		if err != nil {
-			return err
-		}
-		return traceSetValue(objVal, path[1:], newValue)
-	default:
-		return fmt.Errorf("no attribute path specified")
-	}
-}
-
-func traceMethod(obj interface{}, path []string, args []reflect.Value) (reflect.Value, error) {
-
-	switch length := len(path); {
-	case length == 1:
-		// this obj is reflect.Value... it should not.
-		types, variad, err := pkg.GetFunctionParameterTypes(obj, path[0])
-		if err != nil {
-			return reflect.ValueOf(nil),
-				fmt.Errorf("error while fetching function %s() parameter types. Got %v", path[0], err)
-		}
-
-		if len(types) != len(args) && !variad {
-			return reflect.ValueOf(nil),
-				fmt.Errorf("invalid argument count for function %s(). need %d argument while there are %d", path[0], len(types), len(args))
-		}
-		iargs := make([]interface{}, len(args))
-		for i, t := range types {
-			if variad && i == len(types)-1 {
-				break
-			}
-			if t.Kind() != args[i].Kind() {
-				if t.Kind() == reflect.Interface {
-					iargs[i] = pkg.ValueToInterface(args[i])
-				} else {
-					return reflect.ValueOf(nil),
-						fmt.Errorf("invalid argument types for function %s(). argument #%d, require %s but %s", path[0], i, t.Kind().String(), args[i].Kind().String())
-				}
-			} else {
-				iargs[i] = pkg.ValueToInterface(args[i])
-			}
-		}
-		if variad {
-			typ := types[len(types)-1].Elem().Kind()
-			for i := len(types) - 1; i < len(args); i++ {
-				if args[i].Kind() != typ {
-					return reflect.ValueOf(nil),
-						fmt.Errorf("invalid variadic argument types for function %s(). argument #%d, require %s but %s", path[0], i, typ.String(), args[i].Kind().String())
-				}
-				iargs[i] = pkg.ValueToInterface(args[i])
-			}
-		}
-		rets, err := pkg.InvokeFunction(obj, path[0], iargs)
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-		switch retLen := len(rets); {
-		case retLen > 1:
-			return reflect.ValueOf(rets[0]), fmt.Errorf("multiple return value for function %s(). ", path[0])
-		case retLen == 1:
-			return reflect.ValueOf(rets[0]), nil
-		default:
-			return reflect.ValueOf(nil), nil
-		}
-	case length > 1:
-		objVal, err := pkg.GetAttributeValue(obj, path[0])
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-		return traceMethod(objVal, path[1:], args)
-	default:
-		return reflect.ValueOf(nil), fmt.Errorf("no function path specified")
-	}
+func (ctx *DataContext) SetValue(receiver reflect.Value, variable string, newValue reflect.Value) error {
+	return pkg.SetAttributeValue(pkg.ValueToInterface(receiver), variable, newValue)
 }

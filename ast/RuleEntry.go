@@ -121,7 +121,10 @@ func (e *RuleEntry) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *RuleEntry) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(fmt.Sprintf("rule %s \"%s\" salience %d {%s%s}", e.RuleName.SimpleName, e.RuleDescription.Text, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
+	buff.WriteString(RULEENTRY)
+	buff.WriteString("(")
+	buff.WriteString(fmt.Sprintf("N:%s DEC:\"%s\" SAL:%d W:%s T:%s}", e.RuleName.SimpleName, e.RuleDescription.Text, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
+	buff.WriteString(")")
 	return buff.String()
 }
 

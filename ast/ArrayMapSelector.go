@@ -8,12 +8,14 @@ import (
 	"reflect"
 )
 
+// NewArrayMapSelector create a new array selector graph
 func NewArrayMapSelector() *ArrayMapSelector {
 	return &ArrayMapSelector{
 		AstID: uuid.New().String(),
 	}
 }
 
+// ArrayMapSelector an array selector graph containing an expression that act ass array or map selector
 type ArrayMapSelector struct {
 	AstID   string
 	GrlText string
@@ -26,6 +28,7 @@ type ArrayMapSelector struct {
 	Value reflect.Value
 }
 
+// ArrayMapSelectorReceiver must be implemented by all other ast graph that uses map/array selector
 type ArrayMapSelectorReceiver interface {
 	AcceptArrayMapSelector(sel *ArrayMapSelector) error
 }
@@ -82,9 +85,10 @@ func (e *ArrayMapSelector) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ArrayMapSelector) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("[")
+	buff.WriteString(MAPARRAYSELECTOR)
+	buff.WriteString("(")
 	buff.WriteString(e.Expression.GetSnapshot())
-	buff.WriteString("]")
+	buff.WriteString(")")
 	return buff.String()
 }
 

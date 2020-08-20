@@ -22,11 +22,11 @@ var (
 )
 
 // NewGruleV2ParserListener create new instance of GruleV2ParserListener
-func NewGruleV2ParserListener(errorCallBack func(e error)) *GruleV2ParserListener {
+func NewGruleV2ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV2ParserListener {
 	return &GruleV2ParserListener{
-		PreviousNode:        make([]string, 0),
-		ErrorCallback:       errorCallBack,
-		VariableSnapshotMap: make(map[string]*ast.Variable),
+		PreviousNode:  make([]string, 0),
+		ErrorCallback: errorCallBack,
+		KnowledgeBase: KnowledgeBase,
 	}
 }
 
@@ -36,11 +36,11 @@ type GruleV2ParserListener struct {
 	grulev2.Basegrulev2Listener
 	PreviousNode []string
 
-	Grl                 *ast.Grl
-	Stack               *stack
-	StopParse           bool
-	ErrorCallback       func(e error)
-	VariableSnapshotMap map[string]*ast.Variable
+	Grl           *ast.Grl
+	Stack         *stack
+	StopParse     bool
+	ErrorCallback func(e error)
+	KnowledgeBase *ast.KnowledgeBase
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -67,19 +67,19 @@ func (s *GruleV2ParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 // ExitEveryRule is called when any rule is exited.
 func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
-// EnterRoot is called when production root is entered.
+// EnterGrl is called when production grl is entered.
 func (s *GruleV2ParserListener) EnterGrl(ctx *grulev2.GrlContext) {
 	s.Stack = newStack()
 	s.Grl = ast.NewGrl()
 	s.Stack.Push(s.Grl)
 }
 
-// ExitRoot is called when production root is exited.
+// ExitGrl is called when production root is exited. The listener will instruct working memory re-index here.
 func (s *GruleV2ParserListener) ExitGrl(ctx *grulev2.GrlContext) {
 	if s.StopParse {
 		return
 	}
-	s.Stack.Pop()
+	_ = s.Stack.Pop().(*ast.Grl)
 }
 
 // EnterRuleEntry is called when production ruleEntry is entered.
@@ -296,7 +296,8 @@ func (s *GruleV2ParserListener) ExitExpression(ctx *grulev2.ExpressionContext) {
 	}
 	expr := s.Stack.Pop().(*ast.Expression)
 	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
-	err := exprRec.AcceptExpression(expr)
+
+	err := exprRec.AcceptExpression(s.KnowledgeBase.WorkingMemory.AddExpression(expr))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)
@@ -409,7 +410,8 @@ func (s *GruleV2ParserListener) ExitExpressionAtom(ctx *grulev2.ExpressionAtomCo
 	}
 	atm := s.Stack.Pop().(*ast.ExpressionAtom)
 	expr := s.Stack.Peek().(ast.ExpressionAtomReceiver)
-	err := expr.AcceptExpressionAtom(atm)
+
+	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)
@@ -494,12 +496,11 @@ func (s *GruleV2ParserListener) EnterVariable(ctx *grulev2.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	varName := ctx.GetText()
 	vari := ast.NewVariable()
 	if ctx.SIMPLENAME() != nil && len(ctx.SIMPLENAME().GetText()) > 0 {
 		vari.Name = ctx.SIMPLENAME().GetText()
 	}
-	vari.GrlText = varName
+	vari.GrlText = ctx.GetText()
 	s.Stack.Push(vari)
 }
 
@@ -510,19 +511,8 @@ func (s *GruleV2ParserListener) ExitVariable(ctx *grulev2.VariableContext) {
 	}
 	vari := s.Stack.Pop().(*ast.Variable)
 	variRec := s.Stack.Peek().(ast.VariableReceiver)
-	var err error
-	snapshot := vari.GetSnapshot()
-	if snapshot == "var()" {
-		LoggerV2.Tracef("Empty snapshot with text : %s", ctx.GetText())
-	}
-	if v, ok := s.VariableSnapshotMap[snapshot]; ok {
-		LoggerV2.Tracef("Reused snapshot [%s]", snapshot)
-		err = variRec.AcceptVariable(v)
-	} else {
-		s.VariableSnapshotMap[snapshot] = vari
-		LoggerV2.Tracef("Added  snapshot [%s]", snapshot)
-		err = variRec.AcceptVariable(vari)
-	}
+
+	err := variRec.AcceptVariable(s.KnowledgeBase.WorkingMemory.AddVariable(vari))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)

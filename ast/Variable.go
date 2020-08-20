@@ -100,22 +100,19 @@ func (e *Variable) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Variable) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("var(")
+	buff.WriteString(VARIABLE)
+	buff.WriteString("(")
 	if len(e.Name) > 0 && e.Variable == nil {
-		buff.WriteString("name:")
+		buff.WriteString("N:")
 		buff.WriteString(e.Name)
-	}
-	if e.Constant != nil {
+	} else if e.Constant != nil {
 		buff.WriteString(e.Constant.GetSnapshot())
-	}
-	if e.Variable != nil && e.FunctionCall != nil {
-		buff.WriteString(fmt.Sprintf("%s->%s", e.Variable.GetSnapshot(), e.FunctionCall.GetSnapshot()))
-	}
-	if e.Variable != nil && len(e.Name) > 0 {
-		buff.WriteString(fmt.Sprintf("%s->%s", e.Variable.GetSnapshot(), e.Name))
-	}
-	if e.Variable != nil && e.ArrayMapSelector != nil {
-		buff.WriteString(fmt.Sprintf("%s->%s", e.Variable.GetSnapshot(), e.ArrayMapSelector.GetSnapshot()))
+	} else if e.Variable != nil && e.FunctionCall != nil {
+		buff.WriteString(fmt.Sprintf("O:%s->%s", e.Variable.GetSnapshot(), e.FunctionCall.GetSnapshot()))
+	} else if e.Variable != nil && len(e.Name) > 0 {
+		buff.WriteString(fmt.Sprintf("O:%s->%s", e.Variable.GetSnapshot(), e.Name))
+	} else if e.Variable != nil && e.ArrayMapSelector != nil {
+		buff.WriteString(fmt.Sprintf("O:%s->%s", e.Variable.GetSnapshot(), e.ArrayMapSelector.GetSnapshot()))
 	}
 	buff.WriteString(")")
 	return buff.String()
@@ -127,9 +124,10 @@ func (e *Variable) SetGrlText(grlText string) {
 	e.GrlText = grlText
 }
 
+// Assign will assign the specified value to the variable
 func (e *Variable) Assign(newVal reflect.Value) error {
 	if len(e.Name) > 0 && e.Variable == nil {
-		return e.DataContext.SetValue(e.Name, newVal)
+		return e.DataContext.Add(e.Name, pkg.ValueToInterface(newVal))
 	}
 	if e.Constant != nil {
 		return fmt.Errorf("can not change constant")
@@ -138,10 +136,18 @@ func (e *Variable) Assign(newVal reflect.Value) error {
 		return fmt.Errorf("can not change function call")
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
-		return pkg.SetAttributeValue(pkg.ValueToInterface(e.Variable.Value), e.Name, newVal)
+		err := pkg.SetAttributeValue(pkg.ValueToInterface(e.Variable.Value), e.Name, newVal)
+		if err == nil {
+			e.WorkingMemory.ResetVariable(e)
+		}
+		return err
 	}
 	if e.Variable != nil && e.ArrayMapSelector != nil {
-		return pkg.SetMapArrayValue(pkg.ValueToInterface(e.Variable.Value), e.ArrayMapSelector.Value, newVal)
+		err := pkg.SetMapArrayValue(pkg.ValueToInterface(e.Variable.Value), e.ArrayMapSelector.Value, newVal)
+		if err == nil {
+			e.WorkingMemory.ResetVariable(e)
+		}
+		return err
 	}
 	return fmt.Errorf("this code part should not be reached")
 }
@@ -149,11 +155,11 @@ func (e *Variable) Assign(newVal reflect.Value) error {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Variable) Evaluate() (reflect.Value, error) {
 	if len(e.Name) > 0 && e.Variable == nil {
-		val, err := e.DataContext.GetValue(e.Name)
-		if err != nil {
-			return reflect.ValueOf(nil), err
+		val := e.DataContext.Get(e.Name)
+		if val == nil {
+			return reflect.ValueOf(nil), fmt.Errorf("non existent key %s", val)
 		}
-		e.Value = val
+		e.Value = reflect.ValueOf(val)
 		return e.Value, nil
 	}
 	if e.Constant != nil {

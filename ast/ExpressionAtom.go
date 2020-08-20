@@ -26,6 +26,8 @@ type ExpressionAtom struct {
 	Variable     *Variable
 	FunctionCall *FunctionCall
 	Value        reflect.Value
+
+	Evaluated bool
 }
 
 // ExpressionAtomReceiver contains function to be implemented by other AST graph to receive an ExpressionAtom AST graph
@@ -102,7 +104,8 @@ func (e *ExpressionAtom) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ExpressionAtom) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("atom(")
+	buff.WriteString(EXPRESSIONATOM)
+	buff.WriteString("(")
 	if e.Variable != nil {
 		buff.WriteString(e.Variable.GetSnapshot())
 	} else if e.FunctionCall != nil {
@@ -120,18 +123,20 @@ func (e *ExpressionAtom) SetGrlText(grlText string) {
 
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *ExpressionAtom) Evaluate() (reflect.Value, error) {
+	if e.Evaluated == true {
+		return e.Value, nil
+	}
 	var val reflect.Value
 	var err error
 	if e.Variable != nil {
 		val, err = e.Variable.Evaluate()
 	} else if e.FunctionCall != nil {
-		val, err = e.DataContext.GetValue("DEFUNC")
-		if err == nil {
-			val, err = e.FunctionCall.Evaluate(val)
-		}
+		v := e.DataContext.Get("DEFUNC")
+		val, err = e.FunctionCall.Evaluate(reflect.ValueOf(v))
 	}
 	if err == nil {
 		e.Value = val
 	}
+	e.Evaluated = true
 	return val, err
 }

@@ -37,13 +37,13 @@ func TestItemPriceChecker_TestParser(t *testing.T) {
 	kb := lib.GetKnowledgeBase("Test", "0.1.1")
 
 	var parseError error
-	listener := antlr2.NewGruleV2ParserListener(kb, kb.WorkingMemory, func(e error) {
+	listener := antlr2.NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
 	})
 
 	psr := parser2.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
 	if parseError != nil {
 		t.Log(parseError)

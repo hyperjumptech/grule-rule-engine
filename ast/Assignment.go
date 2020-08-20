@@ -25,6 +25,7 @@ type Assignment struct {
 	Expression *Expression
 }
 
+// AssignmentReceiver must be implemented by all other ast graph that uses an assigment expression
 type AssignmentReceiver interface {
 	AcceptAssignment(assignment *Assignment) error
 }
@@ -97,7 +98,8 @@ func (e *Assignment) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Assignment) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("assign(")
+	buff.WriteString(ASSIGMENT)
+	buff.WriteString("(")
 	buff.WriteString(e.Variable.GetSnapshot())
 	buff.WriteString("=")
 	buff.WriteString(e.Expression.GetSnapshot())

@@ -3,6 +3,9 @@ package antlr
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -43,8 +46,9 @@ func TestV2Parser(t *testing.T) {
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 		var parseError error
+		kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-		listener := NewGruleV2ParserListener(func(e error) {
+		listener := NewGruleV2ParserListener(kb, func(e error) {
 			parseError = e
 		})
 
@@ -129,8 +133,9 @@ func TestV2Parser2(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV2ParserListener(func(e error) {
+	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
 		panic(e)
 	})
@@ -153,8 +158,9 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV2ParserListener(func(e error) {
+	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
 	})
 
@@ -175,8 +181,9 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV2ParserListener(func(e error) {
+	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
 	})
 
@@ -187,4 +194,33 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 	if parseError != nil {
 		t.Fatal("Failed to parse rule with escaped string constant")
 	}
+}
+
+func TestV2ParserSnapshotEyeBalling(t *testing.T) {
+	logrus.SetLevel(logrus.TraceLevel)
+
+	data := `
+rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10 {
+    when
+        TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
+    then
+        TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement;
+		DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+}
+`
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err := rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(data)))
+
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	kb := lib.GetKnowledgeBase("Test", "0.1.1")
+
+	if len(kb.RuleEntries) != 1 {
+		t.Fatalf("Expect 1 but %d", len(kb.RuleEntries))
+	}
+	t.Logf("WhenScope snapshot : %s", kb.RuleEntries["RuleName"].WhenScope.GetSnapshot())
 }
