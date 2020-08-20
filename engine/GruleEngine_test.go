@@ -251,6 +251,8 @@ const complexRule1 = `rule ComplexRule "test complex rule" salience 10 {
 
 func TestEngine_ComplexRule1(t *testing.T) {
 
+	logrus.SetLevel(logrus.TraceLevel)
+
 	ts := &TestStruct{
 		Param1: true,
 		Param2: true,

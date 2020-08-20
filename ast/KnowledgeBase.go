@@ -72,7 +72,6 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 	}
 	if e.RuleEntries != nil {
 		for k, entry := range e.RuleEntries {
-			clone.RuleEntries[k] = entry.Clone(cloneTable)
 			if cloneTable.IsCloned(entry.AstID) {
 				clone.RuleEntries[k] = cloneTable.Records[entry.AstID].CloneInstance.(*RuleEntry)
 			} else {

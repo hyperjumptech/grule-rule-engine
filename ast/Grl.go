@@ -1,13 +1,15 @@
 package ast
 
+import "fmt"
+
 func NewGrl() *Grl {
 	return &Grl{
-		RuleEntries: make([]*RuleEntry, 0),
+		RuleEntries: make(map[string]*RuleEntry, 0),
 	}
 }
 
 type Grl struct {
-	RuleEntries []*RuleEntry
+	RuleEntries map[string]*RuleEntry
 }
 
 type GrlReceiver interface {
@@ -16,8 +18,11 @@ type GrlReceiver interface {
 
 func (g *Grl) ReceiveRuleEntry(entry *RuleEntry) error {
 	if g.RuleEntries == nil {
-		g.RuleEntries = make([]*RuleEntry, 0)
+		g.RuleEntries = make(map[string]*RuleEntry)
 	}
-	g.RuleEntries = append(g.RuleEntries, entry)
+	if _, ok := g.RuleEntries[entry.RuleName.SimpleName]; ok {
+		return fmt.Errorf("duplicate rule entry %w", entry.RuleName.SimpleName)
+	}
+	g.RuleEntries[entry.RuleName.SimpleName] = entry
 	return nil
 }

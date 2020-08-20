@@ -155,7 +155,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			for _, r := range runnable {
 				// reset the counter to 0 to detect if there are variable change.
 				dataCtx.ResetVariableChangeCount()
-				log.Debugf("Executing rule : %s. Salience %d", r.RuleName.SimpleName, r.Salience)
+				log.Debugf("Executing rule : %s. Salience %d", r.RuleName.SimpleName, r.Salience.SalienceValue)
 
 				// emit rule execute start event
 				RuleEntryPublisher.Publish(&events.RuleEntryEvent{

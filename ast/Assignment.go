@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/sirupsen/logrus"
 )
 
 // NewAssignment will create new instance of Assignment AST Node
@@ -115,6 +116,7 @@ func (e *Assignment) SetGrlText(grlText string) {
 
 // Execute will execute this graph in the Then scope
 func (e *Assignment) Execute() error {
+	logrus.Warnf("Assignment : %s", e.GetSnapshot())
 	exprVal, err := e.Expression.Evaluate()
 	if err != nil {
 		return err

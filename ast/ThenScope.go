@@ -2,7 +2,6 @@ package ast
 
 import (
 	"bytes"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -92,5 +91,8 @@ func (e *ThenScope) SetGrlText(grlText string) {
 
 // Execute will execute this graph in the Then scope
 func (e *ThenScope) Execute() error {
+	if e.ThenExpressionList == nil {
+		AstLog.Warnf("Can not execute nil expression list")
+	}
 	return e.ThenExpressionList.Execute()
 }

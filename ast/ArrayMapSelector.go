@@ -40,7 +40,6 @@ func (e ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 		GrlText:       e.GrlText,
 		DataContext:   nil,
 		WorkingMemory: nil,
-		Expression:    nil,
 	}
 	if e.Expression != nil {
 		if cloneTable.IsCloned(e.Expression.AstID) {

@@ -68,6 +68,14 @@ func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 			cloneTable.MarkCloned(e.ThenScope.AstID, clonedThenScope.AstID, e.ThenScope, clonedThenScope)
 		}
 	}
+
+	AstLog.Warnf("Original %s %s", e.GetAstID(), e.GetSnapshot())
+	AstLog.Warnf("Cloned   %s %s", clone.GetAstID(), clone.GetSnapshot())
+
+	if e.GetSnapshot() != clone.GetSnapshot() {
+		panic(fmt.Sprintf("ThenScope clone failed : original [%s] clone [%s]", e.GetSnapshot(), clone.GetSnapshot()))
+	}
+
 	return clone
 }
 
@@ -152,5 +160,8 @@ func (e *RuleEntry) Evaluate() (bool, error) {
 
 // Execute will execute this graph in the Then scope
 func (e *RuleEntry) Execute() error {
+	if e.ThenScope == nil {
+		AstLog.Warnf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
+	}
 	return e.ThenScope.Execute()
 }

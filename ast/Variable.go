@@ -41,6 +41,44 @@ func (e Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 		WorkingMemory: nil,
 		Name:          e.Name,
 	}
+
+	if e.Constant != nil {
+		if cloneTable.IsCloned(e.Constant.AstID) {
+			clone.Constant = cloneTable.Records[e.Constant.AstID].CloneInstance.(*Constant)
+		} else {
+			cloned := e.Constant.Clone(cloneTable)
+			clone.Constant = cloned
+			cloneTable.MarkCloned(e.Constant.AstID, cloned.AstID, e.Constant, cloned)
+		}
+	}
+	if e.Variable != nil {
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
+	}
+	if e.FunctionCall != nil {
+		if cloneTable.IsCloned(e.FunctionCall.AstID) {
+			clone.FunctionCall = cloneTable.Records[e.FunctionCall.AstID].CloneInstance.(*FunctionCall)
+		} else {
+			cloned := e.FunctionCall.Clone(cloneTable)
+			clone.FunctionCall = cloned
+			cloneTable.MarkCloned(e.FunctionCall.AstID, cloned.AstID, e.FunctionCall, cloned)
+		}
+	}
+	if e.ArrayMapSelector != nil {
+		if cloneTable.IsCloned(e.ArrayMapSelector.AstID) {
+			clone.ArrayMapSelector = cloneTable.Records[e.ArrayMapSelector.AstID].CloneInstance.(*ArrayMapSelector)
+		} else {
+			cloned := e.ArrayMapSelector.Clone(cloneTable)
+			clone.ArrayMapSelector = cloned
+			cloneTable.MarkCloned(e.ArrayMapSelector.AstID, cloned.AstID, e.ArrayMapSelector, cloned)
+		}
+	}
+
 	return clone
 }
 
@@ -157,7 +195,7 @@ func (e *Variable) Evaluate() (reflect.Value, error) {
 	if len(e.Name) > 0 && e.Variable == nil {
 		val := e.DataContext.Get(e.Name)
 		if val == nil {
-			return reflect.ValueOf(nil), fmt.Errorf("non existent key %s", val)
+			return reflect.ValueOf(nil), fmt.Errorf("non existent key %s", e.Name)
 		}
 		e.Value = reflect.ValueOf(val)
 		return e.Value, nil

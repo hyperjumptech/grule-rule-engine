@@ -4,8 +4,6 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -209,18 +207,45 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 }
 `
 
-	lib := ast.NewKnowledgeLibrary()
-	rb := builder.NewRuleBuilder(lib)
-	err := rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(data)))
+	logrus.SetLevel(logrus.TraceLevel)
 
-	if err != nil {
-		t.Fatalf(err.Error())
+	is := antlr.NewInputStream(data)
+	lexer := parser.Newgrulev2Lexer(is)
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	var parseError error
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+
+	listener := NewGruleV2ParserListener(kb, func(e error) {
+		parseError = e
+	})
+
+	psr := parser.Newgrulev2Parser(stream)
+	psr.BuildParseTrees = true
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
+	if parseError != nil {
+		t.Log(parseError)
+		t.FailNow()
 	}
 
-	kb := lib.GetKnowledgeBase("Test", "0.1.1")
-
-	if len(kb.RuleEntries) != 1 {
-		t.Fatalf("Expect 1 but %d", len(kb.RuleEntries))
+	listener.KnowledgeBase.WorkingMemory.IndexVariables()
+	if listener.Grl.RuleEntries["SpeedUp"] == nil {
+		t.Fatalf("Rule entry not exist")
 	}
-	t.Logf("WhenScope snapshot : %s", kb.RuleEntries["RuleName"].WhenScope.GetSnapshot())
+	if listener.Grl.RuleEntries["SpeedUp"].WhenScope == nil {
+		t.Fatalf("When scope not exist")
+	}
+	if listener.Grl.RuleEntries["SpeedUp"].ThenScope == nil {
+		t.Fatalf("Then scope not exist")
+	}
+	t.Log(listener.Grl.RuleEntries["SpeedUp"].GetSnapshot())
+	if listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList == nil {
+		t.Fatalf("Then expression list is not exist")
+	}
+	if listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.ThenExpressions == nil {
+		t.Fatalf("Then expression list array is not exist")
+	}
+	if len(listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.ThenExpressions) != 2 {
+		t.Fatalf("Then expression list array %s contains not 2 but %d", listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.GetAstID(), len(listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.ThenExpressions))
+	}
 }

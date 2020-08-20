@@ -179,10 +179,15 @@ func (e *Expression) GetSnapshot() string {
 	buff.WriteString(EXPRESSION)
 	buff.WriteString("(")
 	if e.SingleExpression != nil {
+		buff.WriteString("SE(")
 		buff.WriteString(e.SingleExpression.GetSnapshot())
+		buff.WriteString(")")
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
+		buff.WriteString("EL(")
 		buff.WriteString(e.LeftExpression.GetSnapshot())
+		buff.WriteString(")")
+
 		switch e.Operator {
 		case OpMul:
 			buff.WriteString("*")
@@ -216,10 +221,14 @@ func (e *Expression) GetSnapshot() string {
 			buff.WriteString("||")
 		}
 
+		buff.WriteString("ER(")
 		buff.WriteString(e.RightExpression.GetSnapshot())
+		buff.WriteString(")")
 	}
 	if e.ExpressionAtom != nil {
+		buff.WriteString("EA(")
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+		buff.WriteString(")")
 	}
 	buff.WriteString(")")
 	return buff.String()
@@ -289,10 +298,6 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		case OpLTE:
 			val, opErr = pkg.EvaluateLesserThanEqual(lval, rval)
 		case OpEq:
-			AstLog.Infof("----------GRLTEXT = %s", e.GrlText)
-			AstLog.Infof("----------SNAP = %s, SNAPLEFT = %s, SNAPRIGHT=%s", e.GetSnapshot(), e.LeftExpression.GetSnapshot(), e.RightExpression.GetSnapshot())
-
-			AstLog.Infof("----------LEFT = %s, RIGHT = %s", lval.Type().String(), lval.Type().String())
 			val, opErr = pkg.EvaluateEqual(lval, rval)
 		case OpNEq:
 			val, opErr = pkg.EvaluateNotEqual(lval, rval)

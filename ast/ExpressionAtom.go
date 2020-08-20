@@ -45,7 +45,13 @@ func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 	}
 
 	if e.Variable != nil {
-		clone.Variable = e.Variable.Clone(cloneTable)
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
 	}
 
 	if e.FunctionCall != nil {

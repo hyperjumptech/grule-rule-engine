@@ -61,6 +61,16 @@ func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 		}
 	}
 
+	if e.Variable != nil {
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
+	}
+
 	return clone
 }
 

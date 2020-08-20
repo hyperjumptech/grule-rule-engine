@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -33,7 +34,10 @@ func (e ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
 	if e.ThenExpressions == nil {
 		e.ThenExpressions = make([]*ThenExpression, 0)
 	}
+	AstLog.Warnf("%s Before %d", e.AstID, len(e.ThenExpressions))
 	e.ThenExpressions = append(e.ThenExpressions, expr)
+	AstLog.Warnf("%s After %d", e.AstID, len(e.ThenExpressions))
+	AstLog.Warnf("------- %d", len(e.ThenExpressions))
 	return nil
 }
 
@@ -106,7 +110,9 @@ func (e *ThenExpressionList) SetGrlText(grlText string) {
 
 // Execute will execute this graph in the Then scope
 func (e *ThenExpressionList) Execute() error {
+	logrus.Warnf("-------- expression to execute %d", len(e.ThenExpressions))
 	for _, es := range e.ThenExpressions {
+		logrus.Warnf("--------- Executing %s", es.GetSnapshot())
 		err := es.Execute()
 		if err != nil {
 			return err
