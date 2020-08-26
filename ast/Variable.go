@@ -18,10 +18,8 @@ func NewVariable() *Variable {
 
 // Variable AST graph node
 type Variable struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	Name             string
 	Constant         *Constant
@@ -33,13 +31,11 @@ type Variable struct {
 }
 
 // Clone will clone this Variable. The new clone will have an identical structure
-func (e Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
+func (e *Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 	clone := &Variable{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Name:          e.Name,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
+		Name:    e.Name,
 	}
 
 	if e.Constant != nil {
@@ -80,24 +76,6 @@ func (e Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Variable) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Constant != nil {
-		e.Constant.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.Variable != nil {
-		e.Variable.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.FunctionCall != nil {
-		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.ArrayMapSelector != nil {
-		e.ArrayMapSelector.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // VariableReceiver should be implemented by AST graph node to receive Variable AST graph node
@@ -163,9 +141,13 @@ func (e *Variable) SetGrlText(grlText string) {
 }
 
 // Assign will assign the specified value to the variable
-func (e *Variable) Assign(newVal reflect.Value) error {
+func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory *WorkingMemory) error {
 	if len(e.Name) > 0 && e.Variable == nil {
-		return e.DataContext.Add(e.Name, pkg.ValueToInterface(newVal))
+		err := dataContext.Add(e.Name, pkg.ValueToInterface(newVal))
+		if err == nil {
+			dataContext.IncrementVariableChangeCount()
+		}
+		return err
 	}
 	if e.Constant != nil {
 		return fmt.Errorf("can not change constant")
@@ -174,16 +156,23 @@ func (e *Variable) Assign(newVal reflect.Value) error {
 		return fmt.Errorf("can not change function call")
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
-		err := pkg.SetAttributeValue(pkg.ValueToInterface(e.Variable.Value), e.Name, newVal)
+		objVal, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			return err
+		}
+		err = pkg.SetAttributeValue(objVal, e.Name, newVal)
 		if err == nil {
-			e.WorkingMemory.ResetVariable(e)
+			dataContext.IncrementVariableChangeCount()
+			_ = memory.ResetVariable(e)
+			return nil
 		}
 		return err
 	}
 	if e.Variable != nil && e.ArrayMapSelector != nil {
-		err := pkg.SetMapArrayValue(pkg.ValueToInterface(e.Variable.Value), e.ArrayMapSelector.Value, newVal)
+		err := pkg.SetMapArrayValue(e.Variable.Value, e.ArrayMapSelector.Value, newVal)
 		if err == nil {
-			e.WorkingMemory.ResetVariable(e)
+			dataContext.IncrementVariableChangeCount()
+			memory.ResetVariable(e)
 		}
 		return err
 	}
@@ -191,9 +180,9 @@ func (e *Variable) Assign(newVal reflect.Value) error {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *Variable) Evaluate() (reflect.Value, error) {
+func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if len(e.Name) > 0 && e.Variable == nil {
-		val := e.DataContext.Get(e.Name)
+		val := dataContext.Get(e.Name)
 		if val == nil {
 			return reflect.ValueOf(nil), fmt.Errorf("non existent key %s", e.Name)
 		}
@@ -201,7 +190,7 @@ func (e *Variable) Evaluate() (reflect.Value, error) {
 		return e.Value, nil
 	}
 	if e.Constant != nil {
-		val, err := e.Constant.Evaluate()
+		val, err := e.Constant.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -209,11 +198,11 @@ func (e *Variable) Evaluate() (reflect.Value, error) {
 		return e.Value, nil
 	}
 	if e.Variable != nil && e.FunctionCall != nil {
-		varValue, err := e.Variable.Evaluate()
+		varValue, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		val, err := e.FunctionCall.Evaluate(varValue)
+		val, err := e.FunctionCall.Evaluate(varValue, dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -221,11 +210,11 @@ func (e *Variable) Evaluate() (reflect.Value, error) {
 		return e.Value, nil
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
-		varValue, err := e.Variable.Evaluate()
+		varValue, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		val, err := pkg.GetAttributeValue(pkg.ValueToInterface(varValue), e.Name)
+		val, err := pkg.GetAttributeValue(varValue, e.Name)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -233,15 +222,15 @@ func (e *Variable) Evaluate() (reflect.Value, error) {
 		return e.Value, nil
 	}
 	if e.Variable != nil && e.ArrayMapSelector != nil {
-		varValue, err := e.Variable.Evaluate()
+		varValue, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		selValue, err := e.ArrayMapSelector.Evaluate()
+		selValue, err := e.ArrayMapSelector.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		val, err := pkg.GetMapArrayValue(pkg.ValueToInterface(varValue), pkg.ValueToInterface(selValue))
+		val, err := pkg.GetMapArrayValue(varValue, selValue)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}

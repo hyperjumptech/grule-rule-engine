@@ -35,7 +35,7 @@ type WorkingMemory struct {
 }
 
 // Clone will clone this WorkingMemory. The new clone will have an identical structure
-func (e WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
+func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 	clone := NewWorkingMemory(e.Name, e.Version)
 
 	if e.expressionSnapshotMap != nil {

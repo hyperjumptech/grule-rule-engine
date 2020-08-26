@@ -96,9 +96,6 @@ func (e *KnowledgeBase) AddRuleEntry(entry *RuleEntry) error {
 		return fmt.Errorf("rule entry %s already exist", entry.RuleName.SimpleName)
 	}
 	e.RuleEntries[entry.RuleName.SimpleName] = entry
-	if e.DataContext != nil && e.WorkingMemory != nil {
-		entry.InitializeContext(e.DataContext, e.WorkingMemory)
-	}
 
 	e.Publisher.Publish(&events.RuleEntryEvent{
 		EventType: events.RuleEntryAddedEvent,
@@ -131,11 +128,6 @@ func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
 func (e *KnowledgeBase) InitializeContext(dataCtx IDataContext) {
 	e.DataContext = dataCtx
-	if e.RuleEntries != nil {
-		for _, re := range e.RuleEntries {
-			re.InitializeContext(dataCtx, e.WorkingMemory)
-		}
-	}
 }
 
 // RetractRule will retract the selected rule for execution on the next cycle.

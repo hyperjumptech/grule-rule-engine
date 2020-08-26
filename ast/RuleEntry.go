@@ -19,10 +19,8 @@ func NewRuleEntry() *RuleEntry {
 
 // RuleEntry AST graph node
 type RuleEntry struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	RuleName        *RuleName
 	RuleDescription *RuleDescription
@@ -38,12 +36,10 @@ type RuleEntryReceiver interface {
 }
 
 // Clone will clone this RuleEntry. The new clone will have an identical structure
-func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
+func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	clone := &RuleEntry{
 		AstID:           uuid.New().String(),
 		GrlText:         e.GrlText,
-		DataContext:     nil,
-		WorkingMemory:   nil,
 		RuleName:        e.RuleName,
 		RuleDescription: e.RuleDescription,
 		Salience:        e.Salience,
@@ -69,26 +65,11 @@ func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 		}
 	}
 
-	AstLog.Warnf("Original %s %s", e.GetAstID(), e.GetSnapshot())
-	AstLog.Warnf("Cloned   %s %s", clone.GetAstID(), clone.GetSnapshot())
-
 	if e.GetSnapshot() != clone.GetSnapshot() {
 		panic(fmt.Sprintf("ThenScope clone failed : original [%s] clone [%s]", e.GetSnapshot(), clone.GetSnapshot()))
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *RuleEntry) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.WhenScope != nil {
-		e.WhenScope.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.ThenScope != nil {
-		e.ThenScope.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 func (e *RuleEntry) AcceptRuleName(ruleName *RuleName) error {
@@ -143,11 +124,11 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *RuleEntry) Evaluate() (bool, error) {
+func (e *RuleEntry) Evaluate(dataContext IDataContext, memory *WorkingMemory) (bool, error) {
 	if e.Retracted {
 		return false, nil
 	}
-	val, err := e.WhenScope.Evaluate()
+	val, err := e.WhenScope.Evaluate(dataContext, memory)
 	if err != nil {
 		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName.SimpleName, err)
 		return false, err
@@ -159,9 +140,9 @@ func (e *RuleEntry) Evaluate() (bool, error) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *RuleEntry) Execute() error {
+func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) error {
 	if e.ThenScope == nil {
 		AstLog.Warnf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
 	}
-	return e.ThenScope.Execute()
+	return e.ThenScope.Execute(dataContext, memory)
 }

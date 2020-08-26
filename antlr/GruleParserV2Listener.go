@@ -27,6 +27,7 @@ func NewGruleV2ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack fu
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errorCallBack,
 		KnowledgeBase: KnowledgeBase,
+		Stack:         newStack(),
 	}
 }
 
@@ -69,7 +70,6 @@ func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterGrl is called when production grl is entered.
 func (s *GruleV2ParserListener) EnterGrl(ctx *grulev2.GrlContext) {
-	s.Stack = newStack()
 	s.Grl = ast.NewGrl()
 	s.Stack.Push(s.Grl)
 }
@@ -247,6 +247,7 @@ func (s *GruleV2ParserListener) ExitThenExpression(ctx *grulev2.ThenExpressionCo
 		return
 	}
 	thenExpr := s.Stack.Pop().(*ast.ThenExpression)
+
 	receiver := s.Stack.Peek().(ast.ThenExpressionReceiver)
 	err := receiver.AcceptThenExpression(thenExpr)
 	if err != nil {

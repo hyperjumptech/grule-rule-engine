@@ -53,10 +53,8 @@ func NewExpression() *Expression {
 
 // Expression AST Graph node
 type Expression struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	LeftExpression   *Expression
 	RightExpression  *Expression
@@ -69,13 +67,11 @@ type Expression struct {
 }
 
 // Clone will clone this Expression. The new clone will have an identical structure
-func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
+func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	clone := &Expression{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Operator:      e.Operator,
+		AstID:    uuid.New().String(),
+		GrlText:  e.GrlText,
+		Operator: e.Operator,
 	}
 
 	if e.LeftExpression != nil {
@@ -119,24 +115,6 @@ func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Expression) InitializeContext(dataCtx IDataContext, memory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = memory
-	if e.LeftExpression != nil {
-		e.LeftExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.RightExpression != nil {
-		e.RightExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.SingleExpression != nil {
-		e.SingleExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.InitializeContext(dataCtx, memory)
-	}
 }
 
 // AcceptExpression will accept an Expression AST graph into this ast graph
@@ -241,12 +219,12 @@ func (e *Expression) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *Expression) Evaluate() (reflect.Value, error) {
+func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if e.Evaluated == true {
 		return e.Value, nil
 	}
 	if e.ExpressionAtom != nil {
-		val, err := e.ExpressionAtom.Evaluate()
+		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
 			e.Evaluated = true
@@ -254,7 +232,7 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		return val, err
 	}
 	if e.SingleExpression != nil {
-		val, err := e.SingleExpression.Evaluate()
+		val, err := e.SingleExpression.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
 			e.Evaluated = true
@@ -262,8 +240,8 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		return val, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
-		lval, lerr := e.LeftExpression.Evaluate()
-		rval, rerr := e.RightExpression.Evaluate()
+		lval, lerr := e.LeftExpression.Evaluate(dataContext, memory)
+		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
 		if lerr != nil {
 			return reflect.ValueOf(nil), fmt.Errorf("left hand expression error. got %v", lerr)
 		}

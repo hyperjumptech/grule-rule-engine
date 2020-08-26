@@ -55,7 +55,7 @@ func (c *Clapper) Clap() {
 }
 
 func TestCallingFactFunction(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.TraceLevel)
 
 	c := &Clapper{
 		CanClap:   false,

@@ -21,10 +21,8 @@ func NewFunctionCall() *FunctionCall {
 
 // FunctionCall AST graph node
 type FunctionCall struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	FunctionName string
 	ArgumentList *ArgumentList
@@ -32,13 +30,11 @@ type FunctionCall struct {
 }
 
 // Clone will clone this FunctionCall. The new clone will have an identical structure
-func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
+func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 	clone := &FunctionCall{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		FunctionName:  e.FunctionName,
+		AstID:        uuid.New().String(),
+		GrlText:      e.GrlText,
+		FunctionName: e.FunctionName,
 	}
 
 	if e.ArgumentList != nil {
@@ -51,15 +47,6 @@ func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 		}
 	}
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *FunctionCall) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.ArgumentList != nil {
-		e.ArgumentList.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // FunctionCallReceiver should be implemented bu AST graph node to receive a FunctionCall AST graph mode
@@ -106,12 +93,15 @@ func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *FunctionCall) Evaluate(receiver reflect.Value) (reflect.Value, error) {
-	args, err := e.ArgumentList.Evaluate()
+func (e *FunctionCall) Evaluate(receiver reflect.Value, dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+	args, err := e.ArgumentList.Evaluate(dataContext, memory)
 	if err != nil {
 		return reflect.ValueOf(nil), err
 	}
-	return e.DataContext.ExecMethod(receiver, e.FunctionName, args)
+	if dataContext == nil {
+		AstLog.Errorf("Datacontext for function call %s (%s) is nil", e.FunctionName, e.AstID)
+	}
+	return dataContext.ExecMethod(receiver, e.FunctionName, args)
 }
 
 func StrCompare(str string, arg []reflect.Value) (reflect.Value, error) {

@@ -189,16 +189,16 @@ func (ctx *DataContext) ExecMethod(receiver reflect.Value, methodName string, ar
 
 // GetType will extract type information of data in this context.
 func (ctx *DataContext) GetType(receiver reflect.Value, variable string) (reflect.Type, error) {
-	return pkg.GetAttributeType(pkg.ValueToInterface(receiver), variable)
+	return pkg.GetAttributeType(receiver, variable)
 }
 
 // GetValue will get member variables Value information.
 // Used by the rule execution to obtain variable value.
 func (ctx *DataContext) GetValue(receiver reflect.Value, variable string) (reflect.Value, error) {
-	return pkg.GetAttributeValue(pkg.ValueToInterface(receiver), variable)
+	return pkg.GetAttributeValue(receiver, variable)
 }
 
 // SetValue will set variable value of an object instance in this data context, Used by rule script to set values.
 func (ctx *DataContext) SetValue(receiver reflect.Value, variable string, newValue reflect.Value) error {
-	return pkg.SetAttributeValue(pkg.ValueToInterface(receiver), variable, newValue)
+	return pkg.SetAttributeValue(receiver, variable, newValue)
 }

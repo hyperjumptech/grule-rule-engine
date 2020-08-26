@@ -20,9 +20,6 @@ type ArrayMapSelector struct {
 	AstID   string
 	GrlText string
 
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
-
 	Expression *Expression
 
 	Value reflect.Value
@@ -34,12 +31,10 @@ type ArrayMapSelectorReceiver interface {
 }
 
 // Clone will clone this ArgumentList. The new clone will have an identical structure
-func (e ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
+func (e *ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 	clone := &ArrayMapSelector{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 	if e.Expression != nil {
 		if cloneTable.IsCloned(e.Expression.AstID) {
@@ -60,15 +55,6 @@ func (e *ArrayMapSelector) AcceptExpression(exp *Expression) error {
 		return nil
 	}
 	return fmt.Errorf("expression for when scope already assigned")
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ArrayMapSelector) InitializeContext(dataCtx IDataContext, workingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = workingMemory
-	if e.Expression != nil {
-		e.Expression.InitializeContext(dataCtx, workingMemory)
-	}
 }
 
 // GetAstID get the UUID asigned for this AST graph node
@@ -98,9 +84,9 @@ func (e *ArrayMapSelector) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *ArrayMapSelector) Evaluate() (reflect.Value, error) {
+func (e *ArrayMapSelector) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if e.Expression != nil {
-		val, err := e.Expression.Evaluate()
+		val, err := e.Expression.Evaluate(dataContext, memory)
 		if err != nil {
 			return val, err
 		}

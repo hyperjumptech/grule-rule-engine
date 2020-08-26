@@ -92,6 +92,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	*/
 	for {
 		if contextCanceled {
+			log.Error("Context canceled")
 			return contextError
 		}
 
@@ -108,6 +109,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		// if cycle is above the maximum allowed cycle, returnan error indicated the cycle has ended.
 		if cycle > g.MaxCycle {
 
+			log.Error("Max cycle reached")
 			// create the error
 			err := fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
 
@@ -126,7 +128,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
 			// test if this rule entry v can execute.
-			can, err := v.Evaluate()
+			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
 				// No longer return error, since unavailability of variable or fact in context might be intentional.
@@ -163,7 +165,8 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 					RuleName:  r.RuleName.SimpleName,
 				})
 
-				err := r.Execute()
+				err := r.Execute(dataCtx, knowledge.WorkingMemory)
+
 				if err != nil {
 					log.Errorf("Failed execution rule : %s. Got error %v", r.RuleName.SimpleName, err)
 					return err
@@ -176,6 +179,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				})
 
 				if dataCtx.IsComplete() {
+					log.Warnf("Complete")
 					cycleDone = true
 					break
 				}
@@ -193,6 +197,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			}
 		} else {
 			// No more rule can be executed, so we are done here.
+			log.Warnf("No more rule to run")
 			break
 		}
 	}
@@ -232,7 +237,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	//Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
 	for _, v := range knowledge.RuleEntries {
 		// test if this rule entry v can execute.
-		can, err := v.Evaluate()
+		can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 		if err != nil {
 			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
 			// No longer return error, since unavailability of variable or fact in context might be intentional.

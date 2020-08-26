@@ -21,19 +21,14 @@ type ArgumentList struct {
 	AstID   string
 	GrlText string
 
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
-
 	Arguments []*Expression
 }
 
 // Clone will clone this ArgumentList. The new clone will have an identical structure
-func (e ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
+func (e *ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 	clone := &ArgumentList{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 	if e.Arguments != nil {
 		clone.Arguments = make([]*Expression, len(e.Arguments))
@@ -48,17 +43,6 @@ func (e ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 		}
 	}
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ArgumentList) InitializeContext(dataCtx IDataContext, workingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = workingMemory
-	if e.Arguments != nil && len(e.Arguments) > 0 {
-		for _, expr := range e.Arguments {
-			expr.InitializeContext(dataCtx, workingMemory)
-		}
-	}
 }
 
 // AcceptExpression will accept an expression AST graph into this ast graph
@@ -107,10 +91,10 @@ type ArgumentListReceiver interface {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *ArgumentList) Evaluate() ([]reflect.Value, error) {
+func (e *ArgumentList) Evaluate(dataContext IDataContext, memory *WorkingMemory) ([]reflect.Value, error) {
 	values := make([]reflect.Value, len(e.Arguments))
 	for i, exp := range e.Arguments {
-		val, err := exp.Evaluate()
+		val, err := exp.Evaluate(dataContext, memory)
 		if err != nil {
 			return values, err
 		}

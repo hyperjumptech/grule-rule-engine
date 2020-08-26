@@ -15,10 +15,8 @@ func NewThenScope() *ThenScope {
 
 // ThenScope AST graph node
 type ThenScope struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	ThenExpressionList *ThenExpressionList
 }
@@ -28,12 +26,10 @@ type ThenScopeReceiver interface {
 }
 
 // Clone will clone this ThenScope. The new clone will have an identical structure
-func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
+func (e *ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	clone := &ThenScope{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.ThenExpressionList != nil {
@@ -52,15 +48,6 @@ func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 func (e *ThenScope) AcceptThenExpressionList(list *ThenExpressionList) error {
 	e.ThenExpressionList = list
 	return nil
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenScope) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.ThenExpressionList != nil {
-		e.ThenExpressionList.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // GetAstID get the UUID asigned for this AST graph node
@@ -90,9 +77,9 @@ func (e *ThenScope) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *ThenScope) Execute() error {
+func (e *ThenScope) Execute(dataContext IDataContext, memory *WorkingMemory) error {
 	if e.ThenExpressionList == nil {
 		AstLog.Warnf("Can not execute nil expression list")
 	}
-	return e.ThenExpressionList.Execute()
+	return e.ThenExpressionList.Execute(dataContext, memory)
 }

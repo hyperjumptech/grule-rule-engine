@@ -18,10 +18,8 @@ func NewThenExpression() *ThenExpression {
 
 // ThenExpression AST graph node
 type ThenExpression struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	Assignment   *Assignment
 	FunctionCall *FunctionCall
@@ -33,12 +31,10 @@ type ThenExpressionReceiver interface {
 }
 
 // Clone will clone this ThenExpression. The new clone will have an identical structure
-func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
+func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	clone := &ThenExpression{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.Assignment != nil {
@@ -72,18 +68,6 @@ func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenExpression) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Assignment != nil {
-		e.Assignment.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.FunctionCall != nil {
-		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
@@ -136,17 +120,33 @@ func (e *ThenExpression) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *ThenExpression) Execute() error {
+func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory) error {
 	if e.Assignment != nil {
-		return e.Assignment.Execute()
+		err := e.Assignment.Execute(dataContext, memory)
+		if err != nil {
+			AstLog.Errorf("error while executing assignment %s. got %s", e.Assignment.GrlText, err.Error())
+		} else {
+			AstLog.Debugf("success executing assignment %s", e.Assignment.GrlText)
+		}
+		return err
 	}
 	if e.FunctionCall != nil {
-		v := e.DataContext.Get("DEFUNC")
-		_, err := e.FunctionCall.Evaluate(reflect.ValueOf(v))
+		v := dataContext.Get("DEFUNC")
+		_, err := e.FunctionCall.Evaluate(reflect.ValueOf(v), dataContext, memory)
+		if err != nil {
+			AstLog.Errorf("error while executing %s. got %s", e.Assignment.GrlText, err.Error())
+		} else {
+			AstLog.Debugf("success executing %s", e.Assignment.GrlText)
+		}
 		return err
 	}
 	if e.Variable != nil {
-		_, err := e.Variable.Evaluate()
+		_, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			AstLog.Errorf("error while executing %s. got %s", e.Assignment.GrlText, err.Error())
+		} else {
+			AstLog.Debugf("success executing %s", e.Assignment.GrlText)
+		}
 		return err
 	}
 	return nil

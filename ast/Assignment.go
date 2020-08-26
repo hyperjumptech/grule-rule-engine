@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 )
 
 // NewAssignment will create new instance of Assignment AST Node
@@ -17,10 +16,8 @@ func NewAssignment() *Assignment {
 
 // Assignment ast node to store assigment expression.
 type Assignment struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	Variable   *Variable
 	Expression *Expression
@@ -32,12 +29,10 @@ type AssignmentReceiver interface {
 }
 
 // Clone will clone this Assignment. The new clone will have an identical structure
-func (e Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
+func (e *Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 	clone := &Assignment{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 	if e.Variable != nil {
 		if cloneTable.IsCloned(e.Variable.AstID) {
@@ -58,14 +53,6 @@ func (e Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 		}
 	}
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Assignment) InitializeContext(dataCtx IDataContext, workingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = workingMemory
-	e.Variable.InitializeContext(dataCtx, workingMemory)
-	e.Expression.InitializeContext(dataCtx, workingMemory)
 }
 
 // AcceptExpression will accept an Expression AST graph into this ast graph
@@ -115,11 +102,10 @@ func (e *Assignment) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *Assignment) Execute() error {
-	logrus.Warnf("Assignment : %s", e.GetSnapshot())
-	exprVal, err := e.Expression.Evaluate()
+func (e *Assignment) Execute(dataContext IDataContext, memory *WorkingMemory) error {
+	exprVal, err := e.Expression.Evaluate(dataContext, memory)
 	if err != nil {
 		return err
 	}
-	return e.Variable.Assign(exprVal)
+	return e.Variable.Assign(exprVal, dataContext, memory)
 }

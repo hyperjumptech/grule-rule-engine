@@ -41,25 +41,9 @@ func TestNewWhenScope(t *testing.T) {
 	}
 	dt.Add("Struct", test)
 
-	if ws.DataContext != nil {
-		t.Fatalf("datacontext not nil")
-	}
-	if ws.WorkingMemory != nil {
-		t.Fatalf("working memory not nil")
-	}
-
-	ws.InitializeContext(dt, wm)
-
-	if ws.DataContext == nil {
-		t.Fatalf("datacontext nil")
-	}
-	if ws.WorkingMemory == nil {
-		t.Fatalf("working memory nil")
-	}
-
 	t.Logf("%s Snapshot : %s", ws.GetAstID(), ws.GetSnapshot())
 
-	val, err := ws.Evaluate()
+	val, err := ws.Evaluate(dt, wm)
 	if err != nil {
 		t.Fatalf("error while evaluating constant expression. got %s", err)
 	}
@@ -82,7 +66,9 @@ func TestNewWhenScopeEvaluate(t *testing.T) {
 			},
 		},
 	}
-	val, err := expr1.Evaluate()
+	wm := NewWorkingMemory("T", "1")
+	dt := NewDataContext()
+	val, err := expr1.Evaluate(dt, wm)
 	if err != nil {
 		t.Fatalf("error while evaluating constant expression")
 	}
@@ -94,7 +80,7 @@ func TestNewWhenScopeEvaluate(t *testing.T) {
 	if ws.AcceptExpression(expr1) != nil {
 		t.Fatalf("error when accepting expression first time")
 	}
-	val, err = ws.Evaluate()
+	val, err = ws.Evaluate(dt, wm)
 	if err != nil {
 		t.Fatalf("error while evaluating constant expression")
 	}
