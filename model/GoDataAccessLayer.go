@@ -57,13 +57,13 @@ func (node *GoValueNode) GetArrayType() (reflect.Type, error) {
 	if node.IsArray() {
 		return node.thisValue.Type().Elem(), nil
 	}
-	return nil, fmt.Errorf("this node is not referring to an array or slice")
+	return nil, fmt.Errorf("this node identified as \"%s\" is not referring to an array or slice", node.IdentifiedAs())
 }
 func (node *GoValueNode) GetArrayValueAt(index int) (reflect.Value, error) {
 	if node.IsArray() {
 		return node.thisValue.Index(index), nil
 	}
-	return reflect.Value{}, fmt.Errorf("this node is not referring to an array or slice")
+	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referring to an array or slice", node.IdentifiedAs())
 }
 func (node *GoValueNode) GetChildNodeByIndex(index int) (ValueNode, error) {
 	if node.IsArray() {
@@ -74,7 +74,7 @@ func (node *GoValueNode) GetChildNodeByIndex(index int) (ValueNode, error) {
 		gv := node.ContinueWithValue(v, fmt.Sprintf("[%d]", index))
 		return gv, nil
 	} else {
-		return nil, fmt.Errorf("this node is not an array. its %s", node.thisValue.Type().String())
+		return nil, fmt.Errorf("this node identified as \"%s\" is not an array. its %s", node.IdentifiedAs(), node.thisValue.Type().String())
 	}
 }
 func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err error) {
@@ -89,9 +89,9 @@ func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err er
 			val.Set(value)
 			return nil
 		}
-		return fmt.Errorf("can not set value on array index %d", index)
+		return fmt.Errorf("this node identified as \"%s\" can not set value on array index %d", node.IdentifiedAs(), index)
 	}
-	return fmt.Errorf("this node is not referencing an array or slice")
+	return fmt.Errorf("this node identified as \"%s\" is not referencing an array or slice", node.IdentifiedAs())
 }
 func (node *GoValueNode) AppendValue(value reflect.Value) (err error) {
 	if node.IsArray() {
@@ -106,26 +106,47 @@ func (node *GoValueNode) AppendValue(value reflect.Value) (err error) {
 			return nil
 		}
 	}
-	return fmt.Errorf("this node is not referencing an array or slice")
+	return fmt.Errorf("this node identified as \"%s\" is not referencing an array or slice", node.IdentifiedAs())
 }
 func (node *GoValueNode) Length() (int, error) {
 	if node.IsArray() || node.IsMap() || node.IsString() {
 		return node.thisValue.Len(), nil
 	}
-	return 0, fmt.Errorf("this node is not referencing an array, slice, map or string")
+	return 0, fmt.Errorf("this node identified as \"%s\" is not referencing an array, slice, map or string", node.IdentifiedAs())
 }
 
 func (node *GoValueNode) IsMap() bool {
 	return node.thisValue.Kind() == reflect.Map
 }
 func (node *GoValueNode) GetMapValueAt(index reflect.Value) (reflect.Value, error) {
-	panic("not yet implemented")
+	if node.IsMap() {
+		retVal := node.thisValue.MapIndex(index)
+		if retVal.IsValid() {
+			return retVal, nil
+		} else {
+			return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" have no selector with specified key", node.IdentifiedAs())
+		}
+	}
+	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referencing a map", node.IdentifiedAs())
 }
-func (node *GoValueNode) SetMapValueAt(index, newValue reflect.Value) error {
-	panic("not yet implemented")
+func (node *GoValueNode) SetMapValueAt(index, newValue reflect.Value) (err error) {
+	if node.IsMap() {
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("recovered : %v", r)
+			}
+		}()
+		node.thisValue.SetMapIndex(index, newValue)
+		return nil
+	}
+	return fmt.Errorf("this node identified as \"%s\" is not referencing a map", node.IdentifiedAs())
 }
 func (node *GoValueNode) GetChildNodeBySelector(index reflect.Value) (ValueNode, error) {
-	panic("not yet implemented")
+	val, err := node.GetMapValueAt(index)
+	if err != nil {
+		return nil, err
+	}
+	return node.ContinueWithValue(val, fmt.Sprintf("[%s->%s]", index.Type().String(), index.String())), nil
 }
 
 func (node *GoValueNode) IsObject() bool {
@@ -153,7 +174,7 @@ func (node *GoValueNode) GetObjectValueByField(field string) (reflect.Value, err
 		}
 		return reflect.Value{}, fmt.Errorf("this node have no field named %s", field)
 	}
-	return reflect.Value{}, fmt.Errorf("this node is not referencing to an object")
+	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referencing to an object", node.IdentifiedAs())
 }
 
 func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, err error) {
@@ -171,7 +192,7 @@ func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, e
 			return node.thisValue.FieldByName(field).Type(), nil
 		}
 	}
-	return nil, fmt.Errorf("this node is not referring to an object")
+	return nil, fmt.Errorf("this node identified as \"%s\" is not referring to an object", node.IdentifiedAs())
 }
 
 func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Value) (err error) {
@@ -185,11 +206,74 @@ func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Va
 		fieldVal.Set(newValue)
 		return nil
 	}
-	return fmt.Errorf("node is not valid nor addressable")
+	return fmt.Errorf("this node identified as \"%s\" have field \"%s\" that is not valid nor addressable", node.IdentifiedAs(), field)
 }
 
-func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (reflect.Value, error) {
-	panic("not yet implemented")
+func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (retval reflect.Value, err error) {
+	switch pkg.GetBaseKind(node.thisValue) {
+	case reflect.Int64, reflect.Uint64, reflect.Float64, reflect.Bool:
+		return reflect.ValueOf(nil), fmt.Errorf("this node identified as \"%s\" try to call function %s which is not supported for type %s", node.IdentifiedAs(), funcName, node.thisValue.Type().String())
+	case reflect.String:
+		var strfunc func(string, []reflect.Value) (reflect.Value, error)
+		switch funcName {
+		case "Compare":
+			strfunc = StrCompare
+		case "Contains":
+			strfunc = StrContains
+		case "Count":
+			strfunc = StrCount
+		case "HasPrefix":
+			strfunc = StrHasPrefix
+		case "HasSuffix":
+			strfunc = StrHasSuffix
+		case "Index":
+			strfunc = StrIndex
+		case "LastIndex":
+			strfunc = StrLastIndex
+		case "Repeat":
+			strfunc = StrRepeat
+		case "Replace":
+			strfunc = StrReplace
+		case "Split":
+			strfunc = StrSplit
+		case "ToLower":
+			strfunc = StrToLower
+		case "ToUpper":
+			strfunc = StrToUpper
+		case "Trim":
+			strfunc = StrTrim
+		}
+		if strfunc != nil {
+			val, err := strfunc(node.thisValue.String(), args)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			return val, nil
+		}
+		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for string", node.IdentifiedAs(), funcName)
+	}
+
+	if node.IsObject() {
+		funcValue := node.thisValue.MethodByName(funcName)
+		if funcValue.IsValid() {
+			defer func() {
+				if r := recover(); r != nil {
+					err = fmt.Errorf("recovered : %v", r)
+					retval = reflect.Value{}
+				}
+			}()
+			rets := funcValue.Call(args)
+			if len(rets) > 1 {
+				return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" calling function %s which returns multiple values, multiple value returns are not supported", node.IdentifiedAs(), funcName)
+			}
+			if len(rets) == 1 {
+				return rets[0], nil
+			}
+			return reflect.Value{}, nil
+		}
+		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" have no function named %s", node.IdentifiedAs(), funcName)
+	}
+	return reflect.ValueOf(nil), fmt.Errorf("this node identified as \"%s\" is not referencing an object thus function %s call is not supported", node.IdentifiedAs(), funcName)
 }
 
 func (node *GoValueNode) GetChildNodeByField(field string) (ValueNode, error) {

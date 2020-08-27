@@ -122,48 +122,6 @@ func (ctx *DataContext) Reset() {
 
 // ExecMethod will execute instance member variable using the supplied arguments.
 func (ctx *DataContext) ExecMethod(receiver reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error) {
-	switch pkg.GetBaseKind(receiver) {
-	case reflect.Int64, reflect.Uint64, reflect.Float64, reflect.Bool:
-		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for type %s", methodName, receiver.Type().String())
-	case reflect.String:
-		var strfunc func(string, []reflect.Value) (reflect.Value, error)
-		switch methodName {
-		case "Compare":
-			strfunc = StrCompare
-		case "Contains":
-			strfunc = StrContains
-		case "Count":
-			strfunc = StrCount
-		case "HasPrefix":
-			strfunc = StrHasPrefix
-		case "HasSuffix":
-			strfunc = StrHasSuffix
-		case "Index":
-			strfunc = StrIndex
-		case "LastIndex":
-			strfunc = StrLastIndex
-		case "Repeat":
-			strfunc = StrRepeat
-		case "Replace":
-			strfunc = StrReplace
-		case "Split":
-			strfunc = StrSplit
-		case "ToLower":
-			strfunc = StrToLower
-		case "ToUpper":
-			strfunc = StrToUpper
-		case "Trim":
-			strfunc = StrTrim
-		}
-		if strfunc != nil {
-			val, err := strfunc(receiver.String(), args)
-			if err != nil {
-				return reflect.ValueOf(nil), err
-			}
-			return val, nil
-		}
-		return reflect.ValueOf(nil), fmt.Errorf("function %s is not supported for string", methodName)
-	}
 
 	// this obj is reflect.Value... it should not.
 	types, variad, err := pkg.GetFunctionParameterTypes(receiver, methodName)

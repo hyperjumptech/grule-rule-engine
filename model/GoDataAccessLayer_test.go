@@ -176,6 +176,21 @@ func TestGoValueNode_Array(t *testing.T) {
 	assert.Equal(t, "Johnson", val.String())
 }
 
+func TestGoValueNode_Map(t *testing.T) {
+	person := MakeTestPerson()
+	actorNode := NewGoValueNode(reflect.ValueOf(person), "actor")
+	childrenNode, err := actorNode.GetChildNodeByField("Children")
+	assert.NoError(t, err)
+	assert.True(t, childrenNode.IsMap())
+	childrenChristenValue, err := childrenNode.GetMapValueAt(reflect.ValueOf("Christen"))
+	assert.NoError(t, err)
+	assert.Equal(t, "*model.Person", childrenChristenValue.Type().String())
+	childrenChristenNode, err := childrenNode.GetChildNodeBySelector(reflect.ValueOf("Christen"))
+	assert.NoError(t, err)
+	assert.True(t, childrenChristenNode.IsObject())
+	t.Logf(childrenChristenNode.IdentifiedAs())
+}
+
 func TestGoValueNode_Array_Set(t *testing.T) {
 	person := MakeTestPerson()
 	actorNode := NewGoValueNode(reflect.ValueOf(person), "actor")
@@ -244,7 +259,6 @@ func TestGoValueNodeSetValues(t *testing.T) {
 	// set value of non existent field
 	err = actorNode.SetObjectValueByField("NonExistent", reflect.ValueOf("22 Dunk Street"))
 	assert.Error(t, err)
-
 }
 
 func TestGoValueNode(t *testing.T) {
@@ -321,4 +335,12 @@ func TestGoValueNode(t *testing.T) {
 	assert.False(t, actorGraduationNode.IsReal())
 	assert.True(t, actorGraduationNode.IsTime())
 
+}
+
+func TestConstantFunctionCalls(t *testing.T) {
+	textNode := NewGoValueNode(reflect.ValueOf("   SomeWithSpace  "), "SpacedText")
+	retVal, err := textNode.CallFunction("Trim")
+	assert.NoError(t, err)
+	assert.Equal(t, "string", retVal.Type().String())
+	assert.Equal(t, "SomeWithSpace", retVal.String())
 }
