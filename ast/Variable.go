@@ -85,21 +85,25 @@ type VariableReceiver interface {
 	AcceptVariable(exp *Variable) error
 }
 
+// AcceptVariable accept a variable AST graph into this Variable graph
 func (e *Variable) AcceptVariable(vari *Variable) error {
 	e.Variable = vari
 	return nil
 }
 
+// AcceptArrayMapSelector accept an array map selector into this variable graph
 func (e *Variable) AcceptArrayMapSelector(sel *ArrayMapSelector) error {
 	e.ArrayMapSelector = sel
 	return nil
 }
 
+// AcceptFunctionCall accept a function call AST graph into this variable graph
 func (e *Variable) AcceptFunctionCall(fu *FunctionCall) error {
 	e.FunctionCall = fu
 	return nil
 }
 
+// AcceptConstant accept a constant AST graph into this variable graph.
 func (e *Variable) AcceptConstant(con *Constant) error {
 	e.Constant = con
 	return nil

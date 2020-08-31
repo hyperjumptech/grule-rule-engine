@@ -21,6 +21,7 @@ type ThenScope struct {
 	ThenExpressionList *ThenExpressionList
 }
 
+// ThenScopeReceiver must be implemented by any AST object that will hold a ThenScope
 type ThenScopeReceiver interface {
 	AcceptThenScope(thenScope *ThenScope) error
 }
@@ -45,6 +46,7 @@ func (e *ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	return clone
 }
 
+// AcceptThenExpressionList will accept ThenExpressionList graph into this ThenScope
 func (e *ThenScope) AcceptThenExpressionList(list *ThenExpressionList) error {
 	e.ThenExpressionList = list
 	return nil

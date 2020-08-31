@@ -136,6 +136,7 @@ type ExpressionReceiver interface {
 	AcceptExpression(exp *Expression) error
 }
 
+// AcceptExpressionAtom will accept ExpressionAtom into this Expression
 func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	e.ExpressionAtom = atom
 	return nil

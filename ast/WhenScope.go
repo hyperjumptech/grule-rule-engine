@@ -24,6 +24,7 @@ type WhenScope struct {
 	Expression *Expression
 }
 
+// WhenScopeReceiver must be implemented by AST object that stores WhenScope
 type WhenScopeReceiver interface {
 	AcceptWhenScope(whenScope *WhenScope) error
 }

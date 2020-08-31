@@ -22,10 +22,12 @@ type ThenExpressionList struct {
 	ThenExpressions []*ThenExpression
 }
 
+// ThenExpressionListReceiver must be implemented by any AST object that hold a ThenExpression list AST object
 type ThenExpressionListReceiver interface {
 	AcceptThenExpressionList(list *ThenExpressionList) error
 }
 
+// AcceptThenExpression will accept ThenExpression AST graph into this ExpressionList
 func (e *ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
 	if e.ThenExpressions == nil {
 		e.ThenExpressions = make([]*ThenExpression, 0)

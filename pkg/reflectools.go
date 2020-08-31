@@ -101,7 +101,6 @@ func IsValidField(objVal reflect.Value, fieldName string) bool {
 }
 
 // IsStruct validates if an instance is struct or pointer to struct
-
 func IsStruct(val reflect.Value) bool {
 	if val.IsValid() {
 		typ := val.Type()
@@ -351,6 +350,7 @@ func IsAttributeArray(objVal reflect.Value, fieldName string) (bool, error) {
 	return fieldVal.Type().Kind() == reflect.Array || fieldVal.Type().Kind() == reflect.Slice, nil
 }
 
+// SetMapArrayValue will set a value into map array indicated by a selector
 func SetMapArrayValue(mapArray, selector reflect.Value, newValue reflect.Value) (err error) {
 	objVal := mapArray
 	if objVal.Type().Kind() == reflect.Map {
@@ -383,6 +383,7 @@ func SetMapArrayValue(mapArray, selector reflect.Value, newValue reflect.Value) 
 	return fmt.Errorf("argument is not an array, slice nor map")
 }
 
+// GetMapArrayValue get value of map, array atau slice by its selector value
 func GetMapArrayValue(mapArray, selector interface{}) (ret interface{}, err error) {
 	if mapArray == nil {
 		return nil, fmt.Errorf("nil map, array or slice")
@@ -531,6 +532,7 @@ func GetBaseKind(val reflect.Value) reflect.Kind {
 	}
 }
 
+// IsNumber will check a value if its a number eg, int,uint or float
 func IsNumber(val reflect.Value) bool {
 	switch GetBaseKind(val) {
 	case reflect.Int64, reflect.Uint64, reflect.Float64:

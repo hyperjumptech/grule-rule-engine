@@ -31,6 +31,7 @@ type RuleEntry struct {
 	Retracted bool
 }
 
+// RuleEntryReceiver should be implemented by any rule AST object that receive a RuleEntry
 type RuleEntryReceiver interface {
 	ReceiveRuleEntry(entry *RuleEntry) error
 }
@@ -72,26 +73,31 @@ func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	return clone
 }
 
+// AcceptRuleName will accept rule name ast object into this rule entry
 func (e *RuleEntry) AcceptRuleName(ruleName *RuleName) error {
 	e.RuleName = ruleName
 	return nil
 }
 
+// AcceptRuleDescription will accept rule description ast object into this rule entry
 func (e *RuleEntry) AcceptRuleDescription(ruleDescription *RuleDescription) error {
 	e.RuleDescription = ruleDescription
 	return nil
 }
 
+// AcceptSalience will accept rule salience ast object into this rule entry
 func (e *RuleEntry) AcceptSalience(salience *Salience) error {
 	e.Salience = salience
 	return nil
 }
 
+// AcceptWhenScope will accept when scope ast object into this rule entry
 func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
 	e.WhenScope = when
 	return nil
 }
 
+// AcceptThenScope will accept then scope ast object into this rule entry
 func (e *RuleEntry) AcceptThenScope(then *ThenScope) error {
 	e.ThenScope = then
 	return nil

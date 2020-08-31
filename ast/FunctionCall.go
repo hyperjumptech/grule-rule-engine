@@ -90,7 +90,7 @@ func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 	return nil
 }
 
-// Evaluate will evaluate this AST graph for when scope evaluation
+// EvaluateArgumentList will evaluate all arguments and ensure it can be passed into function.
 func (e *FunctionCall) EvaluateArgumentList(dataContext IDataContext, memory *WorkingMemory) ([]reflect.Value, error) {
 	args, err := e.ArgumentList.Evaluate(dataContext, memory)
 	if err != nil {

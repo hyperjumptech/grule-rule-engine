@@ -35,6 +35,7 @@ type WorkingMemory struct {
 	ID                        string
 }
 
+// DebugContent will shows the working memory mapping content
 func (e *WorkingMemory) DebugContent() {
 	if AstLog.Level <= logrus.DebugLevel {
 		for varName, vari := range e.variableSnapshotMap {
@@ -60,6 +61,7 @@ func (e *WorkingMemory) DebugContent() {
 	}
 }
 
+// Equals shallowly equals check this Working Memory against other working memory
 func (e *WorkingMemory) Equals(that *WorkingMemory) bool {
 	if e.Name != that.Name {
 		return false
@@ -231,7 +233,7 @@ func (e *WorkingMemory) AddExpressionAtom(exp *ExpressionAtom) *ExpressionAtom {
 	return exp
 }
 
-// AddExpression will add expression into its map if the expression signature is unique
+// AddVariable will add variable into its map if the expression signature is unique
 // if the expression is already in its map, it will return one from the map.
 func (e *WorkingMemory) AddVariable(vari *Variable) *Variable {
 	snapshot := vari.GetSnapshot()

@@ -51,11 +51,10 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 		if kb.IsIdentical(newClone) {
 			logrus.Debugf("Successfuly create instance [%s:%s]", newClone.Name, newClone.Version)
 			return newClone
-		} else {
-			logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
-			logrus.Fatalf("CLONE    : %s", newClone.GetSnapshot())
-			panic("The clone is not identical")
 		}
+		logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		logrus.Fatalf("CLONE    : %s", newClone.GetSnapshot())
+		panic("The clone is not identical")
 	}
 	return nil
 }
@@ -70,15 +69,17 @@ type KnowledgeBase struct {
 	RuleEntries   map[string]*RuleEntry
 }
 
+// IsIdentical will validate if two KnoledgeBase is identical. Used to validate if the origin and clone is identical.
 func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
 	return e.GetSnapshot() == that.GetSnapshot()
 }
 
+// GetSnapshot will create this knowledge base signature
 func (e *KnowledgeBase) GetSnapshot() string {
 	var buffer bytes.Buffer
 	buffer.WriteString(fmt.Sprintf("%s:%s[", e.Name, e.Version))
 	keys := make([]string, 0)
-	for i, _ := range e.RuleEntries {
+	for i := range e.RuleEntries {
 		keys = append(keys, i)
 	}
 	sort.SliceStable(keys, func(i, j int) bool {

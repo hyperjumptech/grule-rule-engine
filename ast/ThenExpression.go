@@ -24,6 +24,7 @@ type ThenExpression struct {
 	Variable     *Variable
 }
 
+// ThenExpressionReceiver must be implemented by any AST object that will store a Then expression
 type ThenExpressionReceiver interface {
 	AcceptThenExpression(expr *ThenExpression) error
 }
@@ -68,6 +69,7 @@ func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	return clone
 }
 
+// AcceptAssignment will accept Assignment AST graph into this Then ast graph
 func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
 	e.Assignment = assignment
 	return nil
@@ -92,6 +94,7 @@ func (e *ThenExpression) GetGrlText() string {
 	return e.GrlText
 }
 
+// AcceptVariable will accept variable AST object into this then expression
 func (e *ThenExpression) AcceptVariable(vari *Variable) error {
 	e.Variable = vari
 	return nil
