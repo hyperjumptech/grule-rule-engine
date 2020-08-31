@@ -22,7 +22,7 @@ type ValueNode interface {
 	GetArrayValueAt(index int) (reflect.Value, error)
 	GetChildNodeByIndex(index int) (ValueNode, error)
 	SetArrayValueAt(index int, value reflect.Value) error
-	AppendValue(value reflect.Value) error
+	AppendValue(value []reflect.Value) error
 	Length() (int, error)
 
 	IsMap() bool
@@ -167,4 +167,35 @@ func StrTrim(str string, arg []reflect.Value) (reflect.Value, error) {
 	}
 	b := strings.TrimSpace(str)
 	return reflect.ValueOf(b), nil
+}
+
+func ArrMapLen(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(nil), fmt.Errorf("function Len requires no argument")
+	}
+	return reflect.ValueOf(arr.Len()), nil
+}
+
+func ArrClear(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(nil), fmt.Errorf("function array.Clear requires no argument")
+	}
+	newArray := reflect.MakeSlice(arr.Type(), 0, 0)
+	if arr.CanSet() {
+		arr.Set(newArray)
+		return newArray, nil
+	}
+	return reflect.Value{}, fmt.Errorf("can not assign new empty map")
+}
+
+func MapClear(amap reflect.Value, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(nil), fmt.Errorf("function map.Clear requires no argument")
+	}
+	newMap := reflect.MakeMap(amap.Type())
+	if amap.CanSet() {
+		amap.Set(newMap)
+		return newMap, nil
+	}
+	return reflect.Value{}, fmt.Errorf("can not assign new empty map")
 }

@@ -362,7 +362,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 }
 
 func TestRuleAssignment(t *testing.T) {
-	// logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.TraceLevel)
 	dctx := ast.NewDataContext()
 
 	data := `

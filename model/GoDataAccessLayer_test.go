@@ -219,7 +219,7 @@ func TestGoValueNode_Array_Set(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 3, l)
 
-	err = interestNode.AppendValue(reflect.ValueOf("Diving"))
+	err = interestNode.AppendValue([]reflect.Value{reflect.ValueOf("Diving")})
 	assert.NoError(t, err)
 
 	l, err = interestNode.Length()

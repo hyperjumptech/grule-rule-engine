@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"sort"
@@ -137,79 +135,6 @@ func getTypeOf(i interface{}) string {
 		return fmt.Sprintf("*%s", t.Elem().Name())
 	}
 	return t.Name()
-}
-
-func TestGrule_ExecuteWithSubscribers(t *testing.T) {
-	// logrus.SetLevel(logrus.InfoLevel)
-	tc := &TestCar{
-		SpeedUp:        true,
-		Speed:          0,
-		MaxSpeed:       100,
-		SpeedIncrement: 2,
-	}
-	dr := &DistanceRecorder{
-		TotalDistance: 0,
-	}
-	dctx := ast.NewDataContext()
-	err := dctx.Add("TestCar", tc)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = dctx.Add("DistanceRecord", dr)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ruleEntrySubscriber := eventbus.DefaultBrooker.GetSubscriber(events.RuleEntryEventTopic, func(i interface{}) error {
-		if i != nil && getTypeOf(i) == "*RuleEntryEvent" {
-			event := i.(*events.RuleEntryEvent)
-			if event.EventType == events.RuleEntryExecuteStartEvent {
-				log.Infof("Rule executed %s", event.RuleName)
-			}
-		} else if i != nil {
-			log.Infof("RuleEntry Subscriber, Receive type is %s ", getTypeOf(i))
-		}
-		return nil
-	})
-	ruleEntrySubscriber.Subscribe()
-
-	ruleEngineSubscriber := eventbus.DefaultBrooker.GetSubscriber(events.RuleEngineEventTopic, func(i interface{}) error {
-		if i != nil && getTypeOf(i) == "*RuleEngineEvent" {
-			event := i.(*events.RuleEngineEvent)
-			if event.EventType == events.RuleEngineEndEvent {
-				log.Infof("Engine finished in %d cycles", event.Cycle)
-			}
-		} else if i != nil {
-			log.Infof("RuleEngine Subscriber, Receive type is %s ", getTypeOf(i))
-		}
-		return nil
-	})
-	ruleEngineSubscriber.Subscribe()
-
-	//f := func(r *ast.RuleEntry) {
-	//	log.Debugf("Now executing rule %s", r.Name)
-	//}
-
-	lib := ast.NewKnowledgeLibrary()
-	rb := builder.NewRuleBuilder(lib)
-	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
-	if err != nil {
-		t.Errorf("Got error : %v", err)
-		t.FailNow()
-	} else {
-		engine := NewGruleEngine()
-		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
-		start := time.Now()
-		err = engine.Execute(dctx, kb)
-		if err != nil {
-			t.Errorf("Got error : %v", err)
-			t.FailNow()
-		} else {
-			dur := time.Since(start)
-			t.Log(dr.TotalDistance)
-			t.Logf("Duration %d ms", dur.Milliseconds())
-		}
-	}
 }
 
 func TestEmptyValueEquality(t *testing.T) {

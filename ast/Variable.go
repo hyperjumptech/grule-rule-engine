@@ -162,26 +162,40 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 		return fmt.Errorf("can not change function call")
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
-		objVal, err := e.Variable.Evaluate(dataContext, memory)
+		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return err
 		}
-		err = pkg.SetAttributeValue(objVal, e.Name, newVal)
+		err = e.Variable.ValueNode.SetObjectValueByField(e.Name, newVal)
 		if err == nil {
 			dataContext.IncrementVariableChangeCount()
 			memory.ResetVariable(e)
-		} else {
-			AstLog.Errorf("Whoooops error %s", err)
 		}
 		return err
 	}
 	if e.Variable != nil && e.ArrayMapSelector != nil {
-		err := pkg.SetMapArrayValue(e.Variable.Value, e.ArrayMapSelector.Value, newVal)
-		if err == nil {
-			dataContext.IncrementVariableChangeCount()
-			memory.ResetVariable(e)
+		_, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			return err
 		}
-		return err
+		_, err = e.ArrayMapSelector.Evaluate(dataContext, memory)
+		if err != nil {
+			return err
+		}
+		if e.Variable.ValueNode.IsArray() {
+			err := e.Variable.ValueNode.SetArrayValueAt(int(e.ArrayMapSelector.Value.Int()), newVal)
+			if err == nil {
+				memory.ResetVariable(e)
+			}
+			return err
+		}
+		if e.Variable.ValueNode.IsMap() {
+			err := e.Variable.ValueNode.SetMapValueAt(e.ArrayMapSelector.Value, newVal)
+			if err == nil {
+				memory.ResetVariable(e)
+			}
+			return err
+		}
 	}
 	return fmt.Errorf("this code part should not be reached")
 }

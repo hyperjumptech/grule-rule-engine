@@ -432,6 +432,7 @@ func (s *GruleV2ParserListener) EnterArrayMapSelector(ctx *grulev2.ArrayMapSelec
 	}
 	sel := ast.NewArrayMapSelector()
 	sel.GrlText = ctx.GetText()
+	s.Stack.Push(sel)
 }
 
 // ExitArrayMapSelector is called when production arrayMapSelector is exited.

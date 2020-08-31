@@ -7,7 +7,7 @@ build:
 	go build ./...
 
 lint: build
-	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. events/...
+	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/.
 
 test-short: lint
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short

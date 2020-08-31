@@ -90,6 +90,9 @@ func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err er
 		}()
 		val := node.thisValue.Index(index)
 		if val.CanAddr() && val.CanSet() {
+			if pkg.IsNumber(val) && pkg.IsNumber(value) {
+				return SetNumberValue(val, value)
+			}
 			val.Set(value)
 			return nil
 		}
@@ -97,7 +100,7 @@ func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err er
 	}
 	return fmt.Errorf("this node identified as \"%s\" is not referencing an array or slice", node.IdentifiedAs())
 }
-func (node *GoValueNode) AppendValue(value reflect.Value) (err error) {
+func (node *GoValueNode) AppendValue(value []reflect.Value) (err error) {
 	if node.IsArray() {
 		arrVal := node.thisValue
 		if arrVal.CanSet() {
@@ -106,7 +109,7 @@ func (node *GoValueNode) AppendValue(value reflect.Value) (err error) {
 					err = fmt.Errorf("recovered : %v", r)
 				}
 			}()
-			arrVal.Set(reflect.Append(arrVal, value))
+			arrVal.Set(reflect.Append(arrVal, value...))
 			return nil
 		}
 	}
@@ -199,6 +202,43 @@ func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, e
 	return nil, fmt.Errorf("this node identified as \"%s\" is not referring to an object", node.IdentifiedAs())
 }
 
+func SetNumberValue(target, newvalue reflect.Value) error {
+	if pkg.IsNumber(target) && pkg.IsNumber(newvalue) {
+		switch target.Type().Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			if pkg.GetBaseKind(newvalue) == reflect.Uint64 {
+				target.SetInt(int64(newvalue.Uint()))
+			} else if pkg.GetBaseKind(newvalue) == reflect.Float64 {
+				target.SetInt(int64(newvalue.Float()))
+			} else {
+				target.SetInt(newvalue.Int())
+			}
+			return nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			if pkg.GetBaseKind(newvalue) == reflect.Uint64 {
+				target.SetUint(newvalue.Uint())
+			} else if pkg.GetBaseKind(newvalue) == reflect.Float64 {
+				target.SetUint(uint64(newvalue.Float()))
+			} else {
+				target.SetUint(uint64(newvalue.Int()))
+			}
+			return nil
+		case reflect.Float32, reflect.Float64:
+			if pkg.GetBaseKind(newvalue) == reflect.Uint64 {
+				target.SetFloat(float64(newvalue.Uint()))
+			} else if pkg.GetBaseKind(newvalue) == reflect.Float64 {
+				target.SetFloat(newvalue.Float())
+			} else {
+				target.SetFloat(float64(newvalue.Int()))
+			}
+			return nil
+		}
+		return fmt.Errorf("this line should not be reached")
+	} else {
+		return fmt.Errorf("this function only used for assigning number data to number variable")
+	}
+}
+
 func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Value) (err error) {
 	fieldVal := node.thisValue.Elem().FieldByName(field)
 	if fieldVal.IsValid() && fieldVal.CanAddr() && fieldVal.CanSet() {
@@ -207,6 +247,9 @@ func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Va
 				err = fmt.Errorf("recovered : %v", r)
 			}
 		}()
+		if pkg.IsNumber(fieldVal) && pkg.IsNumber(newValue) {
+			return SetNumberValue(fieldVal, newValue)
+		}
 		fieldVal.Set(newValue)
 		return nil
 	}
@@ -256,16 +299,46 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		}
 		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for string", node.IdentifiedAs(), funcName)
 	}
+	if node.IsArray() {
+		var arrFunc func(reflect.Value, []reflect.Value) (reflect.Value, error)
+		switch funcName {
+		case "Len":
+			arrFunc = ArrMapLen
+		case "Append":
+			node.AppendValue(args)
+		case "Clear":
+			arrFunc = ArrClear
+		}
+		if arrFunc != nil {
+			val, err := arrFunc(node.thisValue, args)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			return val, nil
+		}
+		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for array", node.IdentifiedAs(), funcName)
+	}
+	if node.IsMap() {
+		var mapFunc func(reflect.Value, []reflect.Value) (reflect.Value, error)
+		switch funcName {
+		case "Len":
+			mapFunc = ArrMapLen
+		case "Clear":
+			mapFunc = MapClear
+		}
+		if mapFunc != nil {
+			val, err := mapFunc(node.thisValue, args)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			return val, nil
+		}
+		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for map", node.IdentifiedAs(), funcName)
+	}
 
 	if node.IsObject() {
 		funcValue := node.thisValue.MethodByName(funcName)
 		if funcValue.IsValid() {
-			//defer func() {
-			//	if r := recover(); r != nil {
-			//		err = fmt.Errorf("in GoValueNode.CallFunction recovered : %v", r)
-			//		retval = reflect.Value{}
-			//	}
-			//}()
 			rets := funcValue.Call(args)
 			if len(rets) > 1 {
 				return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" calling function %s which returns multiple values, multiple value returns are not supported", node.IdentifiedAs(), funcName)
