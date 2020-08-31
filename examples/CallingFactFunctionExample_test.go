@@ -6,7 +6,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"testing"
 )
 
@@ -55,7 +54,7 @@ func (c *Clapper) Clap() {
 }
 
 func TestCallingFactFunction(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
+	// logrus.SetLevel(logrus.TraceLevel)
 
 	c := &Clapper{
 		CanClap:   false,

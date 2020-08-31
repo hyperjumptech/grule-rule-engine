@@ -8,7 +8,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"sort"
@@ -90,7 +89,7 @@ rule SetTime "When Distance Recorder time not set, set it." {
 )
 
 func TestGrule_Execute(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -141,7 +140,7 @@ func getTypeOf(i interface{}) string {
 }
 
 func TestGrule_ExecuteWithSubscribers(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 	tc := &TestCar{
 		SpeedUp:        true,
 		Speed:          0,
@@ -251,7 +250,7 @@ const complexRule1 = `rule ComplexRule "test complex rule" salience 10 {
 
 func TestEngine_ComplexRule1(t *testing.T) {
 
-	logrus.SetLevel(logrus.TraceLevel)
+	// logrus.SetLevel(logrus.TraceLevel)
 
 	ts := &TestStruct{
 		Param1: true,
@@ -483,8 +482,8 @@ func (s *Sleeper) SleepMore() {
 }
 
 func TestGruleEngine_ExecuteWithContext(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
-	defer logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
+	// defer logrus.SetLevel(logrus.InfoLevel)
 	ts := &Sleeper{}
 
 	dctx := ast.NewDataContext()

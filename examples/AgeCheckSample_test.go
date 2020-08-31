@@ -6,7 +6,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -58,7 +57,7 @@ type User struct {
 }
 
 func TestMyPoGo_GetStringLength(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 	dataContext := ast.NewDataContext()
 	pogo := &MyPoGo{}
 	err := dataContext.Add("Pogo", pogo)

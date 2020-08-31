@@ -1,7 +1,6 @@
 package examples
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
@@ -22,9 +21,8 @@ func TestItemPriceChecker_TestLexer(t *testing.T) {
 		if nt.GetTokenType() == antlr.TokenEOF {
 			break
 		}
-		fmt.Println(nt.GetText())
+		t.Logf(nt.GetText())
 	}
-
 }
 
 func TestItemPriceChecker_TestParser(t *testing.T) {

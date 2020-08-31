@@ -6,7 +6,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
 )
@@ -25,7 +24,7 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 
 func TestTutorial(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 	myFact := &MyFact{
 		IntAttribute:     123,
 		StringAttribute:  "Some string value",

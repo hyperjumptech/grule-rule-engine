@@ -129,7 +129,7 @@ func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
 }
 
 func TestConcurrency(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()

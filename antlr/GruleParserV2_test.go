@@ -4,7 +4,6 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"reflect"
@@ -34,7 +33,7 @@ func TestV2Lexer(t *testing.T) {
 }
 
 func TestV2Parser(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
+	// logrus.SetLevel(logrus.TraceLevel)
 	data, err := ioutil.ReadFile("./sample3.grl")
 	if err != nil {
 		t.Fatal(err)
@@ -124,7 +123,7 @@ rule SetTime "When Distance Recorder time not set, set it." {
 )
 
 func TestV2Parser2(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 
 	sdata := rules
 
@@ -151,7 +150,7 @@ func TestV2Parser2(t *testing.T) {
 }
 
 func TestV2ParserEscapedStringInvalid(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 
 	is := antlr.NewInputStream(invalidEscapeRule)
 	lexer := parser.Newgrulev2Lexer(is)
@@ -174,7 +173,7 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 }
 
 func TestV2ParserEscapedStringValid(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 
 	is := antlr.NewInputStream(validEscapeRule)
 	lexer := parser.Newgrulev2Lexer(is)
@@ -197,7 +196,7 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 }
 
 func TestV2ParserSnapshotEyeBalling(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
+	// logrus.SetLevel(logrus.TraceLevel)
 
 	data := `
 rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10 {
@@ -291,7 +290,7 @@ func prepareTestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *as
 }
 
 func TestConstantFunctionAndConstantFunctionChain(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 	dctx := ast.NewDataContext()
 
 	data := `
@@ -326,7 +325,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 }
 
 func TestRuleRetract(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 	dctx := ast.NewDataContext()
 
 	data := `
@@ -363,7 +362,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 }
 
 func TestRuleAssignment(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.InfoLevel)
 	dctx := ast.NewDataContext()
 
 	data := `

@@ -25,7 +25,7 @@ func (g *Grl) ReceiveRuleEntry(entry *RuleEntry) error {
 		g.RuleEntries = make(map[string]*RuleEntry)
 	}
 	if _, ok := g.RuleEntries[entry.RuleName.SimpleName]; ok {
-		return fmt.Errorf("duplicate rule entry %w", entry.RuleName.SimpleName)
+		return fmt.Errorf("duplicate rule entry %s", entry.RuleName.SimpleName)
 	}
 	g.RuleEntries[entry.RuleName.SimpleName] = entry
 	return nil

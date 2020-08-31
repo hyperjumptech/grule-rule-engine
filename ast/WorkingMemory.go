@@ -255,6 +255,16 @@ func (e *WorkingMemory) Reset(varName string) bool {
 			return e.ResetVariable(vari)
 		}
 	}
+	for snap, expr := range e.expressionSnapshotMap {
+		if strings.Contains(snap, varName) {
+			expr.Evaluated = false
+		}
+	}
+	for snap, expr := range e.expressionAtomSnapshotMap {
+		if strings.Contains(snap, varName) {
+			expr.Evaluated = false
+		}
+	}
 	return false
 }
 

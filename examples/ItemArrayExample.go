@@ -26,6 +26,7 @@ rule ApplyDiscountForCart "If a cart contain item prices is above 100 we give th
         Cart.CountItemWithPriceAboveWithNoDiscount(100) > 0
     then
         Cart.GiveDiscountForItemPriceAbove(100,10);
+		Changed("CountItemWithPriceAboveWithNoDiscount");
 		Log("Applying discount to cart item");
 }
 `
