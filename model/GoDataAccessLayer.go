@@ -6,6 +6,7 @@ import (
 	"reflect"
 )
 
+// NewGoValueNode creates new instance of ValueNode backed by golang reflection
 func NewGoValueNode(value reflect.Value, identifiedAs string) ValueNode {
 	return &GoValueNode{
 		parentNode:   nil,
@@ -14,24 +15,29 @@ func NewGoValueNode(value reflect.Value, identifiedAs string) ValueNode {
 	}
 }
 
+// GoValueNode is an implementation of ValueNode that used to traverse native golang primitives through reflect package
 type GoValueNode struct {
 	parentNode   ValueNode
 	identifiedAs string
 	thisValue    reflect.Value
 }
 
+// Value returns the underlying reflect.Value
 func (node *GoValueNode) Value() reflect.Value {
 	return node.thisValue
 }
 
+// HasParent returns `true` if the current value is a field, function, map, array, slice of another value
 func (node *GoValueNode) HasParent() bool {
 	return node.parentNode != nil
 }
 
+// Parent returns the value node of the parent value, if this node is a field, function, map, array, slice of another value
 func (node *GoValueNode) Parent() ValueNode {
 	return node.parentNode
 }
 
+// IdentifiedAs return the current representation of this Value Node
 func (node *GoValueNode) IdentifiedAs() string {
 	if node.HasParent() {
 		if node.parentNode.IsArray() || node.parentNode.IsMap() {
@@ -41,6 +47,9 @@ func (node *GoValueNode) IdentifiedAs() string {
 	}
 	return node.identifiedAs
 }
+
+// ContinueWithValue will return a nother ValueNode to wrap the specified value and treated as child of current node.
+// The main purpose of this is for easier debugging.
 func (node *GoValueNode) ContinueWithValue(value reflect.Value, identifiedAs string) ValueNode {
 	return &GoValueNode{
 		parentNode:   node,
@@ -48,27 +57,39 @@ func (node *GoValueNode) ContinueWithValue(value reflect.Value, identifiedAs str
 		thisValue:    value,
 	}
 }
+
+// GetValue will return the underlying reflect.Value
 func (node *GoValueNode) GetValue() (reflect.Value, error) {
 	return node.thisValue, nil
 }
+
+// GetType will return the underlying value's type
 func (node *GoValueNode) GetType() (reflect.Type, error) {
 	return node.thisValue.Type(), nil
 }
+
+// IsArray to check if the underlying value is an array or not
 func (node *GoValueNode) IsArray() bool {
 	return node.thisValue.Kind() == reflect.Array || node.thisValue.Kind() == reflect.Slice
 }
+
+// GetArrayType to get the type of underlying value array element types.
 func (node *GoValueNode) GetArrayType() (reflect.Type, error) {
 	if node.IsArray() {
 		return node.thisValue.Type().Elem(), nil
 	}
 	return nil, fmt.Errorf("this node identified as \"%s\" is not referring to an array or slice", node.IdentifiedAs())
 }
+
+// GetArrayValueAt to get the value of an array element if the current underlying value is an array
 func (node *GoValueNode) GetArrayValueAt(index int) (reflect.Value, error) {
 	if node.IsArray() {
 		return node.thisValue.Index(index), nil
 	}
 	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referring to an array or slice", node.IdentifiedAs())
 }
+
+// GetChildNodeByIndex is similar to `GetArrayValueAt`, where this will return a ValueNode that wrap the value.
 func (node *GoValueNode) GetChildNodeByIndex(index int) (ValueNode, error) {
 	if node.IsArray() {
 		v, err := node.GetArrayValueAt(index)
@@ -77,10 +98,11 @@ func (node *GoValueNode) GetChildNodeByIndex(index int) (ValueNode, error) {
 		}
 		gv := node.ContinueWithValue(v, fmt.Sprintf("[%d]", index))
 		return gv, nil
-	} else {
-		return nil, fmt.Errorf("this node identified as \"%s\" is not an array. its %s", node.IdentifiedAs(), node.thisValue.Type().String())
 	}
+	return nil, fmt.Errorf("this node identified as \"%s\" is not an array. its %s", node.IdentifiedAs(), node.thisValue.Type().String())
 }
+
+// SetArrayValueAt will set the value of specified array index on the current underlying array value.
 func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err error) {
 	if node.IsArray() {
 		defer func() {
@@ -100,6 +122,9 @@ func (node *GoValueNode) SetArrayValueAt(index int, value reflect.Value) (err er
 	}
 	return fmt.Errorf("this node identified as \"%s\" is not referencing an array or slice", node.IdentifiedAs())
 }
+
+// AppendValue will append the new values into the current underlying array.
+// will return error if argument list are not compatible with the array element type.
 func (node *GoValueNode) AppendValue(value []reflect.Value) (err error) {
 	if node.IsArray() {
 		arrVal := node.thisValue
@@ -115,6 +140,8 @@ func (node *GoValueNode) AppendValue(value []reflect.Value) (err error) {
 	}
 	return fmt.Errorf("this node identified as \"%s\" is not referencing an array or slice", node.IdentifiedAs())
 }
+
+// Length will return the length of underlying value if its an array, slice, map or string
 func (node *GoValueNode) Length() (int, error) {
 	if node.IsArray() || node.IsMap() || node.IsString() {
 		return node.thisValue.Len(), nil
@@ -122,20 +149,24 @@ func (node *GoValueNode) Length() (int, error) {
 	return 0, fmt.Errorf("this node identified as \"%s\" is not referencing an array, slice, map or string", node.IdentifiedAs())
 }
 
+// IsMap will validate if the underlying value is a map.
 func (node *GoValueNode) IsMap() bool {
 	return node.thisValue.Kind() == reflect.Map
 }
+
+// GetMapValueAt will retrieve a map value by the specified key argument.
 func (node *GoValueNode) GetMapValueAt(index reflect.Value) (reflect.Value, error) {
 	if node.IsMap() {
 		retVal := node.thisValue.MapIndex(index)
 		if retVal.IsValid() {
 			return retVal, nil
-		} else {
-			return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" have no selector with specified key", node.IdentifiedAs())
 		}
+		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" have no selector with specified key", node.IdentifiedAs())
 	}
 	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referencing a map", node.IdentifiedAs())
 }
+
+// SetMapValueAt will set the map value for the specified key, value argument
 func (node *GoValueNode) SetMapValueAt(index, newValue reflect.Value) (err error) {
 	if node.IsMap() {
 		defer func() {
@@ -148,6 +179,8 @@ func (node *GoValueNode) SetMapValueAt(index, newValue reflect.Value) (err error
 	}
 	return fmt.Errorf("this node identified as \"%s\" is not referencing a map", node.IdentifiedAs())
 }
+
+// GetChildNodeBySelector is similar to GetMapValueAt, it retrieve a value of map element identified by a value index as ValueNode.
 func (node *GoValueNode) GetChildNodeBySelector(index reflect.Value) (ValueNode, error) {
 	val, err := node.GetMapValueAt(index)
 	if err != nil {
@@ -156,6 +189,7 @@ func (node *GoValueNode) GetChildNodeBySelector(index reflect.Value) (ValueNode,
 	return node.ContinueWithValue(val, fmt.Sprintf("[%s->%s]", index.Type().String(), index.String())), nil
 }
 
+// IsObject will check if the underlying value is a struct or pointer to a struct
 func (node *GoValueNode) IsObject() bool {
 	if node.thisValue.IsValid() {
 		typ := node.thisValue.Type()
@@ -167,6 +201,7 @@ func (node *GoValueNode) IsObject() bool {
 	return false
 }
 
+// GetObjectValueByField will return underlying value's field
 func (node *GoValueNode) GetObjectValueByField(field string) (reflect.Value, error) {
 	if node.IsObject() {
 		var val reflect.Value
@@ -184,6 +219,7 @@ func (node *GoValueNode) GetObjectValueByField(field string) (reflect.Value, err
 	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referencing to an object", node.IdentifiedAs())
 }
 
+// GetObjectTypeByField will return underlying type of the value's field
 func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, err error) {
 	if node.IsObject() {
 		defer func() {
@@ -202,6 +238,10 @@ func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, e
 	return nil, fmt.Errorf("this node identified as \"%s\" is not referring to an object", node.IdentifiedAs())
 }
 
+// SetNumberValue will assign a numeric value to a numeric target value
+// this helper function is to ensure assignment between numerical types is happening regardless of types, int, uint or float.
+// The rule designer should be careful as conversion of types in automatic way like this will cause lost of precision
+// during conversion. This will be removed in the future version.
 func SetNumberValue(target, newvalue reflect.Value) error {
 	if pkg.IsNumber(target) && pkg.IsNumber(newvalue) {
 		switch target.Type().Kind() {
@@ -234,11 +274,11 @@ func SetNumberValue(target, newvalue reflect.Value) error {
 			return nil
 		}
 		return fmt.Errorf("this line should not be reached")
-	} else {
-		return fmt.Errorf("this function only used for assigning number data to number variable")
 	}
+	return fmt.Errorf("this function only used for assigning number data to number variable")
 }
 
+// SetObjectValueByField will set the underlying value's field with new value.
 func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Value) (err error) {
 	fieldVal := node.thisValue.Elem().FieldByName(field)
 	if fieldVal.IsValid() && fieldVal.CanAddr() && fieldVal.CanSet() {
@@ -256,6 +296,8 @@ func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Va
 	return fmt.Errorf("this node identified as \"%s\" have field \"%s\" that is not valid nor addressable", node.IdentifiedAs(), field)
 }
 
+// CallFunction will call a function owned by the underlying value receiver.
+// this function will artificially create a built-in functions for constants, array and map.
 func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (retval reflect.Value, err error) {
 	switch pkg.GetBaseKind(node.thisValue) {
 	case reflect.Int64, reflect.Uint64, reflect.Float64, reflect.Bool:
@@ -353,6 +395,7 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 	return reflect.ValueOf(nil), fmt.Errorf("this node identified as \"%s\" is not referencing an object thus function %s call is not supported", node.IdentifiedAs(), funcName)
 }
 
+// GetChildNodeByField will retrieve the underlying struct's field and return the ValueNode wraper.
 func (node *GoValueNode) GetChildNodeByField(field string) (ValueNode, error) {
 	val, err := node.GetObjectValueByField(field)
 	if err != nil {
@@ -361,20 +404,29 @@ func (node *GoValueNode) GetChildNodeByField(field string) (ValueNode, error) {
 	return node.ContinueWithValue(val, field), nil
 }
 
+// IsTime will check if the underlying value is a time.Time
 func (node *GoValueNode) IsTime() bool {
 	return node.thisValue.Type().String() == "time.Time"
 }
+
+// IsInteger will check if the underlying value is a type of int, or uint
 func (node *GoValueNode) IsInteger() bool {
 	kind := pkg.GetBaseKind(node.thisValue)
 	return kind == reflect.Int64 || kind == reflect.Uint64
 }
+
+// IsReal will check if the underlying value is a type of real number, float.
 func (node *GoValueNode) IsReal() bool {
 	kind := pkg.GetBaseKind(node.thisValue)
 	return kind == reflect.Float64
 }
+
+// IsBool will check if the underlying value is a type of boolean.
 func (node *GoValueNode) IsBool() bool {
 	return node.thisValue.Kind() == reflect.Bool
 }
+
+// IsString will check if the underlying value is a type of string
 func (node *GoValueNode) IsString() bool {
 	return node.thisValue.Kind() == reflect.String
 }
