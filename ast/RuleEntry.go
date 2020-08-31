@@ -140,9 +140,14 @@ func (e *RuleEntry) Evaluate(dataContext IDataContext, memory *WorkingMemory) (b
 }
 
 // Execute will execute this graph in the Then scope
-func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) error {
+func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) (err error) {
 	if e.ThenScope == nil {
-		AstLog.Warnf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
+		return fmt.Errorf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
 	}
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
+	//	}
+	//}()
 	return e.ThenScope.Execute(dataContext, memory)
 }

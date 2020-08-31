@@ -140,7 +140,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			}
 		} else {
 			// No more rule can be executed, so we are done here.
-			log.Warnf("No more rule to run")
+			log.Debugf("No more rule to run")
 			break
 		}
 	}
@@ -167,9 +167,10 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Debugf("Initializing Context")
 	knowledge.InitializeContext(dataCtx)
 
-	runnable := make([]*ast.RuleEntry, 0)
-
 	//Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
+	// Select all rule entry that can be executed.
+	log.Tracef("Select all rule entry that can be executed.")
+	runnable := make([]*ast.RuleEntry, 0)
 	for _, v := range knowledge.RuleEntries {
 		// test if this rule entry v can execute.
 		can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
@@ -182,6 +183,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 			runnable = append(runnable, v)
 		}
 	}
+
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {

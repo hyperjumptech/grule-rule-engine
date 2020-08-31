@@ -252,7 +252,9 @@ func SetAttributeValue(objVal reflect.Value, fieldName string, value reflect.Val
 
 	// Check source data type compatibility with the field type
 	if GetBaseKind(fieldVal) != GetBaseKind(value) { // pointer check
-		return fmt.Errorf("can not assign type %s to %s", value.Type().String(), fieldVal.Type().String())
+		if !(IsNumber(fieldVal) && IsNumber(value)) {
+			return fmt.Errorf("can not assign type %s to %s", value.Type().String(), fieldVal.Type().String())
+		}
 	}
 	if fieldVal.CanSet() {
 		switch fieldVal.Type().Kind() {
@@ -260,13 +262,31 @@ func SetAttributeValue(objVal reflect.Value, fieldName string, value reflect.Val
 			fieldVal.SetString(value.String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			fieldVal.SetInt(value.Int())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetInt(int64(value.Uint()))
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetInt(int64(value.Float()))
+			} else {
+				fieldVal.SetInt(value.Int())
+			}
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			fieldVal.SetUint(value.Uint())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetUint(value.Uint())
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetUint(uint64(value.Float()))
+			} else {
+				fieldVal.SetUint(uint64(value.Int()))
+			}
 			break
 		case reflect.Float32, reflect.Float64:
-			fieldVal.SetFloat(value.Float())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetFloat(float64(value.Uint()))
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetFloat(value.Float())
+			} else {
+				fieldVal.SetFloat(float64(value.Int()))
+			}
 			break
 		case reflect.Bool:
 			fieldVal.SetBool(value.Bool())
@@ -509,4 +529,12 @@ func GetBaseKind(val reflect.Value) reflect.Kind {
 	default:
 		return val.Kind()
 	}
+}
+
+func IsNumber(val reflect.Value) bool {
+	switch GetBaseKind(val) {
+	case reflect.Int64, reflect.Uint64, reflect.Float64:
+		return true
+	}
+	return false
 }

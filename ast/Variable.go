@@ -166,6 +166,8 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 		if err == nil {
 			dataContext.IncrementVariableChangeCount()
 			memory.ResetVariable(e)
+		} else {
+			AstLog.Errorf("Whoooops error %s", err)
 		}
 		return err
 	}

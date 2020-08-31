@@ -49,7 +49,7 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 		cTable := pkg.NewCloneTable()
 		newClone := kb.Clone(cTable)
 		if kb.IsIdentical(newClone) {
-			logrus.Infof("Successfuly create instance [%s:%s]", newClone.Name, newClone.Version)
+			logrus.Debugf("Successfuly create instance [%s:%s]", newClone.Name, newClone.Version)
 			return newClone
 		} else {
 			logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())

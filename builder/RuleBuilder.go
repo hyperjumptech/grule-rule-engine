@@ -103,7 +103,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	for _, ruleEntry := range grl.RuleEntries {
 		err := kb.AddRuleEntry(ruleEntry)
 		if err != nil {
-			log.Errorf("error while adding rule entry : %s. got %s", ruleEntry.RuleName.SimpleName, err.Error())
+			log.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
 		}
 	}
 

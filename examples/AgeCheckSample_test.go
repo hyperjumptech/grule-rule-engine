@@ -58,7 +58,7 @@ type User struct {
 }
 
 func TestMyPoGo_GetStringLength(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 	dataContext := ast.NewDataContext()
 	pogo := &MyPoGo{}
 	err := dataContext.Add("Pogo", pogo)

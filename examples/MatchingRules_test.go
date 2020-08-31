@@ -84,8 +84,8 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	//Then
 	assert.NoError(t, err)
 	assert.Equal(t, 4, len(ruleEntries))
-	assert.Equal(t, 8, ruleEntries[0].Salience)
-	assert.Equal(t, 7, ruleEntries[1].Salience)
-	assert.Equal(t, 6, ruleEntries[2].Salience)
-	assert.Equal(t, 5, ruleEntries[3].Salience)
+	assert.Equal(t, 8, ruleEntries[0].Salience.SalienceValue)
+	assert.Equal(t, 7, ruleEntries[1].Salience.SalienceValue)
+	assert.Equal(t, 6, ruleEntries[2].Salience.SalienceValue)
+	assert.Equal(t, 5, ruleEntries[3].Salience.SalienceValue)
 }

@@ -143,9 +143,9 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 	if e.Variable != nil {
 		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
-			AstLog.Errorf("error while executing %s. got %s", e.Assignment.GrlText, err.Error())
+			AstLog.Errorf("error while executing %s. got %s", e.Variable.GrlText, err.Error())
 		} else {
-			AstLog.Debugf("success executing %s", e.Assignment.GrlText)
+			AstLog.Debugf("success executing %s", e.Variable.GrlText)
 		}
 		return err
 	}

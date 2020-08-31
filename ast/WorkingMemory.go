@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
@@ -34,77 +35,137 @@ type WorkingMemory struct {
 	ID                        string
 }
 
+func (e *WorkingMemory) DebugContent() {
+	if AstLog.Level <= logrus.DebugLevel {
+		for varName, vari := range e.variableSnapshotMap {
+			AstLog.Debugf("Variable %s : %s : %s", varName, vari.GrlText, vari.AstID)
+
+			if exprs, ok := e.expressionVariableMap[vari]; ok {
+				AstLog.Debugf("  %d expressions", len(exprs))
+				for i, ex := range exprs {
+					AstLog.Debugf("   expr %d: %s", i, ex.GrlText)
+				}
+			} else {
+				AstLog.Debugf("  no expressions mapped for variable %s", vari.GrlText)
+			}
+			if expratms, ok := e.expressionAtomVariableMap[vari]; ok {
+				AstLog.Debugf("  %d expression atoms", len(expratms))
+				for i, ex := range expratms {
+					AstLog.Debugf("   expr atm %d: %s", i, ex.GrlText)
+				}
+			} else {
+				AstLog.Debugf("  no expressions atom mapped for variable %s", vari.GrlText)
+			}
+		}
+	}
+}
+
+func (e *WorkingMemory) Equals(that *WorkingMemory) bool {
+	if e.Name != that.Name {
+		return false
+	}
+	if e.Version != that.Version {
+		return false
+	}
+	if len(e.expressionSnapshotMap) != len(that.expressionSnapshotMap) {
+		return false
+	}
+	if len(e.expressionAtomSnapshotMap) != len(that.expressionAtomSnapshotMap) {
+		return false
+	}
+	if len(e.variableSnapshotMap) != len(that.variableSnapshotMap) {
+		return false
+	}
+	if len(e.expressionVariableMap) != len(that.expressionVariableMap) {
+		return false
+	}
+	if len(e.expressionAtomVariableMap) != len(that.expressionAtomVariableMap) {
+		return false
+	}
+	return true
+}
+
 // Clone will clone this WorkingMemory. The new clone will have an identical structure
 func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
+	AstLog.Debugf("Cloning working memory %s:%s", e.Name, e.Version)
 	clone := NewWorkingMemory(e.Name, e.Version)
 
 	if e.expressionSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d expressionSnapshotMap entries", len(e.expressionSnapshotMap))
 		for k, expr := range e.expressionSnapshotMap {
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			} else {
-				cloned := expr.Clone(cloneTable)
-				clone.expressionSnapshotMap[k] = cloned
-				cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
+				panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
 			}
 		}
 	}
 
 	if e.expressionAtomSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d expressionAtomSnapshotMap entries", len(e.expressionAtomSnapshotMap))
 		for k, exprAtm := range e.expressionAtomSnapshotMap {
 			if cloneTable.IsCloned(exprAtm.AstID) {
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
 			} else {
-				cloned := exprAtm.Clone(cloneTable)
-				clone.expressionAtomSnapshotMap[k] = cloned
-				cloneTable.MarkCloned(exprAtm.AstID, cloned.AstID, exprAtm, cloned)
+				panic(fmt.Sprintf("expression atom %s is not on the clone table", exprAtm.GrlText))
 			}
 		}
 	}
 
 	if e.variableSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d variableSnapshotMap entries", len(e.variableSnapshotMap))
 		for k, vari := range e.variableSnapshotMap {
 			if cloneTable.IsCloned(vari.AstID) {
 				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
 			} else {
-				cloned := vari.Clone(cloneTable)
-				clone.variableSnapshotMap[k] = cloned
-				cloneTable.MarkCloned(vari.AstID, cloned.AstID, vari, cloned)
+				panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
 			}
 		}
 	}
 
 	if e.expressionVariableMap != nil {
+		AstLog.Debugf("Cloning %d expressionVariableMap entries", len(e.expressionVariableMap))
 		for k, exprArr := range e.expressionVariableMap {
-			clone.expressionVariableMap[k] = make([]*Expression, len(exprArr))
-			for k2, expr := range exprArr {
-				if cloneTable.IsCloned(expr.AstID) {
-					clone.expressionVariableMap[k][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
-				} else {
-					cloned := expr.Clone(cloneTable)
-					clone.expressionVariableMap[k][k2] = cloned
-					cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
+			if cloneTable.IsCloned(k.AstID) {
+				clonedVari := cloneTable.Records[k.AstID].CloneInstance.(*Variable)
+				clone.expressionVariableMap[clonedVari] = make([]*Expression, len(exprArr))
+				for k2, expr := range exprArr {
+					if cloneTable.IsCloned(expr.AstID) {
+						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
+					} else {
+						panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
+					}
 				}
+			} else {
+				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
 		}
 	}
 
 	if e.expressionAtomVariableMap != nil {
+		AstLog.Debugf("Cloning %d expressionAtomVariableMap entries", len(e.expressionAtomVariableMap))
 		for k, exprAtmArr := range e.expressionAtomVariableMap {
-			clone.expressionAtomVariableMap[k] = make([]*ExpressionAtom, len(exprAtmArr))
-			for k2, expr := range exprAtmArr {
-				if cloneTable.IsCloned(expr.AstID) {
-					clone.expressionAtomVariableMap[k][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
-				} else {
-					cloned := expr.Clone(cloneTable)
-					clone.expressionAtomVariableMap[k][k2] = cloned
-					cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
+			if cloneTable.IsCloned(k.AstID) {
+				clonedVari := cloneTable.Records[k.AstID].CloneInstance.(*Variable)
+				clone.expressionAtomVariableMap[clonedVari] = make([]*ExpressionAtom, len(exprAtmArr))
+				for k2, expr := range exprAtmArr {
+					if cloneTable.IsCloned(expr.AstID) {
+						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
+					} else {
+						panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
+					}
 				}
+			} else {
+				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
 		}
 	}
 
-	return clone
+	if e.Equals(clone) {
+		clone.DebugContent()
+		return clone
+	}
+	panic("Clone not equals the origin.")
 }
 
 // IndexVariables will index all expression and expression atoms that contains a speciffic variable name
@@ -139,6 +200,9 @@ func (e *WorkingMemory) IndexVariables() {
 			}
 		}
 	}
+
+	e.DebugContent()
+
 }
 
 // AddExpression will add expression into its map if the expression signature is unique
@@ -183,6 +247,7 @@ func (e *WorkingMemory) AddVariable(vari *Variable) *Variable {
 // Reset will reset the evaluated status of a specific variable if its contains a variable name in its signature.
 // Returns true if any expression was reset, false if otherwise
 func (e *WorkingMemory) Reset(varName string) bool {
+	AstLog.Tracef("------- resetting var %s", varName)
 	for _, vari := range e.variableSnapshotMap {
 		if vari.GrlText == varName {
 			return e.ResetVariable(vari)
@@ -194,21 +259,28 @@ func (e *WorkingMemory) Reset(varName string) bool {
 // ResetVariable will reset the evaluated status of a specific expression if its contains a variable name in its signature.
 // Returns true if any expression was reset, false if otherwise
 func (e *WorkingMemory) ResetVariable(variable *Variable) bool {
+	AstLog.Tracef("------- resetting variable %s : %s", variable.GrlText, variable.AstID)
 	if AstLog.Level == logrus.TraceLevel {
 		AstLog.Tracef("%s : Resetting %s", e.ID, variable.GetSnapshot())
 	}
 	reseted := false
 	if arr, ok := e.expressionVariableMap[variable]; ok {
 		for _, expr := range arr {
+			AstLog.Tracef("------ reset expr : %s", expr.GrlText)
 			expr.Evaluated = false
 			reseted = true
 		}
+	} else {
+		AstLog.Warnf("No expression to reset for variable %s", variable.GrlText)
 	}
 	if arr, ok := e.expressionAtomVariableMap[variable]; ok {
 		for _, expr := range arr {
+			AstLog.Tracef("------ reset expr atm : %s", expr.GrlText)
 			expr.Evaluated = false
 			reseted = true
 		}
+	} else {
+		AstLog.Warnf("No expression atom to reset for variable %s", variable.GrlText)
 	}
 	return reseted
 }

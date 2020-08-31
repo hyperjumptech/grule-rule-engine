@@ -5,7 +5,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"testing"
 )
 
@@ -22,7 +21,7 @@ rule CallingLog "Calling a log" {
 )
 
 func TestCallingLog(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
+	//logrus.SetLevel(logrus.DebugLevel)
 	dataContext := ast.NewDataContext()
 
 	lib := ast.NewKnowledgeLibrary()
