@@ -3,8 +3,7 @@ package ast
 //go:generate mockgen -destination=../mocks/ast/DataContext.go -package=mocksAst . IDataContext
 
 import (
-	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 )
 
@@ -44,7 +43,7 @@ type IDataContext interface {
 	HasVariableChange() bool
 
 	Add(key string, obj interface{}) error
-	Get(key string) interface{}
+	Get(key string) model.ValueNode
 
 	Retract(key string)
 	IsRetracted(key string) bool
@@ -52,11 +51,6 @@ type IDataContext interface {
 	IsComplete() bool
 	Retracted() []string
 	Reset()
-
-	ExecMethod(receiver reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error)
-	GetType(receiver reflect.Value, variable string) (reflect.Type, error)
-	GetValue(receiver reflect.Value, variable string) (reflect.Value, error)
-	SetValue(receiver reflect.Value, variable string, newValue reflect.Value) error
 }
 
 // ResetVariableChangeCount will reset the variable change count
@@ -88,9 +82,9 @@ func (ctx *DataContext) Add(key string, obj interface{}) error {
 }
 
 // Get will extract the struct instance
-func (ctx *DataContext) Get(key string) interface{} {
+func (ctx *DataContext) Get(key string) model.ValueNode {
 	if v, ok := ctx.ObjectStore[key]; ok {
-		return v
+		return model.NewGoValueNode(reflect.ValueOf(v), key)
 	}
 	return nil
 }
@@ -118,45 +112,4 @@ func (ctx *DataContext) Retracted() []string {
 // Reset will un-retract all fact, making them available for evaluation and modification.
 func (ctx *DataContext) Reset() {
 	ctx.retracted = make([]string, 0)
-}
-
-// ExecMethod will execute instance member variable using the supplied arguments.
-func (ctx *DataContext) ExecMethod(receiver reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error) {
-
-	// this obj is reflect.Value... it should not.
-	types, variad, err := pkg.GetFunctionParameterTypes(receiver, methodName)
-	if err != nil {
-		return reflect.ValueOf(nil),
-			fmt.Errorf("error while fetching function %s() parameter types. Got %v", methodName, err)
-	}
-
-	if len(types) != len(args) && !variad {
-		return reflect.ValueOf(nil),
-			fmt.Errorf("invalid argument count for function %s(). need %d argument while there are %d", methodName, len(types), len(args))
-	}
-
-	retVals, err := pkg.InvokeFunction(receiver, methodName, args)
-	if err == nil {
-		if len(retVals) == 0 {
-			return reflect.ValueOf(nil), nil
-		}
-		return retVals[0], nil
-	}
-	return reflect.ValueOf(nil), err
-}
-
-// GetType will extract type information of data in this context.
-func (ctx *DataContext) GetType(receiver reflect.Value, variable string) (reflect.Type, error) {
-	return pkg.GetAttributeType(receiver, variable)
-}
-
-// GetValue will get member variables Value information.
-// Used by the rule execution to obtain variable value.
-func (ctx *DataContext) GetValue(receiver reflect.Value, variable string) (reflect.Value, error) {
-	return pkg.GetAttributeValue(receiver, variable)
-}
-
-// SetValue will set variable value of an object instance in this data context, Used by rule script to set values.
-func (ctx *DataContext) SetValue(receiver reflect.Value, variable string, newValue reflect.Value) error {
-	return pkg.SetAttributeValue(receiver, variable, newValue)
 }

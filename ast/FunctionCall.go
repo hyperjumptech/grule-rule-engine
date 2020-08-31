@@ -91,13 +91,13 @@ func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *FunctionCall) Evaluate(receiver reflect.Value, dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+func (e *FunctionCall) EvaluateArgumentList(dataContext IDataContext, memory *WorkingMemory) ([]reflect.Value, error) {
 	args, err := e.ArgumentList.Evaluate(dataContext, memory)
 	if err != nil {
-		return reflect.ValueOf(nil), err
+		return nil, err
 	}
 	if dataContext == nil {
 		AstLog.Errorf("Datacontext for function call %s (%s) is nil", e.FunctionName, e.AstID)
 	}
-	return dataContext.ExecMethod(receiver, e.FunctionName, args)
+	return args, nil
 }

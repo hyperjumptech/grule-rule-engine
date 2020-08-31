@@ -5,7 +5,9 @@ import (
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"reflect"
 	"testing"
 )
 
@@ -207,8 +209,6 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 }
 `
 
-	logrus.SetLevel(logrus.TraceLevel)
-
 	is := antlr.NewInputStream(data)
 	lexer := parser.Newgrulev2Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
@@ -248,4 +248,167 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 	if len(listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.ThenExpressions) != 2 {
 		t.Fatalf("Then expression list array %s contains not 2 but %d", listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.GetAstID(), len(listener.Grl.RuleEntries["SpeedUp"].ThenScope.ThenExpressionList.ThenExpressions))
 	}
+}
+
+type Person struct {
+	Name         string
+	ParentString string
+	Child        *Child
+}
+
+type Child struct {
+	Name        string
+	ChildString string
+	GrandChild  *GrandChild
+}
+
+type GrandChild struct {
+	GrandChildString string
+	Name             string
+}
+
+func prepareTestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *ast.WorkingMemory) {
+	is := antlr.NewInputStream(grl)
+	lexer := parser.Newgrulev2Lexer(is)
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	var parseError error
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+
+	listener := NewGruleV2ParserListener(kb, func(e error) {
+		parseError = e
+	})
+
+	psr := parser.Newgrulev2Parser(stream)
+	psr.BuildParseTrees = true
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
+	if parseError != nil {
+		t.Log(parseError)
+		t.FailNow()
+	}
+	listener.KnowledgeBase.WorkingMemory.IndexVariables()
+	return kb, kb.WorkingMemory
+}
+
+func TestConstantFunctionAndConstantFunctionChain(t *testing.T) {
+	logrus.SetLevel(logrus.InfoLevel)
+	dctx := ast.NewDataContext()
+
+	data := `
+rule RuleOne "RuleOneDesc" salience 123 {
+    when
+        "    true    ".Trim() != "true"
+    then
+        Log("      Success    ".Trim().ToUpper());
+}
+`
+	kb, wm := prepareTestKnowledgeBase(t, data)
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+		Knowledge:     kb,
+		WorkingMemory: wm,
+		DataContext:   dctx,
+	})
+
+	assert.NoError(t, err)
+
+	whenVal, err := kb.RuleEntries["RuleOne"].WhenScope.Evaluate(dctx, wm)
+	assert.NoError(t, err)
+	assert.True(t, whenVal.IsValid())
+	assert.Equal(t, reflect.Bool, whenVal.Kind())
+	assert.False(t, whenVal.Bool())
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions)
+	assert.Equal(t, 1, len(kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions))
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0])
+	err = kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0].Execute(dctx, wm)
+	assert.NoError(t, err)
+}
+
+func TestRuleRetract(t *testing.T) {
+	logrus.SetLevel(logrus.InfoLevel)
+	dctx := ast.NewDataContext()
+
+	data := `
+rule RuleOne "RuleOneDesc" salience 123 {
+    when
+        "    true    ".Trim() != "true"
+    then
+        Retract("RuleOne");
+}
+`
+
+	kb, wm := prepareTestKnowledgeBase(t, data)
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+		Knowledge:     kb,
+		WorkingMemory: wm,
+		DataContext:   dctx,
+	})
+
+	assert.False(t, kb.RuleEntries["RuleOne"].Retracted)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions)
+	assert.Equal(t, 1, len(kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions))
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0])
+
+	err = kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0].Execute(dctx, wm)
+	if err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+	assert.True(t, kb.RuleEntries["RuleOne"].Retracted)
+	kb.Reset()
+	assert.False(t, kb.RuleEntries["RuleOne"].Retracted)
+}
+
+func TestRuleAssignment(t *testing.T) {
+	logrus.SetLevel(logrus.InfoLevel)
+	dctx := ast.NewDataContext()
+
+	data := `
+rule RuleOne "RuleOneDesc" salience 123 {
+    when
+        Person.Name == "Rudolf"
+    then
+        Person.Name="Pearson".ToUpper();
+}
+`
+
+	kb, wm := prepareTestKnowledgeBase(t, data)
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+		Knowledge:     kb,
+		WorkingMemory: wm,
+		DataContext:   dctx,
+	})
+
+	p := &Person{
+		Name: "Rudolf",
+	}
+	err = dctx.Add("Person", p)
+
+	assert.NoError(t, err)
+	assert.False(t, kb.RuleEntries["RuleOne"].Retracted)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList)
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions)
+
+	ret, err := kb.RuleEntries["RuleOne"].WhenScope.Evaluate(dctx, wm)
+	assert.NoError(t, err)
+	assert.True(t, ret.IsValid())
+	assert.Equal(t, reflect.Bool, ret.Kind())
+	assert.True(t, ret.Bool())
+
+	assert.Equal(t, 1, len(kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions))
+	assert.NotNil(t, kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0])
+	err = kb.RuleEntries["RuleOne"].ThenScope.ThenExpressionList.ThenExpressions[0].Execute(dctx, wm)
+	assert.NoError(t, err)
+	assert.Equal(t, "PEARSON", p.Name)
+
+	ret, err = kb.RuleEntries["RuleOne"].WhenScope.Evaluate(dctx, wm)
+	assert.NoError(t, err)
+	assert.True(t, ret.IsValid())
+	assert.Equal(t, reflect.Bool, ret.Kind())
+	assert.False(t, ret.Bool())
+
 }

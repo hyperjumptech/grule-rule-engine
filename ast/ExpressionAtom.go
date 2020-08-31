@@ -116,17 +116,28 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 	if e.Evaluated == true {
 		return e.Value, nil
 	}
-	var val reflect.Value
-	var err error
 	if e.Variable != nil {
-		val, err = e.Variable.Evaluate(dataContext, memory)
-	} else if e.FunctionCall != nil {
-		v := dataContext.Get("DEFUNC")
-		val, err = e.FunctionCall.Evaluate(reflect.ValueOf(v), dataContext, memory)
-	}
-	if err == nil {
+		val, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
 		e.Value = val
+		e.Evaluated = true
+		return val, err
 	}
-	e.Evaluated = true
-	return val, err
+	if e.FunctionCall != nil {
+		valueNode := dataContext.Get("DEFUNC")
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		ret, err := valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = ret
+		e.Evaluated = true
+		return ret, err
+	}
+	panic("should not be reached")
 }

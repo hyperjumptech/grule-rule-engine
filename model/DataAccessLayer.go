@@ -9,6 +9,7 @@ import (
 
 type ValueNode interface {
 	IdentifiedAs() string
+	Value() reflect.Value
 	HasParent() bool
 	Parent() ValueNode
 

@@ -3,8 +3,6 @@ package ast
 import (
 	"bytes"
 	"errors"
-	"reflect"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -131,14 +129,16 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 		return err
 	}
 	if e.FunctionCall != nil {
-		v := dataContext.Get("DEFUNC")
-		_, err := e.FunctionCall.Evaluate(reflect.ValueOf(v), dataContext, memory)
+		valueNode := dataContext.Get("DEFUNC")
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
-			AstLog.Errorf("error while executing %s. got %s", e.Assignment.GrlText, err.Error())
-		} else {
-			AstLog.Debugf("success executing %s", e.Assignment.GrlText)
+			return err
 		}
-		return err
+		_, err = valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 	if e.Variable != nil {
 		_, err := e.Variable.Evaluate(dataContext, memory)

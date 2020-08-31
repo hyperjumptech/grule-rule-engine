@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 	"strconv"
 	"testing"
@@ -40,7 +41,7 @@ func TestDataContext_ExecMethod(t *testing.T) {
 	}
 
 	ctx := NewDataContext()
-	err := ctx.Add("C", TCS)
+	err := ctx.Add("C", model.NewGoValueNode(reflect.ValueOf(TCS), "C"))
 	if err != nil {
 		t.Fatal(err)
 	}

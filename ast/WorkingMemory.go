@@ -50,6 +50,30 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		}
 	}
 
+	if e.expressionAtomSnapshotMap != nil {
+		for k, exprAtm := range e.expressionAtomSnapshotMap {
+			if cloneTable.IsCloned(exprAtm.AstID) {
+				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
+			} else {
+				cloned := exprAtm.Clone(cloneTable)
+				clone.expressionAtomSnapshotMap[k] = cloned
+				cloneTable.MarkCloned(exprAtm.AstID, cloned.AstID, exprAtm, cloned)
+			}
+		}
+	}
+
+	if e.variableSnapshotMap != nil {
+		for k, vari := range e.variableSnapshotMap {
+			if cloneTable.IsCloned(vari.AstID) {
+				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
+			} else {
+				cloned := vari.Clone(cloneTable)
+				clone.variableSnapshotMap[k] = cloned
+				cloneTable.MarkCloned(vari.AstID, cloned.AstID, vari, cloned)
+			}
+		}
+	}
+
 	if e.expressionVariableMap != nil {
 		for k, exprArr := range e.expressionVariableMap {
 			clone.expressionVariableMap[k] = make([]*Expression, len(exprArr))
@@ -59,6 +83,21 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 				} else {
 					cloned := expr.Clone(cloneTable)
 					clone.expressionVariableMap[k][k2] = cloned
+					cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
+				}
+			}
+		}
+	}
+
+	if e.expressionAtomVariableMap != nil {
+		for k, exprAtmArr := range e.expressionAtomVariableMap {
+			clone.expressionAtomVariableMap[k] = make([]*ExpressionAtom, len(exprAtmArr))
+			for k2, expr := range exprAtmArr {
+				if cloneTable.IsCloned(expr.AstID) {
+					clone.expressionAtomVariableMap[k][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
+				} else {
+					cloned := expr.Clone(cloneTable)
+					clone.expressionAtomVariableMap[k][k2] = cloned
 					cloneTable.MarkCloned(expr.AstID, cloned.AstID, expr, cloned)
 				}
 			}

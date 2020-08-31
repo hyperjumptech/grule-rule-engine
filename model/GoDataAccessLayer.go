@@ -20,6 +20,10 @@ type GoValueNode struct {
 	thisValue    reflect.Value
 }
 
+func (node *GoValueNode) Value() reflect.Value {
+	return node.thisValue
+}
+
 func (node *GoValueNode) HasParent() bool {
 	return node.parentNode != nil
 }
@@ -256,12 +260,12 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 	if node.IsObject() {
 		funcValue := node.thisValue.MethodByName(funcName)
 		if funcValue.IsValid() {
-			defer func() {
-				if r := recover(); r != nil {
-					err = fmt.Errorf("recovered : %v", r)
-					retval = reflect.Value{}
-				}
-			}()
+			//defer func() {
+			//	if r := recover(); r != nil {
+			//		err = fmt.Errorf("in GoValueNode.CallFunction recovered : %v", r)
+			//		retval = reflect.Value{}
+			//	}
+			//}()
 			rets := funcValue.Call(args)
 			if len(rets) > 1 {
 				return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" calling function %s which returns multiple values, multiple value returns are not supported", node.IdentifiedAs(), funcName)

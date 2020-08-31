@@ -243,10 +243,10 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		lval, lerr := e.LeftExpression.Evaluate(dataContext, memory)
 		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
 		if lerr != nil {
-			return reflect.ValueOf(nil), fmt.Errorf("left hand expression error. got %v", lerr)
+			return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
 		}
 		if rerr != nil {
-			return reflect.ValueOf(nil), fmt.Errorf("right hand expression error.  got %v", rerr)
+			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
 		}
 
 		var val reflect.Value
@@ -290,5 +290,5 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		}
 		return val, opErr
 	}
-	return reflect.ValueOf(nil), nil
+	return reflect.Value{}, nil
 }

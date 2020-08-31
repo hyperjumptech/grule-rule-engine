@@ -80,6 +80,12 @@ func (s *GruleV2ParserListener) ExitGrl(ctx *grulev2.GrlContext) {
 		return
 	}
 	_ = s.Stack.Pop().(*ast.Grl)
+	for _, re := range s.Grl.RuleEntries {
+		err := s.KnowledgeBase.AddRuleEntry(re)
+		if err != nil {
+			s.ErrorCallback(err)
+		}
+	}
 }
 
 // EnterRuleEntry is called when production ruleEntry is entered.

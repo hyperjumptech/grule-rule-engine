@@ -3,6 +3,7 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 
 	"github.com/google/uuid"
@@ -27,7 +28,8 @@ type Variable struct {
 	FunctionCall     *FunctionCall
 	ArrayMapSelector *ArrayMapSelector
 
-	Value reflect.Value
+	ValueNode model.ValueNode
+	Value     reflect.Value
 }
 
 // Clone will clone this Variable. The new clone will have an identical structure
@@ -163,8 +165,7 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 		err = pkg.SetAttributeValue(objVal, e.Name, newVal)
 		if err == nil {
 			dataContext.IncrementVariableChangeCount()
-			_ = memory.ResetVariable(e)
-			return nil
+			memory.ResetVariable(e)
 		}
 		return err
 	}
@@ -182,11 +183,12 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if len(e.Name) > 0 && e.Variable == nil {
-		val := dataContext.Get(e.Name)
-		if val == nil {
+		valueNode := dataContext.Get(e.Name)
+		if valueNode == nil {
 			return reflect.ValueOf(nil), fmt.Errorf("non existent key %s", e.Name)
 		}
-		e.Value = reflect.ValueOf(val)
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
 		return e.Value, nil
 	}
 	if e.Constant != nil {
@@ -194,47 +196,72 @@ func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (re
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		e.Value = val
+		valueNode := model.NewGoValueNode(val, fmt.Sprintf("%s->%s", val.Type().String(), val.String()))
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
 		return e.Value, nil
 	}
 	if e.Variable != nil && e.FunctionCall != nil {
-		varValue, err := e.Variable.Evaluate(dataContext, memory)
+		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		val, err := e.FunctionCall.Evaluate(varValue, dataContext, memory)
+
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
-		e.Value = val
+
+		retVal, err := e.Variable.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		if retVal.IsValid() {
+			e.Value = retVal
+		}
+		e.ValueNode = e.Variable.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
 		return e.Value, nil
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
-		varValue, err := e.Variable.Evaluate(dataContext, memory)
+		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return reflect.Value{}, err
 		}
-		val, err := pkg.GetAttributeValue(varValue, e.Name)
+		valueNode, err := e.Variable.ValueNode.GetChildNodeByField(e.Name)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return reflect.Value{}, err
 		}
-		e.Value = val
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
 		return e.Value, nil
 	}
 	if e.Variable != nil && e.ArrayMapSelector != nil {
-		varValue, err := e.Variable.Evaluate(dataContext, memory)
+		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return reflect.Value{}, err
 		}
 		selValue, err := e.ArrayMapSelector.Evaluate(dataContext, memory)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return reflect.Value{}, err
 		}
-		val, err := pkg.GetMapArrayValue(varValue, selValue)
-		if err != nil {
-			return reflect.ValueOf(nil), err
+		var valueNode model.ValueNode
+		if e.Variable.ValueNode.IsArray() {
+			valueNode, err = e.Variable.ValueNode.GetChildNodeByIndex(int(selValue.Int()))
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else if e.Variable.ValueNode.IsMap() {
+			valueNode, err = e.Variable.ValueNode.GetChildNodeBySelector(selValue)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else {
+			return reflect.Value{}, fmt.Errorf("%s is not an array nor map", e.Variable.ValueNode.IdentifiedAs())
 		}
-		e.Value = reflect.ValueOf(val)
+
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
 		return e.Value, nil
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("this code part should not be reached")

@@ -1,12 +1,14 @@
 package ast
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"sort"
+	"strings"
 	"sync"
 
-	"github.com/hyperjumptech/grule-rule-engine/events"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/hyperjumptech/grule-rule-engine/pkg/eventbus"
 )
 
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
@@ -33,7 +35,6 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 		Name:          name,
 		Version:       version,
 		RuleEntries:   make(map[string]*RuleEntry),
-		Publisher:     eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic),
 		WorkingMemory: NewWorkingMemory(name, version),
 	}
 	lib.Library[fmt.Sprintf("%s:%s", name, version)] = kb
@@ -46,7 +47,15 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
 		cTable := pkg.NewCloneTable()
-		return kb.Clone(cTable)
+		newClone := kb.Clone(cTable)
+		if kb.IsIdentical(newClone) {
+			logrus.Infof("Successfuly create instance [%s:%s]", newClone.Name, newClone.Version)
+			return newClone
+		} else {
+			logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+			logrus.Fatalf("CLONE    : %s", newClone.GetSnapshot())
+			panic("The clone is not identical")
+		}
 	}
 	return nil
 }
@@ -59,7 +68,30 @@ type KnowledgeBase struct {
 	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 	RuleEntries   map[string]*RuleEntry
-	Publisher     *eventbus.Publisher
+}
+
+func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
+	return e.GetSnapshot() == that.GetSnapshot()
+}
+
+func (e *KnowledgeBase) GetSnapshot() string {
+	var buffer bytes.Buffer
+	buffer.WriteString(fmt.Sprintf("%s:%s[", e.Name, e.Version))
+	keys := make([]string, 0)
+	for i, _ := range e.RuleEntries {
+		keys = append(keys, i)
+	}
+	sort.SliceStable(keys, func(i, j int) bool {
+		return strings.Compare(keys[i], keys[j]) >= 0
+	})
+	for i, k := range keys {
+		if i > 0 {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString(e.RuleEntries[k].GetSnapshot())
+	}
+	buffer.WriteString("]")
+	return buffer.String()
 }
 
 // Clone will clone this instance of KnowledgeBase and produce another (structure wise) identical instance.
@@ -68,7 +100,6 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 		Name:        e.Name,
 		Version:     e.Version,
 		RuleEntries: make(map[string]*RuleEntry),
-		Publisher:   eventbus.DefaultBrooker.GetPublisher(events.RuleEntryEventTopic),
 	}
 	if e.RuleEntries != nil {
 		for k, entry := range e.RuleEntries {
@@ -96,12 +127,6 @@ func (e *KnowledgeBase) AddRuleEntry(entry *RuleEntry) error {
 		return fmt.Errorf("rule entry %s already exist", entry.RuleName.SimpleName)
 	}
 	e.RuleEntries[entry.RuleName.SimpleName] = entry
-
-	e.Publisher.Publish(&events.RuleEntryEvent{
-		EventType: events.RuleEntryAddedEvent,
-		RuleName:  entry.RuleName.SimpleName,
-	})
-
 	return nil
 }
 
@@ -117,11 +142,6 @@ func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 	defer e.lock.Unlock()
 	if e.ContainsRuleEntry(name) {
 		delete(e.RuleEntries, name)
-		// emit rule entry remove event
-		e.Publisher.Publish(&events.RuleEntryEvent{
-			EventType: events.RuleEntryRemovedEvent,
-			RuleName:  name,
-		})
 	}
 }
 
@@ -135,12 +155,6 @@ func (e *KnowledgeBase) RetractRule(ruleName string) {
 	for _, re := range e.RuleEntries {
 		if re.RuleName.SimpleName == ruleName {
 			re.Retracted = true
-
-			// emit rule entry retract event
-			e.Publisher.Publish(&events.RuleEntryEvent{
-				EventType: events.RuleEntryRetractedEvent,
-				RuleName:  ruleName,
-			})
 		}
 	}
 }
@@ -160,12 +174,6 @@ func (e *KnowledgeBase) Reset() {
 	for _, re := range e.RuleEntries {
 		if re.Retracted {
 			re.Retracted = false
-
-			// emit rule entry reset event
-			e.Publisher.Publish(&events.RuleEntryEvent{
-				EventType: events.RuleEntryResetEvent,
-				RuleName:  re.RuleName.SimpleName,
-			})
 		}
 	}
 }
