@@ -6,7 +6,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -55,8 +55,6 @@ func (c *Clapper) Clap() {
 }
 
 func TestCallingFactFunction(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
-
 	c := &Clapper{
 		CanClap:   false,
 		HandsUp:   false,
@@ -65,26 +63,16 @@ func TestCallingFactFunction(t *testing.T) {
 
 	dataContext := ast.NewDataContext()
 	err := dataContext.Add("Clapper", c)
-	if err != nil {
-		panic(err)
-	}
+	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncDRL)))
 	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")
-	if err != nil {
-		panic(err)
-	} else {
-		eng1 := &engine.GruleEngine{MaxCycle: 500}
-		err := eng1.Execute(dataContext, knowledgeBase)
-		if err != nil {
-			t.Fatalf("Got error %v", err)
-		}
-		if c.ClapCount != 10 {
-			t.Logf("Expected 10 clap, but %d", c.ClapCount)
-			t.Fail()
-		}
-	}
+	assert.NoError(t, err)
+	eng1 := &engine.GruleEngine{MaxCycle: 500}
+	err = eng1.Execute(dataContext, knowledgeBase)
+	assert.NoError(t, err)
+	assert.Equal(t, 10, int(c.ClapCount))
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
 	"time"
@@ -129,15 +130,11 @@ func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
 }
 
 func TestConcurrency(t *testing.T) {
-	logrus.SetLevel(logrus.InfoLevel)
-
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err := rb.BuildRuleFromResource("VibonaciTest", "0.0.1", pkg.NewBytesResource([]byte(VibonaciRule)))
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// Now start 500 thread that uses the KnowledgeLibrary
 	for i := 1; i <= 500; i++ {
