@@ -68,9 +68,7 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	}
 	dctx := ast.NewDataContext()
 	err := dctx.Add("Fact", fact)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
@@ -80,9 +78,9 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	//When
 	e := engine.NewGruleEngine()
 	ruleEntries, err := e.FetchMatchingRules(dctx, kb)
+	assert.NoError(t, err)
 
 	//Then
-	assert.NoError(t, err)
 	assert.Equal(t, 4, len(ruleEntries))
 	assert.Equal(t, 8, ruleEntries[0].Salience.SalienceValue)
 	assert.Equal(t, 7, ruleEntries[1].Salience.SalienceValue)

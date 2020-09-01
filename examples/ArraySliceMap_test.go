@@ -56,22 +56,17 @@ rule SetTreeName "Set the top most tree name" {
 
 	dataContext := ast.NewDataContext()
 	err := dataContext.Add("Tree", Tree)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		kb := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
-		eng1 := &engine.GruleEngine{MaxCycle: 1}
-		err := eng1.Execute(dataContext, kb)
-		assert.NoError(t, err)
-		assert.Equal(t, "verified", Tree.Name)
-		assert.Equal(t, "SetSuccessful", Tree.ChildArray[0].StringArray[0])
-		assert.Equal(t, 1000, Tree.NumberArray[1])
-	}
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
+	eng1 := &engine.GruleEngine{MaxCycle: 1}
+	err = eng1.Execute(dataContext, kb)
+	assert.NoError(t, err)
+	assert.Equal(t, "verified", Tree.Name)
+	assert.Equal(t, "SetSuccessful", Tree.ChildArray[0].StringArray[0])
+	assert.Equal(t, 1000, Tree.NumberArray[1])
 }

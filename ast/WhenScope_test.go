@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
@@ -21,17 +22,9 @@ func TestNewWhenScope(t *testing.T) {
 
 	ws := NewWhenScope()
 	ws.SetGrlText("a == b")
-	if ws.GetGrlText() != "a == b" {
-		t.Fatalf("GRL text not equal")
-	}
-
-	if ws.AcceptExpression(expr1) != nil {
-		t.Fatalf("Error when first time accept expression")
-	}
-
-	if ws.AcceptExpression(expr1) == nil {
-		t.Fatalf("Not Error when second time time accept expression")
-	}
+	assert.Equal(t, "a == b", ws.GetGrlText())
+	assert.Nil(t, ws.AcceptExpression(expr1), "Error when first time accept expression")
+	assert.NotNil(t, ws.AcceptExpression(expr1), "Not Error when second time time accept expression")
 
 	wm := NewWorkingMemory("T", "1")
 	dt := NewDataContext()
@@ -44,13 +37,8 @@ func TestNewWhenScope(t *testing.T) {
 	t.Logf("%s Snapshot : %s", ws.GetAstID(), ws.GetSnapshot())
 
 	val, err := ws.Evaluate(dt, wm)
-	if err != nil {
-		t.Fatalf("error while evaluating constant expression. got %s", err)
-	}
-	if !val.Bool() {
-		t.Fatalf("Value is not as expected.")
-	}
-
+	assert.NoError(t, err)
+	assert.True(t, val.Bool())
 }
 
 func TestNewWhenScopeEvaluate(t *testing.T) {
@@ -69,23 +57,13 @@ func TestNewWhenScopeEvaluate(t *testing.T) {
 	wm := NewWorkingMemory("T", "1")
 	dt := NewDataContext()
 	val, err := expr1.Evaluate(dt, wm)
-	if err != nil {
-		t.Fatalf("error while evaluating constant expression")
-	}
-	if val.Int() != 123 {
-		t.Fatalf("Value is not as expected. %d", val.Int())
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 123, int(val.Int()))
 
 	ws := NewWhenScope()
-	if ws.AcceptExpression(expr1) != nil {
-		t.Fatalf("error when accepting expression first time")
-	}
+	assert.Nil(t, ws.AcceptExpression(expr1))
 	val, err = ws.Evaluate(dt, wm)
-	if err != nil {
-		t.Fatalf("error while evaluating constant expression")
-	}
-	if val.Int() != 123 {
-		t.Fatalf("Value is not as expected. %d", val.Int())
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 123, int(val.Int()))
 
 }

@@ -281,10 +281,7 @@ func prepareTestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *as
 	psr := parser.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
-	if parseError != nil {
-		t.Log(parseError)
-		t.FailNow()
-	}
+	assert.NoError(t, parseError)
 	listener.KnowledgeBase.WorkingMemory.IndexVariables()
 	return kb, kb.WorkingMemory
 }

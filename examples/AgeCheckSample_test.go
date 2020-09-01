@@ -57,7 +57,6 @@ type User struct {
 }
 
 func TestMyPoGo_GetStringLength(t *testing.T) {
-	// logrus.SetLevel(logrus.InfoLevel)
 	dataContext := ast.NewDataContext()
 	pogo := &MyPoGo{}
 	err := dataContext.Add("Pogo", pogo)
@@ -68,15 +67,12 @@ func TestMyPoGo_GetStringLength(t *testing.T) {
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule2)))
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
-		eng1 := &engine.GruleEngine{MaxCycle: 1}
-		err := eng1.Execute(dataContext, kb)
-		assert.NoError(t, err)
-		assert.Equal(t, "String len above 0", pogo.Result)
-	}
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	eng1 := &engine.GruleEngine{MaxCycle: 1}
+	err = eng1.Execute(dataContext, kb)
+	assert.NoError(t, err)
+	assert.Equal(t, "String len above 0", pogo.Result)
 }
 
 func TestMyPoGo_Compare(t *testing.T) {
@@ -100,20 +96,11 @@ func TestMyPoGo_Compare(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(lib)
 
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule3)))
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
-		eng1 := &engine.GruleEngine{MaxCycle: 100}
-		err := eng1.Execute(dataContext, kb)
-		if err != nil {
-			t.Fatalf("Got error %v", err)
-		} else {
-			t.Log(user)
-		}
-		if user.Name != "Success" {
-			t.Logf("User should have changed name by rule to Success, but %s", user.Name)
-			t.FailNow()
-		}
-	}
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	eng1 := &engine.GruleEngine{MaxCycle: 100}
+	err = eng1.Execute(dataContext, kb)
+	assert.NoError(t, err)
+	t.Log(user)
+	assert.Equal(t, "Success", user.Name, "User should have changed name by rule to Success, but %s", user.Name)
 }

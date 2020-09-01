@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
@@ -47,14 +48,7 @@ func TestWorkingMemory_Add(t *testing.T) {
 	wm.AddExpression(expr3)
 
 	wm.IndexVariables()
-
-	if !wm.Reset("a") {
-		t.Fatalf("Variable not reset while it exist")
-	}
-	if wm.Reset("some.variable.z") {
-		t.Fatalf("Variable reset while it not exist")
-	}
-	if !wm.ResetAll() {
-		t.Fatalf("All Variable not reset")
-	}
+	assert.True(t, wm.Reset("a"))
+	assert.False(t, wm.Reset("some.variable.z"))
+	assert.True(t, wm.ResetAll())
 }
