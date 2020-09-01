@@ -29,10 +29,7 @@ func GetFunctionParameterTypes(obj reflect.Value, methodName string) ([]reflect.
 	ret := make([]reflect.Type, 0)
 	objType := obj.Type()
 
-	var meth reflect.Method
-	var found bool
-
-	meth, found = objType.MethodByName(methodName)
+	meth, found := objType.MethodByName(methodName)
 	if found {
 		x := meth.Type
 		for i := 1; i < x.NumIn(); i++ {
@@ -166,8 +163,7 @@ func GetAttributeList(obj reflect.Value) ([]string, error) {
 		return nil, fmt.Errorf("GetAttributeList : param is not a struct")
 	}
 	strRet := make([]string, 0)
-	v := obj
-	e := v.Elem()
+	e := obj.Elem()
 	for i := 0; i < e.Type().NumField(); i++ {
 		strRet = append(strRet, e.Type().Field(i).Name)
 	}
@@ -439,8 +435,12 @@ func IsAttributeMap(obj reflect.Value, fieldName string) (bool, error) {
 	if !IsValidField(obj, fieldName) {
 		return false, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	objVal := obj
-	fieldVal := objVal.Elem().FieldByName(fieldName)
+	var fieldVal reflect.Value
+	if obj.Kind() == reflect.Ptr {
+		fieldVal = obj.Elem().FieldByName(fieldName)
+	} else if obj.Kind() == reflect.Struct {
+		fieldVal = obj.FieldByName(fieldName)
+	}
 	return fieldVal.Type().Kind() == reflect.Map, nil
 }
 
@@ -452,8 +452,12 @@ func IsAttributeNilOrZero(obj reflect.Value, fieldName string) (bool, error) {
 	if !IsValidField(obj, fieldName) {
 		return false, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	objVal := obj
-	fieldVal := objVal.Elem().FieldByName(fieldName)
+	var fieldVal reflect.Value
+	if obj.Kind() == reflect.Ptr {
+		fieldVal = obj.Elem().FieldByName(fieldName)
+	} else if obj.Kind() == reflect.Struct {
+		fieldVal = obj.FieldByName(fieldName)
+	}
 	if fieldVal.Kind() == reflect.Ptr {
 		return fieldVal.IsNil(), nil
 	}

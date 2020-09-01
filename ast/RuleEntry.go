@@ -150,10 +150,10 @@ func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) (er
 	if e.ThenScope == nil {
 		return fmt.Errorf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
 	}
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
-	//	}
-	//}()
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
+		}
+	}()
 	return e.ThenScope.Execute(dataContext, memory)
 }

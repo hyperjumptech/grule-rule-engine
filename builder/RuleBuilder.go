@@ -76,10 +76,9 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	if err != nil {
 		return err
 	}
-	sdata := string(data)
 
 	// Immediately parse the loaded resource
-	is := antlr.NewInputStream(sdata)
+	is := antlr.NewInputStream(string(data))
 	lexer := parser2.Newgrulev2Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 

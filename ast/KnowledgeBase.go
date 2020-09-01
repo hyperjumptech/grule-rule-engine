@@ -46,10 +46,9 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
 	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		cTable := pkg.NewCloneTable()
-		newClone := kb.Clone(cTable)
+		newClone := kb.Clone(pkg.NewCloneTable())
 		if kb.IsIdentical(newClone) {
-			logrus.Debugf("Successfuly create instance [%s:%s]", newClone.Name, newClone.Version)
+			logrus.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
 			return newClone
 		}
 		logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
