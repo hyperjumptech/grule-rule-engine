@@ -331,6 +331,8 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			strfunc = StrToUpper
 		case "Trim":
 			strfunc = StrTrim
+		case "Len":
+			strfunc = StrLen
 		}
 		if strfunc != nil {
 			val, err := strfunc(node.thisValue.String(), args)

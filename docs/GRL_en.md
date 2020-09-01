@@ -90,6 +90,90 @@ You can always put a comment inside your GRL script. Such as :
 */
 ```
 
+### Array/Slice and Map
+
+Since version 1.6.0, Grule support accessing fact in array/slice or map.
+
+Suppose you have a fact structure like the following :
+
+```go
+type MyFact struct {
+    AnIntArray   []int
+    AStringArray []string
+    SubFacts     []*MyFact
+    SubMaps      map[string]*MyFact
+}
+```
+
+You can always evaluate those slice and map from your rule such as
+
+```go
+    when 
+       Fact.AnIntArray[1] == 12 &&
+       Fact.AStringArray[12] != "SomeText" &&
+       Fact.SubFacts[1].SubFacts[2].AnIntArray[12] > 100 &&
+       Fact.SubMaps["Key"].AnIntArray[0] == 1000
+    then
+       ...
+```
+
+Rule execution will fail if your rule is trying to access array element
+that beyond the fact's capacity.
+
+#### Assigning values into Array/Slice and Map
+
+You can always set an array value if the index you specify is valid.
+
+```go
+   then
+      Fact.AnIntArray[10] = 12;
+      Fact.SubMap["AKey"].AStringArray[1] = "New Value";
+      Fact.AnotherMap[Fact.SomeFunction()] = "Another Value";
+```
+
+There are a couple functions you can use to work with array/slice and map in the [Function page](Function_en.md)
+
+### Function call
+
+From your Rule, you can always call any visible functions your fact have. As long as they're visible and have no or max 1 return value.
+For example:
+
+```go
+    when
+        Fact.Function() == "text" ||
+        Fact.Function("arg") == "text" ||
+        Fact.Function(Fact.Field, true)
+    then
+        Fact.CallFunction();
+        Fact.Value = Fact.CallFunction();
+        ...
+```
+
+In version 1.6.0, Grule can chain function return value.
+For example;
+
+```go
+    when
+        Fact.Function().StringField == "" ||
+        Fact.Function("contant").ObjField.OtherFunction() &&
+        ...
+    then
+        Fact.CallFunction().CallAnotherFunction();
+        ...
+```
+
+Also introduced in 1.6.0, constants value may have built in functions to manipulated them.
+For example;
+
+```go
+    when
+        "AString   ".Trim().ToUpper().HasSuffix("ING")
+    then
+        Fact.Result = Fact.ReturnStringFunc().Trim().ToLower();
+```
+
+List of these constant functions can be found in the [Function Page](Function_en.md).
+
 #### Examples
 
 ```go
