@@ -6,7 +6,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -25,7 +25,6 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 
 func TestTutorial(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
 	myFact := &MyFact{
 		IntAttribute:     123,
 		StringAttribute:  "Some string value",
@@ -35,9 +34,7 @@ func TestTutorial(t *testing.T) {
 	}
 	dataCtx := ast.NewDataContext()
 	err := dataCtx.Add("MF", myFact)
-	if err != nil {
-		panic(err)
-	}
+	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
 	knowledgeLibrary := ast.NewKnowledgeLibrary()
@@ -54,23 +51,13 @@ rule CheckValues "Check the default values" salience 10 {
 `
 	byteArr := pkg.NewBytesResource([]byte(drls))
 	err = ruleBuilder.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
-	if err != nil {
-		panic(err)
-	}
+	assert.NoError(t, err)
 
 	knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
 
 	engine := engine.NewGruleEngine()
 	err = engine.Execute(dataCtx, knowledgeBase)
-	if err != nil {
-		panic(err)
-	}
-
-	if myFact.WhatToSay != "Let say \"Hello Grule\"" {
-		t.Logf("Expected - Let say \"Hello Grule\" - but %s", myFact.WhatToSay)
-		t.Fail()
-	} else {
-		println(myFact.WhatToSay)
-	}
-
+	assert.NoError(t, err)
+	assert.Equal(t, "Let say \"Hello Grule\"", myFact.WhatToSay)
+	println(myFact.WhatToSay)
 }

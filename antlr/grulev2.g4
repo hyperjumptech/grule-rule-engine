@@ -3,7 +3,7 @@ grammar grulev2;
 
 // PARSER HERE
 
-root
+grl
     : ruleEntry* EOF
     ;
 
@@ -37,8 +37,8 @@ thenExpressionList
 
 thenExpression
     : assignment SEMICOLON
-    | methodCall SEMICOLON
     | functionCall SEMICOLON
+    | variable SEMICOLON
     ;
 
 assignment
@@ -76,14 +76,12 @@ orLogicOperator
     ;
 
 expressionAtom
-    : constant
-    | variable
+    : variable
     | functionCall
-    | methodCall
     ;
 
-methodCall
-    : DOTTEDNAME '(' argumentList? ')'
+arrayMapSelector
+    : LS_BRACKET expression RS_BRACKET
     ;
 
 functionCall
@@ -95,7 +93,11 @@ argumentList
     ;
 
 variable
-    : SIMPLENAME | DOTTEDNAME
+    : SIMPLENAME
+    | constant
+    | variable DOT functionCall
+    | variable DOT SIMPLENAME
+    | variable arrayMapSelector
     ;
 
 
@@ -165,7 +167,6 @@ NOT                         : N O T ;
 SALIENCE                    : S A L I E N C E ;
 
 SIMPLENAME                  : [a-zA-Z] [a-zA-Z0-9]* ;
-DOTTEDNAME                  : SIMPLENAME ( DOT SIMPLENAME )+ ;
 
 PLUS                        : '+' ;
 MINUS                       : '-' ;
@@ -189,6 +190,8 @@ LR_BRACE                    : '{';
 RR_BRACE                    : '}';
 LR_BRACKET                  : '(';
 RR_BRACKET                  : ')';
+LS_BRACKET                  : '[';
+RS_BRACKET                  : ']';
 DOT                         : '.' ;
 DQUOTA_STRING               : '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 SQUOTA_STRING               : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';

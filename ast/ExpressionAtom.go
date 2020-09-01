@@ -18,33 +18,36 @@ func NewExpressionAtom() *ExpressionAtom {
 
 // ExpressionAtom AST node graph
 type ExpressionAtom struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
-	Constant     *Constant
 	Variable     *Variable
 	FunctionCall *FunctionCall
-	MethodCall   *MethodCall
 	Value        reflect.Value
+
+	Evaluated bool
+}
+
+// ExpressionAtomReceiver contains function to be implemented by other AST graph to receive an ExpressionAtom AST graph
+type ExpressionAtomReceiver interface {
+	AcceptExpressionAtom(exp *ExpressionAtom) error
 }
 
 // Clone will clone this ExpressionAtom. The new clone will have an identical structure
-func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
+func (e *ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 	clone := &ExpressionAtom{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-	}
-
-	if e.Constant != nil {
-		clone.Constant = e.Constant.Clone(cloneTable)
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.Variable != nil {
-		clone.Variable = e.Variable.Clone(cloneTable)
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
 	}
 
 	if e.FunctionCall != nil {
@@ -57,35 +60,7 @@ func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 		}
 	}
 
-	if e.MethodCall != nil {
-		if cloneTable.IsCloned(e.MethodCall.AstID) {
-			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
-		} else {
-			cloned := e.MethodCall.Clone(cloneTable)
-			clone.MethodCall = cloned
-			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
-		}
-	}
-
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ExpressionAtom) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Constant != nil {
-		e.Constant.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.Variable != nil {
-		e.Variable.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.FunctionCall != nil {
-		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.MethodCall != nil {
-		e.MethodCall.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // AcceptVariable will accept an Variable AST graph into this ast graph
@@ -94,24 +69,6 @@ func (e *ExpressionAtom) AcceptVariable(vari *Variable) error {
 		return errors.New("variable for ExpressionAtom already assigned")
 	}
 	e.Variable = vari
-	return nil
-}
-
-// AcceptConstant will accept an Constant AST graph into this ast graph
-func (e *ExpressionAtom) AcceptConstant(con *Constant) error {
-	if e.Constant != nil {
-		return errors.New("constant for ExpressionAtom already assigned")
-	}
-	e.Constant = con
-	return nil
-}
-
-// AcceptMethodCall will accept an MethodCall AST graph into this ast graph
-func (e *ExpressionAtom) AcceptMethodCall(fun *MethodCall) error {
-	if e.MethodCall != nil {
-		return errors.New("constant for ExpressionAtom already assigned")
-	}
-	e.MethodCall = fun
 	return nil
 }
 
@@ -137,15 +94,14 @@ func (e *ExpressionAtom) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ExpressionAtom) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(EXPRESSIONATOM)
+	buff.WriteString("(")
 	if e.Variable != nil {
 		buff.WriteString(e.Variable.GetSnapshot())
-	} else if e.Constant != nil {
-		buff.WriteString(e.Constant.GetSnapshot())
 	} else if e.FunctionCall != nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
-	} else if e.MethodCall != nil {
-		buff.WriteString(e.MethodCall.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -156,20 +112,32 @@ func (e *ExpressionAtom) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *ExpressionAtom) Evaluate() (reflect.Value, error) {
-	var val reflect.Value
-	var err error
+func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+	if e.Evaluated == true {
+		return e.Value, nil
+	}
 	if e.Variable != nil {
-		val, err = e.Variable.Evaluate()
-	} else if e.FunctionCall != nil {
-		val, err = e.FunctionCall.Evaluate()
-	} else if e.MethodCall != nil {
-		val, err = e.MethodCall.Evaluate()
-	} else if e.Constant != nil {
-		val, err = e.Constant.Evaluate()
-	}
-	if err == nil {
+		val, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
 		e.Value = val
+		e.Evaluated = true
+		return val, err
 	}
-	return val, err
+	if e.FunctionCall != nil {
+		valueNode := dataContext.Get("DEFUNC")
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		ret, err := valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = ret
+		e.Evaluated = true
+		return ret, err
+	}
+	panic("should not be reached")
 }

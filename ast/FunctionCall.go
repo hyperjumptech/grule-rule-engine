@@ -3,11 +3,10 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"reflect"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	log "github.com/sirupsen/logrus"
+	"reflect"
 )
 
 // NewFunctionCall creates new instance of FunctionCall
@@ -20,10 +19,8 @@ func NewFunctionCall() *FunctionCall {
 
 // FunctionCall AST graph node
 type FunctionCall struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	FunctionName string
 	ArgumentList *ArgumentList
@@ -31,13 +28,11 @@ type FunctionCall struct {
 }
 
 // Clone will clone this FunctionCall. The new clone will have an identical structure
-func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
+func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 	clone := &FunctionCall{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		FunctionName:  e.FunctionName,
+		AstID:        uuid.New().String(),
+		GrlText:      e.GrlText,
+		FunctionName: e.FunctionName,
 	}
 
 	if e.ArgumentList != nil {
@@ -50,15 +45,6 @@ func (e FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 		}
 	}
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *FunctionCall) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.ArgumentList != nil {
-		e.ArgumentList.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // FunctionCallReceiver should be implemented bu AST graph node to receive a FunctionCall AST graph mode
@@ -79,14 +65,15 @@ func (e *FunctionCall) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *FunctionCall) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(FUNCTIONCALL)
+	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
 	if e.ArgumentList == nil {
 		log.Errorf("Argument is nil")
 	} else {
-		if e.ArgumentList.Arguments == nil {
-			log.Errorf("Argument.Argumeent array is nil")
-		}
+		buff.WriteString(",")
+		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}
-	buff.WriteString(fmt.Sprintf("func->%s%s", e.FunctionName, e.ArgumentList.GetSnapshot()))
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -97,21 +84,20 @@ func (e *FunctionCall) SetGrlText(grlText string) {
 }
 
 // AcceptArgumentList will accept an ArgumentList AST graph into this ast graph
-func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) {
+func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 	log.Tracef("Method received argument list")
 	e.ArgumentList = argList
+	return nil
 }
 
-// Evaluate will evaluate this AST graph for when scope evaluation
-func (e *FunctionCall) Evaluate() (reflect.Value, error) {
-	objName := fmt.Sprintf("DEFUNC.%s", e.FunctionName)
-	args, err := e.ArgumentList.Evaluate()
+// EvaluateArgumentList will evaluate all arguments and ensure it can be passed into function.
+func (e *FunctionCall) EvaluateArgumentList(dataContext IDataContext, memory *WorkingMemory) ([]reflect.Value, error) {
+	args, err := e.ArgumentList.Evaluate(dataContext, memory)
 	if err != nil {
-		return reflect.ValueOf(nil), err
+		return nil, err
 	}
-	retVal, err := e.DataContext.ExecMethod(objName, args)
-	if err == nil {
-		e.Value = retVal
+	if dataContext == nil {
+		AstLog.Errorf("Datacontext for function call %s (%s) is nil", e.FunctionName, e.AstID)
 	}
-	return retVal, err
+	return args, nil
 }

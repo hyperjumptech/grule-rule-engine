@@ -3,7 +3,6 @@ package ast
 import (
 	"bytes"
 	"errors"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -17,23 +16,24 @@ func NewThenExpression() *ThenExpression {
 
 // ThenExpression AST graph node
 type ThenExpression struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	Assignment   *Assignment
 	FunctionCall *FunctionCall
-	MethodCall   *MethodCall
+	Variable     *Variable
+}
+
+// ThenExpressionReceiver must be implemented by any AST object that will store a Then expression
+type ThenExpressionReceiver interface {
+	AcceptThenExpression(expr *ThenExpression) error
 }
 
 // Clone will clone this ThenExpression. The new clone will have an identical structure
-func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
+func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	clone := &ThenExpression{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.Assignment != nil {
@@ -56,40 +56,22 @@ func (e ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 		}
 	}
 
-	if e.MethodCall != nil {
-		if cloneTable.IsCloned(e.MethodCall.AstID) {
-			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
+	if e.Variable != nil {
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
 		} else {
-			cloned := e.MethodCall.Clone(cloneTable)
-			clone.MethodCall = cloned
-			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
 		}
 	}
 
 	return clone
 }
 
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenExpression) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Assignment != nil {
-		e.Assignment.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.FunctionCall != nil {
-		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.MethodCall != nil {
-		e.MethodCall.InitializeContext(dataCtx, WorkingMemory)
-	}
-}
-
-// AcceptMethodCall will accept an MethodCall AST graph into this ast graph
-func (e *ThenExpression) AcceptMethodCall(fun *MethodCall) error {
-	if e.MethodCall != nil {
-		return errors.New("constant for ThenExpression already assigned")
-	}
-	e.MethodCall = fun
+// AcceptAssignment will accept Assignment AST graph into this Then ast graph
+func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
+	e.Assignment = assignment
 	return nil
 }
 
@@ -112,16 +94,23 @@ func (e *ThenExpression) GetGrlText() string {
 	return e.GrlText
 }
 
+// AcceptVariable will accept variable AST object into this then expression
+func (e *ThenExpression) AcceptVariable(vari *Variable) error {
+	e.Variable = vari
+	return nil
+}
+
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(THENEXPRESSION)
+	buff.WriteString("(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
-	} else if e.MethodCall != nil {
-		buff.WriteString(e.MethodCall.GetSnapshot())
 	} else if e.FunctionCall != nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -132,16 +121,35 @@ func (e *ThenExpression) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *ThenExpression) Execute() error {
+func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory) error {
 	if e.Assignment != nil {
-		return e.Assignment.Execute()
-	}
-	if e.MethodCall != nil {
-		_, err := e.MethodCall.Evaluate()
+		err := e.Assignment.Execute(dataContext, memory)
+		if err != nil {
+			AstLog.Errorf("error while executing assignment %s. got %s", e.Assignment.GrlText, err.Error())
+		} else {
+			AstLog.Debugf("success executing assignment %s", e.Assignment.GrlText)
+		}
 		return err
 	}
 	if e.FunctionCall != nil {
-		_, err := e.FunctionCall.Evaluate()
+		valueNode := dataContext.Get("DEFUNC")
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return err
+		}
+		_, err = valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	if e.Variable != nil {
+		_, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			AstLog.Errorf("error while executing %s. got %s", e.Variable.GrlText, err.Error())
+		} else {
+			AstLog.Debugf("success executing %s", e.Variable.GrlText)
+		}
 		return err
 	}
 	return nil

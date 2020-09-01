@@ -38,14 +38,11 @@ func NewJSONResourceFromResource(res Resource) Resource {
 
 // Load will load the underlying Resource and parse the JSON rules into standard GRule syntax.
 func (jr *JSONResource) Load() ([]byte, error) {
-	var err error
-	var data []byte
-	data, err = jr.subRes.Load()
+	data, err := jr.subRes.Load()
 	if err != nil {
 		return nil, err
 	}
-	var rs string
-	rs, err = ParseJSONRuleset(data)
+	rs, err := ParseJSONRuleset(data)
 	if err != nil {
 		return nil, err
 	}

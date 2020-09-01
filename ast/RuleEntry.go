@@ -13,37 +13,38 @@ import (
 func NewRuleEntry() *RuleEntry {
 	return &RuleEntry{
 		AstID:    uuid.New().String(),
-		Salience: 0,
+		Salience: NewSalience(0),
 	}
 }
 
 // RuleEntry AST graph node
 type RuleEntry struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
-	Name        string
-	Description string
-	Salience    int
-	WhenScope   *WhenScope
-	ThenScope   *ThenScope
+	RuleName        *RuleName
+	RuleDescription *RuleDescription
+	Salience        *Salience
+	WhenScope       *WhenScope
+	ThenScope       *ThenScope
 
 	Retracted bool
 }
 
+// RuleEntryReceiver should be implemented by any rule AST object that receive a RuleEntry
+type RuleEntryReceiver interface {
+	ReceiveRuleEntry(entry *RuleEntry) error
+}
+
 // Clone will clone this RuleEntry. The new clone will have an identical structure
-func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
+func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	clone := &RuleEntry{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Name:          e.Name,
-		Description:   e.Description,
-		Salience:      e.Salience,
-		Retracted:     false,
+		AstID:           uuid.New().String(),
+		GrlText:         e.GrlText,
+		RuleName:        e.RuleName,
+		RuleDescription: e.RuleDescription,
+		Salience:        e.Salience,
+		Retracted:       false,
 	}
 	if e.WhenScope != nil {
 		if cloneTable.IsCloned(e.WhenScope.AstID) {
@@ -64,19 +65,42 @@ func (e RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 			cloneTable.MarkCloned(e.ThenScope.AstID, clonedThenScope.AstID, e.ThenScope, clonedThenScope)
 		}
 	}
+
+	if e.GetSnapshot() != clone.GetSnapshot() {
+		panic(fmt.Sprintf("ThenScope clone failed : original [%s] clone [%s]", e.GetSnapshot(), clone.GetSnapshot()))
+	}
+
 	return clone
 }
 
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *RuleEntry) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.WhenScope != nil {
-		e.WhenScope.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.ThenScope != nil {
-		e.ThenScope.InitializeContext(dataCtx, WorkingMemory)
-	}
+// AcceptRuleName will accept rule name ast object into this rule entry
+func (e *RuleEntry) AcceptRuleName(ruleName *RuleName) error {
+	e.RuleName = ruleName
+	return nil
+}
+
+// AcceptRuleDescription will accept rule description ast object into this rule entry
+func (e *RuleEntry) AcceptRuleDescription(ruleDescription *RuleDescription) error {
+	e.RuleDescription = ruleDescription
+	return nil
+}
+
+// AcceptSalience will accept rule salience ast object into this rule entry
+func (e *RuleEntry) AcceptSalience(salience *Salience) error {
+	e.Salience = salience
+	return nil
+}
+
+// AcceptWhenScope will accept when scope ast object into this rule entry
+func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
+	e.WhenScope = when
+	return nil
+}
+
+// AcceptThenScope will accept then scope ast object into this rule entry
+func (e *RuleEntry) AcceptThenScope(then *ThenScope) error {
+	e.ThenScope = then
+	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
@@ -92,7 +116,10 @@ func (e *RuleEntry) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *RuleEntry) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(fmt.Sprintf("rule %s \"%s\" salience %d {%s%s}", e.Name, e.Description, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
+	buff.WriteString(RULEENTRY)
+	buff.WriteString("(")
+	buff.WriteString(fmt.Sprintf("N:%s DEC:\"%s\" SAL:%d W:%s T:%s}", e.RuleName.SimpleName, e.RuleDescription.Text, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -103,13 +130,13 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *RuleEntry) Evaluate() (bool, error) {
+func (e *RuleEntry) Evaluate(dataContext IDataContext, memory *WorkingMemory) (bool, error) {
 	if e.Retracted {
 		return false, nil
 	}
-	val, err := e.WhenScope.Evaluate()
+	val, err := e.WhenScope.Evaluate(dataContext, memory)
 	if err != nil {
-		AstLog.Errorf("Error while evaluating rule %s, got %v", e.Name, err)
+		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName.SimpleName, err)
 		return false, err
 	}
 	if val.Kind() != reflect.Bool {
@@ -119,6 +146,14 @@ func (e *RuleEntry) Evaluate() (bool, error) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *RuleEntry) Execute() error {
-	return e.ThenScope.Execute()
+func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) (err error) {
+	if e.ThenScope == nil {
+		return fmt.Errorf("RuleEntry %s have no then scope", e.RuleName.SimpleName)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
+		}
+	}()
+	return e.ThenScope.Execute(dataContext, memory)
 }
