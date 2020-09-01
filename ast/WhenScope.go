@@ -18,21 +18,22 @@ func NewWhenScope() *WhenScope {
 
 // WhenScope AST graph node
 type WhenScope struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	Expression *Expression
 }
 
+// WhenScopeReceiver must be implemented by AST object that stores WhenScope
+type WhenScopeReceiver interface {
+	AcceptWhenScope(whenScope *WhenScope) error
+}
+
 // Clone will clone this Clone. The new clone will have an identical structure
-func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
+func (e *WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 	clone := &WhenScope{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.Expression != nil {
@@ -46,15 +47,6 @@ func (e WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *WhenScope) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Expression != nil {
-		e.Expression.InitializeContext(dataCtx, WorkingMemory)
-	}
 }
 
 // AcceptExpression will accept Expression AST graph node into this node
@@ -79,8 +71,10 @@ func (e *WhenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *WhenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" when ")
+	buff.WriteString(WHENSCOPE)
+	buff.WriteString("(")
 	buff.WriteString(e.Expression.GetSnapshot())
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -91,6 +85,6 @@ func (e *WhenScope) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *WhenScope) Evaluate() (reflect.Value, error) {
-	return e.Expression.Evaluate()
+func (e *WhenScope) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+	return e.Expression.Evaluate(dataContext, memory)
 }

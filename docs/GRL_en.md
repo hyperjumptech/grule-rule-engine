@@ -1,6 +1,6 @@
 # Grule Rule Language (GRL)
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [Grule Events](GruleEvent_en.md) | [FAQ](FAQ_en.md)
+[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md)
 
 The **GRL** is a DSL (Domain Specific Language) designed for Grule. It's a simplified language
 to be used for defining rule evaluation criterias and actions to be executed if the criteria(s) are met.

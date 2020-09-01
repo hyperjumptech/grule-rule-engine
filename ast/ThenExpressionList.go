@@ -2,7 +2,6 @@ package ast
 
 import (
 	"bytes"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -17,21 +16,31 @@ func NewThenExpressionList() *ThenExpressionList {
 
 // ThenExpressionList AST graph node
 type ThenExpressionList struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	ThenExpressions []*ThenExpression
 }
 
+// ThenExpressionListReceiver must be implemented by any AST object that hold a ThenExpression list AST object
+type ThenExpressionListReceiver interface {
+	AcceptThenExpressionList(list *ThenExpressionList) error
+}
+
+// AcceptThenExpression will accept ThenExpression AST graph into this ExpressionList
+func (e *ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
+	if e.ThenExpressions == nil {
+		e.ThenExpressions = make([]*ThenExpression, 0)
+	}
+	e.ThenExpressions = append(e.ThenExpressions, expr)
+	return nil
+}
+
 // Clone will clone this ThenExpressionList. The new clone will have an identical structure
-func (e ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionList {
+func (e *ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionList {
 	clone := &ThenExpressionList{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.ThenExpressions != nil {
@@ -50,17 +59,6 @@ func (e ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionLis
 	return clone
 }
 
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenExpressionList) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.ThenExpressions != nil {
-		for _, te := range e.ThenExpressions {
-			te.InitializeContext(dataCtx, WorkingMemory)
-		}
-	}
-}
-
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ThenExpressionList) GetAstID() string {
 	return e.AstID
@@ -74,10 +72,15 @@ func (e *ThenExpressionList) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpressionList) GetSnapshot() string {
 	var buff bytes.Buffer
-	for _, es := range e.ThenExpressions {
+	buff.WriteString(THENEXPRESSIONLIST)
+	buff.WriteString("(")
+	for idx, es := range e.ThenExpressions {
+		if idx > 0 {
+			buff.WriteString(",")
+		}
 		buff.WriteString(es.GetSnapshot())
-		buff.WriteString("; ")
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -88,9 +91,9 @@ func (e *ThenExpressionList) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *ThenExpressionList) Execute() error {
+func (e *ThenExpressionList) Execute(dataContext IDataContext, memory *WorkingMemory) error {
 	for _, es := range e.ThenExpressions {
-		err := es.Execute()
+		err := es.Execute(dataContext, memory)
 		if err != nil {
 			return err
 		}

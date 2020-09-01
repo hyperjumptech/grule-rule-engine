@@ -27,22 +27,14 @@ type Constant struct {
 }
 
 // Clone will clone this Constant. The new clone will have an identical structure
-func (e Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
+func (e *Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
 	clone := &Constant{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Value:         e.Value,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
+		Value:   e.Value,
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Constant) InitializeContext(dataCtx IDataContext, memory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = memory
 }
 
 // ConstantReceiver should be implemented by AST Graph node to receive a Constant Graph Node.
@@ -63,7 +55,8 @@ func (e *Constant) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Constant) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString("const:")
+	buff.WriteString(CONSTANT)
+	buff.WriteString("(")
 	buff.WriteString(e.Value.Kind().String())
 	buff.WriteString("->")
 	switch e.Value.Kind() {
@@ -78,6 +71,7 @@ func (e *Constant) GetSnapshot() string {
 	case reflect.Bool:
 		buff.WriteString(fmt.Sprintf("%v", e.Value.Bool()))
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -88,6 +82,6 @@ func (e *Constant) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *Constant) Evaluate() (reflect.Value, error) {
+func (e *Constant) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	return e.Value, nil
 }
