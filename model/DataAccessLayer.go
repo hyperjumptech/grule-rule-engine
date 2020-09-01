@@ -46,7 +46,7 @@ type ValueNode interface {
 	IsString() bool
 }
 
-// StrCompare is like strings.compare() function, to be called by the ValueNode function call if the underlying data is string.
+// StrLen is return the string length value
 func StrLen(str string, arg []reflect.Value) (reflect.Value, error) {
 	if arg != nil && len(arg) != 0 {
 		return reflect.ValueOf(nil), fmt.Errorf("function Len requires no argument")
