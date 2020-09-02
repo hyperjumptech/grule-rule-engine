@@ -11,7 +11,7 @@ lint: build
 
 test-short: lint
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
-	goornogo -i coverage.out -c 45.4
+	goornogo -i coverage.out -c 45.3
 
 test: lint
 	go test ./... -covermode=count -coverprofile=coverage.out

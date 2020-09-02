@@ -29,7 +29,7 @@ steps:
       go get -u golang.org/x/lint/golint
       go install github.com/newm4n/goornogo
       go test ./... -v -covermode=count -coverprofile=coverage.out -short
-      goornogo -i coverage.out -c 45.4
+      goornogo -i coverage.out -c 45.3
       golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
     workingDirectory: '$(modulePath)'
     displayName: 'Run tests'
