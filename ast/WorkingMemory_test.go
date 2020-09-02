@@ -8,8 +8,6 @@ import (
 
 func TestWorkingMemory_Add(t *testing.T) {
 
-	// logrus.SetLevel(logrus.TraceLevel)
-
 	a := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
 	b := &Variable{GrlText: "b", Constant: &Constant{Value: reflect.ValueOf("b")}}
 	aa := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
