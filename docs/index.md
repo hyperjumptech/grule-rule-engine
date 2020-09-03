@@ -16,7 +16,7 @@ import "github.com/hyperjumptech/grule-rule-engine"
 
 Like **Drools**, **Grule** have its own *DSL* comparable as follows.
 
-Drools's GRL be like :
+Drools's DRL be like :
 
 ```go
 rule "SpeedUp"
