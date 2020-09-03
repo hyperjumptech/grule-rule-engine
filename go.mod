@@ -17,7 +17,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/sys v0.0.0-20200814200057-3d37ad5750ed // indirect
-	golang.org/x/tools v0.0.0-20200903005429-2364a5e8fdcf // indirect
+	golang.org/x/tools v0.0.0-20200903153655-76a6aac657c7 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2
 	gopkg.in/src-d/go-git.v4 v4.13.1

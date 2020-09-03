@@ -16,7 +16,7 @@ type ValueData struct {
 }
 
 const (
-	SalienceDRL = `
+	SalienceGRL = `
 
 // Highest salience, if IntValue is bellow 33, all rule may match but this one take precedence
 rule LowRule "If its on the low range, rating is low" salience 30 {
@@ -103,7 +103,7 @@ func TestSalience(t *testing.T) {
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	byteArr := pkg.NewBytesResource([]byte(SalienceDRL))
+	byteArr := pkg.NewBytesResource([]byte(SalienceGRL))
 	err := rb.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
 	assert.NoError(t, err)
 
