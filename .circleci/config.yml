@@ -24,4 +24,5 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go get -u golang.org/x/lint/golint
+      - run: go install github.com/newm4n/goornogo
       - run: make test-short

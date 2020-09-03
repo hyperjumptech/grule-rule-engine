@@ -759,21 +759,6 @@ rule DoSomething  "Do something when array length is sufficient" {
 }
 ```
 
-### array.Clear() 
-
-`Clear` will empty receiver array
-
-#### Example
-
-```Shell
-rule DoSomething  "Do something when array length is sufficient" {
-    when
-        Fact.ChildrenArray.Len() > 2
-    then
-        Fact.ChildrenArray.Clear();
-}
-```
-
 ### map.Len() int
    
 `Len` will return map's length.
@@ -790,21 +775,6 @@ rule DoSomething  "Do something when map length is sufficient" {
        Fact.ChildrenMap.Len() > 2
    then
        Fact.DoSomething();
-}
-```
-
-### map.Clear() 
-
-`Clear` will empty receiver map
-
-#### Example
-
-```Shell
-rule DoSomething  "Do something when array length is sufficient" {
-    when
-        Fact.ChildrenMap.Len() > 2
-    then
-        Fact.ChildrenMap.Clear();
 }
 ```
 
