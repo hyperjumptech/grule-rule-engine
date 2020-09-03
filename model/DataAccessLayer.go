@@ -46,6 +46,15 @@ type ValueNode interface {
 	IsString() bool
 }
 
+// StrLen is return the string length value
+func StrLen(str string, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(nil), fmt.Errorf("function Len requires no argument")
+	}
+	i := len(str)
+	return reflect.ValueOf(i), nil
+}
+
 // StrCompare is like strings.compare() function, to be called by the ValueNode function call if the underlying data is string.
 func StrCompare(str string, arg []reflect.Value) (reflect.Value, error) {
 	if arg == nil || len(arg) != 1 || arg[0].Kind() != reflect.String {
@@ -189,30 +198,4 @@ func ArrMapLen(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
 		return reflect.ValueOf(nil), fmt.Errorf("function Len requires no argument")
 	}
 	return reflect.ValueOf(arr.Len()), nil
-}
-
-// ArrClear will clear the underlying array
-func ArrClear(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
-	if arg != nil && len(arg) != 0 {
-		return reflect.ValueOf(nil), fmt.Errorf("function array.Clear requires no argument")
-	}
-	newArray := reflect.MakeSlice(arr.Type(), 0, 0)
-	if arr.CanSet() {
-		arr.Set(newArray)
-		return newArray, nil
-	}
-	return reflect.Value{}, fmt.Errorf("can not assign new empty map")
-}
-
-// MapClear will clear up the underlying map.
-func MapClear(amap reflect.Value, arg []reflect.Value) (reflect.Value, error) {
-	if arg != nil && len(arg) != 0 {
-		return reflect.ValueOf(nil), fmt.Errorf("function map.Clear requires no argument")
-	}
-	newMap := reflect.MakeMap(amap.Type())
-	if amap.CanSet() {
-		amap.Set(newMap)
-		return newMap, nil
-	}
-	return reflect.Value{}, fmt.Errorf("can not assign new empty map")
 }

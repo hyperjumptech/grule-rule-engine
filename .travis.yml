@@ -5,4 +5,5 @@ go:
 
 script:
   - go get -u golang.org/x/lint/golint
+  - go install github.com/newm4n/goornogo
   - make test-short

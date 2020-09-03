@@ -331,6 +331,8 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			strfunc = StrToUpper
 		case "Trim":
 			strfunc = StrTrim
+		case "Len":
+			strfunc = StrLen
 		}
 		if strfunc != nil {
 			val, err := strfunc(node.thisValue.String(), args)
@@ -348,10 +350,15 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			arrFunc = ArrMapLen
 		case "Append":
 			node.AppendValue(args)
-		case "Clear":
-			arrFunc = ArrClear
 		}
 		if arrFunc != nil {
+			if funcName == "Clear" {
+				val, err := arrFunc(node.thisValue, args)
+				if err != nil {
+					return reflect.Value{}, err
+				}
+				return val, nil
+			}
 			val, err := arrFunc(node.thisValue, args)
 			if err != nil {
 				return reflect.Value{}, err
@@ -365,8 +372,6 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		switch funcName {
 		case "Len":
 			mapFunc = ArrMapLen
-		case "Clear":
-			mapFunc = MapClear
 		}
 		if mapFunc != nil {
 			val, err := mapFunc(node.thisValue, args)
