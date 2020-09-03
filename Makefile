@@ -7,6 +7,7 @@ build:
 	go build ./...
 
 lint: build
+	go get -u golang.org/x/lint/golint
 	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
 
 test-short: lint
