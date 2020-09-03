@@ -350,6 +350,7 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			arrFunc = ArrMapLen
 		case "Append":
 			node.AppendValue(args)
+			return reflect.Value{}, nil
 		}
 		if arrFunc != nil {
 			if funcName == "Clear" {
