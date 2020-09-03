@@ -93,7 +93,7 @@ And `KnowledgeBase` is a collection of many rules sourced from rule definitions
 loaded from multiple sources.
 We use `RuleBuilder` to build `KnowledgeBase` and add it into `KnowledgeLibrary`
 
-The DRL, can be in the form of simple string, stored in a file or somewhere from the internet can each be
+The GRL, can be in the form of simple string, stored in a file or somewhere from the internet can each be
 used to build those rules.
 
 Now lets create the `KnowledgeLibrary` and `RuleBuilder` to build the rule into prepared `KnowledgeLibrary`
