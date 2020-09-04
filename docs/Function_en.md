@@ -873,4 +873,4 @@ When you make your own function to be called from the rule engine, you need to k
 
 1. The function must be visible. The convention for public functions should start with a capital letter. Private functions cannot be executed.
 2. The function must only return 1 type. Returning multiple variables from a function is not supported, the rule execution will fail if there are multiple return variables.
-3. The way number literals are treated in Grule's DRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.
+3. The way number literals are treated in Grule's GRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.

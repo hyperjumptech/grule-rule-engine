@@ -7,7 +7,7 @@ From Wikipedia : The Rete algorithm (/ˈriːtiː/ REE-tee, /ˈreɪtiː/ RAY-tee,
 Some form of the RETE algorithm was implemented in `grule-rule-engine` starting from version `1.1.0`.
 It replaces the __Naive__ approach when evaluating rules to add to `ConflictSet`.
 
-`ExpressionAtom` in the DRL are compiled and will not be duplicated within the working memory of the engine.
+`ExpressionAtom` in the GRL are compiled and will not be duplicated within the working memory of the engine.
 This increased the engine performance significantly if you have many rules defined with lots of duplicated expressions
 or lots of heavy function/method calls.
 
@@ -51,7 +51,7 @@ dctx := context.NewDataContext()
 err := dctx.Add("Fact", f)
 ```
 
-And we have DRL like ...
+And we have GRL like ...
 
 ```go
 rule ... {
@@ -83,7 +83,7 @@ rule ... {
 }
 ```
 
-Executing the DRL above might "kill" the engine because when it tries to choose what rules to execute,
+Executing the GRL above might "kill" the engine because when it tries to choose what rules to execute,
 the engine will call the `Fact.VeryHeavyAndLongFunction` function in every rule's `when` scope.
 
 Thus, instead of executing the `Fact.VeryHeavyAndLongFunction` while evaluating each
