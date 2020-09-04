@@ -19,7 +19,7 @@ func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {
 	}
 }
 
-// RuleBuilder builds rule from DRL script into contained KnowledgeBase
+// RuleBuilder builds rule from GRL script into contained KnowledgeBase
 type RuleBuilder struct {
 	KnowledgeLibrary *ast.KnowledgeLibrary
 }

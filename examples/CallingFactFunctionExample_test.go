@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	CallFactFuncDRL = `
+	CallFactFuncGRL = `
 rule RaiseHandToClap "Raise the hand to be able to clap" {
 	when 
 		Clapper.ClapCount < 10 &&
@@ -68,7 +68,7 @@ func TestCallingFactFunction(t *testing.T) {
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
-	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncDRL)))
+	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncGRL)))
 	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 500}

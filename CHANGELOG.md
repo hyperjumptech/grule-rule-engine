@@ -34,8 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fix
 
-- Better DRL load and compilation
-- Better DRL error handling when compiling DRL
+- Better GRL load and compilation
+- Better GRL error handling when compiling GRL
 
 ### [1.1.0] - 2019-12-27
 
@@ -59,9 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- Resource bundling, to load multiple DRL files by file path pattern
-- Load DRL resources from GIT
-- Resource bundling, to load multiple DRL files from GIT by the file path patteern
+- Resource bundling, to load multiple GRL files by file path pattern
+- Load GRL resources from GIT
+- Resource bundling, to load multiple GRL files from GIT by the file path patteern
 
 ### [1.2.4] - 2020-02-24
 
