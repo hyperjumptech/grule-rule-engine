@@ -40,17 +40,6 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 // The engine will evaluate context cancelation status in each cycle.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
-	var contextError error
-	var contextCanceled bool
-
-	go func() {
-		select {
-		case <-ctx.Done():
-			contextError = ctx.Err()
-			contextCanceled = true
-		}
-	}()
-
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	// Prepare the timer, we need to measure the processing time in debug mode.
@@ -80,9 +69,9 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		data context which makes rules to get executed again and again.
 	*/
 	for {
-		if contextCanceled {
+		if ctx.Err() != nil {
 			log.Error("Context canceled")
-			return contextError
+			return ctx.Err()
 		}
 
 		// Select all rule entry that can be executed.
