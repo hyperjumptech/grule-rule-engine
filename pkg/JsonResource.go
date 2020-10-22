@@ -101,14 +101,24 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 	}
 	var sb strings.Builder
 	for i := 0; i < len(rules); i++ {
-		sb.WriteString(ParseRule(&rules[i]))
+		sb.WriteString(parseRule(&rules[i]))
 	}
 	rs = sb.String()
 	return
 }
 
 // ParseRule Accepts a struct of GruleJSON rule and returns the parsed string of GRule.
-func ParseRule(rule *GruleJSON) string {
+func ParseRule(rule *GruleJSON) (r string, err error) {
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("%v", x)
+		}
+	}()
+	r = parseRule(rule)
+	return
+}
+
+func parseRule(rule *GruleJSON) string {
 	if len(rule.Name) == 0 {
 		panic("rule name cannot be blank")
 	}
