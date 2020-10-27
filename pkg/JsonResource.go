@@ -107,6 +107,17 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 	return
 }
 
+// ParseRule Accepts a struct of GruleJSON rule and returns the parsed string of GRule.
+func ParseRule(rule *GruleJSON) (r string, err error) {
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("%v", x)
+		}
+	}()
+	r = parseRule(rule)
+	return
+}
+
 func parseRule(rule *GruleJSON) string {
 	if len(rule.Name) == 0 {
 		panic("rule name cannot be blank")
@@ -224,7 +235,7 @@ func buildExpressionEx(input map[string]interface{}, depth int) (string, bool) {
 			case string:
 				return strconv.Quote(x), true
 			case float64:
-				return fmt.Sprint(x), true
+				return strconv.FormatFloat(x, 'f', -1, 64), true
 			case bool:
 				if x {
 					return "true", true
