@@ -101,7 +101,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	grl := listener.Grl
 	for _, ruleEntry := range grl.RuleEntries {
 		err := kb.AddRuleEntry(ruleEntry)
-		if err != nil {
+		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
 			log.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
 		}
 	}
