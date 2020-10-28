@@ -136,3 +136,26 @@ It's important to know that Rule-Engine not a silver-bullet for everything. And 
 
 Another note, some Rule-Engine implementation are very-very expensive and still lots of businesses willing to pay to get their benefit. This shows some prove
 that rule-engine really gives them lots of benefit in their business use-cases.
+
+---
+
+## 6. Logging
+
+**Question** : Grule is flooding my log, its so noisy. Can I somehow turn-off Grule's logger ?
+
+**Answer** : Yes. You can reduce (or completely stop) Grule's logging by increasing it's log level.
+
+```go
+import (
+    "github.com/hyperjumptech/grule-rule-engine/logger"
+    "github.com/sirupsen/logrus"
+)
+...
+...
+logger.SetLogLevel(logrus.PanicLevel)
+```
+
+This will set Grule's log level to `Panic` level, where it will only emits log when it panicked.
+
+Please note that turning Grule's log this way will makes debugging effort become difficult if you find your self
+an issue/bug with the library. Do this only in your production environment where performance is paramount.
