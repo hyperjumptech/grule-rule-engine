@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	// AstLog is a logrus instance twith default fields for grule
+	// BuilderLog is a logrus instance twith default fields for grule
 	BuilderLog = logger.Log.WithFields(logrus.Fields{
 		"package": "builder",
 	})
