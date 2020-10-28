@@ -241,7 +241,33 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		return val, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
+		var val reflect.Value
+		var opErr error
+
 		lval, lerr := e.LeftExpression.Evaluate(dataContext, memory)
+		if e.Operator == OpAnd {
+			if lerr != nil {
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+			}
+			val, opErr = pkg.EvaluateLogicSingle(lval)
+			if opErr == nil && !val.Bool() {
+				e.Value = val
+				e.Evaluated = true
+			}
+			return val, opErr
+		}
+		if e.Operator == OpOr {
+			if lerr != nil {
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+			}
+			val, opErr = pkg.EvaluateLogicSingle(lval)
+			if opErr == nil && val.Bool() {
+				e.Value = val
+				e.Evaluated = true
+			}
+			return val, opErr
+		}
+
 		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
 		if lerr != nil {
 			return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
@@ -249,9 +275,6 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		if rerr != nil {
 			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
 		}
-
-		var val reflect.Value
-		var opErr error
 
 		switch e.Operator {
 		case OpMul:
