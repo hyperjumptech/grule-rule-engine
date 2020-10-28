@@ -253,8 +253,8 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			if opErr == nil && !val.Bool() {
 				e.Value = val
 				e.Evaluated = true
+				return val, opErr
 			}
-			return val, opErr
 		}
 		if e.Operator == OpOr {
 			if lerr != nil {
@@ -264,8 +264,8 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			if opErr == nil && val.Bool() {
 				e.Value = val
 				e.Evaluated = true
+				return val, opErr
 			}
-			return val, opErr
 		}
 
 		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
