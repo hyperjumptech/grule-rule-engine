@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"math"
 	"reflect"
 )
@@ -150,7 +150,7 @@ func ValueToInterface(v reflect.Value) interface{} {
 		if v.CanInterface() {
 			return v.Interface()
 		}
-		logrus.Errorf("Can't interface value of struct %v", v)
+		logger.Log.Errorf("Can't interface value of struct %v", v)
 		return nil
 	default:
 		return nil

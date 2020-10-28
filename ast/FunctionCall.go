@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	log "github.com/sirupsen/logrus"
 	"reflect"
 )
 
@@ -68,7 +67,7 @@ func (e *FunctionCall) GetSnapshot() string {
 	buff.WriteString(FUNCTIONCALL)
 	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
 	if e.ArgumentList == nil {
-		log.Errorf("Argument is nil")
+		AstLog.Errorf("Argument is nil")
 	} else {
 		buff.WriteString(",")
 		buff.WriteString(e.ArgumentList.GetSnapshot())
@@ -85,7 +84,7 @@ func (e *FunctionCall) SetGrlText(grlText string) {
 
 // AcceptArgumentList will accept an ArgumentList AST graph into this ast graph
 func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
-	log.Tracef("Method received argument list")
+	AstLog.Tracef("Method received argument list")
 	e.ArgumentList = argList
 	return nil
 }
