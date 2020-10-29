@@ -2,7 +2,6 @@ package ast
 
 import (
 	"bytes"
-
 	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -16,21 +15,22 @@ func NewThenScope() *ThenScope {
 
 // ThenScope AST graph node
 type ThenScope struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	ThenExpressionList *ThenExpressionList
 }
 
+// ThenScopeReceiver must be implemented by any AST object that will hold a ThenScope
+type ThenScopeReceiver interface {
+	AcceptThenScope(thenScope *ThenScope) error
+}
+
 // Clone will clone this ThenScope. The new clone will have an identical structure
-func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
+func (e *ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	clone := &ThenScope{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:   uuid.New().String(),
+		GrlText: e.GrlText,
 	}
 
 	if e.ThenExpressionList != nil {
@@ -46,13 +46,10 @@ func (e ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	return clone
 }
 
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ThenScope) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.ThenExpressionList != nil {
-		e.ThenExpressionList.InitializeContext(dataCtx, WorkingMemory)
-	}
+// AcceptThenExpressionList will accept ThenExpressionList graph into this ThenScope
+func (e *ThenScope) AcceptThenExpressionList(list *ThenExpressionList) error {
+	e.ThenExpressionList = list
+	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
@@ -68,8 +65,10 @@ func (e *ThenScope) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenScope) GetSnapshot() string {
 	var buff bytes.Buffer
-	buff.WriteString(" THEN ")
+	buff.WriteString(THENSCOPE)
+	buff.WriteString("(")
 	buff.WriteString(e.ThenExpressionList.GetSnapshot())
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -80,6 +79,9 @@ func (e *ThenScope) SetGrlText(grlText string) {
 }
 
 // Execute will execute this graph in the Then scope
-func (e *ThenScope) Execute() error {
-	return e.ThenExpressionList.Execute()
+func (e *ThenScope) Execute(dataContext IDataContext, memory *WorkingMemory) error {
+	if e.ThenExpressionList == nil {
+		AstLog.Warnf("Can not execute nil expression list")
+	}
+	return e.ThenExpressionList.Execute(dataContext, memory)
 }

@@ -1,0 +1,13 @@
+rule Simple "Simple variables" {
+    when
+        true &&
+        variable == true &&
+        class.variable == true &&
+        class.member.variable == true
+    then
+        funcInvoke();
+        variable.funcInvoke();
+        class.variable.funcInvoke();
+        class.member.variable.funcInvoke();
+        class.member.variable = class.member.variable.funcInvoke();
+}

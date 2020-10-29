@@ -5,6 +5,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ type ValueData struct {
 }
 
 const (
-	SalienceDRL = `
+	SalienceGRL = `
 
 // Highest salience, if IntValue is bellow 33, all rule may match but this one take precedence
 rule LowRule "If its on the low range, rating is low" salience 30 {
@@ -102,12 +103,9 @@ func TestSalience(t *testing.T) {
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	byteArr := pkg.NewBytesResource([]byte(SalienceDRL))
+	byteArr := pkg.NewBytesResource([]byte(SalienceGRL))
 	err := rb.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
-
-	if err != nil {
-		panic(err)
-	}
+	assert.NoError(t, err)
 
 	engine := engine.NewGruleEngine()
 
@@ -116,19 +114,11 @@ func TestSalience(t *testing.T) {
 	for _, td := range testData {
 		dataCtx := ast.NewDataContext()
 		err := dataCtx.Add("V", td)
-		if err != nil {
-			panic(err)
-		}
+		assert.NoError(t, err)
 
 		err = engine.Execute(dataCtx, knowledgeBase)
-		if err != nil {
-			panic(err)
-		}
-
-		if td.Rating != td.Expect {
-			t.Logf("On intValue = %d, expect \"%s\" but \"%s\"", td.IntValue, td.Expect, td.Rating)
-			t.Fail()
-		}
+		assert.NoError(t, err)
+		assert.Equal(t, td.Expect, td.Rating)
 	}
 
 }

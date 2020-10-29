@@ -2,14 +2,22 @@ package builder
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2.g4"
+	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	log "github.com/sirupsen/logrus"
+)
+
+var (
+	// BuilderLog is a logrus instance twith default fields for grule
+	BuilderLog = logger.Log.WithFields(logrus.Fields{
+		"package": "builder",
+	})
 )
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
@@ -19,7 +27,7 @@ func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {
 	}
 }
 
-// RuleBuilder builds rule from DRL script into contained KnowledgeBase
+// RuleBuilder builds rule from GRL script into contained KnowledgeBase
 type RuleBuilder struct {
 	KnowledgeLibrary *ast.KnowledgeLibrary
 }
@@ -76,10 +84,9 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	if err != nil {
 		return err
 	}
-	sdata := string(data)
 
 	// Immediately parse the loaded resource
-	is := antlr.NewInputStream(sdata)
+	is := antlr.NewInputStream(string(data))
 	lexer := parser2.Newgrulev2Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
@@ -93,21 +100,31 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV2ParserListener(kb, kb.WorkingMemory, errCall)
+	listener := antlr2.NewGruleV2ParserListener(kb, errCall)
 
 	psr := parser2.Newgrulev2Parser(stream)
 	psr.BuildParseTrees = true
-	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Root())
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
+
+	grl := listener.Grl
+	for _, ruleEntry := range grl.RuleEntries {
+		err := kb.AddRuleEntry(ruleEntry)
+		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
+			BuilderLog.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
+		}
+	}
+
+	kb.WorkingMemory.IndexVariables()
 
 	// Get the loading duration.
 	dur := time.Now().Sub(startTime)
 
 	if parseError != nil {
-		log.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
+		BuilderLog.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
 		return fmt.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
 
-	log.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
+	BuilderLog.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
 
 	return nil
 }

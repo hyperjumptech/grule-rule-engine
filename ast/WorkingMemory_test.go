@@ -1,58 +1,52 @@
 package ast
 
 import (
-	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
 func TestWorkingMemory_Add(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
+
+	a := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
+	b := &Variable{GrlText: "b", Constant: &Constant{Value: reflect.ValueOf("b")}}
+	aa := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
+	bb := &Variable{GrlText: "b", Constant: &Constant{Value: reflect.ValueOf("b")}}
+	c := &Variable{GrlText: "c", Constant: &Constant{Value: reflect.ValueOf("c")}}
+	d := &Variable{GrlText: "d", Constant: &Constant{Value: reflect.ValueOf("d")}}
+
 	expr1 := &Expression{
 		AstID:           "abc",
-		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.a"}}},
-		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.b"}}},
+		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: a}},
+		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: b}},
 		Operator:        OpMul,
 	}
 	expr2 := &Expression{
 		AstID:           "cde",
-		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.a"}}},
-		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.b"}}},
+		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: aa}},
+		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: bb}},
 		Operator:        OpMul,
 	}
 	expr3 := &Expression{
 		AstID:           "fgh",
-		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.c"}}},
-		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Name: "some.variable.d"}}},
+		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: c}},
+		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: d}},
 		Operator:        OpMul,
 	}
 	wm := NewWorkingMemory("T", "1")
-	_, added := wm.Add(expr1)
-	if !added {
-		t.Fatalf("Expression not added on the first expression")
-	}
-	_, added = wm.Add(expr2)
-	if added {
-		t.Fatalf("Expression added on duplicate expression")
-	}
-	_, added = wm.Add(expr3)
-	if !added {
-		t.Fatalf("Expression not added on different expression")
-	}
+	wm.AddVariable(a)
+	wm.AddVariable(b)
+	wm.AddVariable(aa)
+	wm.AddVariable(bb)
+	wm.AddVariable(c)
+	wm.AddVariable(d)
 
-	if !wm.IndexVar("some.variable.a") {
-		t.Fatalf("Variable not indexed while it exist")
-	}
-	if wm.IndexVar("some.variable.z") {
-		t.Fatalf("Variable indexed while it not exist")
-	}
+	wm.AddExpression(expr1)
+	wm.AddExpression(expr2)
+	wm.AddExpression(expr3)
 
-	if !wm.Reset("some.variable.a") {
-		t.Fatalf("Variable not reset while it exist")
-	}
-	if wm.Reset("some.variable.z") {
-		t.Fatalf("Variable reset while it not exist")
-	}
-	if !wm.ResetAll() {
-		t.Fatalf("All Variable not reset")
-	}
+	wm.IndexVariables()
+	assert.True(t, wm.Reset("a"))
+	assert.False(t, wm.Reset("some.variable.z"))
+	assert.True(t, wm.ResetAll())
 }

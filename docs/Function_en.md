@@ -1,6 +1,6 @@
 # Function in Grule
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [Grule Events](GruleEvent_en.md) | [FAQ](FAQ_en.md)
+[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md)
 
 ## Built-In Functions
 
@@ -403,6 +403,381 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 }
 ```
 
+## Constant Functions
+
+The following functions can be immediately called from within GRL
+as long as the receiver value type is correct.
+
+### string.Len() int
+
+`Len` will return string's length.
+
+#### Returns
+
+* The length of string's receiver
+
+#### Example
+
+```Shell
+rule DoSomething  "Do something when string length is sufficient" {
+    when
+        Fact.Name.Len() > "ATextConstant".Len()
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Compare(string) int
+
+`Compare` will compare the receiver string to the argument.
+
+#### Arguments
+
+* `string` The string to compare to
+
+#### Returns
+
+* `< 0` if receiver is less than the argument
+* `0` if receiver is equal to the argument
+* `> 0` if receiver is greater thant the argument
+
+#### Example
+
+```Shell
+rule CompareString  "Do something when Fact.Text is greater than A" {
+    when
+        Fact.Text.Compare("A") > 0
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Contains(string) bool
+
+`Contains` will check if argument is contained within the receiver.
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* `true` if receiver string is containing the argument
+* `false` if receiver string do not contain the argument
+
+#### Example
+
+```Shell
+rule ContainString  "Do something when Fact.Text is contains XXX" {
+    when
+        Fact.Text.Contains("XXX")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Count(string) int
+
+`Count` will count the number of occurences of argument in receiver string.
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* int count of occurences
+
+#### Example
+
+```Shell
+rule CountString  "Do something when Fact.Text contains 3 ABC" {
+    when
+        Fact.Text.Count("ABC") == 3
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.HasPrefix(string) bool
+
+`HasPrefix` will check if the receiver string is prefixed with the argument
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* `true` if receiver have prefix of the argument
+* `false` if receiver do not prefixed of the argument
+
+#### Example
+
+```Shell
+rule IsPrefixed  "Do something when Fact.Text started with PREF" {
+    when
+        Fact.Text.HasPrefix("PREF")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.HasSuffix(string) bool
+
+`HasSuffix` will check if the receiver string is suffixed with the argument
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* `true` if receiver have suffix of the argument
+* `false` if receiver do not suffix of the argument
+
+#### Example
+
+```Shell
+rule IsSuffixed  "Do something when Fact.Text ends with SUFF" {
+    when
+        Fact.Text.HasSuffix("SUFF")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Index(string) int
+
+`Index` will return the offset of first occurrence of argument in receiver string
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* int the offset of first occurrence of argument
+
+#### Example
+
+```Shell
+rule IndexCheck  "Do something when Fact.Text ABC occurrence as specified" {
+    when
+        Fact.Text.Index("ABC") == "abABCabABC".Index("ABC")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.LastIndex(string) int
+
+`LastIndex` will return the offset of last occurrence of argument in receiver string
+
+#### Arguments
+
+* `string` The sub string to check
+
+#### Returns
+
+* int the offset of last occurrence of argument
+
+#### Example
+
+```Shell
+rule LastIndexCheck  "Do something when Fact.Text ABC last occurrence as specified" {
+    when
+        Fact.Text.LastIndex("ABC") == "abABCabABC".LastIndex("ABC")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Repeat(int) string
+
+`Repeat` will return a string containing repeated receiver string, n times
+
+#### Arguments
+
+* `int` the repeat count
+
+#### Returns
+
+* string contains repeated receiver string, n times
+
+#### Example
+
+```Shell
+rule StringRepeat  "Do something when Fact.Text contains ABCABCABC" {
+    when
+        Fact.Text == "ABC".Repeat(3)
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Replace(old, new string) string
+
+`Replace` will return a string containing replaced receiver string
+
+#### Arguments
+
+* `old` the substring to search
+* `new` the string replacement
+
+#### Returns
+
+* string contains receiver string after replace
+
+#### Example
+
+```Shell
+rule ReplaceString  "Do something when Fact.Text contains replaced string" {
+    when
+        Fact.Text == "ABC123ABC".Replace("123","ABC")
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Split(string) []string
+
+`Split` will return a string slice contains splitted receiver string using argument as separator
+
+#### Arguments
+
+* `string` the separator
+
+#### Returns
+
+* string slice
+
+#### Example
+
+```Shell
+rule SplitString  "Do something when Fact.Text split first index is ABC" {
+    when
+        Fact.Text.Split(",")[0] == "ABC"
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.ToLower() string
+
+`ToLower` will return a string contains all lower case of the receiver
+
+#### Returns
+
+* string lower cased string
+
+#### Example
+
+```Shell
+rule LowerText  "Do something when Fact.Text lower case is abc" {
+    when
+        Fact.Text.ToLower() == "Abc".ToLower()
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.ToUpper() string
+
+`ToUpper` will return a string contains all upper case of the receiver
+
+#### Returns
+
+* string upper cased string
+
+#### Example
+
+```Shell
+rule UpperText  "Do something when Fact.Text upper case is ABC" {
+    when
+        Fact.Text.ToUpper() == "Abc".ToUpper()
+    then
+        Fact.DoSomething();
+}
+```
+
+### string.Trim() string
+
+`Trim` will return a string contains trimmed version of receiver
+
+#### Returns
+
+* string trimmed string
+
+#### Example
+
+```Shell
+rule TrimText  "Do something when Fact.Text upper case is ABC" {
+    when
+        Fact.Text == "  Abc   ".Trim().ToUpper()
+    then
+        Fact.DoSomething();
+}
+```
+
+### array.Len() int
+
+`Len` will return array/slice's length.
+
+#### Returns
+
+* The length of array/slice's receiver
+
+#### Example
+
+```Shell
+rule DoSomething  "Do something when array length is sufficient" {
+    when
+        Fact.ChildrenArray.Len() > 2
+    then
+        Fact.DoSomething();
+}
+```
+
+### array.Append(val) 
+
+`Append` will append val into end of receiver array
+
+#### Arguments
+
+* `val` value to append
+
+
+#### Example
+
+```Shell
+rule DoSomething  "Do something when array length is sufficient" {
+    when
+        Fact.ChildrenArray.Len() < 2
+    then
+        Fact.ChildrenArray.Append(Fact.NewChild());
+}
+```
+
+### map.Len() int
+   
+`Len` will return map's length.
+
+#### Returns
+
+* The length of map receiver
+
+#### Example
+
+```Shell
+rule DoSomething  "Do something when map length is sufficient" {
+   when
+       Fact.ChildrenMap.Len() > 2
+   then
+       Fact.DoSomething();
+}
+```
+
 ## Custom Functions
 
 All functions which are invocable from the DataContext is **Invocable** from within the rule,
@@ -498,4 +873,4 @@ When you make your own function to be called from the rule engine, you need to k
 
 1. The function must be visible. The convention for public functions should start with a capital letter. Private functions cannot be executed.
 2. The function must only return 1 type. Returning multiple variables from a function is not supported, the rule execution will fail if there are multiple return variables.
-3. The way number literals are treated in Grule's DRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.
+3. The way number literals are treated in Grule's GRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.

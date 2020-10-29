@@ -87,6 +87,33 @@ const expectedEscaped = `rule SpeedUp "When testcar is speeding up we keep incre
 }
 `
 
+const jsonDataBigIntConversion = `[{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the \"speed\".",
+    "salience": 10,
+    "when": {
+       "and": [
+           {"eq": [{"obj": "TestCar.SpeedUp"}, {"const": true}]},
+           {"lt": [{"obj": "TestCar.Speed"}, {"const": 10000000}]}
+       ]
+    },
+    "then": [
+        {"set": [{"obj": "TestCar.Speed"}, {"plus": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.SpeedIncrement"}]}]},
+        {"set": [{"obj": "DistanceRecord.TotalDistance"}, {"plus": [{"obj": "DistanceRecord.TotalDistance"}, {"obj": "TestCar.Speed"}]}]},
+        {"call": ["Log", {"const": "\"Speed\" increased\n"}]}
+    ]
+}]`
+
+const expectedBigIntConversion = `rule SpeedUp "When testcar is speeding up we keep increase the \"speed\"." salience 10 {
+    when
+        TestCar.SpeedUp == true && TestCar.Speed < 10000000
+    then
+        TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement;
+        DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+        Log("\"Speed\" increased\n");
+}
+`
+
 func TestParseJSONRuleset(t *testing.T) {
 	rs, err := ParseJSONRuleset([]byte(jsonData))
 	if err != nil {
@@ -137,6 +164,17 @@ func TestJSONStringEscaping(t *testing.T) {
 	}
 	t.Log(rs)
 	if rs != expectedEscaped {
+		t.Fatal("Rule output doe not match expected value")
+	}
+}
+
+func TestJSONBigIntConversion(t *testing.T) {
+	rs, err := ParseJSONRuleset([]byte(jsonDataBigIntConversion))
+	if err != nil {
+		t.Fatal("Failed to parse flat ruleset: " + err.Error())
+	}
+	t.Log(rs)
+	if rs != expectedBigIntConversion {
 		t.Fatal("Rule output doe not match expected value")
 	}
 }

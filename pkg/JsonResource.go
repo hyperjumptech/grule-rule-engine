@@ -38,14 +38,11 @@ func NewJSONResourceFromResource(res Resource) Resource {
 
 // Load will load the underlying Resource and parse the JSON rules into standard GRule syntax.
 func (jr *JSONResource) Load() ([]byte, error) {
-	var err error
-	var data []byte
-	data, err = jr.subRes.Load()
+	data, err := jr.subRes.Load()
 	if err != nil {
 		return nil, err
 	}
-	var rs string
-	rs, err = ParseJSONRuleset(data)
+	rs, err := ParseJSONRuleset(data)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +104,17 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 		sb.WriteString(parseRule(&rules[i]))
 	}
 	rs = sb.String()
+	return
+}
+
+// ParseRule Accepts a struct of GruleJSON rule and returns the parsed string of GRule.
+func ParseRule(rule *GruleJSON) (r string, err error) {
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("%v", x)
+		}
+	}()
+	r = parseRule(rule)
 	return
 }
 
@@ -227,7 +235,7 @@ func buildExpressionEx(input map[string]interface{}, depth int) (string, bool) {
 			case string:
 				return strconv.Quote(x), true
 			case float64:
-				return fmt.Sprint(x), true
+				return strconv.FormatFloat(x, 'f', -1, 64), true
 			case bool:
 				if x {
 					return "true", true

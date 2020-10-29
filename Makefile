@@ -7,13 +7,18 @@ build:
 	go build ./...
 
 lint: build
-	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. events/...
+	go get -u golang.org/x/lint/golint
+	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
 
 test-short: lint
+	go install github.com/newm4n/goornogo
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
+	goornogo -i coverage.out -c 45.3
 
 test: lint
-	go test ./... -v -covermode=count -coverprofile=coverage.out
+	go install github.com/newm4n/goornogo
+	go test ./... -covermode=count -coverprofile=coverage.out
+	goornogo -i coverage.out -c 47.5
 
 test-coverage: test
 	go tool cover -html=coverage.out
