@@ -2,6 +2,8 @@ package builder
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -9,7 +11,13 @@ import (
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	log "github.com/sirupsen/logrus"
+)
+
+var (
+	// BuilderLog is a logrus instance twith default fields for grule
+	BuilderLog = logger.Log.WithFields(logrus.Fields{
+		"package": "builder",
+	})
 )
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
@@ -102,7 +110,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	for _, ruleEntry := range grl.RuleEntries {
 		err := kb.AddRuleEntry(ruleEntry)
 		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
-			log.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
+			BuilderLog.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
 		}
 	}
 
@@ -112,11 +120,11 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	dur := time.Now().Sub(startTime)
 
 	if parseError != nil {
-		log.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
+		BuilderLog.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
 		return fmt.Errorf("error were found before builder bailing out. Got %v", parseError)
 	}
 
-	log.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
+	BuilderLog.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)
 
 	return nil
 }

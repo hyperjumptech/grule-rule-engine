@@ -1,6 +1,9 @@
 package ast
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/sirupsen/logrus"
+)
 
 const (
 	// ARGUMENTLIST signature for argument list snapshot
@@ -33,9 +36,8 @@ const (
 
 var (
 	// AstLog is a logrus instance twith default fields for grule
-	AstLog = logrus.WithFields(logrus.Fields{
-		"lib":     "grule",
-		"package": "AST",
+	AstLog = logger.Log.WithFields(logrus.Fields{
+		"package": "ast",
 	})
 )
 
