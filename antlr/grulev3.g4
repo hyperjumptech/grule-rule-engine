@@ -49,7 +49,7 @@ expression
     | expression comparisonOperator expression
     | expression andLogicOperator expression
     | expression orLogicOperator expression
-    | LR_BRACKET expression RR_BRACKET
+    | NEGATION? LR_BRACKET expression RR_BRACKET
     | expressionAtom
     ;
 
@@ -77,6 +77,7 @@ expressionAtom
     : constant
     | functionCall
     | variable
+    | NEGATION expressionAtom
     ;
 
 constant
@@ -84,6 +85,7 @@ constant
     | decimalLiteral
     | booleanLiteral
     | realLiteral
+    | NIL_LITERAL
     ;
 
 variable
@@ -118,7 +120,7 @@ stringLiteral
     ;
 
 booleanLiteral
-    : TRUE | FALSE;
+    : NEGATION? (TRUE | FALSE);
 
 // LEXER HERE
 fragment A                  : [aA] ;
@@ -174,8 +176,8 @@ AND                         : '&&' ;
 OR                          : '||' ;
 TRUE                        : T R U E ;
 FALSE                       : F A L S E ;
-NULL_LITERAL                : N U L L ;
-NOT                         : N O T ;
+NIL_LITERAL                 : N I L ;
+NEGATION                         : '!' ;
 SALIENCE                    : S A L I E N C E ;
 
 EQUALS                      : '==' ;
@@ -221,7 +223,6 @@ DEC_LIT                     : '0'
 HEX_LIT                     : '0' X HEX_DIGITS;
 HEX_DIGITS                  : HEX_DIGIT+;
 DEC_DIGITS                  : DEC_DIGIT+;
-
 
 // IGNORED TOKENS
 SPACE                       : [ \t\r\n]+ {l.Skip()};
