@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -50,12 +50,12 @@ func TestIssue108(t *testing.T) {
 		Sequence:  make([]string, 0),
 	}
 
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	err := dataContext.Add("F", Obj)
 	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test108", "0.0.1", pkg.NewBytesResource([]byte(Rule108)))
 	assert.NoError(t, err)

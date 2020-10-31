@@ -2,7 +2,7 @@ package examples
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -57,14 +57,14 @@ type User struct {
 }
 
 func TestMyPoGo_GetStringLength(t *testing.T) {
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	pogo := &MyPoGo{}
 	err := dataContext.Add("Pogo", pogo)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule2)))
 	assert.NoError(t, err)
@@ -82,7 +82,7 @@ func TestMyPoGo_Compare(t *testing.T) {
 		Male: true,
 	}
 
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	err := dataContext.Add("User", user)
 	if err != nil {
 		t.Fatal(err)
@@ -92,7 +92,7 @@ func TestMyPoGo_Compare(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule3)))

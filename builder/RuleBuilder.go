@@ -2,6 +2,7 @@ package builder
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -21,7 +21,7 @@ var (
 )
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
-func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {
+func NewRuleBuilder(KnowledgeLibrary *v2.KnowledgeLibrary) *RuleBuilder {
 	return &RuleBuilder{
 		KnowledgeLibrary: KnowledgeLibrary,
 	}
@@ -29,7 +29,7 @@ func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {
 
 // RuleBuilder builds rule from GRL script into contained KnowledgeBase
 type RuleBuilder struct {
-	KnowledgeLibrary *ast.KnowledgeLibrary
+	KnowledgeLibrary *v2.KnowledgeLibrary
 }
 
 // MustBuildRuleFromResources is similar to BuildRuleFromResources, with the difference is, it will panic if rule script contains error.

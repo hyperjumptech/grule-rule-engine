@@ -2,7 +2,7 @@ package examples
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	engine2 "github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -111,7 +111,7 @@ type CashFlowCalculator struct {
 func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 	cashFlow := &CashFlow{}
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err := rb.BuildRuleFromResource("Purchase Calculator", "0.0.1", pkg.NewFileResource("CashFlowRule.grl"))
 	assert.NoError(t, err)
@@ -121,7 +121,7 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 	kb := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
 
 	for _, purchase := range Purchases {
-		dctx := ast.NewDataContext()
+		dctx := v2.NewDataContext()
 		dctx.Add("CashFlow", cashFlow)
 		dctx.Add("Purchase", purchase)
 		err = engine.Execute(dctx, kb)

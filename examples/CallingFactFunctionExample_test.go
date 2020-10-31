@@ -2,7 +2,7 @@ package examples
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -61,12 +61,12 @@ func TestCallingFactFunction(t *testing.T) {
 		ClapCount: 0,
 	}
 
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	err := dataContext.Add("Clapper", c)
 	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncGRL)))
 	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")

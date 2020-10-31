@@ -2,15 +2,16 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"io/ioutil"
 	"testing"
 )
+
 /**
-   Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
-   Please refer docs/benchmarking_en.md for more info
+  Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
+  Please refer docs/benchmarking_en.md for more info
 */
 type RideFact struct {
 	Distance           int32
@@ -47,10 +48,10 @@ func load100RulesIntoKnowledgeBase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
@@ -63,10 +64,10 @@ func load1000RulesIntoKnowledgeBase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")

@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -62,17 +62,17 @@ func TestGruleEngine_Support_Multiple_KnowledgeBases(t *testing.T) {
 		Distance: 6000,
 		Duration: 121,
 	}
-	userDataContext := ast.NewDataContext()
+	userDataContext := v2.NewDataContext()
 	err := userDataContext.Add("User", user)
 	if err != nil {
 		t.Fatal(err)
 	}
-	rideDataContext := ast.NewDataContext()
+	rideDataContext := v2.NewDataContext()
 	err = rideDataContext.Add("RideFact", rideFact)
 	if err != nil {
 		t.Fatal(err)
 	}
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 
 	//When

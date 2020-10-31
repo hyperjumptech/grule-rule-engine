@@ -5,7 +5,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
 	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -66,7 +66,7 @@ func (cf *ItemPriceChecker) CheckPrices(t *testing.T) {
 		Price: 110,
 	})
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 
 	// Prepare knowledgebase and load it with our rule.
@@ -82,7 +82,7 @@ func (cf *ItemPriceChecker) CheckPrices(t *testing.T) {
 	// Handling of the array is this program's job.
 	// Let the rule decide for every item.
 	for _, v := range items {
-		dctx := ast.NewDataContext()
+		dctx := v2.NewDataContext()
 		err = dctx.Add("Item", v)
 		assert.NoError(t, err)
 		err = eng.Execute(dctx, kb)
@@ -149,7 +149,7 @@ func (cf *ItemPriceChecker) CheckCart(t *testing.T) {
 	cart := &ItemCart{Items: items}
 
 	// Prepare knowledgebase library and load it with our rule.
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err := rb.BuildRuleFromResource("Cart Check Rules", "0.0.1", pkg.NewBytesResource([]byte(PriceCheckRule2)))
 	assert.NoError(t, err)
@@ -159,7 +159,7 @@ func (cf *ItemPriceChecker) CheckCart(t *testing.T) {
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
 
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 	err = dctx.Add("Cart", cart)
 	assert.NoError(t, err)
 	err = eng.Execute(dctx, kb)
@@ -190,7 +190,7 @@ func TestItemPriceChecker_TestParser(t *testing.T) {
 	lexer := parser2.Newgrulev2Lexer(nis)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	kb := lib.GetKnowledgeBase("Test", "0.1.1")
 
 	var parseError error

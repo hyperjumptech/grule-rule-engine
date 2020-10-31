@@ -2,7 +2,7 @@ package examples
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -32,12 +32,12 @@ func TestTutorial(t *testing.T) {
 		FloatAttribute:   1.234,
 		TimeAttribute:    time.Now(),
 	}
-	dataCtx := ast.NewDataContext()
+	dataCtx := v2.NewDataContext()
 	err := dataCtx.Add("MF", myFact)
 	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
-	knowledgeLibrary := ast.NewKnowledgeLibrary()
+	knowledgeLibrary := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 
 	drls := `

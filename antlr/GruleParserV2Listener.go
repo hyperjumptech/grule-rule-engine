@@ -2,15 +2,14 @@ package antlr
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"reflect"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +22,7 @@ var (
 )
 
 // NewGruleV2ParserListener create new instance of GruleV2ParserListener
-func NewGruleV2ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV2ParserListener {
+func NewGruleV2ParserListener(KnowledgeBase *v2.KnowledgeBase, errorCallBack func(e error)) *GruleV2ParserListener {
 	return &GruleV2ParserListener{
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errorCallBack,
@@ -38,11 +37,11 @@ type GruleV2ParserListener struct {
 	grulev2.Basegrulev2Listener
 	PreviousNode []string
 
-	Grl           *ast.Grl
+	Grl           *v2.Grl
 	Stack         *stack
 	StopParse     bool
 	ErrorCallback func(e error)
-	KnowledgeBase *ast.KnowledgeBase
+	KnowledgeBase *v2.KnowledgeBase
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -71,7 +70,7 @@ func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterGrl is called when production grl is entered.
 func (s *GruleV2ParserListener) EnterGrl(ctx *grulev2.GrlContext) {
-	s.Grl = ast.NewGrl()
+	s.Grl = v2.NewGrl()
 	s.Stack.Push(s.Grl)
 }
 
@@ -80,7 +79,7 @@ func (s *GruleV2ParserListener) ExitGrl(ctx *grulev2.GrlContext) {
 	if s.StopParse {
 		return
 	}
-	_ = s.Stack.Pop().(*ast.Grl)
+	_ = s.Stack.Pop().(*v2.Grl)
 	for _, re := range s.Grl.RuleEntries {
 		err := s.KnowledgeBase.AddRuleEntry(re)
 		if err != nil {
@@ -94,7 +93,7 @@ func (s *GruleV2ParserListener) EnterRuleEntry(ctx *grulev2.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
-	entry := ast.NewRuleEntry()
+	entry := v2.NewRuleEntry()
 	entry.GrlText = ctx.GetText()
 	s.Stack.Push(entry)
 }
@@ -104,8 +103,8 @@ func (s *GruleV2ParserListener) ExitRuleEntry(ctx *grulev2.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
-	entry := s.Stack.Pop().(*ast.RuleEntry)
-	entryReceiver := s.Stack.Peek().(ast.RuleEntryReceiver)
+	entry := s.Stack.Pop().(*v2.RuleEntry)
+	entryReceiver := s.Stack.Peek().(v2.RuleEntryReceiver)
 	err := entryReceiver.ReceiveRuleEntry(entry)
 	if err != nil {
 		s.ErrorCallback(err)
@@ -124,8 +123,8 @@ func (s *GruleV2ParserListener) ExitSalience(ctx *grulev2.SalienceContext) {
 	}
 	dec := ctx.DecimalLiteral().GetText()
 	salValue, _ := strconv.Atoi(dec)
-	receiver := s.Stack.Peek().(ast.SalienceReceiver)
-	err := receiver.AcceptSalience(ast.NewSalience(salValue))
+	receiver := s.Stack.Peek().(v2.SalienceReceiver)
+	err := receiver.AcceptSalience(v2.NewSalience(salValue))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)
@@ -141,8 +140,8 @@ func (s *GruleV2ParserListener) ExitRuleName(ctx *grulev2.RuleNameContext) {
 	if s.StopParse {
 		return
 	}
-	receiver := s.Stack.Peek().(ast.RuleNameReceiver)
-	err := receiver.AcceptRuleName(ast.NewRuleName(ctx.SIMPLENAME().GetText()))
+	receiver := s.Stack.Peek().(v2.RuleNameReceiver)
+	err := receiver.AcceptRuleName(v2.NewRuleName(ctx.SIMPLENAME().GetText()))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)
@@ -158,8 +157,8 @@ func (s *GruleV2ParserListener) ExitRuleDescription(ctx *grulev2.RuleDescription
 	if s.StopParse {
 		return
 	}
-	receiver := s.Stack.Peek().(ast.RuleDescriptionReceiver)
-	err := receiver.AcceptRuleDescription(ast.NewRuleDescription(ctx.GetText()[1 : len(ctx.GetText())-1]))
+	receiver := s.Stack.Peek().(v2.RuleDescriptionReceiver)
+	err := receiver.AcceptRuleDescription(v2.NewRuleDescription(ctx.GetText()[1 : len(ctx.GetText())-1]))
 	if err != nil {
 		s.StopParse = true
 		s.ErrorCallback(err)
@@ -171,7 +170,7 @@ func (s *GruleV2ParserListener) EnterWhenScope(ctx *grulev2.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	whenScope := ast.NewWhenScope()
+	whenScope := v2.NewWhenScope()
 	whenScope.GrlText = ctx.GetText()
 	s.Stack.Push(whenScope)
 }
@@ -181,8 +180,8 @@ func (s *GruleV2ParserListener) ExitWhenScope(ctx *grulev2.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	when := s.Stack.Pop().(*ast.WhenScope)
-	receiver := s.Stack.Peek().(ast.WhenScopeReceiver)
+	when := s.Stack.Pop().(*v2.WhenScope)
+	receiver := s.Stack.Peek().(v2.WhenScopeReceiver)
 	err := receiver.AcceptWhenScope(when)
 	if err != nil {
 		s.StopParse = true
@@ -195,7 +194,7 @@ func (s *GruleV2ParserListener) EnterThenScope(ctx *grulev2.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	then := ast.NewThenScope()
+	then := v2.NewThenScope()
 	then.GrlText = ctx.GetText()
 	s.Stack.Push(then)
 }
@@ -205,8 +204,8 @@ func (s *GruleV2ParserListener) ExitThenScope(ctx *grulev2.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	then := s.Stack.Pop().(*ast.ThenScope)
-	receiver := s.Stack.Peek().(ast.ThenScopeReceiver)
+	then := s.Stack.Pop().(*v2.ThenScope)
+	receiver := s.Stack.Peek().(v2.ThenScopeReceiver)
 	err := receiver.AcceptThenScope(then)
 	if err != nil {
 		s.StopParse = true
@@ -219,7 +218,7 @@ func (s *GruleV2ParserListener) EnterThenExpressionList(ctx *grulev2.ThenExpress
 	if s.StopParse {
 		return
 	}
-	thenExpList := ast.NewThenExpressionList()
+	thenExpList := v2.NewThenExpressionList()
 	thenExpList.GrlText = ctx.GetText()
 	s.Stack.Push(thenExpList)
 }
@@ -229,8 +228,8 @@ func (s *GruleV2ParserListener) ExitThenExpressionList(ctx *grulev2.ThenExpressi
 	if s.StopParse {
 		return
 	}
-	thenExpList := s.Stack.Pop().(*ast.ThenExpressionList)
-	receiver := s.Stack.Peek().(ast.ThenExpressionListReceiver)
+	thenExpList := s.Stack.Pop().(*v2.ThenExpressionList)
+	receiver := s.Stack.Peek().(v2.ThenExpressionListReceiver)
 	err := receiver.AcceptThenExpressionList(thenExpList)
 	if err != nil {
 		s.StopParse = true
@@ -243,7 +242,7 @@ func (s *GruleV2ParserListener) EnterThenExpression(ctx *grulev2.ThenExpressionC
 	if s.StopParse {
 		return
 	}
-	thenExpr := ast.NewThenExpression()
+	thenExpr := v2.NewThenExpression()
 	thenExpr.GrlText = ctx.GetText()
 	s.Stack.Push(thenExpr)
 }
@@ -253,9 +252,9 @@ func (s *GruleV2ParserListener) ExitThenExpression(ctx *grulev2.ThenExpressionCo
 	if s.StopParse {
 		return
 	}
-	thenExpr := s.Stack.Pop().(*ast.ThenExpression)
+	thenExpr := s.Stack.Pop().(*v2.ThenExpression)
 
-	receiver := s.Stack.Peek().(ast.ThenExpressionReceiver)
+	receiver := s.Stack.Peek().(v2.ThenExpressionReceiver)
 	err := receiver.AcceptThenExpression(thenExpr)
 	if err != nil {
 		s.StopParse = true
@@ -268,7 +267,7 @@ func (s *GruleV2ParserListener) EnterAssignment(ctx *grulev2.AssignmentContext) 
 	if s.StopParse {
 		return
 	}
-	assign := ast.NewAssignment()
+	assign := v2.NewAssignment()
 	assign.GrlText = ctx.GetText()
 	s.Stack.Push(assign)
 }
@@ -278,8 +277,8 @@ func (s *GruleV2ParserListener) ExitAssignment(ctx *grulev2.AssignmentContext) {
 	if s.StopParse {
 		return
 	}
-	assign := s.Stack.Pop().(*ast.Assignment)
-	receiver := s.Stack.Peek().(ast.AssignmentReceiver)
+	assign := s.Stack.Pop().(*v2.Assignment)
+	receiver := s.Stack.Peek().(v2.AssignmentReceiver)
 	err := receiver.AcceptAssignment(assign)
 	if err != nil {
 		s.StopParse = true
@@ -292,7 +291,7 @@ func (s *GruleV2ParserListener) EnterExpression(ctx *grulev2.ExpressionContext) 
 	if s.StopParse {
 		return
 	}
-	expr := ast.NewExpression()
+	expr := v2.NewExpression()
 	expr.GrlText = ctx.GetText()
 	s.Stack.Push(expr)
 }
@@ -302,8 +301,8 @@ func (s *GruleV2ParserListener) ExitExpression(ctx *grulev2.ExpressionContext) {
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Pop().(*ast.Expression)
-	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
+	expr := s.Stack.Pop().(*v2.Expression)
+	exprRec := s.Stack.Peek().(v2.ExpressionReceiver)
 
 	err := exprRec.AcceptExpression(s.KnowledgeBase.WorkingMemory.AddExpression(expr))
 	if err != nil {
@@ -317,14 +316,14 @@ func (s *GruleV2ParserListener) EnterMulDivOperators(ctx *grulev2.MulDivOperator
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*ast.Expression)
+	expr := s.Stack.Peek().(*v2.Expression)
 	switch ctx.GetText() {
 	case "*":
-		expr.Operator = ast.OpMul
+		expr.Operator = v2.OpMul
 	case "/":
-		expr.Operator = ast.OpDiv
+		expr.Operator = v2.OpDiv
 	case "%":
-		expr.Operator = ast.OpMod
+		expr.Operator = v2.OpMod
 	}
 }
 
@@ -336,16 +335,16 @@ func (s *GruleV2ParserListener) EnterAddMinusOperators(ctx *grulev2.AddMinusOper
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*ast.Expression)
+	expr := s.Stack.Peek().(*v2.Expression)
 	switch ctx.GetText() {
 	case "+":
-		expr.Operator = ast.OpAdd
+		expr.Operator = v2.OpAdd
 	case "-":
-		expr.Operator = ast.OpSub
+		expr.Operator = v2.OpSub
 	case "|":
-		expr.Operator = ast.OpBitOr
+		expr.Operator = v2.OpBitOr
 	case "&":
-		expr.Operator = ast.OpBitAnd
+		expr.Operator = v2.OpBitAnd
 	}
 }
 
@@ -357,20 +356,20 @@ func (s *GruleV2ParserListener) EnterComparisonOperator(ctx *grulev2.ComparisonO
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*ast.Expression)
+	expr := s.Stack.Peek().(*v2.Expression)
 	switch ctx.GetText() {
 	case "<":
-		expr.Operator = ast.OpLT
+		expr.Operator = v2.OpLT
 	case "<=":
-		expr.Operator = ast.OpLTE
+		expr.Operator = v2.OpLTE
 	case ">":
-		expr.Operator = ast.OpGT
+		expr.Operator = v2.OpGT
 	case ">=":
-		expr.Operator = ast.OpGTE
+		expr.Operator = v2.OpGTE
 	case "==":
-		expr.Operator = ast.OpEq
+		expr.Operator = v2.OpEq
 	case "!=":
-		expr.Operator = ast.OpNEq
+		expr.Operator = v2.OpNEq
 	}
 }
 
@@ -382,8 +381,8 @@ func (s *GruleV2ParserListener) EnterAndLogicOperator(ctx *grulev2.AndLogicOpera
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*ast.Expression)
-	expr.Operator = ast.OpAnd
+	expr := s.Stack.Peek().(*v2.Expression)
+	expr.Operator = v2.OpAnd
 }
 
 // ExitAndLogicOperator is called when production andLogicOperator is exited.
@@ -394,8 +393,8 @@ func (s *GruleV2ParserListener) EnterOrLogicOperator(ctx *grulev2.OrLogicOperato
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*ast.Expression)
-	expr.Operator = ast.OpOr
+	expr := s.Stack.Peek().(*v2.Expression)
+	expr.Operator = v2.OpOr
 }
 
 // ExitOrLogicOperator is called when production orLogicOperator is exited.
@@ -406,7 +405,7 @@ func (s *GruleV2ParserListener) EnterExpressionAtom(ctx *grulev2.ExpressionAtomC
 	if s.StopParse {
 		return
 	}
-	atm := ast.NewExpressionAtom()
+	atm := v2.NewExpressionAtom()
 	atm.GrlText = ctx.GetText()
 	s.Stack.Push(atm)
 }
@@ -416,8 +415,8 @@ func (s *GruleV2ParserListener) ExitExpressionAtom(ctx *grulev2.ExpressionAtomCo
 	if s.StopParse {
 		return
 	}
-	atm := s.Stack.Pop().(*ast.ExpressionAtom)
-	expr := s.Stack.Peek().(ast.ExpressionAtomReceiver)
+	atm := s.Stack.Pop().(*v2.ExpressionAtom)
+	expr := s.Stack.Peek().(v2.ExpressionAtomReceiver)
 
 	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
 	if err != nil {
@@ -431,7 +430,7 @@ func (s *GruleV2ParserListener) EnterArrayMapSelector(ctx *grulev2.ArrayMapSelec
 	if s.StopParse {
 		return
 	}
-	sel := ast.NewArrayMapSelector()
+	sel := v2.NewArrayMapSelector()
 	sel.GrlText = ctx.GetText()
 	s.Stack.Push(sel)
 }
@@ -441,8 +440,8 @@ func (s *GruleV2ParserListener) ExitArrayMapSelector(ctx *grulev2.ArrayMapSelect
 	if s.StopParse {
 		return
 	}
-	sel := s.Stack.Pop().(*ast.ArrayMapSelector)
-	receiver := s.Stack.Peek().(ast.ArrayMapSelectorReceiver)
+	sel := s.Stack.Pop().(*v2.ArrayMapSelector)
+	receiver := s.Stack.Peek().(v2.ArrayMapSelectorReceiver)
 	err := receiver.AcceptArrayMapSelector(sel)
 	if err != nil {
 		s.StopParse = true
@@ -455,7 +454,7 @@ func (s *GruleV2ParserListener) EnterFunctionCall(ctx *grulev2.FunctionCallConte
 	if s.StopParse {
 		return
 	}
-	fun := ast.NewFunctionCall()
+	fun := v2.NewFunctionCall()
 	fun.GrlText = ctx.GetText()
 	fun.FunctionName = ctx.SIMPLENAME().GetText()
 	s.Stack.Push(fun)
@@ -466,8 +465,8 @@ func (s *GruleV2ParserListener) ExitFunctionCall(ctx *grulev2.FunctionCallContex
 	if s.StopParse {
 		return
 	}
-	fun := s.Stack.Pop().(*ast.FunctionCall)
-	metRec := s.Stack.Peek().(ast.FunctionCallReceiver)
+	fun := s.Stack.Pop().(*v2.FunctionCall)
+	metRec := s.Stack.Peek().(v2.FunctionCallReceiver)
 	err := metRec.AcceptFunctionCall(fun)
 	if err != nil {
 		s.StopParse = true
@@ -480,7 +479,7 @@ func (s *GruleV2ParserListener) EnterArgumentList(ctx *grulev2.ArgumentListConte
 	if s.StopParse {
 		return
 	}
-	argList := ast.NewArgumentList()
+	argList := v2.NewArgumentList()
 	argList.GrlText = ctx.GetText()
 	s.Stack.Push(argList)
 }
@@ -490,8 +489,8 @@ func (s *GruleV2ParserListener) ExitArgumentList(ctx *grulev2.ArgumentListContex
 	if s.StopParse {
 		return
 	}
-	argList := s.Stack.Pop().(*ast.ArgumentList)
-	argListRec := s.Stack.Peek().(ast.ArgumentListReceiver)
+	argList := s.Stack.Pop().(*v2.ArgumentList)
+	argListRec := s.Stack.Peek().(v2.ArgumentListReceiver)
 	LoggerV2.Tracef("Adding Argument List To Receiver")
 	err := argListRec.AcceptArgumentList(argList)
 	if err != nil {
@@ -505,7 +504,7 @@ func (s *GruleV2ParserListener) EnterVariable(ctx *grulev2.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	vari := ast.NewVariable()
+	vari := v2.NewVariable()
 	if ctx.SIMPLENAME() != nil && len(ctx.SIMPLENAME().GetText()) > 0 {
 		vari.Name = ctx.SIMPLENAME().GetText()
 	}
@@ -518,8 +517,8 @@ func (s *GruleV2ParserListener) ExitVariable(ctx *grulev2.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	vari := s.Stack.Pop().(*ast.Variable)
-	variRec := s.Stack.Peek().(ast.VariableReceiver)
+	vari := s.Stack.Pop().(*v2.Variable)
+	variRec := s.Stack.Peek().(v2.VariableReceiver)
 
 	err := variRec.AcceptVariable(s.KnowledgeBase.WorkingMemory.AddVariable(vari))
 	if err != nil {
@@ -533,7 +532,7 @@ func (s *GruleV2ParserListener) EnterConstant(ctx *grulev2.ConstantContext) {
 	if s.StopParse {
 		return
 	}
-	cons := ast.NewConstant()
+	cons := v2.NewConstant()
 	cons.GrlText = ctx.GetText()
 	s.Stack.Push(cons)
 }
@@ -543,8 +542,8 @@ func (s *GruleV2ParserListener) ExitConstant(ctx *grulev2.ConstantContext) {
 	if s.StopParse {
 		return
 	}
-	cons := s.Stack.Pop().(*ast.Constant)
-	conRec := s.Stack.Peek().(ast.ConstantReceiver)
+	cons := s.Stack.Pop().(*v2.Constant)
+	conRec := s.Stack.Peek().(v2.ConstantReceiver)
 	err := conRec.AcceptConstant(cons)
 	if err != nil {
 		s.StopParse = true
@@ -562,7 +561,7 @@ func (s *GruleV2ParserListener) ExitDecimalLiteral(ctx *grulev2.DecimalLiteralCo
 	}
 	dec, _ := strconv.Atoi(ctx.GetText())
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
+		cons := s.Stack.Peek().(*v2.Constant)
 		cons.Value = reflect.ValueOf(int64(dec))
 	}
 }
@@ -577,7 +576,7 @@ func (s *GruleV2ParserListener) ExitRealLiteral(ctx *grulev2.RealLiteralContext)
 	}
 	floa, _ := strconv.ParseFloat(ctx.GetText(), 64)
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
+		cons := s.Stack.Peek().(*v2.Constant)
 		cons.Value = reflect.ValueOf(floa)
 	}
 }
@@ -597,7 +596,7 @@ func (s *GruleV2ParserListener) ExitStringLiteral(ctx *grulev2.StringLiteralCont
 		return
 	}
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
+		cons := s.Stack.Peek().(*v2.Constant)
 		cons.Value = reflect.ValueOf(dec)
 	}
 }
@@ -611,7 +610,7 @@ func (s *GruleV2ParserListener) ExitBooleanLiteral(ctx *grulev2.BooleanLiteralCo
 		return
 	}
 	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
+		cons := s.Stack.Peek().(*v2.Constant)
 		switch strings.ToLower(ctx.GetText()) {
 		case "true":
 			cons.Value = reflect.ValueOf(true)
@@ -619,45 +618,4 @@ func (s *GruleV2ParserListener) ExitBooleanLiteral(ctx *grulev2.BooleanLiteralCo
 			cons.Value = reflect.ValueOf(false)
 		}
 	}
-}
-
-func unquoteString(s string) (string, error) {
-	n := len(s)
-	if n < 2 {
-		return "", strconv.ErrSyntax
-	}
-	quote := s[0]
-	if quote != s[n-1] {
-		return "", strconv.ErrSyntax
-	}
-	s = s[1 : n-1]
-
-	if quote != '"' && quote != '\'' {
-		return "", strconv.ErrSyntax
-	}
-
-	if !contains(s, '\\') && !contains(s, quote) && utf8.ValidString(s) {
-		return s, nil
-	}
-
-	var runeTmp [utf8.UTFMax]byte
-	buf := make([]byte, 0, 3*len(s)/2)
-	for len(s) > 0 {
-		c, multibyte, ss, err := strconv.UnquoteChar(s, quote)
-		if err != nil {
-			return "", err
-		}
-		s = ss
-		if c < utf8.RuneSelf || !multibyte {
-			buf = append(buf, byte(c))
-		} else {
-			n := utf8.EncodeRune(runeTmp[:], c)
-			buf = append(buf, runeTmp[:n]...)
-		}
-	}
-	return string(buf), nil
-}
-
-func contains(s string, c byte) bool {
-	return strings.IndexByte(s, c) != -1
 }

@@ -10,7 +10,7 @@ ruleEntry
     ;
 
 salience
-    : SALIENCE decimalLiteral
+    : SALIENCE integerLiteral
     ;
 
 ruleName
@@ -36,11 +36,11 @@ thenExpressionList
 thenExpression
     : assignment SEMICOLON
     | functionCall SEMICOLON
-    | variable SEMICOLON
+    | variable methodCall SEMICOLON
     ;
 
 assignment
-    : variable ASSIGN expression
+    : variable (ASSIGN | PLUS_ASIGN | MINUS_ASIGN | DIV_ASIGN | MUL_ASIGN) expression
     ;
 
 expression
@@ -77,42 +77,73 @@ expressionAtom
     : constant
     | functionCall
     | variable
+    | expressionAtom methodCall
     | NEGATION expressionAtom
     ;
 
 constant
     : stringLiteral
-    | decimalLiteral
+    | integerLiteral
+    | floatLiteral
     | booleanLiteral
-    | realLiteral
     | NIL_LITERAL
     ;
 
 variable
     : SIMPLENAME
-    | variable MEMBERVARIABLE
+    | variable memberVariable
     | variable arrayMapSelector
-    | variable METHOD_SIGNATURE  argumentList? RR_BRACKET
     ;
 
 arrayMapSelector
     : LS_BRACKET expression RS_BRACKET
     ;
 
+memberVariable
+    : DOT SIMPLENAME
+    ;
+
 functionCall
-    : FUNCTION_SIGNATURE  argumentList? RR_BRACKET
+    : SIMPLENAME LR_BRACKET argumentList? RR_BRACKET
+    ;
+
+methodCall
+    : DOT functionCall
     ;
 
 argumentList
     :  expression ( ',' expression )*
     ;
 
-realLiteral
-    : MINUS? FLOAT_LIT
+floatLiteral
+    : decimalFloatLiteral
+    | hexadecimalFloatLiteral
+    ;
+
+decimalFloatLiteral
+    : MINUS? DECIMAL_FLOAT_LIT
+    ;
+
+hexadecimalFloatLiteral
+    : MINUS? HEX_FLOAT_LIT
+    ;
+
+integerLiteral
+    : decimalLiteral
+    | hexadecimalLiteral
+    | octalLiteral
     ;
 
 decimalLiteral
-    : MINUS? INT_LIT
+    : MINUS? DEC_LIT
+    ;
+
+hexadecimalLiteral
+    : MINUS? HEX_LIT
+    ;
+
+octalLiteral
+    : MINUS? OCT_LIT
     ;
 
 stringLiteral
@@ -120,7 +151,8 @@ stringLiteral
     ;
 
 booleanLiteral
-    : NEGATION? (TRUE | FALSE);
+    : TRUE | FALSE
+    ;
 
 // LEXER HERE
 fragment A                  : [aA] ;
@@ -150,9 +182,6 @@ fragment X                  : [xX] ;
 fragment Y                  : [yY] ;
 fragment Z                  : [zZ] ;
 
-fragment UNDER_SCORE        : '_';
-fragment DEC_DIGIT          : [0-9];
-fragment HEX_DIGIT          : [0-9a-fA-F];
 
 PLUS                        : '+' ;
 MINUS                       : '-' ;
@@ -177,11 +206,15 @@ OR                          : '||' ;
 TRUE                        : T R U E ;
 FALSE                       : F A L S E ;
 NIL_LITERAL                 : N I L ;
-NEGATION                         : '!' ;
+NEGATION                    : '!' ;
 SALIENCE                    : S A L I E N C E ;
 
 EQUALS                      : '==' ;
 ASSIGN                      : '=' ;
+PLUS_ASIGN                  : '+=' ;
+MINUS_ASIGN                 : '-=' ;
+DIV_ASIGN                   : '/=' ;
+MUL_ASIGN                   : '*=' ;
 GT                          : '>' ;
 LT                          : '<' ;
 GTE                         : '>=' ;
@@ -191,40 +224,45 @@ NOTEQUALS                   : '!=' ;
 BITAND                      : '&';
 BITOR                       : '|';
 
-METHOD_SIGNATURE            : DOT FUNCTION_SIGNATURE;
-FUNCTION_SIGNATURE          : SIMPLENAME LR_BRACKET;
-MEMBERVARIABLE              : DOT SIMPLENAME ;
 SIMPLENAME                  : [a-zA-Z] [a-zA-Z0-9]*;
 
 DQUOTA_STRING               : '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 SQUOTA_STRING               : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';
 
-FLOAT_LIT                   : DECIMAL_FLOAT_LIT | HEX_FLOAT_LIT ;
-DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_LIT? DECIMAL_EXPONENT?
+
+DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_LIT DECIMAL_EXPONENT?
                             | DEC_LIT DECIMAL_EXPONENT
                             | DOT DEC_LIT DECIMAL_EXPONENT?
                             ;
+
 DECIMAL_EXPONENT            : E (PLUS|MINUS)? DEC_DIGITS;
 
 HEX_FLOAT_LIT               : '0' X HEX_MANTISA HEX_EXPONENT
                             ;
-fragment HEX_MANTISA        : UNDER_SCORE? HEX_DIGITS DOT HEX_DIGITS?
-                            | UNDER_SCORE? HEX_DIGITS
+
+fragment HEX_MANTISA        : HEX_DIGITS DOT HEX_DIGITS?
+                            | HEX_DIGITS
                             | DOT HEX_DIGITS
                             ;
+
 HEX_EXPONENT                : P (PLUS|MINUS)? DEC_DIGITS
                             ;
 
-INT_LIT                     : DEC_LIT | HEX_LIT ;
 DEC_LIT                     : '0'
-                            | [1-9] (UNDER_SCORE? DEC_DIGITS)*
+                            | [1-9] DEC_DIGITS?
                             ;
 
 HEX_LIT                     : '0' X HEX_DIGITS;
-HEX_DIGITS                  : HEX_DIGIT+;
-DEC_DIGITS                  : DEC_DIGIT+;
+OCT_LIT                     : '0' OCT_DIGITS;
+
+fragment HEX_DIGITS         : HEX_DIGIT+;
+fragment DEC_DIGITS         : DEC_DIGIT+;
+fragment OCT_DIGITS         : OCT_DIGIT+;
+fragment DEC_DIGIT          : [0-9];
+fragment OCT_DIGIT          : [0-7];
+fragment HEX_DIGIT          : [0-9a-fA-F];
 
 // IGNORED TOKENS
-SPACE                       : [ \t\r\n]+ {l.Skip()};
-COMMENT                     : '/*' .*? '*/' {l.Skip()};
-LINE_COMMENT                : '//' ~[\r\n]* {l.Skip()};
+SPACE                       : [ \t\r\n]+    -> skip;
+COMMENT                     : '/*' .*? '*/' -> skip;
+LINE_COMMENT                : '//' ~[\r\n]* -> skip;

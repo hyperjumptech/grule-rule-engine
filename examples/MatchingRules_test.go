@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -66,10 +66,10 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 	err := dctx.Add("Fact", fact)
 	assert.NoError(t, err)
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
 	assert.NoError(t, err)

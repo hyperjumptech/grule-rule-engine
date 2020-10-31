@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -46,11 +46,11 @@ rule SetTreeName "Set the top most tree name" {
 }
 `
 
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	err := dataContext.Add("Tree", Tree)
 	assert.NoError(t, err)
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
@@ -91,11 +91,11 @@ rule SetTreeName "Set the top most tree name" {
 }
 `
 
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 	err := dataContext.Add("Tree", Tree)
 	assert.NoError(t, err)
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)

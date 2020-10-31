@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -22,9 +22,9 @@ rule CallingLog "Calling a log" {
 )
 
 func TestCallingLog(t *testing.T) {
-	dataContext := ast.NewDataContext()
+	dataContext := v2.NewDataContext()
 
-	lib := ast.NewKnowledgeLibrary()
+	lib := v2.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(GRL)))
 	assert.NoError(t, err)

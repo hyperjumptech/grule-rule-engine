@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"reflect"
@@ -47,7 +47,7 @@ func TestV2Parser(t *testing.T) {
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 		var parseError error
-		kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+		kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 		listener := NewGruleV2ParserListener(kb, func(e error) {
 			parseError = e
@@ -134,7 +134,7 @@ func TestV2Parser2(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
@@ -159,7 +159,7 @@ func TestV2ParserEscapedStringInvalid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
@@ -182,7 +182,7 @@ func TestV2ParserEscapedStringValid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
@@ -215,7 +215,7 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
@@ -268,13 +268,13 @@ type GrandChild struct {
 	Name             string
 }
 
-func prepareTestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *ast.WorkingMemory) {
+func prepareTestKnowledgeBase(t *testing.T, grl string) (*v2.KnowledgeBase, *v2.WorkingMemory) {
 	is := antlr.NewInputStream(grl)
 	lexer := parser.Newgrulev2Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := v2.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV2ParserListener(kb, func(e error) {
 		parseError = e
@@ -290,7 +290,7 @@ func prepareTestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *as
 
 func TestConstantFunctionAndConstantFunctionChain(t *testing.T) {
 	// logrus.SetLevel(logrus.InfoLevel)
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -301,7 +301,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 }
 `
 	kb, wm := prepareTestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &v2.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,
@@ -325,7 +325,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 
 func TestRuleRetract(t *testing.T) {
 	// logrus.SetLevel(logrus.InfoLevel)
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -337,7 +337,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 `
 
 	kb, wm := prepareTestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &v2.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,
@@ -362,7 +362,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 
 func TestRuleAssignment(t *testing.T) {
 	// logrus.SetLevel(logrus.TraceLevel)
-	dctx := ast.NewDataContext()
+	dctx := v2.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -374,7 +374,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 `
 
 	kb, wm := prepareTestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &v2.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,
