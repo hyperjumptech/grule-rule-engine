@@ -83,27 +83,23 @@ func (e *Constant) SetGrlText(grlText string) {
 }
 
 // AcceptIntegerLiteral will accept integer literal
-func (e *Constant) AcceptIntegerLiteral(fun *IntegerLiteral) error {
+func (e *Constant) AcceptIntegerLiteral(fun *IntegerLiteral) {
 	e.Value = reflect.ValueOf(fun.Integer)
-	return nil
 }
 
 // AcceptStringLiteral will accept string literal
-func (e *Constant) AcceptStringLiteral(fun *StringLiteral) error {
+func (e *Constant) AcceptStringLiteral(fun *StringLiteral) {
 	e.Value = reflect.ValueOf(fun.String)
-	return nil
 }
 
 // AcceptFloatLiteral will accept float literal
-func (e *Constant) AcceptFloatLiteral(fun *FloatLiteral) error {
+func (e *Constant) AcceptFloatLiteral(fun *FloatLiteral) {
 	e.Value = reflect.ValueOf(fun.Float)
-	return nil
 }
 
 // AcceptBooleanLiteral will accept boolean literal
-func (e *Constant) AcceptBooleanLiteral(fun *BooleanLiteral) error {
+func (e *Constant) AcceptBooleanLiteral(fun *BooleanLiteral) {
 	e.Value = reflect.ValueOf(fun.Boolean)
-	return nil
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation

@@ -43,6 +43,16 @@ func (e *RuleEntry) AcceptSalience(salience *Salience) {
 	e.Salience = salience.SalienceValue
 }
 
+func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
+	e.WhenScope = when
+	return nil
+}
+
+func (e *RuleEntry) AcceptThenScope(thenScope *ThenScope) error {
+	e.ThenScope = thenScope
+	return nil
+}
+
 // Clone will clone this RuleEntry. The new clone will have an identical structure
 func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	clone := &RuleEntry{

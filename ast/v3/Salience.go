@@ -20,4 +20,5 @@ type SalienceReceiver interface {
 // AcceptIntegerLiteral accept the assigned integer
 func (sal *Salience) AcceptIntegerLiteral(lit *IntegerLiteral) error {
 	sal.SalienceValue = int(lit.Integer)
+	return nil
 }

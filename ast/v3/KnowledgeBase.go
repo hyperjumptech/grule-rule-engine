@@ -122,10 +122,10 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 func (e *KnowledgeBase) AddRuleEntry(entry *RuleEntry) error {
 	e.lock.Lock()
 	defer e.lock.Unlock()
-	if e.ContainsRuleEntry(entry.RuleName.SimpleName) {
-		return fmt.Errorf("rule entry %s already exist", entry.RuleName.SimpleName)
+	if e.ContainsRuleEntry(entry.RuleName) {
+		return fmt.Errorf("rule entry %s already exist", entry.RuleName)
 	}
-	e.RuleEntries[entry.RuleName.SimpleName] = entry
+	e.RuleEntries[entry.RuleName] = entry
 	return nil
 }
 
@@ -152,7 +152,7 @@ func (e *KnowledgeBase) InitializeContext(dataCtx IDataContext) {
 // RetractRule will retract the selected rule for execution on the next cycle.
 func (e *KnowledgeBase) RetractRule(ruleName string) {
 	for _, re := range e.RuleEntries {
-		if re.RuleName.SimpleName == ruleName {
+		if re.RuleName == ruleName {
 			re.Retracted = true
 		}
 	}
@@ -161,7 +161,7 @@ func (e *KnowledgeBase) RetractRule(ruleName string) {
 // IsRuleRetracted will check if a certain rule denoted by its rule name is currently retracted
 func (e *KnowledgeBase) IsRuleRetracted(ruleName string) bool {
 	for _, re := range e.RuleEntries {
-		if re.RuleName.SimpleName == ruleName {
+		if re.RuleName == ruleName {
 			return re.Retracted
 		}
 	}

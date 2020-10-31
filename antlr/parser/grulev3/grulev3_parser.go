@@ -70,7 +70,7 @@ var parserATN = []uint16{
 	105, 3, 2, 2, 2, 105, 103, 3, 2, 2, 2, 105, 106, 3, 2, 2, 2, 106, 17, 3,
 	2, 2, 2, 107, 108, 5, 20, 11, 2, 108, 109, 7, 10, 2, 2, 109, 118, 3, 2,
 	2, 2, 110, 111, 5, 44, 23, 2, 111, 112, 7, 10, 2, 2, 112, 118, 3, 2, 2,
-	2, 113, 114, 5, 34, 18, 2, 114, 115, 5, 46, 24, 2, 115, 116, 7, 10, 2,
+	2, 113, 114, 5, 38, 20, 2, 114, 115, 5, 46, 24, 2, 115, 116, 7, 10, 2,
 	2, 116, 118, 3, 2, 2, 2, 117, 107, 3, 2, 2, 2, 117, 110, 3, 2, 2, 2, 117,
 	113, 3, 2, 2, 2, 118, 19, 3, 2, 2, 2, 119, 120, 5, 38, 20, 2, 120, 121,
 	9, 3, 2, 2, 121, 122, 5, 22, 12, 2, 122, 21, 3, 2, 2, 2, 123, 125, 8, 12,
@@ -1293,7 +1293,7 @@ func (p *grulev3Parser) ThenExpressionList() (localctx IThenExpressionListContex
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev3ParserMINUS)|(1<<grulev3ParserTRUE)|(1<<grulev3ParserFALSE)|(1<<grulev3ParserNIL_LITERAL)|(1<<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((1<<uint((_la-38)))&((1<<(grulev3ParserSIMPLENAME-38))|(1<<(grulev3ParserDQUOTA_STRING-38))|(1<<(grulev3ParserSQUOTA_STRING-38))|(1<<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(1<<(grulev3ParserHEX_FLOAT_LIT-38))|(1<<(grulev3ParserDEC_LIT-38))|(1<<(grulev3ParserHEX_LIT-38))|(1<<(grulev3ParserOCT_LIT-38)))) != 0) {
+	for ok := true; ok; ok = _la == grulev3ParserSIMPLENAME {
 		{
 			p.SetState(100)
 			p.ThenExpression()
@@ -1369,14 +1369,14 @@ func (s *ThenExpressionContext) FunctionCall() IFunctionCallContext {
 	return t.(IFunctionCallContext)
 }
 
-func (s *ThenExpressionContext) ExpressionAtom() IExpressionAtomContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionAtomContext)(nil)).Elem(), 0)
+func (s *ThenExpressionContext) Variable() IVariableContext {
+	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableContext)(nil)).Elem(), 0)
 
 	if t == nil {
 		return nil
 	}
 
-	return t.(IExpressionAtomContext)
+	return t.(IVariableContext)
 }
 
 func (s *ThenExpressionContext) MethodCall() IMethodCallContext {
@@ -1468,7 +1468,7 @@ func (p *grulev3Parser) ThenExpression() (localctx IThenExpressionContext) {
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(111)
-			p.expressionAtom(0)
+			p.variable(0)
 		}
 		{
 			p.SetState(112)
