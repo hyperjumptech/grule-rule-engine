@@ -1,6 +1,7 @@
 package antlr
 
 import (
+	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestV2Lexer(t *testing.T) {
-	data, err := ioutil.ReadFile("./sample2.grl")
+	data, err := ioutil.ReadFile("./sample3.grl")
 	if err != nil {
 		t.Fatal(err)
 	} else {
@@ -24,6 +25,7 @@ func TestV2Lexer(t *testing.T) {
 		// Read all tokens
 		for {
 			nt := lexer.NextToken()
+			fmt.Println(nt.GetText())
 			if nt.GetTokenType() == antlr.TokenEOF {
 				break
 			}
