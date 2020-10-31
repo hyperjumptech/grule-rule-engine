@@ -126,5 +126,39 @@ func (e *Assignment) Execute(dataContext IDataContext, memory *WorkingMemory) er
 	if err != nil {
 		return err
 	}
-	return e.Variable.Assign(exprVal, dataContext, memory)
+	if e.IsAssign {
+		return e.Variable.Assign(exprVal, dataContext, memory)
+	}
+	varval, err := e.Variable.Evaluate(dataContext, memory)
+	if err != nil {
+		return err
+	}
+	if e.IsPlusAssign {
+		nval, err := pkg.EvaluateAddition(varval, exprVal)
+		if err != nil {
+			return err
+		}
+		return e.Variable.Assign(nval, dataContext, memory)
+	}
+	if e.IsMinusAssign {
+		nval, err := pkg.EvaluateSubtraction(varval, exprVal)
+		if err != nil {
+			return err
+		}
+		return e.Variable.Assign(nval, dataContext, memory)
+	}
+	if e.IsMulAssign {
+		nval, err := pkg.EvaluateMultiplication(varval, exprVal)
+		if err != nil {
+			return err
+		}
+		return e.Variable.Assign(nval, dataContext, memory)
+	}
+	if e.IsDivAssign {
+		nval, err := pkg.EvaluateDivision(varval, exprVal)
+		if err != nil {
+			return err
+		}
+		return e.Variable.Assign(nval, dataContext, memory)
+	}
 }
