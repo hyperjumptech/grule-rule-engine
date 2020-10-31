@@ -1,5 +1,47 @@
 grammar grulev3;
 
+// PARSER HERE
+grl
+    : ruleEntry* EOF
+    ;
+
+ruleEntry
+    : RULE ruleName ruleDescription? salience? LR_BRACE whenScope thenScope RR_BRACE
+    ;
+
+salience
+    : SALIENCE decimalLiteral
+    ;
+
+ruleName
+    : SIMPLENAME
+    ;
+
+ruleDescription
+    : DQUOTA_STRING | SQUOTA_STRING
+    ;
+
+whenScope
+    : WHEN  expression
+    ;
+
+thenScope
+    : THEN  thenExpressionList
+    ;
+
+thenExpressionList
+    : thenExpression+
+    ;
+
+thenExpression
+    : assignment SEMICOLON
+    | functionCall SEMICOLON
+    | variable SEMICOLON
+    ;
+
+assignment
+    : variable ASSIGN expression
+    ;
 
 expression
     : expression mulDivOperators expression
@@ -39,9 +81,9 @@ expressionAtom
 
 constant
     : stringLiteral
-    | realLiteral
     | decimalLiteral
     | booleanLiteral
+    | realLiteral
     ;
 
 variable
@@ -79,7 +121,6 @@ booleanLiteral
     : TRUE | FALSE;
 
 // LEXER HERE
-
 fragment A                  : [aA] ;
 fragment B                  : [bB] ;
 fragment C                  : [cC] ;
@@ -107,24 +148,24 @@ fragment X                  : [xX] ;
 fragment Y                  : [yY] ;
 fragment Z                  : [zZ] ;
 
-fragment UNDER_SCORE                 : '_';
- PLUS                        : '+' ;
- MINUS                       : '-' ;
- DIV                         : '/' ;
- MUL                         : '*' ;
- MOD                         : '%' ;
- DOT                         : '.' ;
-fragment SEMICOLON                   : ';' ;
-
- LR_BRACE                    : '{';
- RR_BRACE                    : '}';
- LR_BRACKET                  : '(';
- RR_BRACKET                  : ')';
- LS_BRACKET                  : '[';
- RS_BRACKET                  : ']';
-
+fragment UNDER_SCORE        : '_';
 fragment DEC_DIGIT          : [0-9];
 fragment HEX_DIGIT          : [0-9a-fA-F];
+
+PLUS                        : '+' ;
+MINUS                       : '-' ;
+DIV                         : '/' ;
+MUL                         : '*' ;
+MOD                         : '%' ;
+DOT                         : '.' ;
+SEMICOLON                   : ';' ;
+
+LR_BRACE                    : '{';
+RR_BRACE                    : '}';
+LR_BRACKET                  : '(';
+RR_BRACKET                  : ')';
+LS_BRACKET                  : '[';
+RS_BRACKET                  : ']';
 
 RULE                        : R U L E  ;
 WHEN                        : W H E N ;
@@ -136,7 +177,6 @@ FALSE                       : F A L S E ;
 NULL_LITERAL                : N U L L ;
 NOT                         : N O T ;
 SALIENCE                    : S A L I E N C E ;
-
 
 EQUALS                      : '==' ;
 ASSIGN                      : '=' ;
@@ -183,12 +223,7 @@ HEX_DIGITS                  : HEX_DIGIT+;
 DEC_DIGITS                  : DEC_DIGIT+;
 
 
-
-SPACE                       : [ \t\r\n]+ {l.Skip()}
-                            ;
-
-COMMENT                     : '/*' .*? '*/' {l.Skip()}
-                            ;
-
-LINE_COMMENT                : '//' ~[\r\n]* {l.Skip()}
-                            ;
+// IGNORED TOKENS
+SPACE                       : [ \t\r\n]+ {l.Skip()};
+COMMENT                     : '/*' .*? '*/' {l.Skip()};
+LINE_COMMENT                : '//' ~[\r\n]* {l.Skip()};
