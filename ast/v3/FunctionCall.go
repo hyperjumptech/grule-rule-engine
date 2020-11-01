@@ -66,9 +66,7 @@ func (e *FunctionCall) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(FUNCTIONCALL)
 	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
-	if e.ArgumentList == nil {
-		AstLog.Errorf("Argument is nil")
-	} else {
+	if e.ArgumentList != nil {
 		buff.WriteString(",")
 		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}

@@ -74,11 +74,13 @@ func (e *ThenExpressionList) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(THENEXPRESSIONLIST)
 	buff.WriteString("(")
-	for idx, es := range e.ThenExpressions {
-		if idx > 0 {
-			buff.WriteString(",")
+	if e.ThenExpressions != nil {
+		for idx, es := range e.ThenExpressions {
+			if idx > 0 {
+				buff.WriteString(",")
+			}
+			buff.WriteString(es.GetSnapshot())
 		}
-		buff.WriteString(es.GetSnapshot())
 	}
 	buff.WriteString(")")
 	return buff.String()

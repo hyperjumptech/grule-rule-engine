@@ -245,7 +245,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 				if e.Value.Kind() == reflect.Bool {
 					e.Value = reflect.ValueOf(!e.Value.Bool())
 				} else {
-					AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.")
+					AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.SingleExpression.GrlText)
 				}
 			}
 			e.Evaluated = true

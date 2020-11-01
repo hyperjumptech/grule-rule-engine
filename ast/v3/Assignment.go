@@ -161,4 +161,5 @@ func (e *Assignment) Execute(dataContext IDataContext, memory *WorkingMemory) er
 		}
 		return e.Variable.Assign(nval, dataContext, memory)
 	}
+	return nil
 }

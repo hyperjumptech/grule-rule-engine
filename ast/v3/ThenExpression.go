@@ -107,7 +107,13 @@ func (e *ThenExpression) GetSnapshot() string {
 	buff.WriteString("(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
-	} else if e.FunctionCall != nil {
+	}
+	if e.Variable == nil && e.FunctionCall != nil {
+		buff.WriteString(e.FunctionCall.GetSnapshot())
+	}
+	if e.Variable != nil && e.FunctionCall != nil {
+		buff.WriteString(e.Variable.GetSnapshot())
+		buff.WriteString("->")
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
 	buff.WriteString(")")

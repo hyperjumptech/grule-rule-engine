@@ -73,7 +73,9 @@ func (e *WhenScope) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(WHENSCOPE)
 	buff.WriteString("(")
-	buff.WriteString(e.Expression.GetSnapshot())
+	if e.Expression != nil {
+		buff.WriteString(e.Expression.GetSnapshot())
+	}
 	buff.WriteString(")")
 	return buff.String()
 }

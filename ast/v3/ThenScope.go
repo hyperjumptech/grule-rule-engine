@@ -67,7 +67,9 @@ func (e *ThenScope) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(THENSCOPE)
 	buff.WriteString("(")
-	buff.WriteString(e.ThenExpressionList.GetSnapshot())
+	if e.ThenExpressionList != nil {
+		buff.WriteString(e.ThenExpressionList.GetSnapshot())
+	}
 	buff.WriteString(")")
 	return buff.String()
 }

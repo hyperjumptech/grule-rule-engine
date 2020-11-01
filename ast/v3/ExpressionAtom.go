@@ -175,7 +175,7 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			if e.Value.Kind() == reflect.Bool {
 				e.Value = reflect.ValueOf(!e.Value.Bool())
 			} else {
-				AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.")
+				AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.ExpressionAtom.GrlText)
 			}
 		}
 		e.Evaluated = true

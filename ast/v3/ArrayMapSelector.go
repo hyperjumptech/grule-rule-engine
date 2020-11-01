@@ -72,7 +72,9 @@ func (e *ArrayMapSelector) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(MAPARRAYSELECTOR)
 	buff.WriteString("(")
-	buff.WriteString(e.Expression.GetSnapshot())
+	if e.Expression != nil {
+		buff.WriteString(e.Expression.GetSnapshot())
+	}
 	buff.WriteString(")")
 	return buff.String()
 }

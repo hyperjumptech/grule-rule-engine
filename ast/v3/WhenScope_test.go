@@ -15,8 +15,8 @@ func TestNewWhenScope(t *testing.T) {
 
 	expr1 := &Expression{
 		AstID:           "abc",
-		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}}},
-		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Variable: &Variable{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}}},
+		LeftExpression:  &Expression{ExpressionAtom: &ExpressionAtom{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}},
+		RightExpression: &Expression{ExpressionAtom: &ExpressionAtom{Constant: &Constant{Value: reflect.ValueOf("Whooho")}}},
 		Operator:        OpEq,
 	}
 
@@ -46,10 +46,8 @@ func TestNewWhenScopeEvaluate(t *testing.T) {
 		AstID: "abc",
 		SingleExpression: &Expression{
 			ExpressionAtom: &ExpressionAtom{
-				Variable: &Variable{
-					Constant: &Constant{
-						Value: reflect.ValueOf(123),
-					},
+				Constant: &Constant{
+					Value: reflect.ValueOf(123),
 				},
 			},
 		},
