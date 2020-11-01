@@ -3,7 +3,9 @@ package v3
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -27,6 +29,7 @@ type ExpressionAtom struct {
 	Negated        bool
 	ExpressionAtom *ExpressionAtom
 	Value          reflect.Value
+	ValueNode      model.ValueNode
 
 	Evaluated bool
 }
@@ -142,16 +145,27 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 	if e.Evaluated == true {
 		return e.Value, nil
 	}
+	if e.Constant != nil {
+		val, err := e.Constant.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = val
+		e.ValueNode = model.NewGoValueNode(val, fmt.Sprintf("%s->%s", val.Type().String(), val.String()))
+		e.Evaluated = true
+		return val, err
+	}
 	if e.Variable != nil {
 		val, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.Value{}, err
 		}
 		e.Value = val
+		e.ValueNode = e.Variable.ValueNode
 		e.Evaluated = true
 		return val, err
 	}
-	if e.FunctionCall != nil {
+	if e.ExpressionAtom == nil && e.FunctionCall != nil {
 		valueNode := dataContext.Get("DEFUNC")
 		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
@@ -162,18 +176,21 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			return reflect.Value{}, err
 		}
 		e.Value = ret
+		e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("%s()", e.FunctionCall.FunctionName))
 		e.Evaluated = true
 		return ret, err
 	}
-	if e.ExpressionAtom != nil {
+	if e.ExpressionAtom != nil && e.FunctionCall == nil {
 		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.Value{}, err
 		}
 		e.Value = val
+		e.ValueNode = e.ExpressionAtom.ValueNode
 		if e.Negated {
 			if e.Value.Kind() == reflect.Bool {
 				e.Value = reflect.ValueOf(!e.Value.Bool())
+				e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("!%s", e.GrlText))
 			} else {
 				AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.ExpressionAtom.GrlText)
 			}
@@ -181,14 +198,27 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		e.Evaluated = true
 		return val, err
 	}
-	if e.Constant != nil {
-		val, err := e.Constant.Evaluate(dataContext, memory)
+	if e.ExpressionAtom != nil && e.FunctionCall != nil {
+		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
-			return reflect.Value{}, err
+			return reflect.ValueOf(nil), err
 		}
-		e.Value = val
-		e.Evaluated = true
-		return val, err
+
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		if retVal.IsValid() {
+			e.Value = retVal
+		}
+		e.ValueNode = e.ExpressionAtom.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
+		return e.Value, nil
 	}
 	panic("should not be reached")
 }

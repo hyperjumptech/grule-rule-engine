@@ -104,7 +104,6 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 	}
 	entry := s.Stack.Pop().(*v3.RuleEntry)
 	entryReceiver := s.Stack.Peek().(v3.RuleEntryReceiver)
-	err := entryReceiver.ReceiveRuleEntry(entry)
 	if ctx.RuleName() != nil {
 		entry.RuleName = ctx.RuleName().GetText()
 	}
@@ -112,6 +111,7 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 		txt := ctx.RuleDescription().GetText()
 		entry.RuleDescription = txt[1 : len(txt)-1]
 	}
+	err := entryReceiver.ReceiveRuleEntry(entry)
 	if err != nil {
 		s.ErrorCallback(err)
 	} else {

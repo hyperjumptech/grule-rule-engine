@@ -39,8 +39,9 @@ type RuleEntryReceiver interface {
 }
 
 // AcceptSalience will accept salience value
-func (e *RuleEntry) AcceptSalience(salience *Salience) {
+func (e *RuleEntry) AcceptSalience(salience *Salience) error {
 	e.Salience = salience.SalienceValue
+	return nil
 }
 
 func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
