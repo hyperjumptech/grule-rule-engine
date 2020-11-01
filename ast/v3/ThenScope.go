@@ -2,14 +2,14 @@ package v3
 
 import (
 	"bytes"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenScope will create new instance of ThenScope
 func NewThenScope() *ThenScope {
 	return &ThenScope{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -29,7 +29,7 @@ type ThenScopeReceiver interface {
 // Clone will clone this ThenScope. The new clone will have an identical structure
 func (e *ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 	clone := &ThenScope{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 

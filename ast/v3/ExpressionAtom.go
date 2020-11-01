@@ -3,16 +3,16 @@ package v3
 import (
 	"bytes"
 	"errors"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewExpressionAtom create new instance of ExpressionAtom
 func NewExpressionAtom() *ExpressionAtom {
 	return &ExpressionAtom{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -39,7 +39,7 @@ type ExpressionAtomReceiver interface {
 // Clone will clone this ExpressionAtom. The new clone will have an identical structure
 func (e *ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 	clone := &ExpressionAtom{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 

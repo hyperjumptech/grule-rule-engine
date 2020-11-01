@@ -3,14 +3,14 @@ package v3
 import (
 	"bytes"
 	"errors"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenExpression create new instance of ThenExpression
 func NewThenExpression() *ThenExpression {
 	return &ThenExpression{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -32,7 +32,7 @@ type ThenExpressionReceiver interface {
 // Clone will clone this ThenExpression. The new clone will have an identical structure
 func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	clone := &ThenExpression{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 

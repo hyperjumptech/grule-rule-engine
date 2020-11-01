@@ -2,7 +2,7 @@ package v3
 
 import (
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"strings"
@@ -19,7 +19,7 @@ func NewWorkingMemory(name, version string) *WorkingMemory {
 		expressionAtomSnapshotMap: make(map[string]*ExpressionAtom),
 		expressionVariableMap:     make(map[*Variable][]*Expression),
 		expressionAtomVariableMap: make(map[*Variable][]*ExpressionAtom),
-		ID:                        uuid.New().String(),
+		ID:                        unique.NewId(),
 	}
 }
 

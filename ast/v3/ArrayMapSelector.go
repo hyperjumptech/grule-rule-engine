@@ -3,7 +3,7 @@ package v3
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
@@ -11,7 +11,7 @@ import (
 // NewArrayMapSelector create a new array selector graph
 func NewArrayMapSelector() *ArrayMapSelector {
 	return &ArrayMapSelector{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -33,7 +33,7 @@ type ArrayMapSelectorReceiver interface {
 // Clone will clone this ArgumentList. The new clone will have an identical structure
 func (e *ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 	clone := &ArrayMapSelector{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 	if e.Expression != nil {

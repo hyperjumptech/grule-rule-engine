@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -46,7 +46,7 @@ const (
 // NewExpression creates new Expression instance
 func NewExpression() *Expression {
 	return &Expression{
-		AstID:    uuid.New().String(),
+		AstID:    unique.NewId(),
 		Operator: 0,
 	}
 }
@@ -70,7 +70,7 @@ type Expression struct {
 // Clone will clone this Expression. The new clone will have an identical structure
 func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	clone := &Expression{
-		AstID:    uuid.New().String(),
+		AstID:    unique.NewId(),
 		GrlText:  e.GrlText,
 		Operator: e.Operator,
 	}

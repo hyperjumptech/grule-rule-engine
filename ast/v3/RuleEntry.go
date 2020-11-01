@@ -3,16 +3,16 @@ package v3
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewRuleEntry create new instance of RuleEntry
 func NewRuleEntry() *RuleEntry {
 	return &RuleEntry{
-		AstID:           uuid.New().String(),
+		AstID:           unique.NewId(),
 		RuleName:        "No Name",
 		Salience:        0,
 		RuleDescription: "No Description",
@@ -56,7 +56,7 @@ func (e *RuleEntry) AcceptThenScope(thenScope *ThenScope) error {
 // Clone will clone this RuleEntry. The new clone will have an identical structure
 func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 	clone := &RuleEntry{
-		AstID:           uuid.New().String(),
+		AstID:           unique.NewId(),
 		GrlText:         e.GrlText,
 		RuleName:        e.RuleName,
 		RuleDescription: e.RuleDescription,

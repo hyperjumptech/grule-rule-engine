@@ -3,16 +3,16 @@ package v3
 import (
 	"bytes"
 	"errors"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewWhenScope creates new instance of WhenScope
 func NewWhenScope() *WhenScope {
 	return &WhenScope{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -32,7 +32,7 @@ type WhenScopeReceiver interface {
 // Clone will clone this Clone. The new clone will have an identical structure
 func (e *WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 	clone := &WhenScope{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 

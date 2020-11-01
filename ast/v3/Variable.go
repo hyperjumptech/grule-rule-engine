@@ -3,17 +3,17 @@ package v3
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewVariable create new instance of Variable
 func NewVariable() *Variable {
 	return &Variable{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -33,7 +33,7 @@ type Variable struct {
 // Clone will clone this Variable. The new clone will have an identical structure
 func (e *Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 	clone := &Variable{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 		Name:    e.Name,
 	}

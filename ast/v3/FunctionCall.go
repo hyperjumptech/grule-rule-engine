@@ -3,7 +3,7 @@ package v3
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
@@ -11,7 +11,7 @@ import (
 // NewFunctionCall creates new instance of FunctionCall
 func NewFunctionCall() *FunctionCall {
 	return &FunctionCall{
-		AstID:        uuid.New().String(),
+		AstID:        unique.NewId(),
 		ArgumentList: NewArgumentList(),
 	}
 }
@@ -29,7 +29,7 @@ type FunctionCall struct {
 // Clone will clone this FunctionCall. The new clone will have an identical structure
 func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 	clone := &FunctionCall{
-		AstID:        uuid.New().String(),
+		AstID:        unique.NewId(),
 		GrlText:      e.GrlText,
 		FunctionName: e.FunctionName,
 	}

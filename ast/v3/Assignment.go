@@ -3,14 +3,14 @@ package v3
 import (
 	"bytes"
 	"errors"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewAssignment will create new instance of Assignment AST Node
 func NewAssignment() *Assignment {
 	return &Assignment{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -36,7 +36,7 @@ type AssignmentReceiver interface {
 // Clone will clone this Assignment. The new clone will have an identical structure
 func (e *Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 	clone := &Assignment{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 	}
 	if e.Variable != nil {

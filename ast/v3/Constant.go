@@ -3,16 +3,16 @@ package v3
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewConstant will create new instance of Constant
 func NewConstant() *Constant {
 	return &Constant{
-		AstID: uuid.New().String(),
+		AstID: unique.NewId(),
 	}
 }
 
@@ -30,7 +30,7 @@ type Constant struct {
 // Clone will clone this Constant. The new clone will have an identical structure
 func (e *Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
 	clone := &Constant{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewId(),
 		GrlText: e.GrlText,
 		Value:   e.Value,
 	}
