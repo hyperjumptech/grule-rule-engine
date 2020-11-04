@@ -3,7 +3,6 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"sort"
 	"strings"
 	"sync"
@@ -48,11 +47,11 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 	if ok {
 		newClone := kb.Clone(pkg.NewCloneTable())
 		if kb.IsIdentical(newClone) {
-			logrus.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
+			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
 			return newClone
 		}
-		logrus.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
-		logrus.Fatalf("CLONE    : %s", newClone.GetSnapshot())
+		AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
 		panic("The clone is not identical")
 	}
 	return nil

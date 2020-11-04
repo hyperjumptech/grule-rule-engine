@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"reflect"
 	"strings"
 	"time"
@@ -11,8 +12,7 @@ import (
 
 var (
 	// GrlLogger is the logger that be used from within the rule engine GRL
-	GrlLogger = logrus.WithFields(logrus.Fields{
-		"lib":     "grule",
+	GrlLogger = logger.Log.WithFields(logrus.Fields{
 		"package": "AST",
 		"source":  "GRL",
 	})

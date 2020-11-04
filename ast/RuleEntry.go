@@ -12,8 +12,9 @@ import (
 // NewRuleEntry create new instance of RuleEntry
 func NewRuleEntry() *RuleEntry {
 	return &RuleEntry{
-		AstID:    uuid.New().String(),
-		Salience: NewSalience(0),
+		AstID:           uuid.New().String(),
+		Salience:        NewSalience(0),
+		RuleDescription: &RuleDescription{Text: "No Description"},
 	}
 }
 

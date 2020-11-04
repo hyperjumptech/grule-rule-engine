@@ -2,6 +2,7 @@ package antlr
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"reflect"
 	"strconv"
 	"strings"
@@ -15,7 +16,7 @@ import (
 
 var (
 	// LoggerV2 is a logrus instance twith default fields for grule
-	LoggerV2 = logrus.WithFields(logrus.Fields{
+	LoggerV2 = logger.Log.WithFields(logrus.Fields{
 		"lib":    "grule",
 		"struct": "GruleParserV2Listener",
 	})

@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"sort"
 	"time"
 
@@ -12,9 +13,8 @@ import (
 
 var (
 	// Logger is a logrus instance with default fields for grule
-	log = logrus.WithFields(logrus.Fields{
-		"lib":    "grule",
-		"struct": "GruleEngineV2",
+	log = logger.Log.WithFields(logrus.Fields{
+		"package": "engine",
 	})
 )
 
