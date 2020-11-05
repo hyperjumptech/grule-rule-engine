@@ -1,8 +1,12 @@
 GO111MODULE=on
 
-.PHONY: all test clean build docker
+.PHONY: all test test-short fix-antlr4-bug build
 
-build:
+fix-antlr4-bug:
+	sed -i.origin.bak "s/1\<\</int64(1)\<\</g" antlr/parser/grulev2/grulev2_parser.go
+	sed -i.origin.bak "s/1\<\</int64(1)\<\</g" antlr/parser/grulev3/grulev3_parser.go
+
+build: fix-antlr4-bug
 	export GO111MODULE on; \
 	go build ./...
 
