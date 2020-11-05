@@ -16,3 +16,8 @@ type Salience struct {
 type SalienceReceiver interface {
 	AcceptSalience(salience *Salience) error
 }
+
+// AcceptIntegerLiteral accept the assigned integer
+func (sal *Salience) AcceptIntegerLiteral(lit *IntegerLiteral) {
+	sal.SalienceValue = int(lit.Integer)
+}

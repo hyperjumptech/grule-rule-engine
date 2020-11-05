@@ -7,6 +7,7 @@ previewdocs_linux_amd64
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
 *.orig
+*.bak
 
 # Created by git when using merge tools for conflicts
 *.BACKUP.*

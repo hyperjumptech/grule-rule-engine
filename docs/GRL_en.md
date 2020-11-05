@@ -1,6 +1,8 @@
 # Grule Rule Language (GRL)
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md)
+[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+
+---
 
 The **GRL** is a DSL (Domain Specific Language) designed for Grule. It's a simplified language
 to be used for defining rule evaluation criterias and actions to be executed if the criteria(s) are met.
@@ -52,7 +54,10 @@ then
 | Real    | Hold a real value                                                      | `234.4553`, `-234.3` , `314E-2`, `.32` , `12.32E12`  |
 | Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
 
+More example here : [GRL Literals](GRL_Literals_en.md)
+
 Note: Strings are escaped following the same rules used for standard Go strings. Backtick strings are not supported.
+
 
 ### Operators supported 
 
@@ -132,6 +137,30 @@ You can always set an array value if the index you specify is valid.
 ```
 
 There are a couple functions you can use to work with array/slice and map in the [Function page](Function_en.md)
+
+### Negation
+
+A negation symbol `!` is supported by GRL in addition to NEQ `!=` symbol.
+Its to be used in front of a boolean expression or expression atom.
+
+For example in expression atom:
+
+```go
+when 
+    !FunctionReturnTrue() ||
+    !false
+then
+    ... 
+```
+
+or in expression:
+
+```go
+when
+    !(you.IsOk() || !today.isMonday())
+then
+    ...
+```
 
 ### Function call
 

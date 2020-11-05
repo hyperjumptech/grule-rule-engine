@@ -2,14 +2,14 @@ package builder
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	parser2 "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
+	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -87,7 +87,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	// Immediately parse the loaded resource
 	is := antlr.NewInputStream(string(data))
-	lexer := parser2.Newgrulev2Lexer(is)
+	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
@@ -100,9 +100,9 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV2ParserListener(kb, errCall)
+	listener := antlr2.NewGruleV3ParserListener(kb, errCall)
 
-	psr := parser2.Newgrulev2Parser(stream)
+	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
@@ -110,7 +110,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	for _, ruleEntry := range grl.RuleEntries {
 		err := kb.AddRuleEntry(ruleEntry)
 		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
-			BuilderLog.Warnf("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName.SimpleName, err.Error())
+			BuilderLog.Tracef("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName, err.Error())
 		}
 	}
 

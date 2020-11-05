@@ -3,11 +3,11 @@ package engine
 import (
 	"context"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"sort"
 	"time"
 
-	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/sirupsen/logrus"
 )
 
@@ -81,7 +81,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// test if this rule entry v can execute.
 			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 				// No longer return error, since unavailability of variable or fact in context might be intentional.
 			}
 			// if can, add into runnable array
@@ -112,7 +112,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// scan all runnables and pick the highest salience
 			if len(runnable) > 1 {
 				for idx, pr := range runnable {
-					if idx > 0 && runner.Salience.SalienceValue < pr.Salience.SalienceValue {
+					if idx > 0 && runner.Salience < pr.Salience {
 						runner = pr
 					}
 				}
@@ -120,7 +120,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// execute the top most prioritized rule
 			err := runner.Execute(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName.SimpleName, err)
+				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
 				return err
 			}
 
@@ -164,7 +164,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 		// test if this rule entry v can execute.
 		can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 		if err != nil {
-			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
+			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 			// No longer return error, since unavailability of variable or fact in context might be intentional.
 		}
 		// if can, add into runnable array
@@ -176,7 +176,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
-			return runnable[i].Salience.SalienceValue > runnable[j].Salience.SalienceValue
+			return runnable[i].Salience > runnable[j].Salience
 		})
 	}
 	return runnable, nil

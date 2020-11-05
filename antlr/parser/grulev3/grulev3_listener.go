@@ -1,10 +1,10 @@
-// Code generated from C:/Users/User/Laboratory/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev2.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/ferdinandneman/Laboratory/Golang/src/github.com/newm4n/grule-rule-engine/antlr/grulev3.g4 by ANTLR 4.8. DO NOT EDIT.
 
-package grulev2 // grulev2
+package grulev3 // grulev3
 import "github.com/antlr/antlr4/runtime/Go/antlr"
 
-// grulev2Listener is a complete listener for a parse tree produced by grulev2Parser.
-type grulev2Listener interface {
+// grulev3Listener is a complete listener for a parse tree produced by grulev3Parser.
+type grulev3Listener interface {
 	antlr.ParseTreeListener
 
 	// EnterGrl is called when entering the grl production.
@@ -58,26 +58,47 @@ type grulev2Listener interface {
 	// EnterExpressionAtom is called when entering the expressionAtom production.
 	EnterExpressionAtom(c *ExpressionAtomContext)
 
-	// EnterArrayMapSelector is called when entering the arrayMapSelector production.
-	EnterArrayMapSelector(c *ArrayMapSelectorContext)
-
-	// EnterFunctionCall is called when entering the functionCall production.
-	EnterFunctionCall(c *FunctionCallContext)
-
-	// EnterArgumentList is called when entering the argumentList production.
-	EnterArgumentList(c *ArgumentListContext)
+	// EnterConstant is called when entering the constant production.
+	EnterConstant(c *ConstantContext)
 
 	// EnterVariable is called when entering the variable production.
 	EnterVariable(c *VariableContext)
 
-	// EnterConstant is called when entering the constant production.
-	EnterConstant(c *ConstantContext)
+	// EnterArrayMapSelector is called when entering the arrayMapSelector production.
+	EnterArrayMapSelector(c *ArrayMapSelectorContext)
+
+	// EnterMemberVariable is called when entering the memberVariable production.
+	EnterMemberVariable(c *MemberVariableContext)
+
+	// EnterFunctionCall is called when entering the functionCall production.
+	EnterFunctionCall(c *FunctionCallContext)
+
+	// EnterMethodCall is called when entering the methodCall production.
+	EnterMethodCall(c *MethodCallContext)
+
+	// EnterArgumentList is called when entering the argumentList production.
+	EnterArgumentList(c *ArgumentListContext)
+
+	// EnterFloatLiteral is called when entering the floatLiteral production.
+	EnterFloatLiteral(c *FloatLiteralContext)
+
+	// EnterDecimalFloatLiteral is called when entering the decimalFloatLiteral production.
+	EnterDecimalFloatLiteral(c *DecimalFloatLiteralContext)
+
+	// EnterHexadecimalFloatLiteral is called when entering the hexadecimalFloatLiteral production.
+	EnterHexadecimalFloatLiteral(c *HexadecimalFloatLiteralContext)
+
+	// EnterIntegerLiteral is called when entering the integerLiteral production.
+	EnterIntegerLiteral(c *IntegerLiteralContext)
 
 	// EnterDecimalLiteral is called when entering the decimalLiteral production.
 	EnterDecimalLiteral(c *DecimalLiteralContext)
 
-	// EnterRealLiteral is called when entering the realLiteral production.
-	EnterRealLiteral(c *RealLiteralContext)
+	// EnterHexadecimalLiteral is called when entering the hexadecimalLiteral production.
+	EnterHexadecimalLiteral(c *HexadecimalLiteralContext)
+
+	// EnterOctalLiteral is called when entering the octalLiteral production.
+	EnterOctalLiteral(c *OctalLiteralContext)
 
 	// EnterStringLiteral is called when entering the stringLiteral production.
 	EnterStringLiteral(c *StringLiteralContext)
@@ -136,26 +157,47 @@ type grulev2Listener interface {
 	// ExitExpressionAtom is called when exiting the expressionAtom production.
 	ExitExpressionAtom(c *ExpressionAtomContext)
 
-	// ExitArrayMapSelector is called when exiting the arrayMapSelector production.
-	ExitArrayMapSelector(c *ArrayMapSelectorContext)
-
-	// ExitFunctionCall is called when exiting the functionCall production.
-	ExitFunctionCall(c *FunctionCallContext)
-
-	// ExitArgumentList is called when exiting the argumentList production.
-	ExitArgumentList(c *ArgumentListContext)
+	// ExitConstant is called when exiting the constant production.
+	ExitConstant(c *ConstantContext)
 
 	// ExitVariable is called when exiting the variable production.
 	ExitVariable(c *VariableContext)
 
-	// ExitConstant is called when exiting the constant production.
-	ExitConstant(c *ConstantContext)
+	// ExitArrayMapSelector is called when exiting the arrayMapSelector production.
+	ExitArrayMapSelector(c *ArrayMapSelectorContext)
+
+	// ExitMemberVariable is called when exiting the memberVariable production.
+	ExitMemberVariable(c *MemberVariableContext)
+
+	// ExitFunctionCall is called when exiting the functionCall production.
+	ExitFunctionCall(c *FunctionCallContext)
+
+	// ExitMethodCall is called when exiting the methodCall production.
+	ExitMethodCall(c *MethodCallContext)
+
+	// ExitArgumentList is called when exiting the argumentList production.
+	ExitArgumentList(c *ArgumentListContext)
+
+	// ExitFloatLiteral is called when exiting the floatLiteral production.
+	ExitFloatLiteral(c *FloatLiteralContext)
+
+	// ExitDecimalFloatLiteral is called when exiting the decimalFloatLiteral production.
+	ExitDecimalFloatLiteral(c *DecimalFloatLiteralContext)
+
+	// ExitHexadecimalFloatLiteral is called when exiting the hexadecimalFloatLiteral production.
+	ExitHexadecimalFloatLiteral(c *HexadecimalFloatLiteralContext)
+
+	// ExitIntegerLiteral is called when exiting the integerLiteral production.
+	ExitIntegerLiteral(c *IntegerLiteralContext)
 
 	// ExitDecimalLiteral is called when exiting the decimalLiteral production.
 	ExitDecimalLiteral(c *DecimalLiteralContext)
 
-	// ExitRealLiteral is called when exiting the realLiteral production.
-	ExitRealLiteral(c *RealLiteralContext)
+	// ExitHexadecimalLiteral is called when exiting the hexadecimalLiteral production.
+	ExitHexadecimalLiteral(c *HexadecimalLiteralContext)
+
+	// ExitOctalLiteral is called when exiting the octalLiteral production.
+	ExitOctalLiteral(c *OctalLiteralContext)
 
 	// ExitStringLiteral is called when exiting the stringLiteral production.
 	ExitStringLiteral(c *StringLiteralContext)
