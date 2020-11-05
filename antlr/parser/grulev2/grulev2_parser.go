@@ -1252,7 +1252,7 @@ func (p *grulev2Parser) ThenExpressionList() (localctx IThenExpressionListContex
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (((_la-7)&-(0x1f+1)) == 0 && ((1<<uint((_la-7)))&((1<<(grulev2ParserTRUE-7))|(1<<(grulev2ParserFALSE-7))|(1<<(grulev2ParserNULL_LITERAL-7))|(1<<(grulev2ParserNOT-7))|(1<<(grulev2ParserSIMPLENAME-7))|(1<<(grulev2ParserMINUS-7))|(1<<(grulev2ParserDQUOTA_STRING-7))|(1<<(grulev2ParserSQUOTA_STRING-7))|(1<<(grulev2ParserDECIMAL_LITERAL-7))|(1<<(grulev2ParserREAL_LITERAL-7)))) != 0) {
+	for ok := true; ok; ok = (((_la-7)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-7)))&((int64(1)<<(grulev2ParserTRUE-7))|(int64(1)<<(grulev2ParserFALSE-7))|(int64(1)<<(grulev2ParserNULL_LITERAL-7))|(int64(1)<<(grulev2ParserNOT-7))|(int64(1)<<(grulev2ParserSIMPLENAME-7))|(int64(1)<<(grulev2ParserMINUS-7))|(int64(1)<<(grulev2ParserDQUOTA_STRING-7))|(int64(1)<<(grulev2ParserSQUOTA_STRING-7))|(int64(1)<<(grulev2ParserDECIMAL_LITERAL-7))|(int64(1)<<(grulev2ParserREAL_LITERAL-7)))) != 0) {
 		{
 			p.SetState(86)
 			p.ThenExpression()
@@ -1992,7 +1992,7 @@ func (p *grulev2Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
 		p.SetState(139)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserDIV)|(1<<grulev2ParserMUL)|(1<<grulev2ParserMOD))) != 0) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev2ParserDIV)|(int64(1)<<grulev2ParserMUL)|(int64(1)<<grulev2ParserMOD))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2113,7 +2113,7 @@ func (p *grulev2Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext)
 		p.SetState(141)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserPLUS)|(1<<grulev2ParserMINUS)|(1<<grulev2ParserBITAND)|(1<<grulev2ParserBITOR))) != 0) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev2ParserPLUS)|(int64(1)<<grulev2ParserMINUS)|(int64(1)<<grulev2ParserBITAND)|(int64(1)<<grulev2ParserBITOR))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2242,7 +2242,7 @@ func (p *grulev2Parser) ComparisonOperator() (localctx IComparisonOperatorContex
 		p.SetState(143)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<grulev2ParserEQUALS)|(1<<grulev2ParserGT)|(1<<grulev2ParserLT)|(1<<grulev2ParserGTE)|(1<<grulev2ParserLTE)|(1<<grulev2ParserNOTEQUALS))) != 0) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev2ParserEQUALS)|(int64(1)<<grulev2ParserGT)|(int64(1)<<grulev2ParserLT)|(int64(1)<<grulev2ParserGTE)|(int64(1)<<grulev2ParserLTE)|(int64(1)<<grulev2ParserNOTEQUALS))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2832,7 +2832,7 @@ func (p *grulev2Parser) FunctionCall() (localctx IFunctionCallContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if ((_la-7)&-(0x1f+1)) == 0 && ((1<<uint((_la-7)))&((1<<(grulev2ParserTRUE-7))|(1<<(grulev2ParserFALSE-7))|(1<<(grulev2ParserNULL_LITERAL-7))|(1<<(grulev2ParserNOT-7))|(1<<(grulev2ParserSIMPLENAME-7))|(1<<(grulev2ParserMINUS-7))|(1<<(grulev2ParserLR_BRACKET-7))|(1<<(grulev2ParserDQUOTA_STRING-7))|(1<<(grulev2ParserSQUOTA_STRING-7))|(1<<(grulev2ParserDECIMAL_LITERAL-7))|(1<<(grulev2ParserREAL_LITERAL-7)))) != 0 {
+	if ((_la-7)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-7)))&((int64(1)<<(grulev2ParserTRUE-7))|(int64(1)<<(grulev2ParserFALSE-7))|(int64(1)<<(grulev2ParserNULL_LITERAL-7))|(int64(1)<<(grulev2ParserNOT-7))|(int64(1)<<(grulev2ParserSIMPLENAME-7))|(int64(1)<<(grulev2ParserMINUS-7))|(int64(1)<<(grulev2ParserLR_BRACKET-7))|(int64(1)<<(grulev2ParserDQUOTA_STRING-7))|(int64(1)<<(grulev2ParserSQUOTA_STRING-7))|(int64(1)<<(grulev2ParserDECIMAL_LITERAL-7))|(int64(1)<<(grulev2ParserREAL_LITERAL-7)))) != 0 {
 		{
 			p.SetState(159)
 			p.ArgumentList()
