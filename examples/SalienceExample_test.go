@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -101,7 +101,7 @@ func TestSalience(t *testing.T) {
 	}
 
 	// Prepare knowledgebase library and load it with our rule.
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	byteArr := pkg.NewBytesResource([]byte(SalienceGRL))
 	err := rb.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
@@ -112,7 +112,7 @@ func TestSalience(t *testing.T) {
 	knowledgeBase := lib.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
 
 	for _, td := range testData {
-		dataCtx := v2.NewDataContext()
+		dataCtx := ast.NewDataContext()
 		err := dataCtx.Add("V", td)
 		assert.NoError(t, err)
 

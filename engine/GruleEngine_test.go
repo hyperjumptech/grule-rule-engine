@@ -3,7 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
@@ -96,13 +96,13 @@ func TestGrule_Execute(t *testing.T) {
 	dr := &DistanceRecorder{
 		TotalDistance: 0,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestCar", tc)
 	assert.NoError(t, err)
 	err = dctx.Add("DistanceRecord", dr)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	assert.NoError(t, err)
@@ -168,11 +168,11 @@ func TestEngine_ComplexRule1(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule1)))
 	assert.NoError(t, err)
@@ -203,11 +203,11 @@ func TestEngine_ComplexRule2(t *testing.T) {
 		Param4: false,
 	}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule2)))
 	assert.NoError(t, err)
@@ -239,11 +239,11 @@ func TestEngine_ComplexRule3(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule3)))
 	assert.NoError(t, err)
@@ -276,11 +276,11 @@ func TestEngine_ComplexRule4(t *testing.T) {
 		Param4: true,
 	}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule4)))
 	assert.NoError(t, err)
@@ -305,11 +305,11 @@ func TestEngine_OperatorPrecedence(t *testing.T) {
 
 	ts := &TestStruct{}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TestStruct", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(OpPresedenceRule)))
 	assert.NoError(t, err)
@@ -351,11 +351,11 @@ func TestEngine_EscapedStrings(t *testing.T) {
 	es.Var2 = `some "escaped" string value
 And another`
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("ESTest", es)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(escapedRules)))
 	assert.NoError(t, err)
@@ -383,11 +383,11 @@ func (s *Sleeper) SleepMore() {
 func TestGruleEngine_ExecuteWithContext(t *testing.T) {
 	ts := &Sleeper{}
 
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("TS", ts)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("TestTimer", "0.1.1", pkg.NewBytesResource([]byte(`
 rule KeepSleep "test string escaping" salience 10 {
@@ -467,10 +467,10 @@ func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
 		Distance: 6000,
 		Duration: 123,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("Fact", fact)
 	assert.NoError(t, err)
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRules)))
 	assert.NoError(t, err)
@@ -533,10 +533,10 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("Fact", fact)
 	assert.NoError(t, err)
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
 	assert.NoError(t, err)
@@ -549,10 +549,10 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	//Then
 	assert.NoError(t, err)
 	assert.Equal(t, 4, len(ruleEntries))
-	assert.Equal(t, 8, ruleEntries[0].Salience.SalienceValue)
-	assert.Equal(t, 7, ruleEntries[1].Salience.SalienceValue)
-	assert.Equal(t, 6, ruleEntries[2].Salience.SalienceValue)
-	assert.Equal(t, 5, ruleEntries[3].Salience.SalienceValue)
+	assert.Equal(t, 8, ruleEntries[0].Salience)
+	assert.Equal(t, 7, ruleEntries[1].Salience)
+	assert.Equal(t, 6, ruleEntries[2].Salience)
+	assert.Equal(t, 5, ruleEntries[3].Salience)
 }
 
 //This TestCase is to test whether grule-rule-engine follows logical operator precedence
@@ -594,10 +594,10 @@ func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
 		RideType:           "Pre-Booked",
 		IsFrequentCustomer: true,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("Fact", fact)
 	assert.NoError(t, err)
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("logical_operator_rules_test", "0.1.1", pkg.NewBytesResource([]byte(logicalOperatorPrecedenceRules)))
 	assert.NoError(t, err)

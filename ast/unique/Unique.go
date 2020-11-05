@@ -10,9 +10,9 @@ var (
 	lastMS int64 = 0
 )
 
-// NewId will create a new unique ID string for this runtime.
+// NewID will create a new unique ID string for this runtime.
 // Uniqueness between system or apps is not necessary.
-func NewId() string {
+func NewID() string {
 	MS := time.Now().Unix()
 	if lastMS == MS {
 		offset++

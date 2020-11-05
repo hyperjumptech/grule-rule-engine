@@ -4,13 +4,89 @@ import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
-	v3 "github.com/hyperjumptech/grule-rule-engine/ast/v3"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"reflect"
 	"testing"
 )
+
+const (
+	rules = `
+rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10 {
+    when
+        TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
+    then
+        TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement;
+		DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+}
+
+rule StartSpeedDown "When testcar is speeding up and over max speed we change to speed down." salience 10  {
+    when
+        TestCar.SpeedUp == true && TestCar.Speed >= TestCar.MaxSpeed
+    then
+        TestCar.SpeedUp = false;
+		Log("Now we slow down");
+}
+
+rule SlowDown "When testcar is slowing down we keep decreasing the speed." salience 10  {
+    when
+        TestCar.SpeedUp == false && TestCar.Speed > 0
+    then
+        TestCar.Speed = TestCar.Speed - TestCar.SpeedIncrement;
+		DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed;
+}
+
+rule SetTime "When Distance Recorder time not set, set it." {
+	when
+		IsZero(DistanceRecord.TestTime)
+	then
+		ABC.abc = "cde";
+		Log("Set the test time");
+		DistanceRecord.TestTime = Now();
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+		ABC.abc = "cde";
+
+}
+`
+	invalidEscapeRule = `rule SetTime "When Distance Recorder time not set, set it." {
+	when
+		IsZero(DistanceRecord.TestTime)
+	then
+		ABC.abc = "abc\cde";
+		Log("Set the test time");
+		DistanceRecord.TestTime = Now();
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+
+}`
+	validEscapeRule = `rule SetTime "When Distance Recorder time not set, set it." {
+	when
+		IsZero(DistanceRecord.TestTime)
+	then
+		ABC.abc = "abc\\cde";
+		Log("Set the test time");
+		DistanceRecord.TestTime = Now();
+		Log(TimeFormat(DistanceRecord.TestTime,"Mon Jan _2 15:04:05 2006"));
+
+}`
+)
+
+type Person struct {
+	Name         string
+	ParentString string
+	Child        *Child
+}
+
+type Child struct {
+	Name        string
+	ChildString string
+	GrandChild  *GrandChild
+}
+
+type GrandChild struct {
+	GrandChildString string
+	Name             string
+}
 
 func TestV3Lexer(t *testing.T) {
 	data, err := ioutil.ReadFile("./sample4.grl")
@@ -48,7 +124,7 @@ func TestV3Parser(t *testing.T) {
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 		var parseError error
-		kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+		kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 		listener := NewGruleV3ParserListener(kb, func(e error) {
 			parseError = e
@@ -75,7 +151,7 @@ func TestV3Parser2(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV3ParserListener(kb, func(e error) {
 		parseError = e
@@ -100,7 +176,7 @@ func TestV3ParserEscapedStringInvalid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV3ParserListener(kb, func(e error) {
 		parseError = e
@@ -123,7 +199,7 @@ func TestV3ParserEscapedStringValid(t *testing.T) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV3ParserListener(kb, func(e error) {
 		parseError = e
@@ -156,7 +232,7 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV3ParserListener(kb, func(e error) {
 		parseError = e
@@ -192,13 +268,13 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 	}
 }
 
-func prepareV3TestKnowledgeBase(t *testing.T, grl string) (*v3.KnowledgeBase, *v3.WorkingMemory) {
+func prepareV3TestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *ast.WorkingMemory) {
 	is := antlr.NewInputStream(grl)
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	var parseError error
-	kb := v3.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
 	listener := NewGruleV3ParserListener(kb, func(e error) {
 		parseError = e
@@ -214,7 +290,7 @@ func prepareV3TestKnowledgeBase(t *testing.T, grl string) (*v3.KnowledgeBase, *v
 
 func TestV3ConstantFunctionAndConstantFunctionChain(t *testing.T) {
 	// logrus.SetLevel(logrus.InfoLevel)
-	dctx := v3.NewDataContext()
+	dctx := ast.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -225,7 +301,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 }
 `
 	kb, wm := prepareV3TestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &v3.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,
@@ -249,7 +325,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 
 func TestV3RuleRetract(t *testing.T) {
 	// logrus.SetLevel(logrus.InfoLevel)
-	dctx := v3.NewDataContext()
+	dctx := ast.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -261,7 +337,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 `
 
 	kb, wm := prepareV3TestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &v3.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,
@@ -286,7 +362,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 
 func TestV3RuleAssignment(t *testing.T) {
 	// logrus.SetLevel(logrus.TraceLevel)
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 
 	data := `
 rule RuleOne "RuleOneDesc" salience 123 {
@@ -298,7 +374,7 @@ rule RuleOne "RuleOneDesc" salience 123 {
 `
 
 	kb, wm := prepareV3TestKnowledgeBase(t, data)
-	err := dctx.Add("DEFUNC", &v3.BuiltInFunctions{
+	err := dctx.Add("DEFUNC", &ast.BuiltInFunctions{
 		Knowledge:     kb,
 		WorkingMemory: wm,
 		DataContext:   dctx,

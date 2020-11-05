@@ -2,7 +2,7 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -15,7 +15,7 @@ import (
   Please refer docs/benchmarking_en.md for more info
 */
 
-var knowledgeBase *v2.KnowledgeBase
+var knowledgeBase *ast.KnowledgeBase
 
 func Benchmark_Grule_Execution_Engine(b *testing.B) {
 	rules := []struct {
@@ -36,7 +36,7 @@ func Benchmark_Grule_Execution_Engine(b *testing.B) {
 					}
 					e := engine.NewGruleEngine()
 					//Fact1
-					dataCtx := v2.NewDataContext()
+					dataCtx := ast.NewDataContext()
 					err := dataCtx.Add("Fact", &f1)
 					if err != nil {
 						b.Fail()
@@ -58,10 +58,10 @@ func load100RulesIntoKnowledgebase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("exec_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	knowledgeBase = lib.NewKnowledgeBaseInstance("exec_rules_test", "0.1.1")
@@ -74,10 +74,10 @@ func load1000RulesIntoKnowledgebase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("exec_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	knowledgeBase = lib.NewKnowledgeBaseInstance("exec_rules_test", "0.1.1")

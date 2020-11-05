@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v3"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
-	"reflect"
 	"strconv"
 	"strings"
 )
@@ -21,7 +20,7 @@ var (
 )
 
 // NewGruleV3ParserListener create new instance of GruleV3ParserListener
-func NewGruleV3ParserListener(KnowledgeBase *v3.KnowledgeBase, errorCallBack func(e error)) *GruleV3ParserListener {
+func NewGruleV3ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV3ParserListener {
 	return &GruleV3ParserListener{
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errorCallBack,
@@ -36,11 +35,11 @@ type GruleV3ParserListener struct {
 	grulev3.Basegrulev3Listener
 	PreviousNode []string
 
-	Grl           *v3.Grl
+	Grl           *ast.Grl
 	Stack         *stack
 	StopParse     bool
 	ErrorCallback func(e error)
-	KnowledgeBase *v3.KnowledgeBase
+	KnowledgeBase *ast.KnowledgeBase
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -69,7 +68,7 @@ func (s *GruleV3ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterGrl is called when production grl is entered.
 func (s *GruleV3ParserListener) EnterGrl(ctx *grulev3.GrlContext) {
-	s.Grl = v3.NewGrl()
+	s.Grl = ast.NewGrl()
 	s.Stack.Push(s.Grl)
 }
 
@@ -78,7 +77,7 @@ func (s *GruleV3ParserListener) ExitGrl(ctx *grulev3.GrlContext) {
 	if s.StopParse {
 		return
 	}
-	_ = s.Stack.Pop().(*v3.Grl)
+	_ = s.Stack.Pop().(*ast.Grl)
 	for _, re := range s.Grl.RuleEntries {
 		err := s.KnowledgeBase.AddRuleEntry(re)
 		if err != nil {
@@ -92,7 +91,7 @@ func (s *GruleV3ParserListener) EnterRuleEntry(ctx *grulev3.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
-	entry := v3.NewRuleEntry()
+	entry := ast.NewRuleEntry()
 	entry.GrlText = ctx.GetText()
 	s.Stack.Push(entry)
 }
@@ -102,8 +101,8 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
-	entry := s.Stack.Pop().(*v3.RuleEntry)
-	entryReceiver := s.Stack.Peek().(v3.RuleEntryReceiver)
+	entry := s.Stack.Pop().(*ast.RuleEntry)
+	entryReceiver := s.Stack.Peek().(ast.RuleEntryReceiver)
 	if ctx.RuleName() != nil {
 		entry.RuleName = ctx.RuleName().GetText()
 	}
@@ -121,7 +120,7 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 
 // EnterSalience is called when production salience is entered.
 func (s *GruleV3ParserListener) EnterSalience(ctx *grulev3.SalienceContext) {
-	sal := v3.NewSalience(0)
+	sal := ast.NewSalience(0)
 	s.Stack.Push(sal)
 }
 
@@ -130,8 +129,8 @@ func (s *GruleV3ParserListener) ExitSalience(ctx *grulev3.SalienceContext) {
 	if s.StopParse {
 		return
 	}
-	salience := s.Stack.Pop().(*v3.Salience)
-	salienceReceiver := s.Stack.Peek().(v3.SalienceReceiver)
+	salience := s.Stack.Pop().(*ast.Salience)
+	salienceReceiver := s.Stack.Peek().(ast.SalienceReceiver)
 	salienceReceiver.AcceptSalience(salience)
 }
 
@@ -140,7 +139,7 @@ func (s *GruleV3ParserListener) EnterWhenScope(ctx *grulev3.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	whenScope := v3.NewWhenScope()
+	whenScope := ast.NewWhenScope()
 	whenScope.GrlText = ctx.GetText()
 	s.Stack.Push(whenScope)
 }
@@ -150,8 +149,8 @@ func (s *GruleV3ParserListener) ExitWhenScope(ctx *grulev3.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	when := s.Stack.Pop().(*v3.WhenScope)
-	receiver := s.Stack.Peek().(v3.WhenScopeReceiver)
+	when := s.Stack.Pop().(*ast.WhenScope)
+	receiver := s.Stack.Peek().(ast.WhenScopeReceiver)
 	err := receiver.AcceptWhenScope(when)
 	if err != nil {
 		s.StopParse = true
@@ -164,7 +163,7 @@ func (s *GruleV3ParserListener) EnterThenScope(ctx *grulev3.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	then := v3.NewThenScope()
+	then := ast.NewThenScope()
 	then.GrlText = ctx.GetText()
 	s.Stack.Push(then)
 }
@@ -174,8 +173,8 @@ func (s *GruleV3ParserListener) ExitThenScope(ctx *grulev3.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
-	then := s.Stack.Pop().(*v3.ThenScope)
-	receiver := s.Stack.Peek().(v3.ThenScopeReceiver)
+	then := s.Stack.Pop().(*ast.ThenScope)
+	receiver := s.Stack.Peek().(ast.ThenScopeReceiver)
 	err := receiver.AcceptThenScope(then)
 	if err != nil {
 		s.StopParse = true
@@ -188,7 +187,7 @@ func (s *GruleV3ParserListener) EnterThenExpressionList(ctx *grulev3.ThenExpress
 	if s.StopParse {
 		return
 	}
-	thenExpList := v3.NewThenExpressionList()
+	thenExpList := ast.NewThenExpressionList()
 	thenExpList.GrlText = ctx.GetText()
 	s.Stack.Push(thenExpList)
 }
@@ -198,8 +197,8 @@ func (s *GruleV3ParserListener) ExitThenExpressionList(ctx *grulev3.ThenExpressi
 	if s.StopParse {
 		return
 	}
-	thenExpList := s.Stack.Pop().(*v3.ThenExpressionList)
-	receiver := s.Stack.Peek().(v3.ThenExpressionListReceiver)
+	thenExpList := s.Stack.Pop().(*ast.ThenExpressionList)
+	receiver := s.Stack.Peek().(ast.ThenExpressionListReceiver)
 	err := receiver.AcceptThenExpressionList(thenExpList)
 	if err != nil {
 		s.StopParse = true
@@ -212,7 +211,7 @@ func (s *GruleV3ParserListener) EnterThenExpression(ctx *grulev3.ThenExpressionC
 	if s.StopParse {
 		return
 	}
-	thenExpr := v3.NewThenExpression()
+	thenExpr := ast.NewThenExpression()
 	thenExpr.GrlText = ctx.GetText()
 	s.Stack.Push(thenExpr)
 }
@@ -222,9 +221,9 @@ func (s *GruleV3ParserListener) ExitThenExpression(ctx *grulev3.ThenExpressionCo
 	if s.StopParse {
 		return
 	}
-	thenExpr := s.Stack.Pop().(*v3.ThenExpression)
+	thenExpr := s.Stack.Pop().(*ast.ThenExpression)
 
-	receiver := s.Stack.Peek().(v3.ThenExpressionReceiver)
+	receiver := s.Stack.Peek().(ast.ThenExpressionReceiver)
 	err := receiver.AcceptThenExpression(thenExpr)
 	if err != nil {
 		s.StopParse = true
@@ -237,7 +236,7 @@ func (s *GruleV3ParserListener) EnterAssignment(ctx *grulev3.AssignmentContext) 
 	if s.StopParse {
 		return
 	}
-	assign := v3.NewAssignment()
+	assign := ast.NewAssignment()
 	assign.GrlText = ctx.GetText()
 	s.Stack.Push(assign)
 }
@@ -247,8 +246,8 @@ func (s *GruleV3ParserListener) ExitAssignment(ctx *grulev3.AssignmentContext) {
 	if s.StopParse {
 		return
 	}
-	assign := s.Stack.Pop().(*v3.Assignment)
-	receiver := s.Stack.Peek().(v3.AssignmentReceiver)
+	assign := s.Stack.Pop().(*ast.Assignment)
+	receiver := s.Stack.Peek().(ast.AssignmentReceiver)
 	assign.IsAssign = ctx.ASSIGN() != nil
 	assign.IsPlusAssign = ctx.PLUS_ASIGN() != nil
 	assign.IsMinusAssign = ctx.MINUS_ASIGN() != nil
@@ -267,7 +266,7 @@ func (s *GruleV3ParserListener) EnterExpression(ctx *grulev3.ExpressionContext) 
 	if s.StopParse {
 		return
 	}
-	expr := v3.NewExpression()
+	expr := ast.NewExpression()
 	expr.GrlText = ctx.GetText()
 	s.Stack.Push(expr)
 }
@@ -277,8 +276,8 @@ func (s *GruleV3ParserListener) ExitExpression(ctx *grulev3.ExpressionContext) {
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Pop().(*v3.Expression)
-	exprRec := s.Stack.Peek().(v3.ExpressionReceiver)
+	expr := s.Stack.Pop().(*ast.Expression)
+	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
 
 	if ctx.LR_BRACKET() != nil && ctx.RR_BRACKET() != nil && ctx.NEGATION() != nil {
 		expr.Negated = ctx.NEGATION() != nil
@@ -296,14 +295,14 @@ func (s *GruleV3ParserListener) EnterMulDivOperators(ctx *grulev3.MulDivOperator
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*v3.Expression)
+	expr := s.Stack.Peek().(*ast.Expression)
 	switch ctx.GetText() {
 	case "*":
-		expr.Operator = v3.OpMul
+		expr.Operator = ast.OpMul
 	case "/":
-		expr.Operator = v3.OpDiv
+		expr.Operator = ast.OpDiv
 	case "%":
-		expr.Operator = v3.OpMod
+		expr.Operator = ast.OpMod
 	}
 }
 
@@ -315,16 +314,16 @@ func (s *GruleV3ParserListener) EnterAddMinusOperators(ctx *grulev3.AddMinusOper
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*v3.Expression)
+	expr := s.Stack.Peek().(*ast.Expression)
 	switch ctx.GetText() {
 	case "+":
-		expr.Operator = v3.OpAdd
+		expr.Operator = ast.OpAdd
 	case "-":
-		expr.Operator = v3.OpSub
+		expr.Operator = ast.OpSub
 	case "|":
-		expr.Operator = v3.OpBitOr
+		expr.Operator = ast.OpBitOr
 	case "&":
-		expr.Operator = v3.OpBitAnd
+		expr.Operator = ast.OpBitAnd
 	}
 }
 
@@ -336,20 +335,20 @@ func (s *GruleV3ParserListener) EnterComparisonOperator(ctx *grulev3.ComparisonO
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*v3.Expression)
+	expr := s.Stack.Peek().(*ast.Expression)
 	switch ctx.GetText() {
 	case "<":
-		expr.Operator = v3.OpLT
+		expr.Operator = ast.OpLT
 	case "<=":
-		expr.Operator = v3.OpLTE
+		expr.Operator = ast.OpLTE
 	case ">":
-		expr.Operator = v3.OpGT
+		expr.Operator = ast.OpGT
 	case ">=":
-		expr.Operator = v3.OpGTE
+		expr.Operator = ast.OpGTE
 	case "==":
-		expr.Operator = v3.OpEq
+		expr.Operator = ast.OpEq
 	case "!=":
-		expr.Operator = v3.OpNEq
+		expr.Operator = ast.OpNEq
 	}
 }
 
@@ -361,8 +360,8 @@ func (s *GruleV3ParserListener) EnterAndLogicOperator(ctx *grulev3.AndLogicOpera
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*v3.Expression)
-	expr.Operator = v3.OpAnd
+	expr := s.Stack.Peek().(*ast.Expression)
+	expr.Operator = ast.OpAnd
 }
 
 // ExitAndLogicOperator is called when production andLogicOperator is exited.
@@ -373,8 +372,8 @@ func (s *GruleV3ParserListener) EnterOrLogicOperator(ctx *grulev3.OrLogicOperato
 	if s.StopParse {
 		return
 	}
-	expr := s.Stack.Peek().(*v3.Expression)
-	expr.Operator = v3.OpOr
+	expr := s.Stack.Peek().(*ast.Expression)
+	expr.Operator = ast.OpOr
 }
 
 // ExitOrLogicOperator is called when production orLogicOperator is exited.
@@ -385,7 +384,7 @@ func (s *GruleV3ParserListener) EnterExpressionAtom(ctx *grulev3.ExpressionAtomC
 	if s.StopParse {
 		return
 	}
-	atm := v3.NewExpressionAtom()
+	atm := ast.NewExpressionAtom()
 	atm.GrlText = ctx.GetText()
 	s.Stack.Push(atm)
 }
@@ -395,8 +394,8 @@ func (s *GruleV3ParserListener) ExitExpressionAtom(ctx *grulev3.ExpressionAtomCo
 	if s.StopParse {
 		return
 	}
-	atm := s.Stack.Pop().(*v3.ExpressionAtom)
-	expr := s.Stack.Peek().(v3.ExpressionAtomReceiver)
+	atm := s.Stack.Pop().(*ast.ExpressionAtom)
+	expr := s.Stack.Peek().(ast.ExpressionAtomReceiver)
 	atm.Negated = ctx.NEGATION() != nil
 
 	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
@@ -411,7 +410,7 @@ func (s *GruleV3ParserListener) EnterArrayMapSelector(ctx *grulev3.ArrayMapSelec
 	if s.StopParse {
 		return
 	}
-	sel := v3.NewArrayMapSelector()
+	sel := ast.NewArrayMapSelector()
 	sel.GrlText = ctx.GetText()
 	s.Stack.Push(sel)
 }
@@ -421,8 +420,8 @@ func (s *GruleV3ParserListener) ExitArrayMapSelector(ctx *grulev3.ArrayMapSelect
 	if s.StopParse {
 		return
 	}
-	sel := s.Stack.Pop().(*v3.ArrayMapSelector)
-	receiver := s.Stack.Peek().(v3.ArrayMapSelectorReceiver)
+	sel := s.Stack.Pop().(*ast.ArrayMapSelector)
+	receiver := s.Stack.Peek().(ast.ArrayMapSelectorReceiver)
 	err := receiver.AcceptArrayMapSelector(sel)
 	if err != nil {
 		s.StopParse = true
@@ -435,7 +434,7 @@ func (s *GruleV3ParserListener) EnterFunctionCall(ctx *grulev3.FunctionCallConte
 	if s.StopParse {
 		return
 	}
-	fun := v3.NewFunctionCall()
+	fun := ast.NewFunctionCall()
 	fun.FunctionName = ctx.SIMPLENAME().GetText()
 	s.Stack.Push(fun)
 }
@@ -445,8 +444,8 @@ func (s *GruleV3ParserListener) ExitFunctionCall(ctx *grulev3.FunctionCallContex
 	if s.StopParse {
 		return
 	}
-	fun := s.Stack.Pop().(*v3.FunctionCall)
-	metRec := s.Stack.Peek().(v3.FunctionCallReceiver)
+	fun := s.Stack.Pop().(*ast.FunctionCall)
+	metRec := s.Stack.Peek().(ast.FunctionCallReceiver)
 	err := metRec.AcceptFunctionCall(fun)
 	if err != nil {
 		s.StopParse = true
@@ -459,7 +458,7 @@ func (s *GruleV3ParserListener) EnterArgumentList(ctx *grulev3.ArgumentListConte
 	if s.StopParse {
 		return
 	}
-	argList := v3.NewArgumentList()
+	argList := ast.NewArgumentList()
 	argList.GrlText = ctx.GetText()
 	s.Stack.Push(argList)
 }
@@ -469,8 +468,8 @@ func (s *GruleV3ParserListener) ExitArgumentList(ctx *grulev3.ArgumentListContex
 	if s.StopParse {
 		return
 	}
-	argList := s.Stack.Pop().(*v3.ArgumentList)
-	argListRec := s.Stack.Peek().(v3.ArgumentListReceiver)
+	argList := s.Stack.Pop().(*ast.ArgumentList)
+	argListRec := s.Stack.Peek().(ast.ArgumentListReceiver)
 	LoggerV3.Tracef("Adding Argument List To Receiver")
 	err := argListRec.AcceptArgumentList(argList)
 	if err != nil {
@@ -484,7 +483,7 @@ func (s *GruleV3ParserListener) EnterVariable(ctx *grulev3.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	vari := v3.NewVariable()
+	vari := ast.NewVariable()
 	if ctx.SIMPLENAME() != nil && len(ctx.SIMPLENAME().GetText()) > 0 {
 		vari.Name = ctx.SIMPLENAME().GetText()
 	}
@@ -500,8 +499,8 @@ func (s *GruleV3ParserListener) ExitVariable(ctx *grulev3.VariableContext) {
 	if s.StopParse {
 		return
 	}
-	vari := s.Stack.Pop().(*v3.Variable)
-	variRec := s.Stack.Peek().(v3.VariableReceiver)
+	vari := s.Stack.Pop().(*ast.Variable)
+	variRec := s.Stack.Peek().(ast.VariableReceiver)
 
 	err := variRec.AcceptVariable(s.KnowledgeBase.WorkingMemory.AddVariable(vari))
 	if err != nil {
@@ -515,8 +514,8 @@ func (s *GruleV3ParserListener) EnterMemberVariable(ctx *grulev3.MemberVariableC
 
 // ExitMemberVariable is called when production memberVariable is exited.
 func (s *GruleV3ParserListener) ExitMemberVariable(ctx *grulev3.MemberVariableContext) {
-	vari := s.Stack.Peek().(*v3.Variable)
-	vari.Name = ctx.SIMPLENAME().GetText()
+	vari := s.Stack.Peek().(ast.MemberVariableReceiver)
+	vari.AcceptMemberVariable(ctx.SIMPLENAME().GetText())
 }
 
 // EnterConstant is called when production constant is entered.
@@ -524,7 +523,7 @@ func (s *GruleV3ParserListener) EnterConstant(ctx *grulev3.ConstantContext) {
 	if s.StopParse {
 		return
 	}
-	cons := v3.NewConstant()
+	cons := ast.NewConstant()
 	cons.GrlText = ctx.GetText()
 	s.Stack.Push(cons)
 }
@@ -534,8 +533,8 @@ func (s *GruleV3ParserListener) ExitConstant(ctx *grulev3.ConstantContext) {
 	if s.StopParse {
 		return
 	}
-	cons := s.Stack.Pop().(*v3.Constant)
-	conRec := s.Stack.Peek().(v3.ConstantReceiver)
+	cons := s.Stack.Pop().(*ast.Constant)
+	conRec := s.Stack.Peek().(ast.ConstantReceiver)
 	if ctx.NIL_LITERAL() != nil {
 		cons.IsNil = true
 	}
@@ -560,8 +559,8 @@ func (s *GruleV3ParserListener) ExitStringLiteral(ctx *grulev3.StringLiteralCont
 		s.ErrorCallback(fmt.Errorf("error parsing quoted string (%s): %s", ctx.GetText(), err.Error()))
 		return
 	}
-	receiver := s.Stack.Peek().(v3.StringLiteralReceiver)
-	receiver.AcceptStringLiteral(&v3.StringLiteral{String: dec})
+	receiver := s.Stack.Peek().(ast.StringLiteralReceiver)
+	receiver.AcceptStringLiteral(&ast.StringLiteral{String: dec})
 }
 
 // EnterBooleanLiteral is called when production booleanLiteral is entered.
@@ -572,15 +571,14 @@ func (s *GruleV3ParserListener) ExitBooleanLiteral(ctx *grulev3.BooleanLiteralCo
 	if s.StopParse {
 		return
 	}
-	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		lit := &v3.BooleanLiteral{}
+	if receiver, ok := s.Stack.Peek().(ast.BooleanLiteralReceiver); ok {
+		lit := &ast.BooleanLiteral{}
 		switch strings.ToLower(ctx.GetText()) {
 		case "true":
 			lit.Boolean = true
 		case "false":
 			lit.Boolean = false
 		}
-		receiver := s.Stack.Peek().(v3.BooleanLiteralReceiver)
 		receiver.AcceptBooleanLiteral(lit)
 	}
 }
@@ -590,7 +588,7 @@ func (s *GruleV3ParserListener) EnterIntegerLiteral(ctx *grulev3.IntegerLiteralC
 
 // ExitIntegerLiteral is called when production integerLiteral is exited.
 func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralContext) {
-	lit := &v3.IntegerLiteral{}
+	lit := &ast.IntegerLiteral{}
 	i, err := strconv.ParseInt(ctx.GetText(), 0, 64)
 	if err != nil {
 		s.StopParse = true
@@ -598,7 +596,7 @@ func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralCo
 	} else {
 		lit.Integer = i
 	}
-	receiver := s.Stack.Peek().(v3.IntegerLiteralReceiver)
+	receiver := s.Stack.Peek().(ast.IntegerLiteralReceiver)
 	receiver.AcceptIntegerLiteral(lit)
 }
 
@@ -607,7 +605,7 @@ func (s *GruleV3ParserListener) EnterFloatLiteral(ctx *grulev3.FloatLiteralConte
 
 // ExitFloatLiteral is called when production floatLiteral is exited.
 func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContext) {
-	lit := &v3.FloatLiteral{}
+	lit := &ast.FloatLiteral{}
 	i, err := strconv.ParseFloat(ctx.GetText(), 64)
 	if err != nil {
 		s.StopParse = true
@@ -615,6 +613,6 @@ func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContex
 	} else {
 		lit.Float = i
 	}
-	receiver := s.Stack.Peek().(v3.FloatLiteralReceiver)
+	receiver := s.Stack.Peek().(ast.FloatLiteralReceiver)
 	receiver.AcceptFloatLiteral(lit)
 }

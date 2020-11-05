@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -17,6 +17,7 @@ type ArrayNode struct {
 }
 
 func TestArraySlice(t *testing.T) {
+	//logrus.SetLevel(logrus.TraceLevel)
 	Tree := &ArrayNode{
 		Name:        "Node",
 		StringArray: []string{"NodeString1", "NodeString2"},
@@ -54,11 +55,11 @@ rule SetTreeName "Set the top most tree name" {
 }
 `
 
-	dataContext := v2.NewDataContext()
+	dataContext := ast.NewDataContext()
 	err := dataContext.Add("Tree", Tree)
 	assert.NoError(t, err)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)

@@ -2,7 +2,7 @@ package examples
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -83,7 +83,7 @@ func isAllThreadFinished() bool {
 	return true
 }
 
-func beginThread(threadName string, lib *v2.KnowledgeLibrary, t *testing.T) {
+func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
 	concurrencyTestlog.Tracef("Beginning thread %s", threadName)
 
 	// Register this thread into our simple finish map check
@@ -91,7 +91,7 @@ func beginThread(threadName string, lib *v2.KnowledgeLibrary, t *testing.T) {
 	defer finishThread(threadName)
 
 	// Prepare new DataContext to be used in this Thread
-	dataContext := v2.NewDataContext()
+	dataContext := ast.NewDataContext()
 
 	// Create our model and add into data context
 	vibo := &Vibonaci{}
@@ -132,7 +132,7 @@ func beginThread(threadName string, lib *v2.KnowledgeLibrary, t *testing.T) {
 
 func TestConcurrency(t *testing.T) {
 	// Prepare knowledgebase library and load it with our rule.
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err := rb.BuildRuleFromResource("VibonaciTest", "0.0.1", pkg.NewBytesResource([]byte(VibonaciRule)))
 	assert.NoError(t, err)

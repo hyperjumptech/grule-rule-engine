@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -66,10 +66,10 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	err := dctx.Add("Fact", fact)
 	assert.NoError(t, err)
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
 	assert.NoError(t, err)
@@ -82,8 +82,8 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 
 	//Then
 	assert.Equal(t, 4, len(ruleEntries))
-	assert.Equal(t, 8, ruleEntries[0].Salience.SalienceValue)
-	assert.Equal(t, 7, ruleEntries[1].Salience.SalienceValue)
-	assert.Equal(t, 6, ruleEntries[2].Salience.SalienceValue)
-	assert.Equal(t, 5, ruleEntries[3].Salience.SalienceValue)
+	assert.Equal(t, 8, ruleEntries[0].Salience)
+	assert.Equal(t, 7, ruleEntries[1].Salience)
+	assert.Equal(t, 6, ruleEntries[2].Salience)
+	assert.Equal(t, 5, ruleEntries[3].Salience)
 }

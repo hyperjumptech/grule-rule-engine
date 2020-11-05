@@ -2,7 +2,7 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"io/ioutil"
@@ -48,10 +48,10 @@ func load100RulesIntoKnowledgeBase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
@@ -64,10 +64,10 @@ func load1000RulesIntoKnowledgeBase() {
 		Distance: 6000,
 		Duration: 121,
 	}
-	dctx := v2.NewDataContext()
+	dctx := ast.NewDataContext()
 	_ = dctx.Add("Fact", fact)
 
-	lib := v2.NewKnowledgeLibrary()
+	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")

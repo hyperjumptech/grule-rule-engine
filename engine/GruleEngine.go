@@ -3,7 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/v2"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"sort"
 	"time"
@@ -32,21 +32,21 @@ type GruleEngine struct {
 }
 
 // Execute function is the same as ExecuteWithContext(context.Background())
-func (g *GruleEngine) Execute(dataCtx v2.IDataContext, knowledge *v2.KnowledgeBase) error {
+func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
 }
 
 // ExecuteWithContext function will execute a knowledge evaluation and action against data context.
 // The engine will evaluate context cancelation status in each cycle.
 // The engine also do conflict resolution of which rule to execute.
-func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx v2.IDataContext, knowledge *v2.KnowledgeBase) error {
+func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	// Prepare the timer, we need to measure the processing time in debug mode.
 	startTime := time.Now()
 
 	// Prepare the build-in function and add to datacontext.
-	defunc := &v2.BuiltInFunctions{
+	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
 		DataContext:   dataCtx,
@@ -76,12 +76,12 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx v2.IDataCo
 
 		// Select all rule entry that can be executed.
 		log.Tracef("Select all rule entry that can be executed.")
-		runnable := make([]*v2.RuleEntry, 0)
+		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
 			// test if this rule entry v can execute.
 			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 				// No longer return error, since unavailability of variable or fact in context might be intentional.
 			}
 			// if can, add into runnable array
@@ -112,7 +112,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx v2.IDataCo
 			// scan all runnables and pick the highest salience
 			if len(runnable) > 1 {
 				for idx, pr := range runnable {
-					if idx > 0 && runner.Salience.SalienceValue < pr.Salience.SalienceValue {
+					if idx > 0 && runner.Salience < pr.Salience {
 						runner = pr
 					}
 				}
@@ -120,7 +120,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx v2.IDataCo
 			// execute the top most prioritized rule
 			err := runner.Execute(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName.SimpleName, err)
+				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
 				return err
 			}
 
@@ -139,10 +139,10 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx v2.IDataCo
 
 // FetchMatchingRules function is responsible to fetch all the rules that matches to a fact against all rule entries
 // Returns []*ast.RuleEntry order by salience
-func (g *GruleEngine) FetchMatchingRules(dataCtx v2.IDataContext, knowledge *v2.KnowledgeBase) ([]*v2.RuleEntry, error) {
+func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
 	log.Debugf("Starting rule matching using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 	// Prepare the build-in function and add to datacontext.
-	defunc := &v2.BuiltInFunctions{
+	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
 		WorkingMemory: knowledge.WorkingMemory,
 		DataContext:   dataCtx,
@@ -159,12 +159,12 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx v2.IDataContext, knowledge *v2.
 	//Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
 	// Select all rule entry that can be executed.
 	log.Tracef("Select all rule entry that can be executed.")
-	runnable := make([]*v2.RuleEntry, 0)
+	runnable := make([]*ast.RuleEntry, 0)
 	for _, v := range knowledge.RuleEntries {
 		// test if this rule entry v can execute.
 		can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 		if err != nil {
-			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName.SimpleName, err)
+			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 			// No longer return error, since unavailability of variable or fact in context might be intentional.
 		}
 		// if can, add into runnable array
@@ -176,7 +176,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx v2.IDataContext, knowledge *v2.
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
-			return runnable[i].Salience.SalienceValue > runnable[j].Salience.SalienceValue
+			return runnable[i].Salience > runnable[j].Salience
 		})
 	}
 	return runnable, nil

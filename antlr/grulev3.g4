@@ -78,6 +78,7 @@ expressionAtom
     | functionCall
     | variable
     | expressionAtom methodCall
+    | expressionAtom memberVariable
     | NEGATION expressionAtom
     ;
 
