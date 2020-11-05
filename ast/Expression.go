@@ -250,7 +250,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			}
 			e.Evaluated = true
 		}
-		return val, err
+		return e.Value, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
 		var val reflect.Value

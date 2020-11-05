@@ -46,6 +46,7 @@ func (e *ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 		AstID:        unique.NewID(),
 		GrlText:      e.GrlText,
 		VariableName: e.VariableName,
+		Negated:      e.Negated,
 	}
 
 	if e.Constant != nil {
@@ -182,12 +183,6 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 	if e.Evaluated == true {
 		return e.Value, nil
 	}
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		val = reflect.ValueOf(nil)
-	//		err = fmt.Errorf("Panic for expression atom [%s]\n", e.GrlText)
-	//	}
-	//}()
 	if e.Constant != nil {
 		val, err := e.Constant.Evaluate(dataContext, memory)
 		if err != nil {
@@ -239,7 +234,7 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			}
 		}
 		e.Evaluated = true
-		return val, err
+		return e.Value, err
 	}
 	if e.ExpressionAtom != nil && e.FunctionCall != nil {
 		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
@@ -261,6 +256,7 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			e.Value = retVal
 		}
 		e.ValueNode = e.ExpressionAtom.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
+		e.Evaluated = true
 		return e.Value, nil
 	}
 	if e.ExpressionAtom != nil && len(e.VariableName) > 0 {
@@ -274,6 +270,7 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		}
 		e.ValueNode = valueNode
 		e.Value = valueNode.Value()
+		e.Evaluated = true
 		return e.Value, nil
 	}
 	panic("should not be reached")
