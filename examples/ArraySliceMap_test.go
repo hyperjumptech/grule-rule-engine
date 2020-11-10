@@ -17,6 +17,7 @@ type ArrayNode struct {
 }
 
 func TestArraySlice(t *testing.T) {
+	//logrus.SetLevel(logrus.TraceLevel)
 	Tree := &ArrayNode{
 		Name:        "Node",
 		StringArray: []string{"NodeString1", "NodeString2"},

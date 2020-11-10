@@ -3,16 +3,16 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewConstant will create new instance of Constant
 func NewConstant() *Constant {
 	return &Constant{
-		AstID: uuid.New().String(),
+		AstID: unique.NewID(),
 	}
 }
 
@@ -24,12 +24,13 @@ type Constant struct {
 	DataContext   IDataContext
 	WorkingMemory *WorkingMemory
 	Value         reflect.Value
+	IsNil         bool
 }
 
 // Clone will clone this Constant. The new clone will have an identical structure
 func (e *Constant) Clone(cloneTable *pkg.CloneTable) *Constant {
 	clone := &Constant{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewID(),
 		GrlText: e.GrlText,
 		Value:   e.Value,
 	}
@@ -81,7 +82,30 @@ func (e *Constant) SetGrlText(grlText string) {
 	e.GrlText = grlText
 }
 
+// AcceptIntegerLiteral will accept integer literal
+func (e *Constant) AcceptIntegerLiteral(fun *IntegerLiteral) {
+	e.Value = reflect.ValueOf(fun.Integer)
+}
+
+// AcceptStringLiteral will accept string literal
+func (e *Constant) AcceptStringLiteral(fun *StringLiteral) {
+	e.Value = reflect.ValueOf(fun.String)
+}
+
+// AcceptFloatLiteral will accept float literal
+func (e *Constant) AcceptFloatLiteral(fun *FloatLiteral) {
+	e.Value = reflect.ValueOf(fun.Float)
+}
+
+// AcceptBooleanLiteral will accept boolean literal
+func (e *Constant) AcceptBooleanLiteral(fun *BooleanLiteral) {
+	e.Value = reflect.ValueOf(fun.Boolean)
+}
+
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Constant) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+	if e.IsNil {
+		return reflect.ValueOf(nil), nil
+	}
 	return e.Value, nil
 }

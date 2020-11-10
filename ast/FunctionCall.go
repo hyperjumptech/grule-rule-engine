@@ -3,7 +3,7 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 )
@@ -11,7 +11,7 @@ import (
 // NewFunctionCall creates new instance of FunctionCall
 func NewFunctionCall() *FunctionCall {
 	return &FunctionCall{
-		AstID:        uuid.New().String(),
+		AstID:        unique.NewID(),
 		ArgumentList: NewArgumentList(),
 	}
 }
@@ -29,7 +29,7 @@ type FunctionCall struct {
 // Clone will clone this FunctionCall. The new clone will have an identical structure
 func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 	clone := &FunctionCall{
-		AstID:        uuid.New().String(),
+		AstID:        unique.NewID(),
 		GrlText:      e.GrlText,
 		FunctionName: e.FunctionName,
 	}
@@ -66,9 +66,7 @@ func (e *FunctionCall) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(FUNCTIONCALL)
 	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
-	if e.ArgumentList == nil {
-		AstLog.Errorf("Argument is nil")
-	} else {
+	if e.ArgumentList != nil {
 		buff.WriteString(",")
 		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}

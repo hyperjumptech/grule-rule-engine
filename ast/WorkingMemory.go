@@ -2,7 +2,7 @@ package ast
 
 import (
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"strings"
@@ -19,7 +19,7 @@ func NewWorkingMemory(name, version string) *WorkingMemory {
 		expressionAtomSnapshotMap: make(map[string]*ExpressionAtom),
 		expressionVariableMap:     make(map[*Variable][]*Expression),
 		expressionAtomVariableMap: make(map[*Variable][]*ExpressionAtom),
-		ID:                        uuid.New().String(),
+		ID:                        unique.NewID(),
 	}
 }
 
@@ -109,7 +109,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 			if cloneTable.IsCloned(exprAtm.AstID) {
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
 			} else {
-				panic(fmt.Sprintf("expression atom %s is not on the clone table", exprAtm.GrlText))
+				panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
 			}
 		}
 	}
@@ -178,7 +178,7 @@ func (e *WorkingMemory) IndexVariables() {
 	start := time.Now()
 	defer func() {
 		dur := time.Since(start)
-		AstLog.Infof("Working memory indexing takes %d ms", dur/time.Millisecond)
+		AstLog.Tracef("Working memory indexing takes %d ms", dur/time.Millisecond)
 	}()
 	e.expressionVariableMap = make(map[*Variable][]*Expression)
 	e.expressionAtomVariableMap = make(map[*Variable][]*ExpressionAtom)

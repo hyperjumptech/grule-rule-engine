@@ -2,18 +2,17 @@ package ast
 
 import (
 	"github.com/stretchr/testify/assert"
-	"reflect"
 	"testing"
 )
 
 func TestWorkingMemory_Add(t *testing.T) {
 
-	a := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
-	b := &Variable{GrlText: "b", Constant: &Constant{Value: reflect.ValueOf("b")}}
-	aa := &Variable{GrlText: "a", Constant: &Constant{Value: reflect.ValueOf("a")}}
-	bb := &Variable{GrlText: "b", Constant: &Constant{Value: reflect.ValueOf("b")}}
-	c := &Variable{GrlText: "c", Constant: &Constant{Value: reflect.ValueOf("c")}}
-	d := &Variable{GrlText: "d", Constant: &Constant{Value: reflect.ValueOf("d")}}
+	a := &Variable{GrlText: "a", Name: "a"}
+	b := &Variable{GrlText: "b", Name: "b"}
+	aa := &Variable{GrlText: "a", Name: "a"}
+	bb := &Variable{GrlText: "b", Name: "b"}
+	c := &Variable{GrlText: "c", Name: "c"}
+	d := &Variable{GrlText: "d", Name: "d"}
 
 	expr1 := &Expression{
 		AstID:           "abc",

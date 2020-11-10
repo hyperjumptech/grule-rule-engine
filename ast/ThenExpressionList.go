@@ -2,14 +2,14 @@ package ast
 
 import (
 	"bytes"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenExpressionList creates new instance of ThenExpressionList
 func NewThenExpressionList() *ThenExpressionList {
 	return &ThenExpressionList{
-		AstID:           uuid.New().String(),
+		AstID:           unique.NewID(),
 		ThenExpressions: make([]*ThenExpression, 0),
 	}
 }
@@ -39,7 +39,7 @@ func (e *ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
 // Clone will clone this ThenExpressionList. The new clone will have an identical structure
 func (e *ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionList {
 	clone := &ThenExpressionList{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewID(),
 		GrlText: e.GrlText,
 	}
 
@@ -74,11 +74,13 @@ func (e *ThenExpressionList) GetSnapshot() string {
 	var buff bytes.Buffer
 	buff.WriteString(THENEXPRESSIONLIST)
 	buff.WriteString("(")
-	for idx, es := range e.ThenExpressions {
-		if idx > 0 {
-			buff.WriteString(",")
+	if e.ThenExpressions != nil {
+		for idx, es := range e.ThenExpressions {
+			if idx > 0 {
+				buff.WriteString(",")
+			}
+			buff.WriteString(es.GetSnapshot())
 		}
-		buff.WriteString(es.GetSnapshot())
 	}
 	buff.WriteString(")")
 	return buff.String()
