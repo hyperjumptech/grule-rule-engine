@@ -26,7 +26,7 @@ func Benchmark_Grule_Execution_Engine(b *testing.B) {
 		{"1000 rules", load1000RulesIntoKnowledgebase},
 	}
 	for _, rule := range rules {
-		for k := 0.; k <= 10; k++ {
+		for k := 0; k < 10; k++ {
 			b.Run(fmt.Sprintf("%s", rule.name), func(b *testing.B) {
 				rule.fun()
 				for i := 0; i < b.N; i++ {
