@@ -98,7 +98,7 @@ type TestSubObjectNoPtr struct {
 }
 
 func TestGetFunctionList(t *testing.T) {
-	to := &TestObject{}
+	to := reflect.ValueOf(&TestObject{})
 	functions, err := GetFunctionList(to)
 	if err != nil {
 		t.Error("Got error")
@@ -117,7 +117,7 @@ func TestGetFunctionList(t *testing.T) {
 		t.FailNow()
 	}
 
-	to2 := TestObject{}
+	to2 := reflect.ValueOf(TestObject{})
 	functions, err = GetFunctionList(to2)
 	if err != nil {
 		t.Error("Got error")
@@ -138,7 +138,7 @@ func TestGetFunctionList(t *testing.T) {
 }
 
 func TestGetFunctionParameterTypes(t *testing.T) {
-	to := &TestObject{}
+	to := reflect.ValueOf(&TestObject{})
 	types, _, err := GetFunctionParameterTypes(to, "FunctionC")
 	if err != nil {
 		t.Errorf("Error : %v", err)
@@ -162,7 +162,7 @@ func TestGetFunctionParameterTypes(t *testing.T) {
 }
 
 func TestGetFunctionReturnTypes(t *testing.T) {
-	to := &TestObject{}
+	to := reflect.ValueOf(&TestObject{})
 	types, err := GetFunctionReturnTypes(to, "FunctionC")
 	if err != nil {
 		t.Errorf("Error : %v", err)
@@ -193,10 +193,10 @@ func TestGetFunctionReturnTypes(t *testing.T) {
 }
 
 func TestInvokeFunction(t *testing.T) {
-	to := &TestObject{}
-	param := make([]interface{}, 2)
-	param[0] = 10
-	param[1] = "Ten"
+	to := reflect.ValueOf(&TestObject{})
+	param := make([]reflect.Value, 2)
+	param[0] = reflect.ValueOf(10)
+	param[1] = reflect.ValueOf("Ten")
 	rets, err := InvokeFunction(to, "FunctionC", param)
 	if err != nil {
 		t.Errorf("Got error : %v", err)
@@ -204,17 +204,17 @@ func TestInvokeFunction(t *testing.T) {
 		if len(rets) != 2 {
 			t.Errorf("Invalid ret outs : %d", len(rets))
 		}
-		if rets[0].(string) != "C call Arg1 : 10 and Arg2 : Ten" {
-			t.Errorf("Invalid turn : %s", rets[0].(string))
+		if rets[0].String() != "C call Arg1 : 10 and Arg2 : Ten" {
+			t.Errorf("Invalid turn : %s", rets[0].String())
 		}
-		if rets[1] != nil {
-			t.Errorf("2nd return should be nil")
+		if !rets[1].IsValid() {
+			t.Errorf("2nd return should be valid")
 		}
 	}
 }
 
 func TestGetAttributeList(t *testing.T) {
-	to := &TestObject{}
+	to := reflect.ValueOf(&TestObject{})
 	names, err := GetAttributeList(to)
 	if err != nil {
 		t.Errorf("Got error : %v", err)
@@ -236,7 +236,7 @@ func TestGetAttributeList(t *testing.T) {
 }
 
 func TestGetAttributeValue(t *testing.T) {
-	to := TestObjectNoPtr{
+	to := reflect.ValueOf(TestObjectNoPtr{
 		A: "string data",
 		B: 123,
 		C: 456.789,
@@ -247,7 +247,7 @@ func TestGetAttributeValue(t *testing.T) {
 			B: 123,
 			C: 456.789,
 		},
-	}
+	})
 	itv, err := GetAttributeInterface(to, "A")
 	if err != nil {
 		t.Errorf("Got error %v", err)
@@ -268,12 +268,13 @@ func TestGetAttributeValue(t *testing.T) {
 }
 
 func TestSetAttributeValue(t *testing.T) {
-	testObject := &TestObject{
+	to := &TestObject{
 		A: "string data",
 		B: 123,
 		C: 456.789,
 		D: true,
 	}
+	testObject := reflect.ValueOf(to)
 	err := SetAttributeInterface(testObject, "A", "strong data")
 	if err != nil {
 		t.Errorf("Got error %v", err)
@@ -285,11 +286,11 @@ func TestSetAttributeValue(t *testing.T) {
 		t.FailNow()
 	}
 	err = SetAttributeInterface(testObject, "B", 456.123)
-	if err == nil {
-		t.Errorf("Should not be able to set with different type")
+	if err != nil {
+		t.Errorf("Should be able to set with different type as long as between them are numbers")
 		t.FailNow()
 	}
-	if testObject.A != "strong data" && testObject.B != 456 {
+	if to.A != "strong data" && to.B != 456 {
 		t.Errorf("Setting string fail")
 		t.FailNow()
 	}
@@ -304,7 +305,7 @@ func TestSetAttributeValue(t *testing.T) {
 		t.Errorf("Should not be able to set with different type : %v", err)
 		t.FailNow()
 	}
-	if testObject.F.A != "TSO" && testObject.F.B != 2019 {
+	if to.F.A != "TSO" && to.F.B != 2019 {
 		t.Errorf("Setting object fail")
 		t.FailNow()
 	}
@@ -387,13 +388,13 @@ type TestStruct struct {
 }
 
 func TestIsAttributeArray(t *testing.T) {
-	bol, err := IsAttributeArray(12, "something")
+	bol, err := IsAttributeArray(reflect.ValueOf(12), "something")
 	if err == nil {
 		t.Error("error should be raised, obj is not struct")
 		t.Fail()
 	}
 	ts := &TestStruct{}
-	bol, err = IsAttributeArray(ts, "ArrayAttribute")
+	bol, err = IsAttributeArray(reflect.ValueOf(ts), "ArrayAttribute")
 	if err != nil {
 		t.Error(err)
 		t.Fail()
@@ -405,13 +406,13 @@ func TestIsAttributeArray(t *testing.T) {
 }
 
 func TestIsAttributeMap(t *testing.T) {
-	bol, err := IsAttributeMap(12, "something")
+	bol, err := IsAttributeMap(reflect.ValueOf(12), "something")
 	if err == nil {
 		t.Error("error should be raised, obj is not struct")
 		t.Fail()
 	}
 	ts := &TestStruct{}
-	bol, err = IsAttributeMap(ts, "MapAttribute")
+	bol, err = IsAttributeMap(reflect.ValueOf(ts), "MapAttribute")
 	if err != nil {
 		t.Error(err)
 		t.Fail()
@@ -423,19 +424,71 @@ func TestIsAttributeMap(t *testing.T) {
 }
 
 func TestIsAttributeNilOrZero(t *testing.T) {
-	_, err := IsAttributeNilOrZero(12, "something")
+	_, err := IsAttributeNilOrZero(reflect.ValueOf(12), "something")
 	if err == nil {
 		t.Error("error should be raised, obj is not struct")
 		t.Fail()
 	}
 	ts := &TestStruct{}
-	bol, err := IsAttributeNilOrZero(ts, "ArrayAttribute")
+	bol, err := IsAttributeNilOrZero(reflect.ValueOf(ts), "ArrayAttribute")
 	if err != nil {
 		t.Error(err)
 		t.Fail()
 	}
 	if !bol {
 		t.Error("It should be nil or zero")
+		t.Fail()
+	}
+}
+
+func TestGetMapArrayValue(t *testing.T) {
+	amap := make(map[string]string)
+	amap["abc"] = "ABC"
+
+	ret, err := GetMapArrayValue(amap, "abc")
+	if err != nil {
+		t.Errorf("got %s", err.Error())
+		t.Fail()
+	} else {
+		if ret.(string) != "ABC" {
+			t.Errorf("expect ABC but %s", ret.(string))
+			t.Fail()
+		}
+	}
+	ret, err = GetMapArrayValue(amap, "cba")
+	if err == nil {
+		t.Errorf("key not exist but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+	ret, err = GetMapArrayValue(amap, 123)
+	if err == nil {
+		t.Errorf("key different type but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+
+	aarr := make([]string, 0)
+	aarr = append(aarr, "ABC")
+	ret, err = GetMapArrayValue(aarr, 0)
+	if err != nil {
+		t.Errorf("got %s", err.Error())
+		t.Fail()
+	} else {
+		if ret.(string) != "ABC" {
+			t.Errorf("expect ABC but %s", ret.(string))
+			t.Fail()
+		}
+	}
+	ret, err = GetMapArrayValue(aarr, 3)
+	if err == nil {
+		t.Errorf("key out of bound but no error")
+		t.Fail()
+	}
+	t.Logf("Emitted err : %s", err.Error())
+	ret, err = GetMapArrayValue(aarr, uint(0))
+	if err != nil {
+		t.Errorf("key out of bound but no error")
 		t.Fail()
 	}
 }

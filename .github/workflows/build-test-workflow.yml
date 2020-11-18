@@ -1,0 +1,25 @@
+name: Grule-Rule-Engine
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.13
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Fetching dependencies
+        run : go get -v -t -d ./...
+      - name: Install GoLint and Goornogo
+        run : |
+          go get -u golang.org/x/lint/golint
+          go install github.com/newm4n/goornogo
+      - name: Execute test
+        run : make test-short

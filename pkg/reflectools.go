@@ -2,21 +2,19 @@ package pkg
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"math"
 	"reflect"
-	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 // GetFunctionList get list of functions in a struct instance
-func GetFunctionList(obj interface{}) ([]string, error) {
+func GetFunctionList(obj reflect.Value) ([]string, error) {
 	if !IsStruct(obj) {
-		return nil, fmt.Errorf("param is not a struct")
+		return nil, fmt.Errorf("GetFunctionList : param is not a struct")
 	}
 	ret := make([]string, 0)
 
-	objType := reflect.TypeOf(obj)
+	objType := obj.Type()
 	for i := 0; i < objType.NumMethod(); i++ {
 		ret = append(ret, objType.Method(i).Name)
 	}
@@ -24,22 +22,14 @@ func GetFunctionList(obj interface{}) ([]string, error) {
 }
 
 // GetFunctionParameterTypes get list of parameter types of specific function in a struct instance
-func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Type, bool, error) {
+func GetFunctionParameterTypes(obj reflect.Value, methodName string) ([]reflect.Type, bool, error) {
 	if !IsStruct(obj) {
-		return nil, false, fmt.Errorf("param is not a struct")
+		return nil, false, fmt.Errorf("GetFunctionParameterTypes : param is not a struct")
 	}
 	ret := make([]reflect.Type, 0)
-	objType := reflect.TypeOf(obj)
+	objType := obj.Type()
 
-	var meth reflect.Method
-	var found bool
-
-	if objType.String() == "reflect.Value" {
-		val := obj.(reflect.Value)
-		meth, found = val.Type().MethodByName(methodName)
-	} else {
-		meth, found = objType.MethodByName(methodName)
-	}
+	meth, found := objType.MethodByName(methodName)
 	if found {
 		x := meth.Type
 		for i := 1; i < x.NumIn(); i++ {
@@ -51,12 +41,12 @@ func GetFunctionParameterTypes(obj interface{}, methodName string) ([]reflect.Ty
 }
 
 // GetFunctionReturnTypes get list of return types of specific function in a struct instance
-func GetFunctionReturnTypes(obj interface{}, methodName string) ([]reflect.Type, error) {
+func GetFunctionReturnTypes(obj reflect.Value, methodName string) ([]reflect.Type, error) {
 	if !IsStruct(obj) {
-		return nil, fmt.Errorf("param is not a struct")
+		return nil, fmt.Errorf("GetFunctionReturnTypes : param is not a struct")
 	}
 	ret := make([]reflect.Type, 0)
-	objType := reflect.TypeOf(obj)
+	objType := obj.Type()
 
 	meth, found := objType.MethodByName(methodName)
 	if found {
@@ -71,42 +61,31 @@ func GetFunctionReturnTypes(obj interface{}, methodName string) ([]reflect.Type,
 }
 
 // InvokeFunction invokes a specific function in a struct instance, using parameters array
-func InvokeFunction(obj interface{}, methodName string, param []interface{}) ([]interface{}, error) {
+func InvokeFunction(obj reflect.Value, methodName string, param []reflect.Value) (retval []reflect.Value, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("error when invoking function %s. got %s", methodName, r)
+		}
+	}()
+
 	if !IsStruct(obj) {
-		return nil, fmt.Errorf("param is not a struct")
+		return nil, fmt.Errorf("InvokeFunction : param is not a struct")
 	}
-	var objVal reflect.Value
-	if reflect.TypeOf(obj).Name() == "Value" {
-		objVal = obj.(reflect.Value)
-	} else {
-		objVal = reflect.ValueOf(obj)
-	}
-	funcVal := objVal.MethodByName(methodName)
+	funcVal := obj.MethodByName(methodName)
 
 	if !funcVal.IsValid() {
 		return nil, fmt.Errorf("invalid function %s", methodName)
 	}
-
-	argVals := make([]reflect.Value, len(param))
-	for idx, val := range param {
-		argVals[idx] = reflect.ValueOf(val)
-	}
-
-	retVals := funcVal.Call(argVals)
-	ret := make([]interface{}, len(retVals))
-	for idx, r := range retVals {
-		ret[idx] = ValueToInterface(r)
-	}
-	return ret, nil
+	retVals := funcVal.Call(param)
+	return retVals, nil
 }
 
 // IsValidField validates if an instance struct have a field with such name
-func IsValidField(obj interface{}, fieldName string) bool {
-	if !IsStruct(obj) {
+func IsValidField(objVal reflect.Value, fieldName string) bool {
+	if !IsStruct(objVal) {
 		return false
 	}
-	objType := reflect.TypeOf(obj)
-	objVal := reflect.ValueOf(obj)
+	objType := objVal.Type()
 	if objType.Kind() == reflect.Struct {
 		fieldVal := objVal.FieldByName(fieldName)
 		return fieldVal.IsValid()
@@ -119,15 +98,15 @@ func IsValidField(obj interface{}, fieldName string) bool {
 }
 
 // IsStruct validates if an instance is struct or pointer to struct
-func IsStruct(obj interface{}) bool {
-	if !reflect.ValueOf(obj).IsValid() {
-		return false
+func IsStruct(val reflect.Value) bool {
+	if val.IsValid() {
+		typ := val.Type()
+		if typ.Kind() != reflect.Ptr {
+			return typ.Kind() == reflect.Struct
+		}
+		return typ.Elem().Kind() == reflect.Struct
 	}
-	objType := reflect.TypeOf(obj)
-	if objType.Kind() != reflect.Ptr {
-		return objType.Kind() == reflect.Struct
-	}
-	return objType.Elem().Kind() == reflect.Struct
+	return false
 }
 
 // ValueToInterface will try to obtain an interface to a speciffic value.
@@ -171,7 +150,7 @@ func ValueToInterface(v reflect.Value) interface{} {
 		if v.CanInterface() {
 			return v.Interface()
 		}
-		logrus.Errorf("Can't interface value of struct %v", v)
+		logger.Log.Errorf("Can't interface value of struct %v", v)
 		return nil
 	default:
 		return nil
@@ -179,13 +158,12 @@ func ValueToInterface(v reflect.Value) interface{} {
 }
 
 // GetAttributeList will populate list of struct's public member variable.
-func GetAttributeList(obj interface{}) ([]string, error) {
+func GetAttributeList(obj reflect.Value) ([]string, error) {
 	if !IsStruct(obj) {
-		return nil, fmt.Errorf("param is not a struct")
+		return nil, fmt.Errorf("GetAttributeList : param is not a struct")
 	}
 	strRet := make([]string, 0)
-	v := reflect.ValueOf(obj)
-	e := v.Elem()
+	e := obj.Elem()
 	for i := 0; i < e.Type().NumField(); i++ {
 		strRet = append(strRet, e.Type().Field(i).Name)
 	}
@@ -193,14 +171,14 @@ func GetAttributeList(obj interface{}) ([]string, error) {
 }
 
 // GetAttributeValue will retrieve a members variable value.
-func GetAttributeValue(obj interface{}, fieldName string) (reflect.Value, error) {
+func GetAttributeValue(obj reflect.Value, fieldName string) (reflect.Value, error) {
 	if !IsStruct(obj) {
-		return reflect.ValueOf(nil), fmt.Errorf("param is not a struct")
+		return reflect.ValueOf(nil), fmt.Errorf("GetAttributeValue : param is not a struct")
 	}
 	if !IsValidField(obj, fieldName) {
 		return reflect.ValueOf(nil), fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	structval := reflect.ValueOf(obj)
+	structval := obj
 	var attrVal reflect.Value
 	if structval.Kind() == reflect.Ptr {
 		attrVal = structval.Elem().FieldByName(fieldName)
@@ -211,7 +189,7 @@ func GetAttributeValue(obj interface{}, fieldName string) (reflect.Value, error)
 }
 
 // GetAttributeInterface will retrieve a members variable value as usable interface.
-func GetAttributeInterface(obj interface{}, fieldName string) (interface{}, error) {
+func GetAttributeInterface(obj reflect.Value, fieldName string) (interface{}, error) {
 	val, err := GetAttributeValue(obj, fieldName)
 	if err != nil {
 		return nil, err
@@ -220,14 +198,14 @@ func GetAttributeInterface(obj interface{}, fieldName string) (interface{}, erro
 }
 
 // GetAttributeType will return the type of a specific member variable
-func GetAttributeType(obj interface{}, fieldName string) (reflect.Type, error) {
+func GetAttributeType(obj reflect.Value, fieldName string) (reflect.Type, error) {
 	if !IsStruct(obj) {
-		return nil, fmt.Errorf("param is not a struct")
+		return nil, fmt.Errorf("GetAttributeType : param is not a struct")
 	}
 	if !IsValidField(obj, fieldName) {
 		return nil, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	structval := reflect.ValueOf(obj)
+	structval := obj
 	var attrVal reflect.Value
 	if structval.Kind() == reflect.Ptr {
 		attrVal = structval.Elem().FieldByName(fieldName)
@@ -238,16 +216,15 @@ func GetAttributeType(obj interface{}, fieldName string) (reflect.Type, error) {
 }
 
 // SetAttributeValue will try to set a member variable value with a new one.
-func SetAttributeValue(obj interface{}, fieldName string, value reflect.Value) error {
-	if !IsStruct(obj) {
-		return fmt.Errorf("param is not a struct")
+func SetAttributeValue(objVal reflect.Value, fieldName string, value reflect.Value) error {
+	if !IsStruct(objVal) {
+		return fmt.Errorf("SetAttributeValue : param is not a struct")
 	}
-	if !IsValidField(obj, fieldName) {
+	if !IsValidField(objVal, fieldName) {
 		return fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
 	var fieldVal reflect.Value
-	objType := reflect.TypeOf(obj)
-	objVal := reflect.ValueOf(obj)
+	objType := objVal.Type()
 	// If Obj param is a pointer
 	if objType.Kind() == reflect.Ptr {
 		// And it points to a struct
@@ -270,7 +247,9 @@ func SetAttributeValue(obj interface{}, fieldName string, value reflect.Value) e
 
 	// Check source data type compatibility with the field type
 	if GetBaseKind(fieldVal) != GetBaseKind(value) { // pointer check
-		return fmt.Errorf("can not assign type %s to %s", value.Type().String(), fieldVal.Type().String())
+		if !(IsNumber(fieldVal) && IsNumber(value)) {
+			return fmt.Errorf("can not assign type %s to %s", value.Type().String(), fieldVal.Type().String())
+		}
 	}
 	if fieldVal.CanSet() {
 		switch fieldVal.Type().Kind() {
@@ -278,13 +257,31 @@ func SetAttributeValue(obj interface{}, fieldName string, value reflect.Value) e
 			fieldVal.SetString(value.String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			fieldVal.SetInt(value.Int())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetInt(int64(value.Uint()))
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetInt(int64(value.Float()))
+			} else {
+				fieldVal.SetInt(value.Int())
+			}
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			fieldVal.SetUint(value.Uint())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetUint(value.Uint())
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetUint(uint64(value.Float()))
+			} else {
+				fieldVal.SetUint(uint64(value.Int()))
+			}
 			break
 		case reflect.Float32, reflect.Float64:
-			fieldVal.SetFloat(value.Float())
+			if GetBaseKind(value) == reflect.Uint64 {
+				fieldVal.SetFloat(float64(value.Uint()))
+			} else if GetBaseKind(value) == reflect.Float64 {
+				fieldVal.SetFloat(value.Float())
+			} else {
+				fieldVal.SetFloat(float64(value.Int()))
+			}
 			break
 		case reflect.Bool:
 			fieldVal.SetBool(value.Bool())
@@ -317,7 +314,7 @@ func SetAttributeValue(obj interface{}, fieldName string, value reflect.Value) e
 			//// todo Add setter for slice type field
 			//return fmt.Errorf("unsupported operation to set struct")
 		default:
-			return nil
+			return fmt.Errorf("unsupported operation to set %s", fieldVal.Type().String())
 		}
 	} else {
 		return fmt.Errorf("can not set field")
@@ -326,9 +323,9 @@ func SetAttributeValue(obj interface{}, fieldName string, value reflect.Value) e
 }
 
 // SetAttributeInterface will try to set a member variable value with a value from an interface
-func SetAttributeInterface(obj interface{}, fieldName string, value interface{}) error {
+func SetAttributeInterface(obj reflect.Value, fieldName string, value interface{}) error {
 	if !IsStruct(obj) {
-		return fmt.Errorf("param is not a struct")
+		return fmt.Errorf("SetAttributeInterface : param is not a struct")
 	}
 	if !IsValidField(obj, fieldName) {
 		return fmt.Errorf("attribute named %s not exist in struct", fieldName)
@@ -338,41 +335,129 @@ func SetAttributeInterface(obj interface{}, fieldName string, value interface{})
 }
 
 // IsAttributeArray validate if a member variable is an array or a slice.
-func IsAttributeArray(obj interface{}, fieldName string) (bool, error) {
-	if !IsStruct(obj) {
-		return false, fmt.Errorf("param is not a struct")
+func IsAttributeArray(objVal reflect.Value, fieldName string) (bool, error) {
+	if !IsStruct(objVal) {
+		return false, fmt.Errorf("IsAttributeArray : param is not a struct")
 	}
-	if !IsValidField(obj, fieldName) {
+	if !IsValidField(objVal, fieldName) {
 		return false, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	objVal := reflect.ValueOf(obj)
 	fieldVal := objVal.Elem().FieldByName(fieldName)
 	return fieldVal.Type().Kind() == reflect.Array || fieldVal.Type().Kind() == reflect.Slice, nil
 }
 
+// SetMapArrayValue will set a value into map array indicated by a selector
+func SetMapArrayValue(mapArray, selector reflect.Value, newValue reflect.Value) (err error) {
+	objVal := mapArray
+	if objVal.Type().Kind() == reflect.Map {
+		objVal.SetMapIndex(selector, newValue)
+		return nil
+	}
+	if objVal.Type().Kind() == reflect.Array || objVal.Type().Kind() == reflect.Slice {
+		defer func() {
+			if errPanic := recover(); errPanic != nil {
+				err = fmt.Errorf("index %d is out of bound", selector.Int())
+			}
+		}()
+
+		idx := 0
+		switch GetBaseKind(selector) {
+		case reflect.Int64:
+			idx = int(selector.Int())
+		case reflect.Uint64:
+			idx = int(selector.Uint())
+		case reflect.Float32:
+			idx = int(selector.Float())
+		default:
+			return fmt.Errorf("array selector can only be numeric type")
+		}
+
+		retVal := objVal.Index(idx)
+		retVal.Set(newValue)
+		return nil
+	}
+	return fmt.Errorf("argument is not an array, slice nor map")
+}
+
+// GetMapArrayValue get value of map, array atau slice by its selector value
+func GetMapArrayValue(mapArray, selector interface{}) (ret interface{}, err error) {
+	if mapArray == nil {
+		return nil, fmt.Errorf("nil map, array or slice")
+	}
+	objVal := reflect.ValueOf(mapArray)
+	if objVal.Type().Kind() == reflect.Map {
+		if objVal.Type().Key() == reflect.TypeOf(selector) {
+			defer func() {
+				if errPanic := recover(); errPanic != nil {
+					ret = nil
+					err = fmt.Errorf("map key not exist")
+				}
+			}()
+			retVal := objVal.MapIndex(reflect.ValueOf(selector))
+			if retVal.IsZero() {
+				return nil, fmt.Errorf("selector not exist in map key")
+			}
+			return ValueToInterface(retVal), nil
+		}
+		return nil, fmt.Errorf("map requires key of type %s, found %s", objVal.Type().Key().String(), reflect.TypeOf(selector).String())
+	}
+	if objVal.Type().Kind() == reflect.Array || objVal.Type().Kind() == reflect.Slice {
+		defer func() {
+			if errPanic := recover(); errPanic != nil {
+				ret = nil
+				err = fmt.Errorf("index %d is out of bound", selector.(int))
+			}
+		}()
+
+		idx := 0
+		switch GetBaseKind(reflect.ValueOf(selector)) {
+		case reflect.Int64:
+			idx = int(reflect.ValueOf(selector).Int())
+		case reflect.Uint64:
+			idx = int(reflect.ValueOf(selector).Uint())
+		case reflect.Float32:
+			idx = int(reflect.ValueOf(selector).Float())
+		default:
+			return nil, fmt.Errorf("array selector can only be numeric type")
+		}
+
+		retVal := objVal.Index(idx)
+		return ValueToInterface(retVal), nil
+	}
+	return nil, fmt.Errorf("argument is not an array, slice nor map")
+}
+
 // IsAttributeMap validate if a member variable is a map.
-func IsAttributeMap(obj interface{}, fieldName string) (bool, error) {
+func IsAttributeMap(obj reflect.Value, fieldName string) (bool, error) {
 	if !IsStruct(obj) {
-		return false, fmt.Errorf("param is not a struct")
+		return false, fmt.Errorf("IsAttributeMap : param is not a struct")
 	}
 	if !IsValidField(obj, fieldName) {
 		return false, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	objVal := reflect.ValueOf(obj)
-	fieldVal := objVal.Elem().FieldByName(fieldName)
+	var fieldVal reflect.Value
+	if obj.Kind() == reflect.Ptr {
+		fieldVal = obj.Elem().FieldByName(fieldName)
+	} else if obj.Kind() == reflect.Struct {
+		fieldVal = obj.FieldByName(fieldName)
+	}
 	return fieldVal.Type().Kind() == reflect.Map, nil
 }
 
 // IsAttributeNilOrZero validate if a member variable is nil or zero.
-func IsAttributeNilOrZero(obj interface{}, fieldName string) (bool, error) {
+func IsAttributeNilOrZero(obj reflect.Value, fieldName string) (bool, error) {
 	if !IsStruct(obj) {
-		return false, fmt.Errorf("param is not a struct")
+		return false, fmt.Errorf("IsAttributeNilOrZero : param is not a struct")
 	}
 	if !IsValidField(obj, fieldName) {
 		return false, fmt.Errorf("attribute named %s not exist in struct", fieldName)
 	}
-	objVal := reflect.ValueOf(obj)
-	fieldVal := objVal.Elem().FieldByName(fieldName)
+	var fieldVal reflect.Value
+	if obj.Kind() == reflect.Ptr {
+		fieldVal = obj.Elem().FieldByName(fieldName)
+	} else if obj.Kind() == reflect.Struct {
+		fieldVal = obj.FieldByName(fieldName)
+	}
 	if fieldVal.Kind() == reflect.Ptr {
 		return fieldVal.IsNil(), nil
 	}
@@ -437,217 +522,6 @@ func reflectIsZero(v reflect.Value) bool {
 	}
 }
 
-// GetAttributeStringValue will try to obtain member variable's string value
-func GetAttributeStringValue(obj interface{}, fieldName string) (string, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return "", err
-	}
-	return val.(string), err
-}
-
-// SetAttributeStringValue will try to set member variable's string value
-func SetAttributeStringValue(obj interface{}, fieldName string, newValue string) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeIntValue will try to obtain member variable's int value
-func GetAttributeIntValue(obj interface{}, fieldName string) (int, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(int), err
-
-}
-
-// SetAttributeIntValue will try to set member variable's int value
-func SetAttributeIntValue(obj interface{}, fieldName string, newValue int) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeInt8Value will try to obtain member variable's int8 value
-func GetAttributeInt8Value(obj interface{}, fieldName string) (int8, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(int8), err
-}
-
-// SetAttributeInt8Value will try to set member variable's int8 value
-func SetAttributeInt8Value(obj interface{}, fieldName string, newValue int8) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeInt16Value will try to obtain member variable's int16 value
-func GetAttributeInt16Value(obj interface{}, fieldName string) (int16, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(int16), err
-}
-
-// SetAttributeInt16Value will try to set member variable's int16 value
-func SetAttributeInt16Value(obj interface{}, fieldName string, newValue int16) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeInt32Value will try to obtain member variable's int32 value
-func GetAttributeInt32Value(obj interface{}, fieldName string) (int32, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(int32), err
-}
-
-// SetAttributeInt32Value will try to set member variable's int32 value
-func SetAttributeInt32Value(obj interface{}, fieldName string, newValue int32) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeInt64Value will try to obtain member variable's int64 value
-func GetAttributeInt64Value(obj interface{}, fieldName string) (int64, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(int64), err
-}
-
-// SetAttributeInt64Value will try to set member variable's int64 value
-func SetAttributeInt64Value(obj interface{}, fieldName string, newValue int64) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeUIntValue will try to obtain member variable's uint value
-func GetAttributeUIntValue(obj interface{}, fieldName string) (uint, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(uint), err
-}
-
-// SetAttributeUIntValue will try to set member variable's uint value
-func SetAttributeUIntValue(obj interface{}, fieldName string, newValue uint) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeUInt8Value will try to obtain member variable's uint8 value
-func GetAttributeUInt8Value(obj interface{}, fieldName string) (uint8, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(uint8), err
-}
-
-// SetAttributeUInt8Value will try to set member variable's uint8 value
-func SetAttributeUInt8Value(obj interface{}, fieldName string, newValue uint8) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeUInt16Value will try to obtain member variable's uint16 value
-func GetAttributeUInt16Value(obj interface{}, fieldName string) (uint16, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(uint16), err
-}
-
-// SetAttributeUInt16Value will try to set member variable's uint16 value
-func SetAttributeUInt16Value(obj interface{}, fieldName string, newValue uint16) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeUInt32Value will try to obtain member variable's uint32 value
-func GetAttributeUInt32Value(obj interface{}, fieldName string) (uint32, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(uint32), err
-}
-
-// SetAttributeUInt32Value will try to set member variable's uint32 value
-func SetAttributeUInt32Value(obj interface{}, fieldName string, newValue uint32) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeUInt64Value will try to obtain member variable's uint64 value
-func GetAttributeUInt64Value(obj interface{}, fieldName string) (uint64, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(uint64), err
-}
-
-// SetAttributeUInt64Value will try to set member variable's uint64 value
-func SetAttributeUInt64Value(obj interface{}, fieldName string, newValue uint64) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeBoolValue will try to obtain member variable's bool value
-func GetAttributeBoolValue(obj interface{}, fieldName string) (bool, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return false, err
-	}
-	return val.(bool), err
-}
-
-// SetAttributeBoolValue will try to set member variable's bool value
-func SetAttributeBoolValue(obj interface{}, fieldName string, newValue bool) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeFloat32Value will try to obtain member variable's float32 value
-func GetAttributeFloat32Value(obj interface{}, fieldName string) (float32, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(float32), err
-}
-
-// SetAttributeFloat32Value will try to set member variable's float32 value
-func SetAttributeFloat32Value(obj interface{}, fieldName string, newValue float32) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeFloat64Value will try to obtain member variable's float64 value
-func GetAttributeFloat64Value(obj interface{}, fieldName string) (float64, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return 0, err
-	}
-	return val.(float64), err
-}
-
-// SetAttributeFloat64Value will try to set member variable's float64 value
-func SetAttributeFloat64Value(obj interface{}, fieldName string, newValue float64) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
-// GetAttributeTimeValue will try to obtain member variable's time.Time value
-func GetAttributeTimeValue(obj interface{}, fieldName string) (time.Time, error) {
-	val, err := GetAttributeInterface(obj, fieldName)
-	if err != nil {
-		return time.Now(), err
-	}
-	return val.(time.Time), err
-}
-
-// SetAttributeTimeValue will try to set member variable's time.Time value
-func SetAttributeTimeValue(obj interface{}, fieldName string, newValue time.Time) error {
-	return SetAttributeInterface(obj, fieldName, newValue)
-}
-
 // GetBaseKind will try to obtain base obtainable kind of a value, so we know what method to call val.Int(), val.Uint(), etc.
 func GetBaseKind(val reflect.Value) reflect.Kind {
 	switch val.Kind() {
@@ -660,4 +534,13 @@ func GetBaseKind(val reflect.Value) reflect.Kind {
 	default:
 		return val.Kind()
 	}
+}
+
+// IsNumber will check a value if its a number eg, int,uint or float
+func IsNumber(val reflect.Value) bool {
+	switch GetBaseKind(val) {
+	case reflect.Int64, reflect.Uint64, reflect.Float64:
+		return true
+	}
+	return false
 }

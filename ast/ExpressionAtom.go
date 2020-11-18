@@ -3,48 +3,70 @@ package ast
 import (
 	"bytes"
 	"errors"
+	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewExpressionAtom create new instance of ExpressionAtom
 func NewExpressionAtom() *ExpressionAtom {
 	return &ExpressionAtom{
-		AstID: uuid.New().String(),
+		AstID: unique.NewID(),
 	}
 }
 
 // ExpressionAtom AST node graph
 type ExpressionAtom struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
-	Constant     *Constant
-	Variable     *Variable
-	FunctionCall *FunctionCall
-	MethodCall   *MethodCall
-	Value        reflect.Value
+	VariableName   string
+	Constant       *Constant
+	FunctionCall   *FunctionCall
+	Variable       *Variable
+	Negated        bool
+	ExpressionAtom *ExpressionAtom
+	Value          reflect.Value
+	ValueNode      model.ValueNode
+
+	Evaluated bool
+}
+
+// ExpressionAtomReceiver contains function to be implemented by other AST graph to receive an ExpressionAtom AST graph
+type ExpressionAtomReceiver interface {
+	AcceptExpressionAtom(exp *ExpressionAtom) error
 }
 
 // Clone will clone this ExpressionAtom. The new clone will have an identical structure
-func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
+func (e *ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 	clone := &ExpressionAtom{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
+		AstID:        unique.NewID(),
+		GrlText:      e.GrlText,
+		VariableName: e.VariableName,
+		Negated:      e.Negated,
 	}
 
 	if e.Constant != nil {
-		clone.Constant = e.Constant.Clone(cloneTable)
+		if cloneTable.IsCloned(e.Constant.AstID) {
+			clone.Constant = cloneTable.Records[e.Constant.AstID].CloneInstance.(*Constant)
+		} else {
+			cloned := e.Constant.Clone(cloneTable)
+			clone.Constant = cloned
+			cloneTable.MarkCloned(e.Constant.AstID, cloned.AstID, e.Constant, cloned)
+		}
 	}
 
 	if e.Variable != nil {
-		clone.Variable = e.Variable.Clone(cloneTable)
+		if cloneTable.IsCloned(e.Variable.AstID) {
+			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
+		} else {
+			cloned := e.Variable.Clone(cloneTable)
+			clone.Variable = cloned
+			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+		}
 	}
 
 	if e.FunctionCall != nil {
@@ -57,35 +79,22 @@ func (e ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 		}
 	}
 
-	if e.MethodCall != nil {
-		if cloneTable.IsCloned(e.MethodCall.AstID) {
-			clone.MethodCall = cloneTable.Records[e.MethodCall.AstID].CloneInstance.(*MethodCall)
+	if e.ExpressionAtom != nil {
+		if cloneTable.IsCloned(e.ExpressionAtom.AstID) {
+			clone.ExpressionAtom = cloneTable.Records[e.ExpressionAtom.AstID].CloneInstance.(*ExpressionAtom)
 		} else {
-			cloned := e.MethodCall.Clone(cloneTable)
-			clone.MethodCall = cloned
-			cloneTable.MarkCloned(e.MethodCall.AstID, cloned.AstID, e.MethodCall, cloned)
+			cloned := e.ExpressionAtom.Clone(cloneTable)
+			clone.ExpressionAtom = cloned
+			cloneTable.MarkCloned(e.ExpressionAtom.AstID, cloned.AstID, e.ExpressionAtom, cloned)
 		}
 	}
 
 	return clone
 }
 
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *ExpressionAtom) InitializeContext(dataCtx IDataContext, WorkingMemory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = WorkingMemory
-	if e.Constant != nil {
-		e.Constant.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.Variable != nil {
-		e.Variable.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.FunctionCall != nil {
-		e.FunctionCall.InitializeContext(dataCtx, WorkingMemory)
-	}
-	if e.MethodCall != nil {
-		e.MethodCall.InitializeContext(dataCtx, WorkingMemory)
-	}
+// AcceptMemberVariable accept a member variable AST graph into this Variable graph
+func (e *ExpressionAtom) AcceptMemberVariable(name string) {
+	e.VariableName = name
 }
 
 // AcceptVariable will accept an Variable AST graph into this ast graph
@@ -97,30 +106,30 @@ func (e *ExpressionAtom) AcceptVariable(vari *Variable) error {
 	return nil
 }
 
-// AcceptConstant will accept an Constant AST graph into this ast graph
-func (e *ExpressionAtom) AcceptConstant(con *Constant) error {
-	if e.Constant != nil {
-		return errors.New("constant for ExpressionAtom already assigned")
-	}
-	e.Constant = con
-	return nil
-}
-
-// AcceptMethodCall will accept an MethodCall AST graph into this ast graph
-func (e *ExpressionAtom) AcceptMethodCall(fun *MethodCall) error {
-	if e.MethodCall != nil {
-		return errors.New("constant for ExpressionAtom already assigned")
-	}
-	e.MethodCall = fun
-	return nil
-}
-
 // AcceptFunctionCall will accept an FunctionCall AST graph into this ast graph
 func (e *ExpressionAtom) AcceptFunctionCall(fun *FunctionCall) error {
 	if e.FunctionCall != nil {
-		return errors.New("constant for ExpressionAtom already assigned")
+		return errors.New("function call for ExpressionAtom already assigned")
 	}
 	e.FunctionCall = fun
+	return nil
+}
+
+// AcceptExpressionAtom will accept an ExpressionAtom AST graph into this ast graph
+func (e *ExpressionAtom) AcceptExpressionAtom(ea *ExpressionAtom) error {
+	if e.ExpressionAtom != nil {
+		return errors.New("expression atom for ExpressionAtom already assigned")
+	}
+	e.ExpressionAtom = ea
+	return nil
+}
+
+// AcceptConstant will accept a Constant AST graph into this ast graph
+func (e *ExpressionAtom) AcceptConstant(cons *Constant) error {
+	if e.Constant != nil {
+		return errors.New("constant for ExpressionAtom already assigned")
+	}
+	e.Constant = cons
 	return nil
 }
 
@@ -137,15 +146,29 @@ func (e *ExpressionAtom) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *ExpressionAtom) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(EXPRESSIONATOM)
+	buff.WriteString("(")
 	if e.Variable != nil {
 		buff.WriteString(e.Variable.GetSnapshot())
 	} else if e.Constant != nil {
 		buff.WriteString(e.Constant.GetSnapshot())
-	} else if e.FunctionCall != nil {
+	} else if e.FunctionCall != nil && e.ExpressionAtom == nil {
 		buff.WriteString(e.FunctionCall.GetSnapshot())
-	} else if e.MethodCall != nil {
-		buff.WriteString(e.MethodCall.GetSnapshot())
+	} else if e.FunctionCall == nil && e.ExpressionAtom != nil && len(e.VariableName) == 0 {
+		if e.Negated {
+			buff.WriteString("!")
+		}
+		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+	} else if e.FunctionCall != nil && e.ExpressionAtom != nil {
+		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+		buff.WriteString("->")
+		buff.WriteString(e.FunctionCall.GetSnapshot())
+	} else if len(e.VariableName) > 0 && e.ExpressionAtom != nil {
+		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+		buff.WriteString("->MV:")
+		buff.WriteString(e.VariableName)
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -156,20 +179,99 @@ func (e *ExpressionAtom) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *ExpressionAtom) Evaluate() (reflect.Value, error) {
-	var val reflect.Value
-	var err error
-	if e.Variable != nil {
-		val, err = e.Variable.Evaluate()
-	} else if e.FunctionCall != nil {
-		val, err = e.FunctionCall.Evaluate()
-	} else if e.MethodCall != nil {
-		val, err = e.MethodCall.Evaluate()
-	} else if e.Constant != nil {
-		val, err = e.Constant.Evaluate()
+func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemory) (val reflect.Value, err error) {
+	if e.Evaluated == true {
+		return e.Value, nil
 	}
-	if err == nil {
+	if e.Constant != nil {
+		val, err := e.Constant.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
 		e.Value = val
+		e.ValueNode = model.NewGoValueNode(val, fmt.Sprintf("%s->%s", val.Type().String(), val.String()))
+		e.Evaluated = true
+		return val, err
 	}
-	return val, err
+	if e.Variable != nil {
+		val, err := e.Variable.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = val
+		e.ValueNode = e.Variable.ValueNode
+		e.Evaluated = true
+		return val, err
+	}
+	if e.ExpressionAtom == nil && e.FunctionCall != nil {
+		valueNode := dataContext.Get("DEFUNC")
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		ret, err := valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = ret
+		e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("%s()", e.FunctionCall.FunctionName))
+		e.Evaluated = true
+		return ret, err
+	}
+	if e.ExpressionAtom != nil && e.FunctionCall == nil && len(e.VariableName) == 0 {
+		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.Value = val
+		e.ValueNode = e.ExpressionAtom.ValueNode
+		if e.Negated {
+			if e.Value.Kind() == reflect.Bool {
+				e.Value = reflect.ValueOf(!e.Value.Bool())
+				e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("!%s", e.GrlText))
+			} else {
+				AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.ExpressionAtom.GrlText)
+			}
+		}
+		e.Evaluated = true
+		return e.Value, err
+	}
+	if e.ExpressionAtom != nil && e.FunctionCall != nil {
+		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+
+		if retVal.IsValid() {
+			e.Value = retVal
+		}
+		e.ValueNode = e.ExpressionAtom.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
+		e.Evaluated = true
+		return e.Value, nil
+	}
+	if e.ExpressionAtom != nil && len(e.VariableName) > 0 {
+		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		valueNode, err := e.ExpressionAtom.ValueNode.GetChildNodeByField(e.VariableName)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
+		e.Evaluated = true
+		return e.Value, nil
+	}
+	panic("should not be reached")
 }

@@ -5,12 +5,12 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 const (
-	DRL = `
+	GRL = `
 rule CallingLog "Calling a log" {
 	when
 		true
@@ -22,22 +22,16 @@ rule CallingLog "Calling a log" {
 )
 
 func TestCallingLog(t *testing.T) {
-	logrus.SetLevel(logrus.DebugLevel)
 	dataContext := ast.NewDataContext()
 
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
-	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(DRL)))
-	if err != nil {
-		panic(err)
-	} else {
+	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(GRL)))
+	assert.NoError(t, err)
 
-		knowledgeBase := lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
+	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
 
-		eng1 := &engine.GruleEngine{MaxCycle: 1}
-		err := eng1.Execute(dataContext, knowledgeBase)
-		if err != nil {
-			t.Fatalf("Got error %v", err)
-		}
-	}
+	eng1 := &engine.GruleEngine{MaxCycle: 1}
+	err = eng1.Execute(dataContext, knowledgeBase)
+	assert.NoError(t, err)
 }
