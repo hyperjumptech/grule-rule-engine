@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -46,36 +46,33 @@ const (
 // NewExpression creates new Expression instance
 func NewExpression() *Expression {
 	return &Expression{
-		AstID:    uuid.New().String(),
+		AstID:    unique.NewID(),
 		Operator: 0,
 	}
 }
 
 // Expression AST Graph node
 type Expression struct {
-	AstID         string
-	GrlText       string
-	DataContext   IDataContext
-	WorkingMemory *WorkingMemory
+	AstID   string
+	GrlText string
 
 	LeftExpression   *Expression
 	RightExpression  *Expression
 	SingleExpression *Expression
 	ExpressionAtom   *ExpressionAtom
 	Operator         int
+	Negated          bool
 	Value            reflect.Value
 
 	Evaluated bool
 }
 
 // Clone will clone this Expression. The new clone will have an identical structure
-func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
+func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	clone := &Expression{
-		AstID:         uuid.New().String(),
-		GrlText:       e.GrlText,
-		DataContext:   nil,
-		WorkingMemory: nil,
-		Operator:      e.Operator,
+		AstID:    unique.NewID(),
+		GrlText:  e.GrlText,
+		Operator: e.Operator,
 	}
 
 	if e.LeftExpression != nil {
@@ -104,6 +101,7 @@ func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 		} else {
 			cloned := e.SingleExpression.Clone(cloneTable)
 			clone.SingleExpression = cloned
+			clone.Negated = e.Negated
 			cloneTable.MarkCloned(e.SingleExpression.AstID, cloned.AstID, e.SingleExpression, cloned)
 		}
 	}
@@ -119,24 +117,6 @@ func (e Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	}
 
 	return clone
-}
-
-// InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
-func (e *Expression) InitializeContext(dataCtx IDataContext, memory *WorkingMemory) {
-	e.DataContext = dataCtx
-	e.WorkingMemory = memory
-	if e.LeftExpression != nil {
-		e.LeftExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.RightExpression != nil {
-		e.RightExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.SingleExpression != nil {
-		e.SingleExpression.InitializeContext(dataCtx, memory)
-	}
-	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.InitializeContext(dataCtx, memory)
-	}
 }
 
 // AcceptExpression will accept an Expression AST graph into this ast graph
@@ -158,6 +138,12 @@ type ExpressionReceiver interface {
 	AcceptExpression(exp *Expression) error
 }
 
+// AcceptExpressionAtom will accept ExpressionAtom into this Expression
+func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
+	e.ExpressionAtom = atom
+	return nil
+}
+
 // GetAstID get the UUID asigned for this AST graph node
 func (e *Expression) GetAstID() string {
 	return e.AstID
@@ -171,50 +157,64 @@ func (e *Expression) GetGrlText() string {
 // GetSnapshot will create a structure signature or AST graph
 func (e *Expression) GetSnapshot() string {
 	var buff bytes.Buffer
+	buff.WriteString(EXPRESSION)
+	buff.WriteString("(")
 	if e.SingleExpression != nil {
+		buff.WriteString("SE(")
+		if e.Negated {
+			buff.WriteString("!")
+		}
 		buff.WriteString(e.SingleExpression.GetSnapshot())
+		buff.WriteString(")")
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
-		buff.WriteString("(")
+		buff.WriteString("EL(")
 		buff.WriteString(e.LeftExpression.GetSnapshot())
+		buff.WriteString(")")
+
 		switch e.Operator {
 		case OpMul:
-			buff.WriteString(" x ")
+			buff.WriteString("*")
 		case OpDiv:
-			buff.WriteString(" / ")
+			buff.WriteString("/")
 		case OpMod:
-			buff.WriteString(" % ")
+			buff.WriteString("%")
 		case OpAdd:
-			buff.WriteString(" + ")
+			buff.WriteString("+")
 		case OpSub:
-			buff.WriteString(" - ")
+			buff.WriteString("-")
 		case OpBitAnd:
-			buff.WriteString(" & ")
+			buff.WriteString("&")
 		case OpBitOr:
-			buff.WriteString(" | ")
+			buff.WriteString("|")
 		case OpGT:
-			buff.WriteString(" > ")
+			buff.WriteString(">")
 		case OpLT:
-			buff.WriteString(" < ")
+			buff.WriteString("<")
 		case OpGTE:
-			buff.WriteString(" >= ")
+			buff.WriteString(">=")
 		case OpLTE:
-			buff.WriteString(" <= ")
+			buff.WriteString("<=")
 		case OpEq:
-			buff.WriteString(" == ")
+			buff.WriteString("==")
 		case OpNEq:
-			buff.WriteString(" != ")
+			buff.WriteString("!=")
 		case OpAnd:
-			buff.WriteString(" && ")
+			buff.WriteString("&&")
 		case OpOr:
-			buff.WriteString(" || ")
+			buff.WriteString("||")
 		}
+
+		buff.WriteString("ER(")
 		buff.WriteString(e.RightExpression.GetSnapshot())
 		buff.WriteString(")")
 	}
 	if e.ExpressionAtom != nil {
+		buff.WriteString("EA(")
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+		buff.WriteString(")")
 	}
+	buff.WriteString(")")
 	return buff.String()
 }
 
@@ -225,12 +225,12 @@ func (e *Expression) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *Expression) Evaluate() (reflect.Value, error) {
+func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if e.Evaluated == true {
 		return e.Value, nil
 	}
 	if e.ExpressionAtom != nil {
-		val, err := e.ExpressionAtom.Evaluate()
+		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
 			e.Evaluated = true
@@ -238,25 +238,55 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		return val, err
 	}
 	if e.SingleExpression != nil {
-		val, err := e.SingleExpression.Evaluate()
+		val, err := e.SingleExpression.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
+			if e.Negated {
+				if e.Value.Kind() == reflect.Bool {
+					e.Value = reflect.ValueOf(!e.Value.Bool())
+				} else {
+					AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.SingleExpression.GrlText)
+				}
+			}
 			e.Evaluated = true
 		}
-		return val, err
+		return e.Value, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
-		lval, lerr := e.LeftExpression.Evaluate()
-		rval, rerr := e.RightExpression.Evaluate()
-		if lerr != nil {
-			return reflect.ValueOf(nil), fmt.Errorf("left hand expression error. got %v", lerr)
-		}
-		if rerr != nil {
-			return reflect.ValueOf(nil), fmt.Errorf("right hand expression error.  got %v", rerr)
-		}
-
 		var val reflect.Value
 		var opErr error
+
+		lval, lerr := e.LeftExpression.Evaluate(dataContext, memory)
+		if e.Operator == OpAnd {
+			if lerr != nil {
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+			}
+			val, opErr = pkg.EvaluateLogicSingle(lval)
+			if opErr == nil && !val.Bool() {
+				e.Value = val
+				e.Evaluated = true
+				return val, opErr
+			}
+		}
+		if e.Operator == OpOr {
+			if lerr != nil {
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+			}
+			val, opErr = pkg.EvaluateLogicSingle(lval)
+			if opErr == nil && val.Bool() {
+				e.Value = val
+				e.Evaluated = true
+				return val, opErr
+			}
+		}
+
+		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
+		if lerr != nil {
+			return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+		}
+		if rerr != nil {
+			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
+		}
 
 		switch e.Operator {
 		case OpMul:
@@ -296,5 +326,5 @@ func (e *Expression) Evaluate() (reflect.Value, error) {
 		}
 		return val, opErr
 	}
-	return reflect.ValueOf(nil), nil
+	return reflect.Value{}, nil
 }

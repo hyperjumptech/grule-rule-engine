@@ -34,8 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fix
 
-- Better DRL load and compilation
-- Better DRL error handling when compiling DRL
+- Better GRL load and compilation
+- Better GRL error handling when compiling GRL
 
 ### [1.1.0] - 2019-12-27
 
@@ -59,9 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- Resource bundling, to load multiple DRL files by file path pattern
-- Load DRL resources from GIT
-- Resource bundling, to load multiple DRL files from GIT by the file path patteern
+- Resource bundling, to load multiple GRL files by file path pattern
+- Load GRL resources from GIT
+- Resource bundling, to load multiple GRL files from GIT by the file path patteern
 
 ### [1.2.4] - 2020-02-24
 
@@ -89,4 +89,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - Support to build rule from JSON.
-- Engine support for `context.Context` using `ExecuteWithContext` function. 
+- Engine support for `context.Context` using `ExecuteWithContext` function.
+
+### [1.6.0] - 2020-09-01
+ 
+#### Added
+
+- Enhancing in variable traversal, from previously using string tracing to struct-field lookup in reflect.Value
+- Support for Array/Slice and Map handling.
+- Support for Function chaining.
+- Support for Constant functions.
+- Grule engine optimization for selecting from conflict set. Instead of sorting salience in descending, simply look for the biggest value.
+
+#### Removed
+
+- Grule Event Bus is removed from Grule as it seems too complicated and no one use them. They just expect grule to just works. 

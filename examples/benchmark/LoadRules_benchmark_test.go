@@ -8,9 +8,10 @@ import (
 	"io/ioutil"
 	"testing"
 )
+
 /**
-   Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
-   Please refer docs/benchmarking_en.md for more info
+  Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
+  Please refer docs/benchmarking_en.md for more info
 */
 type RideFact struct {
 	Distance           int32
