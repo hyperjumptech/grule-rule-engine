@@ -57,7 +57,7 @@ Benchmark_Grule_Load_Rules/1000_rules#10-12                    4         2618574
 
 To load `100` rules into knowledgeBase it took `22628754 ns/op` (took the highest value) that is equal to `22.628754ms` and (`8871388 B/op`) `8.8MB` memory per operation
 
-To load `1000` rules into knowledgeBase it took `261857403 ns/op` (took the highest value) that is equal to `~211ms` and `88MB` memory per operation
+To load `1000` rules into knowledgeBase it took `261857403 ns/op` (took the highest value) that is equal to `~261ms` and `88MB` memory per operation
 
 ### Test2 - Executing a fact against rules
 Command to run: 
