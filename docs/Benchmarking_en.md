@@ -28,36 +28,36 @@ Result:
 goos: darwin
 goarch: amd64
 pkg: github.com/hyperjumptech/grule-rule-engine/examples/benchmark
-Benchmark_Grule_Load_Rules/100_rules-12                       44          23445211 ns/op         8871465 B/op     216553 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#01-12                    51          24634072 ns/op         8871551 B/op     216554 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#02-12                    46          25222948 ns/op         8871361 B/op     216553 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#03-12                    44          28146387 ns/op         8871486 B/op     216553 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#04-12                    45          30634115 ns/op         8871631 B/op     216554 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#05-12                    49          22554323 ns/op         8871228 B/op     216552 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#06-12                    46          22489783 ns/op         8871493 B/op     216554 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#07-12                    54          25210478 ns/op         8871489 B/op     216554 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#08-12                    54          23163462 ns/op         8871450 B/op     216553 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#09-12                    51          37621286 ns/op         8871515 B/op     216554 allocs/op
-Benchmark_Grule_Load_Rules/100_rules#10-12                    33          37549279 ns/op         8871417 B/op     216553 allocs/op
 
+Benchmark_Grule_Load_Rules/100_rules-12                       60          20968700 ns/op         8871574 B/op     216554 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#01-12                    60          20800060 ns/op         8871255 B/op     216552 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#02-12                    60          21284699 ns/op         8871410 B/op     216553 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#03-12                    61          20414968 ns/op         8871317 B/op     216552 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#04-12                    58          20618596 ns/op         8871612 B/op     216554 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#05-12                    60          21217303 ns/op         8871294 B/op     216552 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#06-12                    67          21312189 ns/op         8871592 B/op     216554 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#07-12                    61          20592475 ns/op         8871213 B/op     216552 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#08-12                    60          22628754 ns/op         8871388 B/op     216553 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#09-12                    68          21192157 ns/op         8871223 B/op     216552 allocs/op
+Benchmark_Grule_Load_Rules/100_rules#10-12                    60          21242572 ns/op         8871226 B/op     216552 allocs/op
 
+Benchmark_Grule_Load_Rules/1000_rules-12                       6         209761389 ns/op        88641262 B/op    2141287 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#01-12                    6         204268674 ns/op        88644670 B/op    2141304 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#02-12                    6         210895687 ns/op        88639476 B/op    2141278 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#03-12                    6         214102248 ns/op        88642209 B/op    2141293 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#04-12                    5         268977045 ns/op        88639793 B/op    2141279 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#05-12                    5         211837045 ns/op        88641822 B/op    2141289 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#06-12                    6         221863753 ns/op        88642209 B/op    2141293 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#07-12                    6         223676073 ns/op        88643585 B/op    2141299 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#08-12                    6         224317362 ns/op        88643070 B/op    2141297 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#09-12                    5         241930711 ns/op        88641422 B/op    2141289 allocs/op
+Benchmark_Grule_Load_Rules/1000_rules#10-12                    4         261857403 ns/op        88637592 B/op    2141269 allocs/op
 
-Benchmark_Grule_Load_Rules/1000_rules-12                       4         345123608 ns/op        88642916 B/op    2141300 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#01-12                    3         358250329 ns/op        88638602 B/op    2141279 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#02-12                    3         347296778 ns/op        88646288 B/op    2141318 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#03-12                    5         283385379 ns/op        88643715 B/op    2141304 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#04-12                    3         372053420 ns/op        88643888 B/op    2141303 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#05-12                    5         213746759 ns/op        88643011 B/op    2141299 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#06-12                    6         230968014 ns/op        88641652 B/op    2141293 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#07-12                    5         216604105 ns/op        88645020 B/op    2141310 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#08-12                    5         213267279 ns/op        88640585 B/op    2141289 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#09-12                    5         214347871 ns/op        88641289 B/op    2141292 allocs/op
-Benchmark_Grule_Load_Rules/1000_rules#10-12                    5         211954473 ns/op        88642294 B/op    2141297 allocs/op
 ```
 
-To load `100` rules into knowledgeBase it took `37549279 ns/op` (took the highest value) that is equal to `37.5ms` and (`8871417 B/op`) `8.8MB` memory per operation
+To load `100` rules into knowledgeBase it took `22628754 ns/op` (took the highest value) that is equal to `22.628754ms` and (`8871388 B/op`) `8.8MB` memory per operation
 
-To load `1000` rules into knowledgeBase it took `211954473 ns/op` (took the highest value) that is equal to `~211ms` and `88MB` memory per operation
+To load `1000` rules into knowledgeBase it took `261857403 ns/op` (took the highest value) that is equal to `~211ms` and `88MB` memory per operation
 
 ### Test2 - Executing a fact against rules
 Command to run: 
@@ -67,35 +67,35 @@ go test -bench=. -benchmem
 
 Result:
 ```go
-Benchmark_Grule_Execution_Engine/100_rules-12              35340             33921 ns/op            4391 B/op         78 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#01-12           29650             34346 ns/op            4446 B/op         79 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#02-12           29587             34380 ns/op            4429 B/op         79 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#03-12           31029             34342 ns/op            4423 B/op         78 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#04-12           29646             35943 ns/op            4451 B/op         79 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#05-12           35835             33039 ns/op            4402 B/op         78 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#06-12           29305             34495 ns/op            4390 B/op         79 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#07-12           28704             34857 ns/op            4397 B/op         79 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#08-12           34936             34349 ns/op            4448 B/op         78 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#09-12           36352             33935 ns/op            4332 B/op         77 allocs/op
-Benchmark_Grule_Execution_Engine/100_rules#10-12           30698             39917 ns/op            4377 B/op         79 allocs/op
-``
+Benchmark_Grule_Execution_Engine/100_rules-12              36260             33049 ns/op            4374 B/op         77 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#01-12           31179             33153 ns/op            4428 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#02-12           30547             34040 ns/op            4418 B/op         79 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#03-12           31520             33168 ns/op            4417 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#04-12           30784             34392 ns/op            4438 B/op         79 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#05-12           31651             33713 ns/op            4368 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#06-12           31008             33189 ns/op            4374 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#07-12           31280             35847 ns/op            4466 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#08-12           32546             34744 ns/op            4360 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#09-12           32839             35002 ns/op            4471 B/op         78 allocs/op
+Benchmark_Grule_Execution_Engine/100_rules#10-12           31684             32847 ns/op            4368 B/op         78 allocs/op
 
-Benchmark_Grule_Execution_Engine/1000_rules-12              3478            317176 ns/op           43912 B/op        690 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#01-12           3434            319312 ns/op           44239 B/op        698 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#02-12           3565            321366 ns/op           43288 B/op        675 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#03-12           3385            330214 ns/op           44611 B/op        707 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#04-12           2544            454601 ns/op           53267 B/op        916 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#05-12            744           1420603 ns/op          137563 B/op       2953 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#06-12           1472            824068 ns/op           78644 B/op       1529 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#07-12           2671            408376 ns/op           51611 B/op        876 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#08-12           3524            359907 ns/op           43579 B/op        682 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#09-12           2970            357360 ns/op           48268 B/op        795 allocs/op
-Benchmark_Grule_Execution_Engine/1000_rules#10-12           3511            367940 ns/op           43670 B/op        684 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules-12              3590            339138 ns/op           43116 B/op        671 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#01-12           3368            318206 ns/op           44745 B/op        710 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#02-12           3685            314999 ns/op           42480 B/op        656 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#03-12           3620            332785 ns/op           42911 B/op        666 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#04-12           3426            475685 ns/op           44299 B/op        700 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#05-12           3464            383093 ns/op           44014 B/op        693 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#06-12           3337            326025 ns/op           44987 B/op        716 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#07-12           3637            324763 ns/op           42797 B/op        663 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#08-12           2763            366498 ns/op           50507 B/op        849 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#09-12           3164            421806 ns/op           46439 B/op        751 allocs/op
+Benchmark_Grule_Execution_Engine/1000_rules#10-12           3648            323597 ns/op           42722 B/op        661 allocs/op
+
 
 ```
 
-To execute a fact against 100 rules, Grule Engine took `~39917 ns/op` (took the highest value as base) that is hardly `~0.03917 ms` and `4377 B/op` which is pretty fast.
+To execute a fact against 100 rules, Grule Engine took `~35847 ns/op` (took the highest value as base) that is hardly `~0.035847ms` and `4466B/op` which is pretty fast.
 
-To execute a fact against 1000 rules, Grule Engine took `~1420603 ns/op` (took the highest value as base) that is hardly `~1.420603 ms` and `137563B/op` which is also pretty fast.
+To execute a fact against 1000 rules, Grule Engine took `~475685 ns/op` (took the highest value as base) that is hardly `~0.475685ms` and `44299B/op` which is also pretty fast.
 
 
