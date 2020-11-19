@@ -113,20 +113,20 @@ Since business rules are actually treated as data. Adjusting the rule according 
 Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
 
 ### Benchmark
-`Loading 100 and 1000 rules into KnowledgeBase`:
-* To load `100` rules into knowledgeBase it took `17523 ns/op` (took the highest value) that is equal to `~0.017523ms` and (`5071 B/op`) `0.005071MB` memory per operation
+`Loading rules into KnowledgeBase`:
 
-* To load `1000` rules into knowledgeBase it took `21222 ns/op` (took the highest value) that is equal to `~0.021222ms` and (`5071 B/op`) `0.005071MB` memory per operation
+* To load `100` rules into knowledgeBase it took `99342047 ns/op` (took the highest value) that is equal to `~99.342047ms` and (`49295906 B/op`) `~49.295906MB` memory per operation
 
-`Executing a fact against 100 and 1000 rules`:
+* To load `1000` rules into knowledgeBase it took `933617752 ns/op` (took the highest value) that is equal to `~933.617752ms` and (`488126636 B/op`) `~488.126636` memory per operation
 
-* To execute a fact against 100 rules, Grule Engine took `~703 ns/op` (took the highest value as base) that is hardly `~0.000703ms` and (`512 B/op`) `0.000512MB` memory per operation which is pretty fast.
+`Executing rules against a fact`:
 
-* To execute a fact against 1000 rules, Grule Engine took `~587 ns/op` (took the highest value as base) that is hardly `~0.000587ms` and (`512 B/op`) `0.000512MB` memory per operation  which is also pretty fast.
+* To execute a fact against 100 rules, Grule Engine took `~9697 ns/op` (took the highest value as base) that is hardly `~0.009697ms` and `3957 B/op` which is pretty fast.
+
+* To execute a fact against 1000 rules, Grule Engine took `~568959 ns/op` (took the highest value as base) that is hardly `~0.568959ms` and `293710 B/op` which is also pretty fast.
+
 
 You can read the [detail report here](docs/Benchmarking_en.md)
-
-
 
 
 # Tasks and Help Wanted
