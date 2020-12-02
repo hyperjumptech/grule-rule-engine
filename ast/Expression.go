@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -46,7 +46,7 @@ const (
 // NewExpression creates new Expression instance
 func NewExpression() *Expression {
 	return &Expression{
-		AstID:    uuid.New().String(),
+		AstID:    unique.NewID(),
 		Operator: 0,
 	}
 }
@@ -61,6 +61,7 @@ type Expression struct {
 	SingleExpression *Expression
 	ExpressionAtom   *ExpressionAtom
 	Operator         int
+	Negated          bool
 	Value            reflect.Value
 
 	Evaluated bool
@@ -69,7 +70,7 @@ type Expression struct {
 // Clone will clone this Expression. The new clone will have an identical structure
 func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	clone := &Expression{
-		AstID:    uuid.New().String(),
+		AstID:    unique.NewID(),
 		GrlText:  e.GrlText,
 		Operator: e.Operator,
 	}
@@ -100,6 +101,7 @@ func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 		} else {
 			cloned := e.SingleExpression.Clone(cloneTable)
 			clone.SingleExpression = cloned
+			clone.Negated = e.Negated
 			cloneTable.MarkCloned(e.SingleExpression.AstID, cloned.AstID, e.SingleExpression, cloned)
 		}
 	}
@@ -159,6 +161,9 @@ func (e *Expression) GetSnapshot() string {
 	buff.WriteString("(")
 	if e.SingleExpression != nil {
 		buff.WriteString("SE(")
+		if e.Negated {
+			buff.WriteString("!")
+		}
 		buff.WriteString(e.SingleExpression.GetSnapshot())
 		buff.WriteString(")")
 	}
@@ -236,9 +241,16 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		val, err := e.SingleExpression.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
+			if e.Negated {
+				if e.Value.Kind() == reflect.Bool {
+					e.Value = reflect.ValueOf(!e.Value.Bool())
+				} else {
+					AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.SingleExpression.GrlText)
+				}
+			}
 			e.Evaluated = true
 		}
-		return val, err
+		return e.Value, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
 		var val reflect.Value

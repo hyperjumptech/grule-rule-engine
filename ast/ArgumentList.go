@@ -2,16 +2,16 @@ package ast
 
 import (
 	"bytes"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewArgumentList create a new instance of ArgumentList
 func NewArgumentList() *ArgumentList {
 	return &ArgumentList{
-		AstID:     uuid.New().String(),
+		AstID:     unique.NewID(),
 		Arguments: make([]*Expression, 0),
 	}
 }
@@ -27,7 +27,7 @@ type ArgumentList struct {
 // Clone will clone this ArgumentList. The new clone will have an identical structure
 func (e *ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 	clone := &ArgumentList{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewID(),
 		GrlText: e.GrlText,
 	}
 	if e.Arguments != nil {

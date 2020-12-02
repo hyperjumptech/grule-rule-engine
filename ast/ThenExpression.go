@@ -3,14 +3,14 @@ package ast
 import (
 	"bytes"
 	"errors"
-	"github.com/google/uuid"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewThenExpression create new instance of ThenExpression
 func NewThenExpression() *ThenExpression {
 	return &ThenExpression{
-		AstID: uuid.New().String(),
+		AstID: unique.NewID(),
 	}
 }
 
@@ -32,7 +32,7 @@ type ThenExpressionReceiver interface {
 // Clone will clone this ThenExpression. The new clone will have an identical structure
 func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 	clone := &ThenExpression{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewID(),
 		GrlText: e.GrlText,
 	}
 
@@ -107,7 +107,13 @@ func (e *ThenExpression) GetSnapshot() string {
 	buff.WriteString("(")
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
-	} else if e.FunctionCall != nil {
+	}
+	if e.Variable == nil && e.FunctionCall != nil {
+		buff.WriteString(e.FunctionCall.GetSnapshot())
+	}
+	if e.Variable != nil && e.FunctionCall != nil {
+		buff.WriteString(e.Variable.GetSnapshot())
+		buff.WriteString("->")
 		buff.WriteString(e.FunctionCall.GetSnapshot())
 	}
 	buff.WriteString(")")
@@ -131,7 +137,7 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 		}
 		return err
 	}
-	if e.FunctionCall != nil {
+	if e.FunctionCall != nil && e.Variable == nil {
 		valueNode := dataContext.Get("DEFUNC")
 		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
@@ -143,13 +149,18 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 		}
 		return nil
 	}
-	if e.Variable != nil {
+	if e.FunctionCall != nil && e.Variable != nil {
 		_, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
-			AstLog.Errorf("error while executing %s. got %s", e.Variable.GrlText, err.Error())
-		} else {
-			AstLog.Debugf("success executing %s", e.Variable.GrlText)
+			return err
 		}
+
+		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+		if err != nil {
+			return err
+		}
+
+		_, err = e.Variable.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		return err
 	}
 	return nil

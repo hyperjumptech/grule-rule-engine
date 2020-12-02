@@ -2,29 +2,26 @@ package antlr
 
 import (
 	"fmt"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
+	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
-	"reflect"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
-	"unicode/utf8"
-
-	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev2"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/sirupsen/logrus"
 )
 
 var (
-	// LoggerV2 is a logrus instance twith default fields for grule
-	LoggerV2 = logger.Log.WithFields(logrus.Fields{
+	// LoggerV3 is a logrus instance twith default fields for grule
+	LoggerV3 = logger.Log.WithFields(logrus.Fields{
 		"lib":    "grule",
-		"struct": "GruleParserV2Listener",
+		"struct": "GruleParserV3Listener",
 	})
 )
 
-// NewGruleV2ParserListener create new instance of GruleV2ParserListener
-func NewGruleV2ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV2ParserListener {
-	return &GruleV2ParserListener{
+// NewGruleV3ParserListener create new instance of GruleV3ParserListener
+func NewGruleV3ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV3ParserListener {
+	return &GruleV3ParserListener{
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errorCallBack,
 		KnowledgeBase: KnowledgeBase,
@@ -32,10 +29,10 @@ func NewGruleV2ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack fu
 	}
 }
 
-// GruleV2ParserListener is an implementation of logic to build the execution flow or execution graph as it
+// GruleV3ParserListener is an implementation of logic to build the execution flow or execution graph as it
 // defined within the knowledge base.
-type GruleV2ParserListener struct {
-	grulev2.Basegrulev2Listener
+type GruleV3ParserListener struct {
+	grulev3.Basegrulev3Listener
 	PreviousNode []string
 
 	Grl           *ast.Grl
@@ -46,7 +43,7 @@ type GruleV2ParserListener struct {
 }
 
 // VisitTerminal is called when a terminal node is visited.
-func (s *GruleV2ParserListener) VisitTerminal(node antlr.TerminalNode) {
+func (s *GruleV3ParserListener) VisitTerminal(node antlr.TerminalNode) {
 	if s.StopParse {
 		return
 	}
@@ -57,26 +54,26 @@ func (s *GruleV2ParserListener) VisitTerminal(node antlr.TerminalNode) {
 }
 
 // VisitErrorNode is called when an error node is visited.
-func (s *GruleV2ParserListener) VisitErrorNode(node antlr.ErrorNode) {
-	LoggerV2.Errorf("GRL error, after '%v' and then unexpected '%s'", s.PreviousNode, node.GetText())
+func (s *GruleV3ParserListener) VisitErrorNode(node antlr.ErrorNode) {
+	LoggerV3.Errorf("GRL error, after '%v' and then unexpected '%s'", s.PreviousNode, node.GetText())
 	s.StopParse = true
 	s.ErrorCallback(fmt.Errorf("GRL error, after '%v' and then unexpected '%s'", s.PreviousNode, node.GetText()))
 }
 
 // EnterEveryRule is called when any rule is entered.
-func (s *GruleV2ParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
+func (s *GruleV3ParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 
 // ExitEveryRule is called when any rule is exited.
-func (s *GruleV2ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
+func (s *GruleV3ParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterGrl is called when production grl is entered.
-func (s *GruleV2ParserListener) EnterGrl(ctx *grulev2.GrlContext) {
+func (s *GruleV3ParserListener) EnterGrl(ctx *grulev3.GrlContext) {
 	s.Grl = ast.NewGrl()
 	s.Stack.Push(s.Grl)
 }
 
 // ExitGrl is called when production root is exited. The listener will instruct working memory re-index here.
-func (s *GruleV2ParserListener) ExitGrl(ctx *grulev2.GrlContext) {
+func (s *GruleV3ParserListener) ExitGrl(ctx *grulev3.GrlContext) {
 	if s.StopParse {
 		return
 	}
@@ -90,7 +87,7 @@ func (s *GruleV2ParserListener) ExitGrl(ctx *grulev2.GrlContext) {
 }
 
 // EnterRuleEntry is called when production ruleEntry is entered.
-func (s *GruleV2ParserListener) EnterRuleEntry(ctx *grulev2.RuleEntryContext) {
+func (s *GruleV3ParserListener) EnterRuleEntry(ctx *grulev3.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
@@ -100,74 +97,45 @@ func (s *GruleV2ParserListener) EnterRuleEntry(ctx *grulev2.RuleEntryContext) {
 }
 
 // ExitRuleEntry is called when production ruleEntry is exited.
-func (s *GruleV2ParserListener) ExitRuleEntry(ctx *grulev2.RuleEntryContext) {
+func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 	if s.StopParse {
 		return
 	}
 	entry := s.Stack.Pop().(*ast.RuleEntry)
 	entryReceiver := s.Stack.Peek().(ast.RuleEntryReceiver)
+	if ctx.RuleName() != nil {
+		entry.RuleName = ctx.RuleName().GetText()
+	}
+	if ctx.RuleDescription() != nil {
+		txt := ctx.RuleDescription().GetText()
+		entry.RuleDescription = txt[1 : len(txt)-1]
+	}
 	err := entryReceiver.ReceiveRuleEntry(entry)
 	if err != nil {
 		s.ErrorCallback(err)
 	} else {
-		LoggerV2.Debugf("Added RuleEntry : %s", entry.RuleName.SimpleName)
+		LoggerV3.Debugf("Added RuleEntry : %s", entry.RuleName)
 	}
 }
 
 // EnterSalience is called when production salience is entered.
-func (s *GruleV2ParserListener) EnterSalience(ctx *grulev2.SalienceContext) {}
+func (s *GruleV3ParserListener) EnterSalience(ctx *grulev3.SalienceContext) {
+	sal := ast.NewSalience(0)
+	s.Stack.Push(sal)
+}
 
 // ExitSalience is called when production salience is exited.
-func (s *GruleV2ParserListener) ExitSalience(ctx *grulev2.SalienceContext) {
+func (s *GruleV3ParserListener) ExitSalience(ctx *grulev3.SalienceContext) {
 	if s.StopParse {
 		return
 	}
-	dec := ctx.DecimalLiteral().GetText()
-	salValue, _ := strconv.Atoi(dec)
-	receiver := s.Stack.Peek().(ast.SalienceReceiver)
-	err := receiver.AcceptSalience(ast.NewSalience(salValue))
-	if err != nil {
-		s.StopParse = true
-		s.ErrorCallback(err)
-	}
-}
-
-// EnterRuleName is called when production ruleName is entered.
-func (s *GruleV2ParserListener) EnterRuleName(ctx *grulev2.RuleNameContext) {
-}
-
-// ExitRuleName is called when production ruleName is exited.
-func (s *GruleV2ParserListener) ExitRuleName(ctx *grulev2.RuleNameContext) {
-	if s.StopParse {
-		return
-	}
-	receiver := s.Stack.Peek().(ast.RuleNameReceiver)
-	err := receiver.AcceptRuleName(ast.NewRuleName(ctx.SIMPLENAME().GetText()))
-	if err != nil {
-		s.StopParse = true
-		s.ErrorCallback(err)
-	}
-}
-
-// EnterRuleDescription is called when production ruleDescription is entered.
-func (s *GruleV2ParserListener) EnterRuleDescription(ctx *grulev2.RuleDescriptionContext) {
-}
-
-// ExitRuleDescription is called when production ruleDescription is exited.
-func (s *GruleV2ParserListener) ExitRuleDescription(ctx *grulev2.RuleDescriptionContext) {
-	if s.StopParse {
-		return
-	}
-	receiver := s.Stack.Peek().(ast.RuleDescriptionReceiver)
-	err := receiver.AcceptRuleDescription(ast.NewRuleDescription(ctx.GetText()[1 : len(ctx.GetText())-1]))
-	if err != nil {
-		s.StopParse = true
-		s.ErrorCallback(err)
-	}
+	salience := s.Stack.Pop().(*ast.Salience)
+	salienceReceiver := s.Stack.Peek().(ast.SalienceReceiver)
+	salienceReceiver.AcceptSalience(salience)
 }
 
 // EnterWhenScope is called when production whenScope is entered.
-func (s *GruleV2ParserListener) EnterWhenScope(ctx *grulev2.WhenScopeContext) {
+func (s *GruleV3ParserListener) EnterWhenScope(ctx *grulev3.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
@@ -177,7 +145,7 @@ func (s *GruleV2ParserListener) EnterWhenScope(ctx *grulev2.WhenScopeContext) {
 }
 
 // ExitWhenScope is called when production whenScope is exited.
-func (s *GruleV2ParserListener) ExitWhenScope(ctx *grulev2.WhenScopeContext) {
+func (s *GruleV3ParserListener) ExitWhenScope(ctx *grulev3.WhenScopeContext) {
 	if s.StopParse {
 		return
 	}
@@ -191,7 +159,7 @@ func (s *GruleV2ParserListener) ExitWhenScope(ctx *grulev2.WhenScopeContext) {
 }
 
 // EnterThenScope is called when production thenScope is entered.
-func (s *GruleV2ParserListener) EnterThenScope(ctx *grulev2.ThenScopeContext) {
+func (s *GruleV3ParserListener) EnterThenScope(ctx *grulev3.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
@@ -201,7 +169,7 @@ func (s *GruleV2ParserListener) EnterThenScope(ctx *grulev2.ThenScopeContext) {
 }
 
 // ExitThenScope is called when production thenScope is exited.
-func (s *GruleV2ParserListener) ExitThenScope(ctx *grulev2.ThenScopeContext) {
+func (s *GruleV3ParserListener) ExitThenScope(ctx *grulev3.ThenScopeContext) {
 	if s.StopParse {
 		return
 	}
@@ -215,7 +183,7 @@ func (s *GruleV2ParserListener) ExitThenScope(ctx *grulev2.ThenScopeContext) {
 }
 
 // EnterThenExpressionList is called when production thenExpressionList is entered.
-func (s *GruleV2ParserListener) EnterThenExpressionList(ctx *grulev2.ThenExpressionListContext) {
+func (s *GruleV3ParserListener) EnterThenExpressionList(ctx *grulev3.ThenExpressionListContext) {
 	if s.StopParse {
 		return
 	}
@@ -225,7 +193,7 @@ func (s *GruleV2ParserListener) EnterThenExpressionList(ctx *grulev2.ThenExpress
 }
 
 // ExitThenExpressionList is called when production thenExpressionList is exited.
-func (s *GruleV2ParserListener) ExitThenExpressionList(ctx *grulev2.ThenExpressionListContext) {
+func (s *GruleV3ParserListener) ExitThenExpressionList(ctx *grulev3.ThenExpressionListContext) {
 	if s.StopParse {
 		return
 	}
@@ -239,7 +207,7 @@ func (s *GruleV2ParserListener) ExitThenExpressionList(ctx *grulev2.ThenExpressi
 }
 
 // EnterThenExpression is called when production thenExpression is entered.
-func (s *GruleV2ParserListener) EnterThenExpression(ctx *grulev2.ThenExpressionContext) {
+func (s *GruleV3ParserListener) EnterThenExpression(ctx *grulev3.ThenExpressionContext) {
 	if s.StopParse {
 		return
 	}
@@ -249,7 +217,7 @@ func (s *GruleV2ParserListener) EnterThenExpression(ctx *grulev2.ThenExpressionC
 }
 
 // ExitThenExpression is called when production thenExpression is exited.
-func (s *GruleV2ParserListener) ExitThenExpression(ctx *grulev2.ThenExpressionContext) {
+func (s *GruleV3ParserListener) ExitThenExpression(ctx *grulev3.ThenExpressionContext) {
 	if s.StopParse {
 		return
 	}
@@ -264,7 +232,7 @@ func (s *GruleV2ParserListener) ExitThenExpression(ctx *grulev2.ThenExpressionCo
 }
 
 // EnterAssignment is called when production assignment is entered.
-func (s *GruleV2ParserListener) EnterAssignment(ctx *grulev2.AssignmentContext) {
+func (s *GruleV3ParserListener) EnterAssignment(ctx *grulev3.AssignmentContext) {
 	if s.StopParse {
 		return
 	}
@@ -274,12 +242,18 @@ func (s *GruleV2ParserListener) EnterAssignment(ctx *grulev2.AssignmentContext) 
 }
 
 // ExitAssignment is called when production assignment is exited.
-func (s *GruleV2ParserListener) ExitAssignment(ctx *grulev2.AssignmentContext) {
+func (s *GruleV3ParserListener) ExitAssignment(ctx *grulev3.AssignmentContext) {
 	if s.StopParse {
 		return
 	}
 	assign := s.Stack.Pop().(*ast.Assignment)
 	receiver := s.Stack.Peek().(ast.AssignmentReceiver)
+	assign.IsAssign = ctx.ASSIGN() != nil
+	assign.IsPlusAssign = ctx.PLUS_ASIGN() != nil
+	assign.IsMinusAssign = ctx.MINUS_ASIGN() != nil
+	assign.IsDivAssign = ctx.DIV_ASIGN() != nil
+	assign.IsMulAssign = ctx.MUL_ASIGN() != nil
+
 	err := receiver.AcceptAssignment(assign)
 	if err != nil {
 		s.StopParse = true
@@ -288,7 +262,7 @@ func (s *GruleV2ParserListener) ExitAssignment(ctx *grulev2.AssignmentContext) {
 }
 
 // EnterExpression is called when production expression is entered.
-func (s *GruleV2ParserListener) EnterExpression(ctx *grulev2.ExpressionContext) {
+func (s *GruleV3ParserListener) EnterExpression(ctx *grulev3.ExpressionContext) {
 	if s.StopParse {
 		return
 	}
@@ -298,12 +272,16 @@ func (s *GruleV2ParserListener) EnterExpression(ctx *grulev2.ExpressionContext) 
 }
 
 // ExitExpression is called when production expression is exited.
-func (s *GruleV2ParserListener) ExitExpression(ctx *grulev2.ExpressionContext) {
+func (s *GruleV3ParserListener) ExitExpression(ctx *grulev3.ExpressionContext) {
 	if s.StopParse {
 		return
 	}
 	expr := s.Stack.Pop().(*ast.Expression)
 	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
+
+	if ctx.LR_BRACKET() != nil && ctx.RR_BRACKET() != nil && ctx.NEGATION() != nil {
+		expr.Negated = ctx.NEGATION() != nil
+	}
 
 	err := exprRec.AcceptExpression(s.KnowledgeBase.WorkingMemory.AddExpression(expr))
 	if err != nil {
@@ -313,7 +291,7 @@ func (s *GruleV2ParserListener) ExitExpression(ctx *grulev2.ExpressionContext) {
 }
 
 // EnterMulDivOperators is called when production mulDivOperators is entered.
-func (s *GruleV2ParserListener) EnterMulDivOperators(ctx *grulev2.MulDivOperatorsContext) {
+func (s *GruleV3ParserListener) EnterMulDivOperators(ctx *grulev3.MulDivOperatorsContext) {
 	if s.StopParse {
 		return
 	}
@@ -329,10 +307,10 @@ func (s *GruleV2ParserListener) EnterMulDivOperators(ctx *grulev2.MulDivOperator
 }
 
 // ExitMulDivOperators is called when production mulDivOperators is exited.
-func (s *GruleV2ParserListener) ExitMulDivOperators(ctx *grulev2.MulDivOperatorsContext) {}
+func (s *GruleV3ParserListener) ExitMulDivOperators(ctx *grulev3.MulDivOperatorsContext) {}
 
 // EnterAddMinusOperators is called when production addMinusOperators is entered.
-func (s *GruleV2ParserListener) EnterAddMinusOperators(ctx *grulev2.AddMinusOperatorsContext) {
+func (s *GruleV3ParserListener) EnterAddMinusOperators(ctx *grulev3.AddMinusOperatorsContext) {
 	if s.StopParse {
 		return
 	}
@@ -350,10 +328,10 @@ func (s *GruleV2ParserListener) EnterAddMinusOperators(ctx *grulev2.AddMinusOper
 }
 
 // ExitAddMinusOperators is called when production addMinusOperators is exited.
-func (s *GruleV2ParserListener) ExitAddMinusOperators(ctx *grulev2.AddMinusOperatorsContext) {}
+func (s *GruleV3ParserListener) ExitAddMinusOperators(ctx *grulev3.AddMinusOperatorsContext) {}
 
 // EnterComparisonOperator is called when production comparisonOperator is entered.
-func (s *GruleV2ParserListener) EnterComparisonOperator(ctx *grulev2.ComparisonOperatorContext) {
+func (s *GruleV3ParserListener) EnterComparisonOperator(ctx *grulev3.ComparisonOperatorContext) {
 	if s.StopParse {
 		return
 	}
@@ -375,10 +353,10 @@ func (s *GruleV2ParserListener) EnterComparisonOperator(ctx *grulev2.ComparisonO
 }
 
 // ExitComparisonOperator is called when production comparisonOperator is exited.
-func (s *GruleV2ParserListener) ExitComparisonOperator(ctx *grulev2.ComparisonOperatorContext) {}
+func (s *GruleV3ParserListener) ExitComparisonOperator(ctx *grulev3.ComparisonOperatorContext) {}
 
 // EnterAndLogicOperator is called when production andLogicOperator is entered.
-func (s *GruleV2ParserListener) EnterAndLogicOperator(ctx *grulev2.AndLogicOperatorContext) {
+func (s *GruleV3ParserListener) EnterAndLogicOperator(ctx *grulev3.AndLogicOperatorContext) {
 	if s.StopParse {
 		return
 	}
@@ -387,10 +365,10 @@ func (s *GruleV2ParserListener) EnterAndLogicOperator(ctx *grulev2.AndLogicOpera
 }
 
 // ExitAndLogicOperator is called when production andLogicOperator is exited.
-func (s *GruleV2ParserListener) ExitAndLogicOperator(ctx *grulev2.AndLogicOperatorContext) {}
+func (s *GruleV3ParserListener) ExitAndLogicOperator(ctx *grulev3.AndLogicOperatorContext) {}
 
 // EnterOrLogicOperator is called when production orLogicOperator is entered.
-func (s *GruleV2ParserListener) EnterOrLogicOperator(ctx *grulev2.OrLogicOperatorContext) {
+func (s *GruleV3ParserListener) EnterOrLogicOperator(ctx *grulev3.OrLogicOperatorContext) {
 	if s.StopParse {
 		return
 	}
@@ -399,10 +377,10 @@ func (s *GruleV2ParserListener) EnterOrLogicOperator(ctx *grulev2.OrLogicOperato
 }
 
 // ExitOrLogicOperator is called when production orLogicOperator is exited.
-func (s *GruleV2ParserListener) ExitOrLogicOperator(ctx *grulev2.OrLogicOperatorContext) {}
+func (s *GruleV3ParserListener) ExitOrLogicOperator(ctx *grulev3.OrLogicOperatorContext) {}
 
 // EnterExpressionAtom is called when production expressionAtom is entered.
-func (s *GruleV2ParserListener) EnterExpressionAtom(ctx *grulev2.ExpressionAtomContext) {
+func (s *GruleV3ParserListener) EnterExpressionAtom(ctx *grulev3.ExpressionAtomContext) {
 	if s.StopParse {
 		return
 	}
@@ -412,12 +390,13 @@ func (s *GruleV2ParserListener) EnterExpressionAtom(ctx *grulev2.ExpressionAtomC
 }
 
 // ExitExpressionAtom is called when production expressionAtom is exited.
-func (s *GruleV2ParserListener) ExitExpressionAtom(ctx *grulev2.ExpressionAtomContext) {
+func (s *GruleV3ParserListener) ExitExpressionAtom(ctx *grulev3.ExpressionAtomContext) {
 	if s.StopParse {
 		return
 	}
 	atm := s.Stack.Pop().(*ast.ExpressionAtom)
 	expr := s.Stack.Peek().(ast.ExpressionAtomReceiver)
+	atm.Negated = ctx.NEGATION() != nil
 
 	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
 	if err != nil {
@@ -427,7 +406,7 @@ func (s *GruleV2ParserListener) ExitExpressionAtom(ctx *grulev2.ExpressionAtomCo
 }
 
 // EnterArrayMapSelector is called when production arrayMapSelector is entered.
-func (s *GruleV2ParserListener) EnterArrayMapSelector(ctx *grulev2.ArrayMapSelectorContext) {
+func (s *GruleV3ParserListener) EnterArrayMapSelector(ctx *grulev3.ArrayMapSelectorContext) {
 	if s.StopParse {
 		return
 	}
@@ -437,7 +416,7 @@ func (s *GruleV2ParserListener) EnterArrayMapSelector(ctx *grulev2.ArrayMapSelec
 }
 
 // ExitArrayMapSelector is called when production arrayMapSelector is exited.
-func (s *GruleV2ParserListener) ExitArrayMapSelector(ctx *grulev2.ArrayMapSelectorContext) {
+func (s *GruleV3ParserListener) ExitArrayMapSelector(ctx *grulev3.ArrayMapSelectorContext) {
 	if s.StopParse {
 		return
 	}
@@ -451,18 +430,17 @@ func (s *GruleV2ParserListener) ExitArrayMapSelector(ctx *grulev2.ArrayMapSelect
 }
 
 // EnterFunctionCall is called when production functionCall is entered.
-func (s *GruleV2ParserListener) EnterFunctionCall(ctx *grulev2.FunctionCallContext) {
+func (s *GruleV3ParserListener) EnterFunctionCall(ctx *grulev3.FunctionCallContext) {
 	if s.StopParse {
 		return
 	}
 	fun := ast.NewFunctionCall()
-	fun.GrlText = ctx.GetText()
 	fun.FunctionName = ctx.SIMPLENAME().GetText()
 	s.Stack.Push(fun)
 }
 
 // ExitFunctionCall is called when production functionCall is exited.
-func (s *GruleV2ParserListener) ExitFunctionCall(ctx *grulev2.FunctionCallContext) {
+func (s *GruleV3ParserListener) ExitFunctionCall(ctx *grulev3.FunctionCallContext) {
 	if s.StopParse {
 		return
 	}
@@ -476,7 +454,7 @@ func (s *GruleV2ParserListener) ExitFunctionCall(ctx *grulev2.FunctionCallContex
 }
 
 // EnterArgumentList is called when production argumentList is entered.
-func (s *GruleV2ParserListener) EnterArgumentList(ctx *grulev2.ArgumentListContext) {
+func (s *GruleV3ParserListener) EnterArgumentList(ctx *grulev3.ArgumentListContext) {
 	if s.StopParse {
 		return
 	}
@@ -486,13 +464,13 @@ func (s *GruleV2ParserListener) EnterArgumentList(ctx *grulev2.ArgumentListConte
 }
 
 // ExitArgumentList is called when production argumentList is exited.
-func (s *GruleV2ParserListener) ExitArgumentList(ctx *grulev2.ArgumentListContext) {
+func (s *GruleV3ParserListener) ExitArgumentList(ctx *grulev3.ArgumentListContext) {
 	if s.StopParse {
 		return
 	}
 	argList := s.Stack.Pop().(*ast.ArgumentList)
 	argListRec := s.Stack.Peek().(ast.ArgumentListReceiver)
-	LoggerV2.Tracef("Adding Argument List To Receiver")
+	LoggerV3.Tracef("Adding Argument List To Receiver")
 	err := argListRec.AcceptArgumentList(argList)
 	if err != nil {
 		s.StopParse = true
@@ -501,7 +479,7 @@ func (s *GruleV2ParserListener) ExitArgumentList(ctx *grulev2.ArgumentListContex
 }
 
 // EnterVariable is called when production variable is entered.
-func (s *GruleV2ParserListener) EnterVariable(ctx *grulev2.VariableContext) {
+func (s *GruleV3ParserListener) EnterVariable(ctx *grulev3.VariableContext) {
 	if s.StopParse {
 		return
 	}
@@ -509,12 +487,15 @@ func (s *GruleV2ParserListener) EnterVariable(ctx *grulev2.VariableContext) {
 	if ctx.SIMPLENAME() != nil && len(ctx.SIMPLENAME().GetText()) > 0 {
 		vari.Name = ctx.SIMPLENAME().GetText()
 	}
+	if ctx.MemberVariable() != nil && len(ctx.MemberVariable().GetText()) > 0 {
+		vari.Name = ctx.MemberVariable().GetText()[1:]
+	}
 	vari.GrlText = ctx.GetText()
 	s.Stack.Push(vari)
 }
 
 // ExitVariable is called when production variable is exited.
-func (s *GruleV2ParserListener) ExitVariable(ctx *grulev2.VariableContext) {
+func (s *GruleV3ParserListener) ExitVariable(ctx *grulev3.VariableContext) {
 	if s.StopParse {
 		return
 	}
@@ -528,8 +509,17 @@ func (s *GruleV2ParserListener) ExitVariable(ctx *grulev2.VariableContext) {
 	}
 }
 
+// EnterMemberVariable is called when production memberVariable is entered.
+func (s *GruleV3ParserListener) EnterMemberVariable(ctx *grulev3.MemberVariableContext) {}
+
+// ExitMemberVariable is called when production memberVariable is exited.
+func (s *GruleV3ParserListener) ExitMemberVariable(ctx *grulev3.MemberVariableContext) {
+	vari := s.Stack.Peek().(ast.MemberVariableReceiver)
+	vari.AcceptMemberVariable(ctx.SIMPLENAME().GetText())
+}
+
 // EnterConstant is called when production constant is entered.
-func (s *GruleV2ParserListener) EnterConstant(ctx *grulev2.ConstantContext) {
+func (s *GruleV3ParserListener) EnterConstant(ctx *grulev3.ConstantContext) {
 	if s.StopParse {
 		return
 	}
@@ -539,12 +529,15 @@ func (s *GruleV2ParserListener) EnterConstant(ctx *grulev2.ConstantContext) {
 }
 
 // ExitConstant is called when production constant is exited.
-func (s *GruleV2ParserListener) ExitConstant(ctx *grulev2.ConstantContext) {
+func (s *GruleV3ParserListener) ExitConstant(ctx *grulev3.ConstantContext) {
 	if s.StopParse {
 		return
 	}
 	cons := s.Stack.Pop().(*ast.Constant)
 	conRec := s.Stack.Peek().(ast.ConstantReceiver)
+	if ctx.NIL_LITERAL() != nil {
+		cons.IsNil = true
+	}
 	err := conRec.AcceptConstant(cons)
 	if err != nil {
 		s.StopParse = true
@@ -552,42 +545,12 @@ func (s *GruleV2ParserListener) ExitConstant(ctx *grulev2.ConstantContext) {
 	}
 }
 
-// EnterDecimalLiteral is called when production decimalLiteral is entered.
-func (s *GruleV2ParserListener) EnterDecimalLiteral(ctx *grulev2.DecimalLiteralContext) {}
-
-// ExitDecimalLiteral is called when production decimalLiteral is exited.
-func (s *GruleV2ParserListener) ExitDecimalLiteral(ctx *grulev2.DecimalLiteralContext) {
-	if s.StopParse {
-		return
-	}
-	dec, _ := strconv.Atoi(ctx.GetText())
-	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
-		cons.Value = reflect.ValueOf(int64(dec))
-	}
-}
-
-// EnterRealLiteral is called when production realLiteral is entered.
-func (s *GruleV2ParserListener) EnterRealLiteral(ctx *grulev2.RealLiteralContext) {}
-
-// ExitRealLiteral is called when production realLiteral is exited.
-func (s *GruleV2ParserListener) ExitRealLiteral(ctx *grulev2.RealLiteralContext) {
-	if s.StopParse {
-		return
-	}
-	floa, _ := strconv.ParseFloat(ctx.GetText(), 64)
-	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
-		cons.Value = reflect.ValueOf(floa)
-	}
-}
-
 // EnterStringLiteral is called when production stringLiteral is entered.
-func (s *GruleV2ParserListener) EnterStringLiteral(ctx *grulev2.StringLiteralContext) {
+func (s *GruleV3ParserListener) EnterStringLiteral(ctx *grulev3.StringLiteralContext) {
 }
 
 // ExitStringLiteral is called when production stringLiteral is exited.
-func (s *GruleV2ParserListener) ExitStringLiteral(ctx *grulev2.StringLiteralContext) {
+func (s *GruleV3ParserListener) ExitStringLiteral(ctx *grulev3.StringLiteralContext) {
 	if s.StopParse {
 		return
 	}
@@ -596,68 +559,60 @@ func (s *GruleV2ParserListener) ExitStringLiteral(ctx *grulev2.StringLiteralCont
 		s.ErrorCallback(fmt.Errorf("error parsing quoted string (%s): %s", ctx.GetText(), err.Error()))
 		return
 	}
-	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
-		cons.Value = reflect.ValueOf(dec)
-	}
+	receiver := s.Stack.Peek().(ast.StringLiteralReceiver)
+	receiver.AcceptStringLiteral(&ast.StringLiteral{String: dec})
 }
 
 // EnterBooleanLiteral is called when production booleanLiteral is entered.
-func (s *GruleV2ParserListener) EnterBooleanLiteral(ctx *grulev2.BooleanLiteralContext) {}
+func (s *GruleV3ParserListener) EnterBooleanLiteral(ctx *grulev3.BooleanLiteralContext) {}
 
 // ExitBooleanLiteral is called when production booleanLiteral is exited.
-func (s *GruleV2ParserListener) ExitBooleanLiteral(ctx *grulev2.BooleanLiteralContext) {
+func (s *GruleV3ParserListener) ExitBooleanLiteral(ctx *grulev3.BooleanLiteralContext) {
 	if s.StopParse {
 		return
 	}
-	if reflect.TypeOf(s.Stack.Peek()).String() == "*ast.Constant" {
-		cons := s.Stack.Peek().(*ast.Constant)
+	if receiver, ok := s.Stack.Peek().(ast.BooleanLiteralReceiver); ok {
+		lit := &ast.BooleanLiteral{}
 		switch strings.ToLower(ctx.GetText()) {
 		case "true":
-			cons.Value = reflect.ValueOf(true)
+			lit.Boolean = true
 		case "false":
-			cons.Value = reflect.ValueOf(false)
+			lit.Boolean = false
 		}
+		receiver.AcceptBooleanLiteral(lit)
 	}
 }
 
-func unquoteString(s string) (string, error) {
-	n := len(s)
-	if n < 2 {
-		return "", strconv.ErrSyntax
-	}
-	quote := s[0]
-	if quote != s[n-1] {
-		return "", strconv.ErrSyntax
-	}
-	s = s[1 : n-1]
+// EnterIntegerLiteral is called when production integerLiteral is entered.
+func (s *GruleV3ParserListener) EnterIntegerLiteral(ctx *grulev3.IntegerLiteralContext) {}
 
-	if quote != '"' && quote != '\'' {
-		return "", strconv.ErrSyntax
+// ExitIntegerLiteral is called when production integerLiteral is exited.
+func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralContext) {
+	lit := &ast.IntegerLiteral{}
+	i, err := strconv.ParseInt(ctx.GetText(), 0, 64)
+	if err != nil {
+		s.StopParse = true
+		s.ErrorCallback(err)
+	} else {
+		lit.Integer = i
 	}
-
-	if !contains(s, '\\') && !contains(s, quote) && utf8.ValidString(s) {
-		return s, nil
-	}
-
-	var runeTmp [utf8.UTFMax]byte
-	buf := make([]byte, 0, 3*len(s)/2)
-	for len(s) > 0 {
-		c, multibyte, ss, err := strconv.UnquoteChar(s, quote)
-		if err != nil {
-			return "", err
-		}
-		s = ss
-		if c < utf8.RuneSelf || !multibyte {
-			buf = append(buf, byte(c))
-		} else {
-			n := utf8.EncodeRune(runeTmp[:], c)
-			buf = append(buf, runeTmp[:n]...)
-		}
-	}
-	return string(buf), nil
+	receiver := s.Stack.Peek().(ast.IntegerLiteralReceiver)
+	receiver.AcceptIntegerLiteral(lit)
 }
 
-func contains(s string, c byte) bool {
-	return strings.IndexByte(s, c) != -1
+// EnterFloatLiteral is called when production floatLiteral is entered.
+func (s *GruleV3ParserListener) EnterFloatLiteral(ctx *grulev3.FloatLiteralContext) {}
+
+// ExitFloatLiteral is called when production floatLiteral is exited.
+func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContext) {
+	lit := &ast.FloatLiteral{}
+	i, err := strconv.ParseFloat(ctx.GetText(), 64)
+	if err != nil {
+		s.StopParse = true
+		s.ErrorCallback(err)
+	} else {
+		lit.Float = i
+	}
+	receiver := s.Stack.Peek().(ast.FloatLiteralReceiver)
+	receiver.AcceptFloatLiteral(lit)
 }

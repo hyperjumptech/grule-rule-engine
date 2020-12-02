@@ -3,17 +3,17 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 
-	"github.com/google/uuid"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewVariable create new instance of Variable
 func NewVariable() *Variable {
 	return &Variable{
-		AstID: uuid.New().String(),
+		AstID: unique.NewID(),
 	}
 }
 
@@ -23,9 +23,7 @@ type Variable struct {
 	GrlText string
 
 	Name             string
-	Constant         *Constant
 	Variable         *Variable
-	FunctionCall     *FunctionCall
 	ArrayMapSelector *ArrayMapSelector
 
 	ValueNode model.ValueNode
@@ -35,20 +33,11 @@ type Variable struct {
 // Clone will clone this Variable. The new clone will have an identical structure
 func (e *Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 	clone := &Variable{
-		AstID:   uuid.New().String(),
+		AstID:   unique.NewID(),
 		GrlText: e.GrlText,
 		Name:    e.Name,
 	}
 
-	if e.Constant != nil {
-		if cloneTable.IsCloned(e.Constant.AstID) {
-			clone.Constant = cloneTable.Records[e.Constant.AstID].CloneInstance.(*Constant)
-		} else {
-			cloned := e.Constant.Clone(cloneTable)
-			clone.Constant = cloned
-			cloneTable.MarkCloned(e.Constant.AstID, cloned.AstID, e.Constant, cloned)
-		}
-	}
 	if e.Variable != nil {
 		if cloneTable.IsCloned(e.Variable.AstID) {
 			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
@@ -56,15 +45,6 @@ func (e *Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 			cloned := e.Variable.Clone(cloneTable)
 			clone.Variable = cloned
 			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
-		}
-	}
-	if e.FunctionCall != nil {
-		if cloneTable.IsCloned(e.FunctionCall.AstID) {
-			clone.FunctionCall = cloneTable.Records[e.FunctionCall.AstID].CloneInstance.(*FunctionCall)
-		} else {
-			cloned := e.FunctionCall.Clone(cloneTable)
-			clone.FunctionCall = cloned
-			cloneTable.MarkCloned(e.FunctionCall.AstID, cloned.AstID, e.FunctionCall, cloned)
 		}
 	}
 	if e.ArrayMapSelector != nil {
@@ -85,6 +65,16 @@ type VariableReceiver interface {
 	AcceptVariable(exp *Variable) error
 }
 
+// MemberVariableReceiver should be implemented by AST graph node to receive member Variable information.
+type MemberVariableReceiver interface {
+	AcceptMemberVariable(name string)
+}
+
+// AcceptMemberVariable accept a member variable information into this Variable graph
+func (e *Variable) AcceptMemberVariable(name string) {
+	e.Name = name
+}
+
 // AcceptVariable accept a variable AST graph into this Variable graph
 func (e *Variable) AcceptVariable(vari *Variable) error {
 	e.Variable = vari
@@ -94,18 +84,6 @@ func (e *Variable) AcceptVariable(vari *Variable) error {
 // AcceptArrayMapSelector accept an array map selector into this variable graph
 func (e *Variable) AcceptArrayMapSelector(sel *ArrayMapSelector) error {
 	e.ArrayMapSelector = sel
-	return nil
-}
-
-// AcceptFunctionCall accept a function call AST graph into this variable graph
-func (e *Variable) AcceptFunctionCall(fu *FunctionCall) error {
-	e.FunctionCall = fu
-	return nil
-}
-
-// AcceptConstant accept a constant AST graph into this variable graph.
-func (e *Variable) AcceptConstant(con *Constant) error {
-	e.Constant = con
 	return nil
 }
 
@@ -127,10 +105,6 @@ func (e *Variable) GetSnapshot() string {
 	if len(e.Name) > 0 && e.Variable == nil {
 		buff.WriteString("N:")
 		buff.WriteString(e.Name)
-	} else if e.Constant != nil {
-		buff.WriteString(e.Constant.GetSnapshot())
-	} else if e.Variable != nil && e.FunctionCall != nil {
-		buff.WriteString(fmt.Sprintf("O:%s->%s", e.Variable.GetSnapshot(), e.FunctionCall.GetSnapshot()))
 	} else if e.Variable != nil && len(e.Name) > 0 {
 		buff.WriteString(fmt.Sprintf("O:%s->%s", e.Variable.GetSnapshot(), e.Name))
 	} else if e.Variable != nil && e.ArrayMapSelector != nil {
@@ -154,12 +128,6 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 			dataContext.IncrementVariableChangeCount()
 		}
 		return err
-	}
-	if e.Constant != nil {
-		return fmt.Errorf("can not change constant")
-	}
-	if e.Variable != nil && e.FunctionCall != nil {
-		return fmt.Errorf("can not change function call")
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
 		_, err := e.Variable.Evaluate(dataContext, memory)
@@ -209,38 +177,6 @@ func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (re
 		}
 		e.ValueNode = valueNode
 		e.Value = valueNode.Value()
-		return e.Value, nil
-	}
-	if e.Constant != nil {
-		val, err := e.Constant.Evaluate(dataContext, memory)
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-		valueNode := model.NewGoValueNode(val, fmt.Sprintf("%s->%s", val.Type().String(), val.String()))
-		e.ValueNode = valueNode
-		e.Value = valueNode.Value()
-		return e.Value, nil
-	}
-	if e.Variable != nil && e.FunctionCall != nil {
-		_, err := e.Variable.Evaluate(dataContext, memory)
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-
-		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-
-		retVal, err := e.Variable.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
-		if err != nil {
-			return reflect.ValueOf(nil), err
-		}
-
-		if retVal.IsValid() {
-			e.Value = retVal
-		}
-		e.ValueNode = e.Variable.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
 		return e.Value, nil
 	}
 	if e.Variable != nil && len(e.Name) > 0 {
