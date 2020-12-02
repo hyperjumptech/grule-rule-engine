@@ -376,8 +376,9 @@ type Sleeper struct {
 	Count int
 }
 
-func (s *Sleeper) SleepMore() {
-	time.Sleep(1 * time.Second)
+func (s *Sleeper) Sleep2Second() {
+	fmt.Printf("Sleep for 4 second to timeout.\n")
+	time.Sleep(4 * time.Second)
 }
 
 func TestGruleEngine_ExecuteWithContext(t *testing.T) {
@@ -392,10 +393,10 @@ func TestGruleEngine_ExecuteWithContext(t *testing.T) {
 	err = rb.BuildRuleFromResource("TestTimer", "0.1.1", pkg.NewBytesResource([]byte(`
 rule KeepSleep "test string escaping" salience 10 {
     when
-        TS.Count < 4
+        TS.Count < 1
     then
+		TS.Sleep2Second();
         TS.Count = TS.Count + 1;
-		TS.SleepMore();
 }
 `)))
 	assert.NoError(t, err)

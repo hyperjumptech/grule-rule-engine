@@ -64,8 +64,8 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	var cycle uint64
 
 	/*
-		Un-limitted loop as long as there are rule to execute.
-		We need to add safety mechanism to detect unlimitted loop as there are posibility executed rule are not changing
+		Un-limited loop as long as there are rule to execute.
+		We need to add safety mechanism to detect unlimited loop as there are possibility executed rule are not changing
 		data context which makes rules to get executed again and again.
 	*/
 	for {

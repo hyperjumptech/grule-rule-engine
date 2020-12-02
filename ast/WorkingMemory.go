@@ -248,20 +248,20 @@ func (e *WorkingMemory) AddVariable(vari *Variable) *Variable {
 
 // Reset will reset the evaluated status of a specific variable if its contains a variable name in its signature.
 // Returns true if any expression was reset, false if otherwise
-func (e *WorkingMemory) Reset(varName string) bool {
-	AstLog.Tracef("------- resetting var %s", varName)
+func (e *WorkingMemory) Reset(name string) bool {
+	AstLog.Tracef("------- resetting  %s", name)
 	for _, vari := range e.variableSnapshotMap {
-		if vari.GrlText == varName {
+		if vari.GrlText == name {
 			return e.ResetVariable(vari)
 		}
 	}
 	for snap, expr := range e.expressionSnapshotMap {
-		if strings.Contains(snap, varName) {
+		if strings.Contains(snap, name) || strings.Contains(expr.GrlText, name) {
 			expr.Evaluated = false
 		}
 	}
 	for snap, expr := range e.expressionAtomSnapshotMap {
-		if strings.Contains(snap, varName) {
+		if strings.Contains(snap, name) || strings.Contains(expr.GrlText, name) {
 			expr.Evaluated = false
 		}
 	}

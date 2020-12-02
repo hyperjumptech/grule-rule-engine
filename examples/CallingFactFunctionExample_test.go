@@ -18,6 +18,7 @@ rule RaiseHandToClap "Raise the hand to be able to clap" {
 		Clapper.HandsUp == false
 	then
 		Clapper.HandsUp = true;
+		Log("RaiseHandToClap : Now hands up");
 }
 
 rule CheckIfCanClap "If hands is up we can clap" {
@@ -26,17 +27,21 @@ rule CheckIfCanClap "If hands is up we can clap" {
 		Clapper.CanClap == false
 	then
 		Clapper.CanClap = true;
+		Log("CheckIfCanClap : Now can clap");
 }
 
 rule LetsClap "If hands are up and can clap, lets clap" {
 	when
 		Clapper.HandsUp && Clapper.CanClap
 	then
+		Log("LetsClap : Now clapping. Hands Down thus Can't clap'");
 		Clapper.Clap();
-		Changed("Clapper.CanClap");
-		Changed("Clapper.HandsUp");
-		Changed("Clapper.ClapCount");
-		Log("Clapped " + Clapper.ClapCount + " times");
+
+		// instruct the engine to forget about variables and functions. Otherwise the engine will use the last remembered value.
+		Forget("Clapper.CanClap");
+		Forget("Clapper.HandsUp");
+		Forget("Clapper.ClapCount");
+		Forget("Clapper.Clap()");
 }
 `
 )
@@ -48,7 +53,6 @@ type Clapper struct {
 }
 
 func (c *Clapper) Clap() {
-	fmt.Println("CLAP !!!")
 	c.ClapCount++
 	c.HandsUp = false
 	c.CanClap = false
@@ -74,5 +78,6 @@ func TestCallingFactFunction(t *testing.T) {
 	eng1 := &engine.GruleEngine{MaxCycle: 500}
 	err = eng1.Execute(dataContext, knowledgeBase)
 	assert.NoError(t, err)
+	fmt.Printf("%v", c)
 	assert.Equal(t, 10, int(c.ClapCount))
 }

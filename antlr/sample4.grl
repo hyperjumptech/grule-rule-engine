@@ -4,11 +4,14 @@ rule Simple "Simple variables" {
         variable == true &&
         class.variable == true &&
         class.member.real == 6.67428e-11 &&
-        class.member.variable == true
+        class.member.variable == true ||
+        var[12].function(chain).func() == function("asfe")[asef]
     then
         funcInvoke();
         variable.funcInvoke();
         class.variable.funcInvoke();
         class.member.variable.funcInvoke();
         class.member.variable = class.member.variable.funcInvoke();
+        var["toassign"] = var[12].function(chain).func();
+        abc.function("asfe").funcchain();
 }
