@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
@@ -16,6 +17,15 @@ type ArrayNode struct {
 	ChildArray  []*ArrayNode
 }
 
+func (node *ArrayNode) CallMyName() string {
+	fmt.Println("You have call my name", node.Name)
+	return node.Name
+}
+
+func (node *ArrayNode) GetChild(idx int64) *ArrayNode {
+	return node.ChildArray[idx]
+}
+
 func TestArraySlice(t *testing.T) {
 	//logrus.SetLevel(logrus.TraceLevel)
 	Tree := &ArrayNode{
@@ -27,7 +37,19 @@ func TestArraySlice(t *testing.T) {
 				Name:        "NodeChild1",
 				StringArray: []string{"NodeChildString11", "NodeChildString12"},
 				NumberArray: []int{578, 296},
-				ChildArray:  nil,
+				ChildArray: []*ArrayNode{
+					&ArrayNode{
+						Name:        "NodeChild11",
+						StringArray: []string{"NodeChildString111", "NodeChildString112"},
+						NumberArray: []int{578, 296},
+						ChildArray:  nil,
+					}, &ArrayNode{
+						Name:        "NodeChild12",
+						StringArray: []string{"NodeChildString121", "NodeChildString122"},
+						NumberArray: []int{744, 895},
+						ChildArray:  nil,
+					},
+				},
 			}, &ArrayNode{
 				Name:        "NodeChild2",
 				StringArray: []string{"NodeChildString21", "NodeChildString22"},
@@ -46,11 +68,15 @@ rule SetTreeName "Set the top most tree name" {
 		Tree.NumberArray[0] == 235 &&
 		Tree.NumberArray[1] == 633 &&
 		Tree.ChildArray[0].Name == "NodeChild1" &&
+		Tree.ChildArray[0].CallMyName() == "NodeChild1" &&
+		Tree.GetChild(0).ChildArray[0].Name == "NodeChild11" &&
+		Tree.GetChild(0).ChildArray[0].CallMyName() == "NodeChild11" &&
 		Tree.ChildArray[0].StringArray[1] == "NodeChildString12"
 	then
 		Tree.Name = "VERIFIED".ToLower();
 		Tree.ChildArray[0].StringArray[0] = "SetSuccessful";
 		Tree.NumberArray[1] = 1000;
+		Tree.ChildArray[0].CallMyName();
 		Retract("SetTreeName");
 }
 `
