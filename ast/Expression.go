@@ -73,6 +73,7 @@ func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 		AstID:    unique.NewID(),
 		GrlText:  e.GrlText,
 		Operator: e.Operator,
+		Negated:  e.Negated,
 	}
 
 	if e.LeftExpression != nil {
