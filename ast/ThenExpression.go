@@ -2,7 +2,6 @@ package ast
 
 import (
 	"bytes"
-	"errors"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -19,9 +18,8 @@ type ThenExpression struct {
 	AstID   string
 	GrlText string
 
-	Assignment   *Assignment
-	FunctionCall *FunctionCall
-	Variable     *Variable
+	Assignment     *Assignment
+	ExpressionAtom *ExpressionAtom
 }
 
 // ThenExpressionReceiver must be implemented by any AST object that will store a Then expression
@@ -46,23 +44,13 @@ func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 		}
 	}
 
-	if e.FunctionCall != nil {
-		if cloneTable.IsCloned(e.FunctionCall.AstID) {
-			clone.FunctionCall = cloneTable.Records[e.FunctionCall.AstID].CloneInstance.(*FunctionCall)
+	if e.ExpressionAtom != nil {
+		if cloneTable.IsCloned(e.ExpressionAtom.AstID) {
+			clone.ExpressionAtom = cloneTable.Records[e.ExpressionAtom.AstID].CloneInstance.(*ExpressionAtom)
 		} else {
-			cloned := e.FunctionCall.Clone(cloneTable)
-			clone.FunctionCall = cloned
-			cloneTable.MarkCloned(e.FunctionCall.AstID, cloned.AstID, e.FunctionCall, cloned)
-		}
-	}
-
-	if e.Variable != nil {
-		if cloneTable.IsCloned(e.Variable.AstID) {
-			clone.Variable = cloneTable.Records[e.Variable.AstID].CloneInstance.(*Variable)
-		} else {
-			cloned := e.Variable.Clone(cloneTable)
-			clone.Variable = cloned
-			cloneTable.MarkCloned(e.Variable.AstID, cloned.AstID, e.Variable, cloned)
+			cloned := e.ExpressionAtom.Clone(cloneTable)
+			clone.ExpressionAtom = cloned
+			cloneTable.MarkCloned(e.ExpressionAtom.AstID, cloned.AstID, e.ExpressionAtom, cloned)
 		}
 	}
 
@@ -75,12 +63,9 @@ func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
 	return nil
 }
 
-// AcceptFunctionCall will accept an FunctionCall AST graph into this ast graph
-func (e *ThenExpression) AcceptFunctionCall(fun *FunctionCall) error {
-	if e.FunctionCall != nil {
-		return errors.New("constant for ThenExpression already assigned")
-	}
-	e.FunctionCall = fun
+// AcceptExpressionAtom will accept an AcceptExpressionAtom AST graph into this ast graph
+func (e *ThenExpression) AcceptExpressionAtom(exp *ExpressionAtom) error {
+	e.ExpressionAtom = exp
 	return nil
 }
 
@@ -94,12 +79,6 @@ func (e *ThenExpression) GetGrlText() string {
 	return e.GrlText
 }
 
-// AcceptVariable will accept variable AST object into this then expression
-func (e *ThenExpression) AcceptVariable(vari *Variable) error {
-	e.Variable = vari
-	return nil
-}
-
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
 	var buff bytes.Buffer
@@ -108,13 +87,8 @@ func (e *ThenExpression) GetSnapshot() string {
 	if e.Assignment != nil {
 		buff.WriteString(e.Assignment.GetSnapshot())
 	}
-	if e.Variable == nil && e.FunctionCall != nil {
-		buff.WriteString(e.FunctionCall.GetSnapshot())
-	}
-	if e.Variable != nil && e.FunctionCall != nil {
-		buff.WriteString(e.Variable.GetSnapshot())
-		buff.WriteString("->")
-		buff.WriteString(e.FunctionCall.GetSnapshot())
+	if e.ExpressionAtom != nil {
+		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 	}
 	buff.WriteString(")")
 	return buff.String()
@@ -137,31 +111,14 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 		}
 		return err
 	}
-	if e.FunctionCall != nil && e.Variable == nil {
-		valueNode := dataContext.Get("DEFUNC")
-		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
+	if e.ExpressionAtom != nil {
+		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
+			AstLog.Errorf("error while executing expression %s. got %s", e.ExpressionAtom.GrlText, err.Error())
 			return err
 		}
-		_, err = valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
-		if err != nil {
-			return err
-		}
+		AstLog.Debugf("success executing ExpressionAtom %s", e.ExpressionAtom.GrlText)
 		return nil
-	}
-	if e.FunctionCall != nil && e.Variable != nil {
-		_, err := e.Variable.Evaluate(dataContext, memory)
-		if err != nil {
-			return err
-		}
-
-		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
-		if err != nil {
-			return err
-		}
-
-		_, err = e.Variable.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
-		return err
 	}
 	return nil
 }
