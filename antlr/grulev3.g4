@@ -30,13 +30,12 @@ thenScope
     ;
 
 thenExpressionList
-    : thenExpression+
+    : (thenExpression SEMICOLON)+
     ;
 
 thenExpression
-    : assignment SEMICOLON
-    | functionCall SEMICOLON
-    | variable methodCall SEMICOLON
+    : assignment
+    | expressionAtom
     ;
 
 assignment
@@ -75,10 +74,11 @@ orLogicOperator
 
 expressionAtom
     : constant
-    | functionCall
     | variable
+    | functionCall
     | expressionAtom methodCall
     | expressionAtom memberVariable
+    | expressionAtom arrayMapSelector
     | NEGATION expressionAtom
     ;
 
@@ -91,9 +91,9 @@ constant
     ;
 
 variable
-    : SIMPLENAME
-    | variable memberVariable
+    : variable memberVariable
     | variable arrayMapSelector
+    | SIMPLENAME
     ;
 
 arrayMapSelector

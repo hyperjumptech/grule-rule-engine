@@ -23,14 +23,15 @@ type ExpressionAtom struct {
 	AstID   string
 	GrlText string
 
-	VariableName   string
-	Constant       *Constant
-	FunctionCall   *FunctionCall
-	Variable       *Variable
-	Negated        bool
-	ExpressionAtom *ExpressionAtom
-	Value          reflect.Value
-	ValueNode      model.ValueNode
+	VariableName     string
+	Constant         *Constant
+	FunctionCall     *FunctionCall
+	Variable         *Variable
+	Negated          bool
+	ExpressionAtom   *ExpressionAtom
+	Value            reflect.Value
+	ValueNode        model.ValueNode
+	ArrayMapSelector *ArrayMapSelector
 
 	Evaluated bool
 }
@@ -89,6 +90,16 @@ func (e *ExpressionAtom) Clone(cloneTable *pkg.CloneTable) *ExpressionAtom {
 		}
 	}
 
+	if e.ArrayMapSelector != nil {
+		if cloneTable.IsCloned(e.ArrayMapSelector.AstID) {
+			clone.ArrayMapSelector = cloneTable.Records[e.ArrayMapSelector.AstID].CloneInstance.(*ArrayMapSelector)
+		} else {
+			cloned := e.ArrayMapSelector.Clone(cloneTable)
+			clone.ArrayMapSelector = cloned
+			cloneTable.MarkCloned(e.ArrayMapSelector.AstID, cloned.AstID, e.ArrayMapSelector, cloned)
+		}
+	}
+
 	return clone
 }
 
@@ -133,6 +144,12 @@ func (e *ExpressionAtom) AcceptConstant(cons *Constant) error {
 	return nil
 }
 
+// AcceptArrayMapSelector accept an array map selector into this variable graph
+func (e *ExpressionAtom) AcceptArrayMapSelector(sel *ArrayMapSelector) error {
+	e.ArrayMapSelector = sel
+	return nil
+}
+
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ExpressionAtom) GetAstID() string {
 	return e.AstID
@@ -167,6 +184,10 @@ func (e *ExpressionAtom) GetSnapshot() string {
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 		buff.WriteString("->MV:")
 		buff.WriteString(e.VariableName)
+	} else if e.ArrayMapSelector != nil && e.ExpressionAtom != nil {
+		buff.WriteString(e.ExpressionAtom.GetSnapshot())
+		buff.WriteString("-[]>")
+		buff.WriteString(e.ArrayMapSelector.GetSnapshot())
 	}
 	buff.WriteString(")")
 	return buff.String()
@@ -198,9 +219,11 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		if err != nil {
 			return reflect.Value{}, err
 		}
+		//t, _ := e.Variable.ValueNode.GetType()
 		e.Value = val
 		e.ValueNode = e.Variable.ValueNode
 		e.Evaluated = true
+
 		return val, err
 	}
 	if e.ExpressionAtom == nil && e.FunctionCall != nil {
@@ -215,10 +238,10 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		}
 		e.Value = ret
 		e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("%s()", e.FunctionCall.FunctionName))
-		e.Evaluated = true
+		// e.Evaluated = true
 		return ret, err
 	}
-	if e.ExpressionAtom != nil && e.FunctionCall == nil && len(e.VariableName) == 0 {
+	if e.ExpressionAtom != nil && e.FunctionCall == nil && len(e.VariableName) == 0 && e.ArrayMapSelector == nil {
 		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
 			return reflect.Value{}, err
@@ -233,6 +256,7 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 				AstLog.Warnf("Expression \"%s\" is a negation to non boolean value, negation is ignored.", e.ExpressionAtom.GrlText)
 			}
 		}
+
 		e.Evaluated = true
 		return e.Value, err
 	}
@@ -271,6 +295,37 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		e.ValueNode = valueNode
 		e.Value = valueNode.Value()
 		e.Evaluated = true
+
+		return e.Value, nil
+	}
+	if e.ExpressionAtom != nil && e.ArrayMapSelector != nil && len(e.VariableName) == 0 {
+
+		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		selValue, err := e.ArrayMapSelector.Evaluate(dataContext, memory)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		var valueNode model.ValueNode
+		if e.ExpressionAtom.ValueNode.IsArray() {
+			valueNode, err = e.ExpressionAtom.ValueNode.GetChildNodeByIndex(int(selValue.Int()))
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else if e.ExpressionAtom.ValueNode.IsMap() {
+			valueNode, err = e.ExpressionAtom.ValueNode.GetChildNodeBySelector(selValue)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else {
+			return reflect.Value{}, fmt.Errorf("%s is not an array nor map", e.Variable.ValueNode.IdentifiedAs())
+		}
+
+		e.ValueNode = valueNode
+		e.Value = valueNode.Value()
+
 		return e.Value, nil
 	}
 	panic("should not be reached")

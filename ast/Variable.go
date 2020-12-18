@@ -218,6 +218,7 @@ func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (re
 
 		e.ValueNode = valueNode
 		e.Value = valueNode.Value()
+
 		return e.Value, nil
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("this code part should not be reached")

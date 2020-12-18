@@ -31,7 +31,7 @@ func Benchmark_Grule_Load_Rules(b *testing.B) {
 		{"1000 rules", load1000RulesIntoKnowledgeBase},
 	}
 	for _, rule := range rules {
-		for k := 0.; k <= 10; k++ {
+		for k := 0; k < 10; k++ {
 			b.Run(fmt.Sprintf("%s", rule.name), func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
 					rule.fun()
@@ -42,7 +42,7 @@ func Benchmark_Grule_Load_Rules(b *testing.B) {
 }
 
 func load100RulesIntoKnowledgeBase() {
-	input, _ := ioutil.ReadFile("100_complicated_rules.grl")
+	input, _ := ioutil.ReadFile("100_rules.grl")
 	rules := string(input)
 	fact := &RideFact{
 		Distance: 6000,
@@ -58,7 +58,7 @@ func load100RulesIntoKnowledgeBase() {
 }
 
 func load1000RulesIntoKnowledgeBase() {
-	input, _ := ioutil.ReadFile("1000_complicated_rules.grl")
+	input, _ := ioutil.ReadFile("1000_rules.grl")
 	rules := string(input)
 	fact := &RideFact{
 		Distance: 6000,

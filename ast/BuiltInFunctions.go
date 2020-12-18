@@ -35,13 +35,19 @@ func (gf *BuiltInFunctions) MakeTime(year, month, day, hour, minute, second int6
 	return time.Date(int(year), time.Month(month), int(day), int(hour), int(minute), int(second), 0, time.Local)
 }
 
-// Changed will enable Grule's working memory to forget about a variable, so in the next cycle
-// grue will re-valuate that variable instead of just use the value from its working memory.
+// Changed is another name for Forget function. This function is retained for backward compatibility reason and will be removed in the future.
+func (gf *BuiltInFunctions) Changed(variableName string) {
+	gf.WorkingMemory.Reset(variableName)
+	gf.Knowledge.DataContext.IncrementVariableChangeCount()
+}
+
+// Forget will force Grule's working memory to forget about a variable, or function call, so in the next cycle
+// grue will re-valuate that variable/function instead of just use the value from its working memory.
 // If you change the variable from within grule GRL (using assignment expression, you dont need to call this
 // function on that variable since grule will automaticaly see the change. So only call this
 // function if the variable got changed from your internal struct logic.
-func (gf *BuiltInFunctions) Changed(variableName string) {
-	gf.WorkingMemory.Reset(variableName)
+func (gf *BuiltInFunctions) Forget(snippet string) {
+	gf.WorkingMemory.Reset(snippet)
 	gf.Knowledge.DataContext.IncrementVariableChangeCount()
 }
 

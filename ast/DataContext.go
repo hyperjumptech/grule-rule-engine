@@ -10,7 +10,7 @@ import (
 // NewDataContext will create a new DataContext instance
 func NewDataContext() IDataContext {
 	return &DataContext{
-		ObjectStore: make(map[string]interface{}),
+		ObjectStore: make(map[string]model.ValueNode),
 
 		retracted:           make([]string, 0),
 		variableChangeCount: 0,
@@ -19,7 +19,7 @@ func NewDataContext() IDataContext {
 
 // DataContext holds all structs instance to be used in rule execution environment.
 type DataContext struct {
-	ObjectStore map[string]interface{}
+	ObjectStore map[string]model.ValueNode
 
 	retracted           []string
 	variableChangeCount uint64
@@ -43,6 +43,7 @@ type IDataContext interface {
 	HasVariableChange() bool
 
 	Add(key string, obj interface{}) error
+	AddJSON(key string, JSON []byte) error
 	Get(key string) model.ValueNode
 
 	Retract(key string)
@@ -70,21 +71,24 @@ func (ctx *DataContext) HasVariableChange() bool {
 
 // Add will add struct instance into rule execution context
 func (ctx *DataContext) Add(key string, obj interface{}) error {
-	// LETS experiment by disabling this. We can add non struct pointer as fact.
-	// Because now we can extract value directly into graph.
-	//
-	//objVal := reflect.ValueOf(obj)
-	//if objVal.Kind() != reflect.Ptr || objVal.Elem().Kind() != reflect.Struct {
-	//	return fmt.Errorf("you can only insert a pointer to struct as fact. objVal = %s", objVal.Kind().String())
-	//}
-	ctx.ObjectStore[key] = obj
+	ctx.ObjectStore[key] = model.NewGoValueNode(reflect.ValueOf(obj), key)
+	return nil
+}
+
+// AddJSON will add struct instance into rule execution context
+func (ctx *DataContext) AddJSON(key string, JSON []byte) error {
+	vn, err := model.NewJSONValueNode(string(JSON), key)
+	if err != nil {
+		return err
+	}
+	ctx.ObjectStore[key] = vn
 	return nil
 }
 
 // Get will extract the struct instance
 func (ctx *DataContext) Get(key string) model.ValueNode {
 	if v, ok := ctx.ObjectStore[key]; ok {
-		return model.NewGoValueNode(reflect.ValueOf(v), key)
+		return v
 	}
 	return nil
 }

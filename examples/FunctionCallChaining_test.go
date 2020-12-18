@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
@@ -16,6 +17,10 @@ type TestTree struct {
 
 func (tt *TestTree) GetChild() *TestTree {
 	return tt.Child
+}
+
+func (tt *TestTree) CallMyName() {
+	fmt.Println("Calling your name", tt.Name)
 }
 
 func TestFunctionChain(t *testing.T) {
@@ -42,6 +47,7 @@ rule SetTreeName "Set the top most tree name" {
 		Tree.GetChild().GetChild().GetChild().Name.ToLower() == "   testtesttesttest  ".Trim()
 	then
 		Tree.Name = "VERIFIED".ToLower();
+		Tree.GetChild().GetChild().CallMyName();
 		Retract("SetTreeName");
 }
 `
