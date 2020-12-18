@@ -21,7 +21,7 @@ test-short: lint
 test: lint
 	go install github.com/newm4n/goornogo
 	go test ./... -covermode=count -coverprofile=coverage.out
-	goornogo -i coverage.out -c 47.5
+	goornogo -i coverage.out -c 47
 
 test-coverage: test
 	go tool cover -html=coverage.out
