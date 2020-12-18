@@ -16,7 +16,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
-	golang.org/x/tools v0.0.0-20201208233053-a543418bbed2 // indirect
+	golang.org/x/tools v0.0.0-20201218024724-ae774e9781d2 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
