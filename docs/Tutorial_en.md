@@ -88,6 +88,11 @@ if err != nil {
 }
 ```
 
+### Add JSON as Fact
+
+JSON string as a fact in Grule is a feature introduced at version 1.8.0. 
+You can read [JSON as a Fact](JSON_Fact_en.md) to know how to add JSON into `DataContext`.
+
 ## Creating KnowledgeLibrary and Add Rules Into It
 
 A `KnowledgeLibrary` is basically collection of `KnowledgeBase` blue prints. 
