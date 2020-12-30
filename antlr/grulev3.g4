@@ -231,9 +231,9 @@ DQUOTA_STRING               : '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 SQUOTA_STRING               : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';
 
 
-DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_LIT DECIMAL_EXPONENT?
+DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_DIGITS DECIMAL_EXPONENT?
                             | DEC_LIT DECIMAL_EXPONENT
-                            | DOT DEC_LIT DECIMAL_EXPONENT?
+                            | DOT DEC_DIGITS DECIMAL_EXPONENT?
                             ;
 
 DECIMAL_EXPONENT            : E (PLUS|MINUS)? DEC_DIGITS;
