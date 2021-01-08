@@ -6,7 +6,7 @@
 
 ## String Literals
 
-In GRL, a string is any sequence of characters begin and ended with either a single `'` or double `"` quote.
+In GRL, a string is any sequence of characters surrounded by either a single `'` or double `"` quotes.
 If the literal is started with single quote, then it must be terminated by single quote. The same for double quote.
 
 For example
@@ -21,7 +21,7 @@ or
 'a quick brown fox jumps over a lazy dog'
 ```
 
-A string literal may contains white-space characters such as `space`, `tab` or a
+A string literal may contain white space characters such as `space`, `tab` or a
 `carriage-return`
 
 For example
@@ -29,10 +29,10 @@ For example
 ```go
 "A quick brown fox
     Jumps
-Over a lazy dogs"
+Over a lazy dog"
 ```
 
-To include special characters in string, you can *escape* them just like normaly we do.
+To include special characters in string, you can *escape* them as is normal in Go
 
 For example
 
@@ -42,9 +42,9 @@ For example
 
 ## Number Literals
 
-GRL follows numbering literal as specified by Golang specification as best
+GRL follows literal numbering as specified by the Golang specification as best
 as it can. It understands various numbers notation such as
-Base10 (Decimals), Base8 (Octal) and Base16 (Hex). Base(2) (Binnary) is not yet implemented.
+Base10 (Decimals), Base8 (Octal) and Base16 (Hex). Base2 (Binary) is not yet implemented.
 
 ### Integer Literal
 
