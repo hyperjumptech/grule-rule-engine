@@ -6,7 +6,7 @@
 
 ## Built-In Functions
 
-Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As of now, they are :
+Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As of now, they are:
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time
 
@@ -38,7 +38,8 @@ rule SetExpire "Set the expire date for Fact created before 2020" {
 
 ### Changed(variableName string)
 
-`Changed` will make sure the specified variableName is removed from the working memory.
+`Changed` will ensure the specified `variableName` is removed from the working
+memory before the next cycle.
 
 #### Arguments
 
@@ -62,7 +63,7 @@ rule SetExpire "Set new expire date" {
 
 #### Returns
 
-* `time.Time` value coontaining the current value
+* `time.Time` value representing the current value
 
 #### Example
 
@@ -86,17 +87,17 @@ rule ResetTime "Reset the lastUpdate time" {
 #### Example
 
 ```Shell
-rule SomeRule "Log candidate name if he is bellow 17 years old" {
+rule SomeRule "Log candidate name if he is below 17 years old" {
     when
         Candidate.Age < 17
     then
-        Log("Under aged : " + Candidate.Name);
+        Log("Under aged: " + Candidate.Name);
 }
 ```
 
 ### IsNil(i interface{}) bool
 
-`IsNil` will check any variable in the argument for `Nil` value.
+`IsNil` will check if the argument is a `nil` value.
 
 #### Arguments
 
@@ -104,8 +105,8 @@ rule SomeRule "Log candidate name if he is bellow 17 years old" {
 
 #### Returns
 
-* `true` if the specified argument contains `nil` or an invalid `ptr` value.
-* `false` if the specified argument contains a valid `ptr` value.
+* `true` if the specified argument is`nil` or an invalid `ptr` value.
+* `false` if the specified argument is a valid `ptr` value.
 
 #### Example
 
@@ -122,8 +123,9 @@ rule CheckEducation "Check candidate's education fact" {
 ### IsZero(i interface{}) bool
 
 `IsZero` will check any variable in the argument for its `Zero` status value. Zero means
-that the variable is newly defined and have not been assigned with any value.
-This is usually applied to types like `string`, `int64`, `uint64`, `bool`, `time.Time`, etc.
+that the variable is newly defined and has not been assigned an initial value.
+This is usually applied to types like `string`, `int64`, `uint64`, `bool`,
+`time.Time`, etc.
 
 #### Arguments
 
@@ -147,9 +149,10 @@ rule CheckStartTime "Check device's starting time." {
 
 ### Retract(ruleName string)
 
-`Retract` will retract the specified rule from next cycle evaluation. If a rule
-is retracted, its `when` scope will not be evaluated. When the rule engine execute
-again, all the retracted status of all rules will be restored.
+`Retract` will remove the specified rule from the next cycle evaluation. If a
+rule is retracted its `when` scope will not be evaluated on the next immediate
+cycle after the call to `Retract`. Before the following cycle, all retracted
+rules will be restored.
 
 #### Arguments
 
@@ -182,7 +185,7 @@ rule CheckStartTime "Check device's starting time." salience 1000 {
 #### Example
 
 ```Shell
-rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
+rule StartNewYearProcess "Check if it's a new year to restart new FinancialYear." salience 1000 {
     when
         GetTimeYear(Now()) != GL.FinancialYear
     then
@@ -205,6 +208,8 @@ rule StartNewYearProcess "Check if its a new year to restart new FinancialYear."
 #### Example
 
 ```Shell
+// TODO: something's not right here. The description is copy/pasted from above
+// but the condition/action doesn't make sense to me
 rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
     when
         isZero(Process.Month)
@@ -313,22 +318,22 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ### IsTimeBefore(time, before time.Time) bool
 
-`IsTimeBefore` will check if a time value is before the other time value.
+`IsTimeBefore` will check if a time value precedes another time value.
 
 #### Arguments
 
-* `time` The time variable
-* `before` Another time variable
+* `time` The time value you wish to have checked
+* `before` The time value against which the above is checked
 
 #### Returns
 
-* True if the `before` time value is before the `time` value.
-* False if the `before` time value is not before the `time` value.
+* True if the `before` time value precedes the `time` value.
+* False if the `before` time value does not precede the `time` value.
 
 #### Example
 
 ```Shell
-rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is not due." {
+rule PromotionExpireCheck "Apply a promotion if promotion hasn't yet expired." {
     when
         IsTimeBefore(Now(), Promotion.ExpireDateTime)
     then
@@ -339,48 +344,48 @@ rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is
 
 ### IsTimeAfter(time, after time.Time) bool
 
-`IsTimeAfter` will check if a time value is after the other time value.
+`IsTimeAfter` will check if a time value follows another time value.
 
 #### Arguments
 
-* `time` The time variable
-* `after` Another time variable
+* `time` The time value you wish to have checked
+* `after` The time value against which the above is checked
 
 #### Returns
 
-* True if the `after` time value is after the `time` value.
-* False if the `after` time value is not after the `time` value.
+* True if the `after` time value follows `time` value.
+* False if the `after` time value does not follow the `time` value.
 
 #### Example
 
 ```Shell
-rule AdditionalTax  "Apply additional tax if purchase after date specified." {
+rule AdditionalTax "Apply additional tax if new tax rules are in effect." {
     when
         IsTimeAfter(Purchase.TransactionTime, TaxRegulation.StartSince)
     then
-        Purchase.Tax = PurchaseTax + 0.01;
+        Purchase.Tax = Purchase.Tax + 0.01;
 }
 ```
 
 ### TimeFormat(time time.Time, layout string) string
 
-`TimeFormat` will format a time argument to a format specified by `layout` argument.
+`TimeFormat` will format a time argument as specified by `layout` argument.
 
 #### Arguments
 
-* `time` The time variable
+* `time` The time value you wish to have formatted.
 * `layout` String variable specifying the date format layout.
 
-For layout format, you can [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
+For the layout format, you can [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
 
 #### Returns
 
-* String contains the formatted time
+* A string formatted as specified.
 
 #### Example
 
 ```Shell
-rule LogPurchaseDate  "Log the purchase date." {
+rule LogPurchaseDate "Log the purchase date." {
     when
         IsZero(Purchase.TransactionDate) == false
     then
@@ -390,12 +395,14 @@ rule LogPurchaseDate  "Log the purchase date." {
 
 ### Complete()
 
-`Complete` will cause the engine to stop processign further rules in its current cycle. This is useful if you want to terminate further rukle evaluation under a set condition.
+`Complete` will cause the engine to stop processing further rules in its
+current cycle. This is useful if you want to terminate further rule evaluation
+under a set condition.
 
 #### Example
 
 ```Shell
-rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
+rule DailyCheckBuild "Execute build at 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
         GetTimeMinute(Now()) == 30 && GetTimeSecond(Now()) == 0
@@ -407,8 +414,8 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ## Constant Functions
 
-The following functions can be immediately called from within GRL
-as long as the receiver value type is correct.
+The following functions can be called from within GRL as long as the receiver
+value type is correct.
 
 ### string.Len() int
 
@@ -421,7 +428,7 @@ as long as the receiver value type is correct.
 #### Example
 
 ```Shell
-rule DoSomething  "Do something when string length is sufficient" {
+rule DoSomething "Do something when string length is sufficient" {
     when
         Fact.Name.Len() > "ATextConstant".Len()
     then
@@ -446,7 +453,7 @@ rule DoSomething  "Do something when string length is sufficient" {
 #### Example
 
 ```Shell
-rule CompareString  "Do something when Fact.Text is greater than A" {
+rule CompareString "Do something when Fact.Text is greater than A" {
     when
         Fact.Text.Compare("A") > 0
     then
@@ -456,21 +463,21 @@ rule CompareString  "Do something when Fact.Text is greater than A" {
 
 ### string.Contains(string) bool
 
-`Contains` will check if argument is contained within the receiver.
+`Contains` will check if its argument is contained within the receiver.
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The substring to check within the receiver
 
 #### Returns
 
-* `true` if receiver string is containing the argument
-* `false` if receiver string do not contain the argument
+* `true` if the argument string is contained within the receiver.
+* `false` if the argument string is not contained within the receiver.
 
 #### Example
 
 ```Shell
-rule ContainString  "Do something when Fact.Text is contains XXX" {
+rule ContainString "Do something when Fact.Text is contains XXX" {
     when
         Fact.Text.Contains("XXX")
     then
@@ -484,16 +491,16 @@ rule ContainString  "Do something when Fact.Text is contains XXX" {
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The substring to count within the receiver
 
 #### Returns
 
-* int count of occurences
+* number of occurences of the argument in the receiver.
 
 #### Example
 
 ```Shell
-rule CountString  "Do something when Fact.Text contains 3 ABC" {
+rule CountString "Do something when Fact.Text contains 3 occurrences of 'ABC'" {
     when
         Fact.Text.Count("ABC") == 3
     then
@@ -503,21 +510,21 @@ rule CountString  "Do something when Fact.Text contains 3 ABC" {
 
 ### string.HasPrefix(string) bool
 
-`HasPrefix` will check if the receiver string is prefixed with the argument
+`HasPrefix` will check if the receiver string has a specific prefix.
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The expected prefix.
 
 #### Returns
 
-* `true` if receiver have prefix of the argument
-* `false` if receiver do not prefixed of the argument
+* `true` if the receiver has the argument as its prefix.
+* `false` if the receiver does not have the argument as its prefix.
 
 #### Example
 
 ```Shell
-rule IsPrefixed  "Do something when Fact.Text started with PREF" {
+rule IsPrefixed "Do something when Fact.Text started with PREF" {
     when
         Fact.Text.HasPrefix("PREF")
     then
@@ -527,21 +534,21 @@ rule IsPrefixed  "Do something when Fact.Text started with PREF" {
 
 ### string.HasSuffix(string) bool
 
-`HasSuffix` will check if the receiver string is suffixed with the argument
+`HasSuffix` will check if the receiver string has a specific suffix.
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The expected suffix.
 
 #### Returns
 
-* `true` if receiver have suffix of the argument
-* `false` if receiver do not suffix of the argument
+* `true` if the receiver has the argument as its suffix.
+* `false` if the receiver does not have the argument as its suffix.
 
 #### Example
 
 ```Shell
-rule IsSuffixed  "Do something when Fact.Text ends with SUFF" {
+rule IsSuffixed "Do something when Fact.Text ends with SUFF" {
     when
         Fact.Text.HasSuffix("SUFF")
     then
@@ -551,20 +558,20 @@ rule IsSuffixed  "Do something when Fact.Text ends with SUFF" {
 
 ### string.Index(string) int
 
-`Index` will return the offset of first occurrence of argument in receiver string
+`Index` will return the index of the first occurrence of the argument in the receiver string.
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The substring to search for.
 
 #### Returns
 
-* int the offset of first occurrence of argument
+* The index value of the first occurrence of the argument.
 
 #### Example
 
 ```Shell
-rule IndexCheck  "Do something when Fact.Text ABC occurrence as specified" {
+rule IndexCheck "Do something when Fact.Text ABC occurs as specified" {
     when
         Fact.Text.Index("ABC") == "abABCabABC".Index("ABC")
     then
@@ -574,20 +581,20 @@ rule IndexCheck  "Do something when Fact.Text ABC occurrence as specified" {
 
 ### string.LastIndex(string) int
 
-`LastIndex` will return the offset of last occurrence of argument in receiver string
+`LastIndex` will return the index of last occurrence of the argument in the receiver string.
 
 #### Arguments
 
-* `string` The sub string to check
+* `string` The substring to search for.
 
 #### Returns
 
-* int the offset of last occurrence of argument
+* The index of the last occurrence of the argument.
 
 #### Example
 
 ```Shell
-rule LastIndexCheck  "Do something when Fact.Text ABC last occurrence as specified" {
+rule LastIndexCheck "Do something when Fact.Text ABC occurs in the last position as specified" {
     when
         Fact.Text.LastIndex("ABC") == "abABCabABC".LastIndex("ABC")
     then
@@ -595,22 +602,22 @@ rule LastIndexCheck  "Do something when Fact.Text ABC last occurrence as specifi
 }
 ```
 
-### string.Repeat(int) string
+### string.Repeat(int64) string
 
-`Repeat` will return a string containing repeated receiver string, n times
+`Repeat` will return a string containing `n` occurrences of the receiver string.
 
 #### Arguments
 
-* `int` the repeat count
+* `int64` the repeat count
 
 #### Returns
 
-* string contains repeated receiver string, n times
+* A new string containing `n` occurrences of the receiver.
 
 #### Example
 
 ```Shell
-rule StringRepeat  "Do something when Fact.Text contains ABCABCABC" {
+rule StringRepeat "Do something when Fact.Text contains ABCABCABC" {
     when
         Fact.Text == "ABC".Repeat(3)
     then
@@ -620,21 +627,21 @@ rule StringRepeat  "Do something when Fact.Text contains ABCABCABC" {
 
 ### string.Replace(old, new string) string
 
-`Replace` will return a string containing replaced receiver string
+`Replace` will return a string with all occurrences of `old` replaced with `new`.
 
 #### Arguments
 
-* `old` the substring to search
-* `new` the string replacement
+* `old` the substring you wish to have replaced.
+* `new` the string you wish to replace all occurrences of `old`.
 
 #### Returns
 
-* string contains receiver string after replace
+* A string where all instances of `old` in the receiver have been replaced with `new`.
 
 #### Example
 
 ```Shell
-rule ReplaceString  "Do something when Fact.Text contains replaced string" {
+rule ReplaceString "Do something when Fact.Text contains replaced string" {
     when
         Fact.Text == "ABC123ABC".Replace("123","ABC")
     then
@@ -644,20 +651,22 @@ rule ReplaceString  "Do something when Fact.Text contains replaced string" {
 
 ### string.Split(string) []string
 
-`Split` will return a string slice contains splitted receiver string using argument as separator
+`Split` will return a string slice whose elements are determined after
+splitting the receiver by the string token argument.  The token will not be
+present in the resulting slice elements.
 
 #### Arguments
 
-* `string` the separator
+* `string` the token you wish to use to split the receiver.
 
 #### Returns
 
-* string slice
+* The string slice containing parts of the original string as split by the token.
 
 #### Example
 
 ```Shell
-rule SplitString  "Do something when Fact.Text split first index is ABC" {
+rule SplitString "Do something when Fact.Text is prefixed by 'ABC,'" {
     when
         Fact.Text.Split(",")[0] == "ABC"
     then
@@ -667,16 +676,17 @@ rule SplitString  "Do something when Fact.Text split first index is ABC" {
 
 ### string.ToLower() string
 
-`ToLower` will return a string contains all lower case of the receiver
+`ToLower` will return a string whose contents are all lower case instances of
+characters in the receiver.
 
 #### Returns
 
-* string lower cased string
+* A new string that is a lower-cased version of the receiver.
 
 #### Example
 
 ```Shell
-rule LowerText  "Do something when Fact.Text lower case is abc" {
+rule LowerText "Do something when Fact.Text is equal to 'abc'" {
     when
         Fact.Text.ToLower() == "Abc".ToLower()
     then
@@ -686,16 +696,17 @@ rule LowerText  "Do something when Fact.Text lower case is abc" {
 
 ### string.ToUpper() string
 
-`ToUpper` will return a string contains all upper case of the receiver
+`ToUpper` will return a string whose contents are all upper case instances of
+characters in the receiver.
 
 #### Returns
 
-* string upper cased string
+* A new string that is an upper-cased version of the receiver.
 
 #### Example
 
 ```Shell
-rule UpperText  "Do something when Fact.Text upper case is ABC" {
+rule UpperText "Do something when Fact.Text is equal to 'ABC'" {
     when
         Fact.Text.ToUpper() == "Abc".ToUpper()
     then
@@ -705,16 +716,16 @@ rule UpperText  "Do something when Fact.Text upper case is ABC" {
 
 ### string.Trim() string
 
-`Trim` will return a string contains trimmed version of receiver
+`Trim` will return a string where the whitespace on either end of the string has been removed.
 
 #### Returns
 
-* string trimmed string
+* A string with the whitespace removed from the beginning and end.
 
 #### Example
 
 ```Shell
-rule TrimText  "Do something when Fact.Text upper case is ABC" {
+rule TrimText "Do something when Fact.Text is 'ABC'" {
     when
         Fact.Text == "  Abc   ".Trim().ToUpper()
     then
@@ -724,16 +735,16 @@ rule TrimText  "Do something when Fact.Text upper case is ABC" {
 
 ### array.Len() int
 
-`Len` will return array/slice's length.
+`Len` will return the length of the array/slice.
 
 #### Returns
 
-* The length of array/slice's receiver
+* The length of array/slice.
 
 #### Example
 
 ```Shell
-rule DoSomething  "Do something when array length is sufficient" {
+rule DoSomething "Do something when array length is sufficient" {
     when
         Fact.ChildrenArray.Len() > 2
     then
@@ -743,17 +754,16 @@ rule DoSomething  "Do something when array length is sufficient" {
 
 ### array.Append(val) 
 
-`Append` will append val into end of receiver array
+`Append` will append `val` onto the end of the receiver array.
 
 #### Arguments
 
-* `val` value to append
-
+* `val` value to have appended.
 
 #### Example
 
 ```Shell
-rule DoSomething  "Do something when array length is sufficient" {
+rule DoSomething "Add a new child when the array has less than 2 children" {
     when
         Fact.ChildrenArray.Len() < 2
     then
@@ -767,12 +777,12 @@ rule DoSomething  "Do something when array length is sufficient" {
 
 #### Returns
 
-* The length of map receiver
+* The length of map receiver.
 
 #### Example
 
 ```Shell
-rule DoSomething  "Do something when map length is sufficient" {
+rule DoSomething "Do something when map length is sufficient" {
    when
        Fact.ChildrenMap.Len() > 2
    then
@@ -782,12 +792,13 @@ rule DoSomething  "Do something when map length is sufficient" {
 
 ## Custom Functions
 
-All functions which are invocable from the DataContext is **Invocable** from within the rule,
-both in the "When" scope and the "Then" scope.
+All functions that are acessible from the DataContext are **Invocable** from
+within the rule, both in the "When" scope and the "Then" scope.
 
-Thus, you can create functions and have your Fact as receiver, and those function can be called from GRL.
+You can create functions and have your Fact as receiver, and those functions
+can be called from GRL.
 
-Assuming you have a struct with some functions.
+For example. Given:
 
 ```go
 type MyPoGo struct {
@@ -802,20 +813,18 @@ func (p *MyPoGo) AppendString(aString, subString string) string {
 }
 ```
 
-And add the struct into knowledge base
+You can make calls to the defined methods:
 
 ```go
 dctx := grule.context.NewDataContext()
 dctx.Add("Pogo", &MyPoGo{})
-```
 
-You can call the function within the rule
-
-```go
-when
-    Pogo.GetStringLength(some.variable) < 100
-then
-    some.variable = Pogo.AppendString(some.variable, "Groooling");
+rule "If it's possible to Groool, Groool" {
+    when
+        Pogo.GetStringLength(some.variable) < 100
+    then
+        some.variable = Pogo.AppendString(some.variable, "Groooling");
+}
 ```
 
 ### Variadic Function Arguments
@@ -834,7 +843,7 @@ func (p *MyPoGo) GetLongestString(strs... string) string {
 }
 ```
 
-This function can then be called from within a rule with zero or more values supplied for the variadic argument
+This function can then be called from within a rule with zero or more values supplied for the variadic argument.
 
 ```go
 when
@@ -869,10 +878,15 @@ then
     some.cost = Pogo.AddTax(come.cost, 0.15);
 ```
 
-### Important Thing you must know about Custom Function in Grule
+### The Laws of Custom Function in Grule
 
-When you make your own function to be called from the rule engine, you need to know the following rules.
+When you make your own function to be called from the rule engine, you need to know the following laws:
 
-1. The function must be visible. The convention for public functions should start with a capital letter. Private functions cannot be executed.
-2. The function must only return 1 type. Returning multiple variables from a function is not supported, the rule execution will fail if there are multiple return variables.
-3. The way number literals are treated in Grule's GRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.
+1. The function must be visible, meaning that functions must start with a
+   capital letter. Private functions cannot be executed.
+2. The function must only return one value type. Returning multiple values from
+   a function is not supported and the rule execution will fail if there are
+   multiple return values.
+3. The way number literals are treated in Grule's GRL is such that a
+   **integer** will always be taken as an `int64` type and a **real** as
+   `float64`, thus you must always define your numeric types accordingly.

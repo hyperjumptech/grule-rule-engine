@@ -1,5 +1,4 @@
-
-[![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+[![Gopher Holds The Rules](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
 
 __"Gopher Holds The Rules"__
@@ -35,7 +34,7 @@ end
 And Grule's GRL be like :
 
 ```go
-rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10  {
+rule SpeedUp "When testcar is speeding up we increase the speed." salience 10  {
     when
         TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
     then
@@ -48,7 +47,7 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 
 There isn't a better explanation than the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
 
-Taken from **TutorialsPoint** website (with slight modifications),
+Taken from the **TutorialsPoint** website (with slight modifications),
 
 **Grule** Rule Engine is a Production Rule System that uses the rule-based approach to implement an Expert System. Expert Systems are knowledge-based systems that use knowledge representations to process acquired knowledge into a knowledge base that can be used for reasoning.
 
@@ -73,7 +72,7 @@ Then
    <Take desired Action>
 ```
 
-The most important part of a Rule is its when part. If the **when** part is satisfied, the **then** part is triggered.
+The most important part of a Rule is its `when` part. If the **when** part is satisfied, the **then** part is triggered.
 
 ```go
 rule  <rule_name> <rule_description>
