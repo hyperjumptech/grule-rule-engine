@@ -4,7 +4,9 @@
 
 ---
 
-Grule rules can be represented in JSON form and translated for use by the rule engine into standard Grule syntax. The design of the JSON format is intended to offer a high level of flexability to suite the needs of the user.
+Grule rules can be represented in JSON form and translated for use by the rule
+engine into standard Grule syntax. The design of the JSON format is intended to
+offer a high level of flexibility to suit the needs of the user.
 
 The basic structure of a JSON rule is as follows:
 ```json
@@ -21,25 +23,35 @@ The basic structure of a JSON rule is as follows:
 
 ## Elements
 
-| Name       | Description                                                                                                             |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `name`     | The name of the rule. This field is required.                                                                           |
-| `desc`     | The description for the rule. If not set the rules description will be set to `""`                                      |
-| `salience` | The salience value for the rule. If this value is not set the saliance will default to 0                                |
-| `when`     | The when conndition for the rule. This field can either be a plain string value or a condition object (described below) |
-| `then`           | An array of then actions for the rule. Each aray element can be a plain string or a then object (described below)                                                                                                                        |
+| Name       | Description                                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| `name`     | The name of the rule. **Required**.                                                                                |
+| `desc`     | The description for the rule. **Optional**, default is `""`                                                        |
+| `salience` | The salience value for the rule. **Optional**, default is `0`                                                      |
+| `when`     | The conndition for the rule. This field can either be a plain string value or a condition object (described below) |
+| `then`     | An array of actions for the rule. Each element can be a plain string or an action object (described below)         |
 
 ## Condition Object
 
-In order to provide a great deal of flexability, the when condition of a rule can be broken down into individual components. This is particularly useful for structuring larger rules and supporting GUI applications used for rule editing and analysis.
+In order to provide a great deal of flexability, the `when` condition of a rule
+can be broken down into individual components. This is particularly useful for
+structuring larger rules and supporting GUI applications used for rule editing
+and analysis.
 
-Condition objects are parsed recursively, meaning that objects can be nested arbitarily to support even the most complex rules. Any time a condition object is expected by the parser, the user can choose to instead provide a constant string or numeric value which will be interpreted by the parser as raw input to be echoed into the output rule.
+Condition objects are parsed recursively, meaning that objects can be nested
+arbitarily to support even the most complex rules. Any time a condition object
+is expected by the parser, the user can choose to instead provide a constant
+string or numeric value which will be interpreted by the parser as raw input to
+be echoed into the output rule.
 
 Each condition object takes the following format:
+
 ```json
-{"operator":[x, y...]}
+{"operator":[x, y, ...]}
 ```
-where operator is one of the operators described below and x and y two or more condition objects or constants.
+
+where `operator` is one of the operators described below and `x` and `y` are
+two or more condition objects or constants.
 
 ### Operators
 
@@ -69,8 +81,8 @@ The following operators have slightly different behaviours than the standard ope
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `"set"`   | GRL = operator. This operator will set the value of the first operand to the output of the second. This can only be used in the `then` section of the rule.                                                                |
 | `"call"`  | GRL function call. The operator will call the funtion name specified in the first operand. If more then one operand is specififed, the subsequent operands are interpreted as arguments to be passed to the funciton call. |
-| `"obj"`   | Explicitly identifies a GRL object. Unkline other operators, this object takes the form of a simple key/value pair. For example: `{"obj": "TestCar.Speed"}`                                                                |
-| `"const"` | Explicitly identified a GRL constant. This opertor takes the same form as the `obj` operator                                                                                                                               |
+| `"obj"`   | Explicitly identifies a GRL object. Unlike other operators, this object takes the form of a simple key/value pair. For example: `{"obj": "TestCar.Speed"}`                                                                 |
+| `"const"` | Explicitly identifies a GRL constant. This opertor takes the same form as the `obj` operator                                                                                                                               |
 
 ### Supported Constants
 
@@ -86,14 +98,14 @@ The following constant types are supported:
 
 ## Then Actions
 
-The `then` actions are formed in the same way as the condition objects. The primary difference is that the root element for each then condition should be either a `set` or `call` operator.
+The `then` actions are formed in the same way as the condition objects. The primary difference is that the root element for each `then` condition should be either a `set` or `call` operator.
 
 # Example
 
 To demonstrate the JSON representation capabilities, the following example rule is to be converted to JSON syntax:
 
 ```
-rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 10 {
+rule SpeedUp "When testcar is speeding up we increase the speed." salience 10 {
     when
         TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed
     then
@@ -106,10 +118,11 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 ## Basic Representation
 
 The most basic representation of this rule in JSON is as follows:
+
 ```json
 {
     "name": "SpeedUp",
-    "desc": "When testcar is speeding up we keep increase the speed.",
+    "desc": "When testcar is speeding up we increase the speed.",
     "salience": 10,
     "when": "TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed",
     "then": [
@@ -120,15 +133,22 @@ The most basic representation of this rule in JSON is as follows:
 }
 ```
 
-This example presents the when and then conditions as raw input objects. This gives the greatest level of control over the output rule. In most cases the translator will output a rule which is an exact match to the original representaion, however in some cases the translator may insert brackets around expressions where it is not required depending on operator presedence. This should not affect the logical meaning of the rule.
+This example presents the `when` and `then` conditions as raw input objects.
+This gives the greatest level of control over the output rule. In most cases
+the translator will output a rule that is an exact match to the original
+representaion.  However in some cases the translator may insert brackets around
+expressions where it is not required depending on operator presedence. This
+should not affect the logical meaning of the rule.
 
 ## Expanded Representation
 
-The above rule can also be represented in a more explicit format by breaking down the when and then conditions to full object representation:
+The above rule can also be represented in a more explicit format by breaking
+down the `when` and `then` conditions to a full object representation:
+
 ```json
 {
     "name": "SpeedUp",
-    "desc": "When testcar is speeding up we keep increase the speed.",
+    "desc": "When testcar is speeding up we increase the speed.",
     "salience": 10,
     "when": {
        "and": [
@@ -144,30 +164,36 @@ The above rule can also be represented in a more explicit format by breaking dow
 }
 ```
 
-The translator will interpret the above rule and produce the same output as the example rule. This rule is much more verbose and can be easily parsed and formated for display or analysis purposes.
+The translator will interpret the above rule and produce the same output as the example rule. This rule is much more verbose and can be easily parsed and formatted for display or analysis purposes.
 
 ## Implicit Representation and String Escaping
 
-Despite being more verbose, the rule above still represent objects and boolean constants implictly. It is not necessary to wrap each object and constant inside of a `const` or `obj` operator because the translator will implicitly interpret the type of input. However, in some cases it can be advantagious to use the `const` or `obj` wrappers, the most notable of which is to enforce escaping rules on string constants that would not be applied to an implicilt string.
+Despite being more verbose, the rule above still represents objects and boolean constants implictly. It is not necessary to wrap each object and constant inside of a `const` or `obj` operator because the translator will implicitly interpret the type of input. However, in some cases it can be advantageous to use the `const` or `obj` wrappers, the most notable of which is to enforce escaping rules on string constants that would not be applied to an implicilt string.
 
-An example of string escaping behaviour shown in the rule above is in the `call` then action. A string is being passed as an argument to the function so in order to pass the argument as a raw object it is necessary for the user to wrap the constant in double quotes and escape them manually:
-`{"call": ["Log", "\"Speed increased\""]}`
+An example of string escaping behaviour shown in the rule above is in the `call` action. A string is being passed as an argument to the function, so in order to pass the argument as a raw object it is necessary for the user to wrap the constant in double quotes and escape them manually:
+
+```
+{"call": ["Log", "\"Speed increased\""]}
+```
 
 While this gives the correct output, it somewhat obfuscates the rule by making it unclear which level of escaping is applied to the output.
 
 If the escaping of the string is done incorrectly, the translator will generate an invalid rule output. In order to prevent this kind of error, it is preferable to wrap the constant in a `const` operator:
-`{"call": ["Log", {"const": "Speed increased"}]}`
 
-I this case, the translator will escape the constant string appropriately and ouput the constant correctly to the output rule.
+```
+{"call": ["Log", {"const": "Speed increased"}]}
+```
+
+I this case, the translator will escape the constant string appropriately and output the constant correctly to the output rule.
 
 ## Verbose Representation
 
-The most verbose possible version of the example rule in JSON syntax is as follows. Note that the additional `obj` and `const` operators here are completely unnecessary but can be useful for rendering engines or tools designed to edit or analyse rules in a visual form.
+The most verbose possible version of the example rule in JSON syntax is as follows. (Note that the additional `obj` and `const` operators here are completely unnecessary but can be useful for rendering engines or tools designed to edit or analyse rules in a visual form.)
 
 ```json
 {
     "name": "SpeedUp",
-    "desc": "When testcar is speeding up we keep increase the speed.",
+    "desc": "When testcar is speeding up we increase the speed.",
     "salience": 10,
     "when": {
        "and": [
@@ -185,7 +211,7 @@ The most verbose possible version of the example rule in JSON syntax is as follo
 
 # Loading JSON Rules
 
-JSON rules can be loaded from an underlying Resource or ResourceBundle provider using the functions `NewJSONResourceFromResource` and `NewJSONResourceBundleFromBundle` respectively. When the `Load()` function is called the underlying Resource is loaded and the rules are translated from JSON syntax to standard GRL syntax. As a result the translation functions can very easily be integrated into existing code.
+JSON rules can be loaded from an underlying Resource or ResourceBundle provider using the functions `NewJSONResourceFromResource` and `NewJSONResourceBundleFromBundle` respectively. When the `Load()` function is called, the underlying Resource is loaded and the rules are translated from JSON syntax to standard GRL syntax. As a result the translation functions can very easily be integrated into existing code.
 
 ```go
 f, err := os.Open("rules.json")
