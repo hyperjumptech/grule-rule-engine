@@ -412,6 +412,79 @@ rule DailyCheckBuild "Execute build at 6.30AM and 6.30PM." {
 }
 ```
 
+## Math Functions
+
+All the functions bellow is a wrapper to their golang math functions.
+You should read Golang math page to know how to use each function.
+
+Unlike go, you don't have to use the `math.` prefix
+to use them in your GRL.
+
+Use them like normal built in function.
+
+```go
+when 
+    Max(Fact.A, Fact.C, Fact.B) > 10
+then
+    Fact.X = Acosh(Fact.C);
+```
+
+- Max(vals ...float64) float64 
+- Min(vals ...float64) float64 
+- Abs(x float64) float64 
+- Acos(x float64) float64 
+- Acosh(x float64) float64 
+- Asin(x float64) float64 
+- Asinh(x float64) float64 
+- Atan(x float64) float64 
+- Atan2(y, x float64) float64 
+- Atanh(x float64) float64 
+- Cbrt(x float64) float64 
+- Ceil(x float64) float64 
+- Copysign(x, y float64) float64 
+- Cos(x float64) float64 
+- Cosh(x float64) float64 
+- Dim(x, y float64) float64 
+- Erf(x float64) float64 
+- Erfc(x float64) float64 
+- Erfcinv(x float64) float64 
+- Erfinv(x float64) float64 
+- Exp(x float64) float64 
+- Exp2(x float64) float64 
+- Expm1(x float64) float64 
+- Float64bits(f float64) uint64 
+- Float64frombits(b uint64) float64 
+- Floor(x float64) float64 
+- Gamma(x float64) float64 
+- Hypot(p, q float64) float64 
+- Ilogb(x float64) int 
+- IsInf(f float64, sign int64) bool 
+- IsNaN(f float64) (is bool) 
+- J0(x float64) float64 
+- J1(x float64) float64 
+- Jn(n int64, x float64) float64 
+- Ldexp(frac float64, exp int64) float64 
+- MathLog(x float64) float64 
+- Log10(x float64) float64 
+- Log1p(x float64) float64 
+- Log2(x float64) float64 
+- Logb(x float64) float64 
+- Mod(x, y float64) float64 
+- NaN() float64 
+- Pow(x, y float64) float64 
+- Pow10(n int64) float64 
+- Remainder(x, y float64) float64 
+- Round(x float64) float64 
+- RoundToEven(x float64) float64 
+- Signbit(x float64) bool 
+- Sin(x float64) float64 
+- Sinh(x float64) float64 
+- Sqrt(x float64) float64 
+- Tan(x float64) float64 
+- Tanh(x float64) float64 
+- Trunc(x float64) float64 
+
+
 ## Constant Functions
 
 The following functions can be called from within GRL as long as the receiver

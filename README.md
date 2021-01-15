@@ -31,8 +31,8 @@ rule "SpeedUp"
     then
         $TestCar.setSpeed($TestCar.Speed + $TestCar.SpeedIncrement);
         update($TestCar);
-        $DistanceRecord.setTotalDistance($DistanceRecord.getTotalDistance() + $TestCar.Speed)
-        update($DistanceRecord)
+        $DistanceRecord.setTotalDistance($DistanceRecord.getTotalDistance() + $TestCar.Speed);
+        update($DistanceRecord);
 end
 ```
 
