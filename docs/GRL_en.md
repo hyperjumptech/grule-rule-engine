@@ -4,10 +4,11 @@
 
 ---
 
-The **GRL** is a DSL (Domain Specific Language) designed for Grule. It's a simplified language
-to be used for defining rule evaluation criterias and actions to be executed if the criteria(s) are met.
+The **GRL** is a DSL (Domain Specific Language) designed for Grule. It's a
+simplified language to be used for defining rule condition criteria and actions
+to be executed if the criteria are met.
 
-Generally, the language have the following structure :
+The language has the following structure:
 
 ```Shell
 rule <RuleName> <RuleDescription> [salience <priority>] {
@@ -18,24 +19,33 @@ rule <RuleName> <RuleDescription> [salience <priority>] {
 }
 ```
 
-**RuleName** identifies a specific rule. The name should be unique in the entire knowledge base, consist of one word and
-it should not contains a white-space.
+**RuleName**: Identifies a specific rule. The name must be unique in the entire
+knowledge base, consist of one word and it must not contain white space.
 
-**RuleDescription** describes the rule. The description should be enclosed with a double-quote.
+**RuleDescription**: Describes the rule for human consumption. The description
+should be enclosed in double quotes.
 
-**Salience** defines the importance of the rule. It's an optional rule configuration, and by default, when you don't specify them, all rules will have the salience value of 0 (zero).
-The lower the value, the less important the rule. Whenever multiple rules become a candidate for execution, the highest salience rule will be executed first. You may define negative values for the salience to make the salience even lower. Like any implementation of Rule-Engine, there are no definitive algorithm to specify which rule to be execute in case of conflicting candidate, the engine may run which ever they like.
-Salience is one way of hinting to the rule engine which rules have more importance relatively.
+**Salience** (optional, default 0): Defines the importance of the rule. Lower
+values indicate rules of lower priority. The salience value is used to specify a
+priority-sorted order when multiple rules are encountered. Salience will accept
+negative values, so you may wish to use those to mark rules that you barely even
+care about. Rule engines are *declarative* so you can't be guaranteed in which
+order your rules will be evaluated.  As such, consider `salience` to be a *hint*
+to the engine that helps it decide what to do in the event of a conflict.
 
-**Boolean Expression** is an expression that will be evaluated by the rule engine to identify if that specific rule
-is a candidate for execution with the current facts.
+**Boolean Expression**: A predicate expression that will be evaluated by the
+rule engine to identify whether or not a specific rule's action is a candidate
+for execution with the current facts.
 
-**Assignment or Operation Expression** contains list of expressions (each expression should be ended with ";" character).
-The expression are designed to modify the current fact values, making calculation, make some logging, etc.
+**Assignment or Operation Expression**: This is the action to be taken should
+the rule evaluate to `true`. You are not limited to a single expression and can
+supply a list of them, separated by the `;` character. The action statements are
+meant to modify the current fact values, make calculations, log some statements,
+etc...
 
 ### Boolean Expression
 
-Boolean expression comes naturally for java or golang developer in GRL.
+A boolean expression should be familiar to most, if not all programmers.
 
 ```go
 when
@@ -47,42 +57,42 @@ then
 
 ### Constants and Literals
 
-| Literal | Description                                                            | Example                          |
-| ------- | ---------------------------------------------------------------------- | -------------------------------- |
-| String  | Hold string literal, enclosed a string with double quote symbol &quot; or a single quote ' | "This is a string" or 'this is a string' |
-| Decimal | Hold a decimal value, may preceded with negative symbol -             | `1` or `34` or `42344` or `-553` |
-| Real    | Hold a real value                                                      | `234.4553`, `-234.3` , `314E-2`, `.32` , `12.32E12`  |
-| Boolean | Hold a boolean value                                                   | `true`, `TRUE`, `False`          |
+| Literal | Description                                                                | Example                                            |
+| ------- | -------------------------------------------------------------------------- | -------------------------------------------------- |
+| String  | Holds a string literal, enclosed with double (&quot;) or single (') quotes | "This is a string" or 'this is a string'           |
+| Integer | Holds an integer value and may preceded with negative symbol -             | `1` or `34` or `42344` or `-553`                   |
+| Real    | Holds a real value                                                         | `234.4553`, `-234.3`, `314E-2`, `.32`, `12.32E12`  |
+| Boolean | Holds a boolean value                                                      | `true`, `TRUE`, `False`                            |
 
-More example here : [GRL Literals](GRL_Literals_en.md)
+More examples can be found at [GRL Literals](GRL_Literals_en.md).
 
-Note: Strings are escaped following the same rules used for standard Go strings. Backtick strings are not supported.
-
+Note: Special characters in strings must be escaped following the same rules
+used for strings in Go.  However, backtick strings are not supported.
 
 ### Operators supported 
 
-| Type | Operator                                                            |
-| ------- | ---------------------------------------------------------------------- |
-| Math |  `+`, `-`, `/`, `*`, `%` |
-| Bit-wise operators | `\|`, `&` |
-| Logical operators | `&&` and `\|\|` |
+| Type                 | Operator                          |
+| -------------------- | --------------------------------- |
+| Math                 |  `+`, `-`, `/`, `*`, `%`          |
+| Bit-wise operators   | `\|`, `&`                         |
+| Logical operators    | `&&`, `\|\|`                      |
 | Comparison operators | `<`, `<=`, `>`, `>=`, `==`, `!=`  |
 
 ### Operator precedence
 
-Grule follows operator precedence in Golang.
+Grule follows operator precedence in Go.
 
-| Precedence |  Operator |
-| ---------- | --------- |
-|    5       |      `*` , `/` , `%` , `&` |
-|    4       |      `+` , `-` , `\|`     |
-|    3       |      `==` , `!=` , `<` , `<=` ,`>` , `>=`  |
-|    2       |      `&&`  |
-|    1       |      `\|\|`  |
+| Precedence | Operator                         |
+| ---------- | -------------------------------- |
+|    5       | `*`, `/`, `%`, `&`               |
+|    4       | `+`, `-`, `\|`                   |
+|    3       | `==`, `!=`, `<`, `<=`, `>`, `>=` |
+|    2       | `&&`                             |
+|    1       | `\|\|`                           |
 
 ### Comments
 
-You can always put a comment inside your GRL script. Such as :
+Comments also follow the standard Go format.
 
 ```go
 // This is a comment
@@ -97,9 +107,9 @@ You can always put a comment inside your GRL script. Such as :
 
 ### Array/Slice and Map
 
-Since version 1.6.0, Grule support accessing fact in array/slice or map.
+Since version 1.6.0, Grule supports accessing facts in array/slice or map.
 
-Suppose you have a fact structure like the following :
+Suppose you have a fact structure like the following:
 
 ```go
 type MyFact struct {
@@ -110,7 +120,7 @@ type MyFact struct {
 }
 ```
 
-You can always evaluate those slice and map from your rule such as
+You can evaluate those slices and maps from your rule with:
 
 ```go
     when 
@@ -122,12 +132,12 @@ You can always evaluate those slice and map from your rule such as
        ...
 ```
 
-Rule execution will fail if your rule is trying to access array element
-that beyond the fact's capacity.
+Rule execution will panic if your rule tries to access an array element that
+is out of bounds.
 
 #### Assigning values into Array/Slice and Map
 
-You can always set an array value if the index you specify is valid.
+You can set an array value if the index you specify is valid.
 
 ```go
    then
@@ -136,12 +146,13 @@ You can always set an array value if the index you specify is valid.
       Fact.AnotherMap[Fact.SomeFunction()] = "Another Value";
 ```
 
-There are a couple functions you can use to work with array/slice and map in the [Function page](Function_en.md)
+There are a couple of functions you can use to work with array/slice and map.
+Those can be found at [Function page](Function_en.md).
 
 ### Negation
 
-A negation symbol `!` is supported by GRL in addition to NEQ `!=` symbol.
-Its to be used in front of a boolean expression or expression atom.
+A unary negation symbol `!` is supported by GRL in addition to NEQ `!=` symbol.
+It is to be used in front of a boolean expression or expression atom.
 
 For example in expression atom:
 
@@ -164,22 +175,22 @@ then
 
 ### Function call
 
-From your Rule, you can always call any visible functions your fact have. As long as they're visible and have no or max 1 return value.
-For example:
+Any visible function can be called from your rule so long as they return 0 or 1
+value.  For example:
 
 ```go
     when
-        Fact.Function() == "text" ||
-        Fact.Function("arg") == "text" ||
-        Fact.Function(Fact.Field, true)
+        Fact.FunctionA() == "text" ||
+        Fact.FunctionB("arg") == "text" ||
+        Fact.FunctionC(Fact.Field, true)
     then
         Fact.CallFunction();
         Fact.Value = Fact.CallFunction();
         ...
 ```
 
-In version 1.6.0, Grule can chain function return value.
-For example;
+In version 1.6.0, Grule can chain function calls and value accessors.  For
+example;
 
 ```go
     when
@@ -191,8 +202,8 @@ For example;
         ...
 ```
 
-Also introduced in 1.6.0, constants value may have built in functions to manipulated them.
-For example;
+Also introduced in 1.6.0, you can call functions on literatl constants.  For
+example:
 
 ```go
     when
@@ -201,7 +212,7 @@ For example;
         Fact.Result = Fact.ReturnStringFunc().Trim().ToLower();
 ```
 
-List of these constant functions can be found in the [Function Page](Function_en.md).
+For a list of available functions, consult [Function Page](Function_en.md).
 
 #### Examples
 
