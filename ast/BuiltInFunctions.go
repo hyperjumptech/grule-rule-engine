@@ -16,6 +16,7 @@ package ast
 
 import (
 	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"math"
 	"reflect"
 	"strings"
 	"time"
@@ -169,4 +170,294 @@ func (gf *BuiltInFunctions) IsTimeAfter(time, after time.Time) bool {
 // TimeFormat will format a time according to format layout.
 func (gf *BuiltInFunctions) TimeFormat(time time.Time, layout string) string {
 	return time.Format(layout)
+}
+
+// Max will pick the biggest of value in the arguments
+func (gf *BuiltInFunctions) Max(vals ...float64) float64 {
+	val := float64(0)
+	for i, v := range vals {
+		if i == 0 {
+			val = v
+		} else {
+			if v > val {
+				val = v
+			}
+		}
+	}
+	return val
+}
+
+// Min will pick the smallest of value in the arguments
+func (gf *BuiltInFunctions) Min(vals ...float64) float64 {
+	val := float64(0)
+	for i, v := range vals {
+		if i == 0 {
+			val = v
+		} else {
+			if v < val {
+				val = v
+			}
+		}
+	}
+	return val
+}
+
+// Abs is a wrapper function for math.Abs function
+func (gf *BuiltInFunctions) Abs(x float64) float64 {
+	return math.Abs(x)
+}
+
+// Acos is a wrapper function for math.Acos function
+func (gf *BuiltInFunctions) Acos(x float64) float64 {
+	return math.Acos(x)
+}
+
+// Acosh is a wrapper function for math.Acosh function
+func (gf *BuiltInFunctions) Acosh(x float64) float64 {
+	return math.Acosh(x)
+}
+
+// Asin is a wrapper function for math.Asin function
+func (gf *BuiltInFunctions) Asin(x float64) float64 {
+	return math.Asin(x)
+}
+
+// Asinh is a wrapper function for math.Asinh function
+func (gf *BuiltInFunctions) Asinh(x float64) float64 {
+	return math.Asinh(x)
+}
+
+// Atan is a wrapper function for math.Atan function
+func (gf *BuiltInFunctions) Atan(x float64) float64 {
+	return math.Atan(x)
+}
+
+// Atan2 is a wrapper function for math.Atan2 function
+func (gf *BuiltInFunctions) Atan2(y, x float64) float64 {
+	return math.Atan2(y, x)
+}
+
+// Atanh is a wrapper function for math.Atanh function
+func (gf *BuiltInFunctions) Atanh(x float64) float64 {
+	return math.Atanh(x)
+}
+
+// Cbrt is a wrapper function for math.Cbrt function
+func (gf *BuiltInFunctions) Cbrt(x float64) float64 {
+	return math.Cbrt(x)
+}
+
+// Ceil is a wrapper function for math.Ceil function
+func (gf *BuiltInFunctions) Ceil(x float64) float64 {
+	return math.Ceil(x)
+}
+
+// Copysign is a wrapper function for math.Copysign function
+func (gf *BuiltInFunctions) Copysign(x, y float64) float64 {
+	return math.Copysign(x, y)
+}
+
+// Cos is a wrapper function for math.Cos function
+func (gf *BuiltInFunctions) Cos(x float64) float64 {
+	return math.Cos(x)
+}
+
+// Cosh is a wrapper function for math.Cosh function
+func (gf *BuiltInFunctions) Cosh(x float64) float64 {
+	return math.Cosh(x)
+}
+
+// Dim is a wrapper function for math.Dim function
+func (gf *BuiltInFunctions) Dim(x, y float64) float64 {
+	return math.Dim(x, y)
+}
+
+// Erf is a wrapper function for math.Erf function
+func (gf *BuiltInFunctions) Erf(x float64) float64 {
+	return math.Erf(x)
+}
+
+// Erfc is a wrapper function for math.Erfc function
+func (gf *BuiltInFunctions) Erfc(x float64) float64 {
+	return math.Erfc(x)
+}
+
+// Erfcinv is a wrapper function for math.Erfcinv function
+func (gf *BuiltInFunctions) Erfcinv(x float64) float64 {
+	return math.Erfcinv(x)
+}
+
+// Erfinv is a wrapper function for math.Erfinv function
+func (gf *BuiltInFunctions) Erfinv(x float64) float64 {
+	return math.Erfinv(x)
+}
+
+// Exp is a wrapper function for math.Exp function
+func (gf *BuiltInFunctions) Exp(x float64) float64 {
+	return math.Exp(x)
+}
+
+// Exp2 is a wrapper function for math.Exp2 function
+func (gf *BuiltInFunctions) Exp2(x float64) float64 {
+	return math.Exp2(x)
+}
+
+// Expm1 is a wrapper function for math.Expm1 function
+func (gf *BuiltInFunctions) Expm1(x float64) float64 {
+	return math.Expm1(x)
+}
+
+// Float64bits is a wrapper function for math.Float64bits function
+func (gf *BuiltInFunctions) Float64bits(f float64) uint64 {
+	return math.Float64bits(f)
+}
+
+// Float64frombits is a wrapper function for math.Float64frombits function
+func (gf *BuiltInFunctions) Float64frombits(b uint64) float64 {
+	return math.Float64frombits(b)
+}
+
+// Floor is a wrapper function for math.Floor function
+func (gf *BuiltInFunctions) Floor(x float64) float64 {
+	return math.Floor(x)
+}
+
+// Gamma is a wrapper function for math.Gamma function
+func (gf *BuiltInFunctions) Gamma(x float64) float64 {
+	return math.Gamma(x)
+}
+
+// Hypot is a wrapper function for math.Hypot function
+func (gf *BuiltInFunctions) Hypot(p, q float64) float64 {
+	return math.Hypot(p, q)
+}
+
+// Ilogb is a wrapper function for math.Ilogb function
+func (gf *BuiltInFunctions) Ilogb(x float64) int {
+	return math.Ilogb(x)
+}
+
+// IsInf is a wrapper function for math.IsInf function
+func (gf *BuiltInFunctions) IsInf(f float64, sign int64) bool {
+	return math.IsInf(f, int(sign))
+}
+
+// IsNaN is a wrapper function for math.IsNaN function
+func (gf *BuiltInFunctions) IsNaN(f float64) (is bool) {
+	return math.IsNaN(f)
+}
+
+// J0 is a wrapper function for math.J0 function
+func (gf *BuiltInFunctions) J0(x float64) float64 {
+	return math.J0(x)
+}
+
+// J1 is a wrapper function for math.J1 function
+func (gf *BuiltInFunctions) J1(x float64) float64 {
+	return math.J1(x)
+}
+
+// Jn is a wrapper function for math.Jn function
+func (gf *BuiltInFunctions) Jn(n int64, x float64) float64 {
+	return math.Jn(int(n), x)
+}
+
+// Ldexp is a wrapper function for math.Ldexp function
+func (gf *BuiltInFunctions) Ldexp(frac float64, exp int64) float64 {
+	return math.Ldexp(frac, int(exp))
+}
+
+// MathLog is a wrapper function for math.MathLog function
+func (gf *BuiltInFunctions) MathLog(x float64) float64 {
+	return math.Log(x)
+}
+
+// Log10 is a wrapper function for math.Log10 function
+func (gf *BuiltInFunctions) Log10(x float64) float64 {
+	return math.Log10(x)
+}
+
+// Log1p is a wrapper function for math.Log1p function
+func (gf *BuiltInFunctions) Log1p(x float64) float64 {
+	return math.Log1p(x)
+}
+
+// Log2 is a wrapper function for math.Log2 function
+func (gf *BuiltInFunctions) Log2(x float64) float64 {
+	return math.Log2(x)
+}
+
+// Logb is a wrapper function for math.Logb function
+func (gf *BuiltInFunctions) Logb(x float64) float64 {
+	return math.Logb(x)
+}
+
+// Mod is a wrapper function for math.Mod function
+func (gf *BuiltInFunctions) Mod(x, y float64) float64 {
+	return math.Mod(x, y)
+}
+
+// NaN is a wrapper function for math.NaN function
+func (gf *BuiltInFunctions) NaN() float64 {
+	return math.NaN()
+}
+
+// Pow is a wrapper function for math.Pow function
+func (gf *BuiltInFunctions) Pow(x, y float64) float64 {
+	return math.Pow(x, y)
+}
+
+// Pow10 is a wrapper function for math.Pow10 function
+func (gf *BuiltInFunctions) Pow10(n int64) float64 {
+	return math.Pow10(int(n))
+}
+
+// Remainder is a wrapper function for math.Remainder function
+func (gf *BuiltInFunctions) Remainder(x, y float64) float64 {
+	return math.Remainder(x, y)
+}
+
+// Round is a wrapper function for math.Round function
+func (gf *BuiltInFunctions) Round(x float64) float64 {
+	return math.Round(x)
+}
+
+// RoundToEven is a wrapper function for math.RoundToEven function
+func (gf *BuiltInFunctions) RoundToEven(x float64) float64 {
+	return math.RoundToEven(x)
+}
+
+// Signbit is a wrapper function for math.Signbit function
+func (gf *BuiltInFunctions) Signbit(x float64) bool {
+	return math.Signbit(x)
+}
+
+// Sin is a wrapper function for math.Sin function
+func (gf *BuiltInFunctions) Sin(x float64) float64 {
+	return math.Sin(x)
+}
+
+// Sinh is a wrapper function for math.Sinh function
+func (gf *BuiltInFunctions) Sinh(x float64) float64 {
+	return math.Sinh(x)
+}
+
+// Sqrt is a wrapper function for math.Sqrt function
+func (gf *BuiltInFunctions) Sqrt(x float64) float64 {
+	return math.Sqrt(x)
+}
+
+// Tan is a wrapper function for math.Tan function
+func (gf *BuiltInFunctions) Tan(x float64) float64 {
+	return math.Tan(x)
+}
+
+// Tanh is a wrapper function for math.Tanh function
+func (gf *BuiltInFunctions) Tanh(x float64) float64 {
+	return math.Tanh(x)
+}
+
+// Trunc is a wrapper function for math.Trunc function
+func (gf *BuiltInFunctions) Trunc(x float64) float64 {
+	return math.Trunc(x)
 }
