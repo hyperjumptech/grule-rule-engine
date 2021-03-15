@@ -8,7 +8,7 @@
 
 __"Gopher Holds The Rules"__
 
-# Grule
+# Grule-Rule-Engine
 
 ```go
 import "github.com/hyperjumptech/grule-rule-engine"
@@ -176,3 +176,14 @@ Yes. We need contributors to make Grule even better and useful to the Open Sourc
 
 If you really want to help us, simply `Fork` the project and apply for Pull Request.
 Please read our [Contribution Manual](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCTS.md)
+
+# Featured Projects Or Products
+
+- **HYPERJUMP tech** ( [https://hyperjump.tech](https://hyperjump.tech) )
+
+<i>If your company or project is using Grule right now
+and don't mind tobe featured here, I would glad to add a name, logo (if you have one) and a link to your site.
+While it surely help us to know our users, your product might gain awareness by those who passing by.
+Please submit a ["Feature me" issue](https://github.com/hyperjumptech/grule-rule-engine/issues/new), 
+stating the company/product name, a link to the page and/or logo in the issue's description. </i>
+
