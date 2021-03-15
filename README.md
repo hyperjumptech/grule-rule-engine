@@ -179,9 +179,13 @@ Please read our [Contribution Manual](CONTRIBUTING.md) and [Code of Conduct](COD
 
 # Featured Projects Or Products
 
+<div style="background: black; padding: 3px;">
+<a href="https://hyperjump.tech"><img width="200px" src="https://hyperjump.tech/images/hyperjump-white.png" style="background: black"></a>
+</div><br>
 
-[![Gopheer Holds The Rule](https://hyperjump.tech/images/hyperjump-white.png)](https://hyperjump.tech)<br>
 **HYPERJUMP tech** ( [https://hyperjump.tech](https://hyperjump.tech) )
+
+<br>
 
 <i>If your company or project is using Grule right now
 and don't mind tobe featured here, I would glad to add a name, logo (if you have one) and a link to your site.
