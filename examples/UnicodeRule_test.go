@@ -41,12 +41,12 @@ func TestUnicodeTutorial(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 
 	drls := `
-rule CheckValues "Check the default values" salience 10 {
+rule ChĕckValuĕs "Check the default values" salience 10 {
     when 
         MḞ.IntAttribute == 123 && MḞ.StringǍttribute == "Some string vǍlue"
     then
         MḞ.WhatToSay = MḞ.GetẀhatToSay("HellǑ Grule");
-		Retract("CheckValues");
+		Retract("ChĕckValuĕs");
 }
 `
 	byteArr := pkg.NewBytesResource([]byte(drls))
