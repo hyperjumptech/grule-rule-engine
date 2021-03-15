@@ -180,7 +180,7 @@ Please read our [Contribution Manual](CONTRIBUTING.md) and [Code of Conduct](COD
 # Featured Projects Or Products
 
 <div style="background-color: black; padding: 3px;">
-<a href="https://hyperjump.tech"><img width="200px" src="https://hyperjump.tech/images/hyperjump-white.png"></a>
+<a href="https://hyperjump.tech" style="background-color: black;"><img width="200px" src="https://hyperjump.tech/images/hyperjump-white.png" style="background-color: black;"></a>
 </div><br>
 
 **HYPERJUMP tech** ( [https://hyperjump.tech](https://hyperjump.tech) )
