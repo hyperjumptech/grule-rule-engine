@@ -89,6 +89,10 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 // once store, the binary stream can be read using LoadKnowledgeBaseFromReader function.
 // This should hopefully speedup loading huge ruleset by storing and reading them
 // without having to parse the GRL.
+//
+// The stored binary file is greatly increased (easily 10x fold) due to lots of generated keys for AST Nodes
+// that was also saved. To overcome this, the use of archive/zip package for Readers and Writers could cut down the
+// binary size quite a lot.
 func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, version string) error {
 	kb := lib.GetKnowledgeBase(name, version)
 	cat := kb.MakeCatalog()
