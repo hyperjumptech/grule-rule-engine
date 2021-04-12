@@ -38,6 +38,26 @@ type ArgumentList struct {
 	Arguments []*Expression
 }
 
+func (e *ArgumentList) MakeCatalog(cat *Catalog) {
+	meta := &ArgumentListMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+		ArgumentASTIDs: nil,
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Arguments != nil && len(e.Arguments) > 0 {
+			meta.ArgumentASTIDs = make([]string, len(e.Arguments))
+			for i, v := range e.Arguments {
+				meta.ArgumentASTIDs[i] = v.AstID
+				v.MakeCatalog(cat)
+			}
+		}
+	}
+}
+
 // Clone will clone this ArgumentList. The new clone will have an identical structure
 func (e *ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 	clone := &ArgumentList{

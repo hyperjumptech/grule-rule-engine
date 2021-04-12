@@ -61,4 +61,5 @@ type Node interface {
 	GetGrlText() string
 	GetSnapshot() string
 	SetGrlText(grlText string)
+	MakeCatalog(cat *Catalog)
 }

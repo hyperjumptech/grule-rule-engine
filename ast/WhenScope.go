@@ -38,6 +38,22 @@ type WhenScope struct {
 	Expression *Expression
 }
 
+func (e *WhenScope) MakeCatalog(cat *Catalog) {
+	meta := &WhenScopeMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Expression != nil {
+			meta.ExpressionID = e.Expression.AstID
+			e.Expression.MakeCatalog(cat)
+		}
+	}
+}
+
 // WhenScopeReceiver must be implemented by AST object that stores WhenScope
 type WhenScopeReceiver interface {
 	AcceptWhenScope(whenScope *WhenScope) error

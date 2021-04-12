@@ -44,6 +44,27 @@ type Variable struct {
 	Value     reflect.Value
 }
 
+func (e *Variable) MakeCatalog(cat *Catalog) {
+	meta := &VariableMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Variable != nil {
+			meta.VariableID = e.Variable.AstID
+			e.Variable.MakeCatalog(cat)
+		}
+		if e.ArrayMapSelector != nil {
+			meta.ArrayMapSelectorID = e.ArrayMapSelector.AstID
+			e.ArrayMapSelector.MakeCatalog(cat)
+		}
+		meta.Name = e.Name
+	}
+}
+
 // Clone will clone this Variable. The new clone will have an identical structure
 func (e *Variable) Clone(cloneTable *pkg.CloneTable) *Variable {
 	clone := &Variable{

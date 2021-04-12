@@ -36,6 +36,26 @@ type ThenExpression struct {
 	ExpressionAtom *ExpressionAtom
 }
 
+func (e *ThenExpression) MakeCatalog(cat *Catalog) {
+	meta := &ThenExpressionMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Assignment != nil {
+			meta.AssignmentID = e.Assignment.AstID
+			e.Assignment.MakeCatalog(cat)
+		}
+		if e.ExpressionAtom != nil {
+			meta.ExpressionAtomID = e.ExpressionAtom.AstID
+			e.ExpressionAtom.MakeCatalog(cat)
+		}
+	}
+}
+
 // ThenExpressionReceiver must be implemented by any AST object that will store a Then expression
 type ThenExpressionReceiver interface {
 	AcceptThenExpression(expr *ThenExpression) error

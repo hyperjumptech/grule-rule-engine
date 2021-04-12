@@ -81,6 +81,26 @@ type KnowledgeBase struct {
 	RuleEntries   map[string]*RuleEntry
 }
 
+func (e *KnowledgeBase) MakeCatalog() *Catalog {
+	catalog := &Catalog{
+		KnowledgeBaseName:               e.Name,
+		KnowledgeBaseVersion:            e.Version,
+		Data:                            nil,
+		MemoryName:                      "",
+		MemoryVersion:                   "",
+		MemoryVariableSnapshotMap:       nil,
+		MemoryExpressionSnapshotMap:     nil,
+		MemoryExpressionAtomSnapshotMap: nil,
+		MemoryExpressionVariableMap:     nil,
+		MemoryExpressionAtomVariableMap: nil,
+	}
+	for _, v := range e.RuleEntries {
+		v.MakeCatalog(catalog)
+	}
+	e.WorkingMemory.MakeCatalog(catalog)
+	return catalog
+}
+
 // IsIdentical will validate if two KnoledgeBase is identical. Used to validate if the origin and clone is identical.
 func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
 	return e.GetSnapshot() == that.GetSnapshot()

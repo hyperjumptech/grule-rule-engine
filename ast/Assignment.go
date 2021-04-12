@@ -42,6 +42,31 @@ type Assignment struct {
 	IsMulAssign   bool
 }
 
+func (e *Assignment) MakeCatalog(cat *Catalog) {
+	meta := &AssigmentMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Variable != nil {
+			meta.VariableID = e.Variable.AstID
+			e.Variable.MakeCatalog(cat)
+		}
+		if e.Expression != nil {
+			meta.ExpressionID = e.Expression.AstID
+			e.Expression.MakeCatalog(cat)
+		}
+		meta.IsAssign = e.IsAssign
+		meta.IsPlusAssign = e.IsPlusAssign
+		meta.IsMinusAssign = e.IsMinusAssign
+		meta.IsDivAssign = e.IsDivAssign
+		meta.IsMulAssign = e.IsMulAssign
+	}
+}
+
 // AssignmentReceiver must be implemented by all other ast graph that uses an assigment expression
 type AssignmentReceiver interface {
 	AcceptAssignment(assignment *Assignment) error
