@@ -43,11 +43,47 @@ type ExpressionAtom struct {
 	Variable         *Variable
 	Negated          bool
 	ExpressionAtom   *ExpressionAtom
-	Value            reflect.Value
-	ValueNode        model.ValueNode
 	ArrayMapSelector *ArrayMapSelector
 
+	Value     reflect.Value
+	ValueNode model.ValueNode
+
 	Evaluated bool
+}
+
+// MakeCatalog will create a catalog entry from ExpressionAtom node.
+func (e *ExpressionAtom) MakeCatalog(cat *Catalog) {
+	meta := &ExpressionAtomMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Constant != nil {
+			meta.ConstantID = e.Constant.AstID
+			e.Constant.MakeCatalog(cat)
+		}
+		if e.FunctionCall != nil {
+			meta.FunctionCallID = e.FunctionCall.AstID
+			e.FunctionCall.MakeCatalog(cat)
+		}
+		if e.Variable != nil {
+			meta.VariableID = e.Variable.AstID
+			e.Variable.MakeCatalog(cat)
+		}
+		if e.ExpressionAtom != nil {
+			meta.ExpressionAtomID = e.ExpressionAtom.AstID
+			e.ExpressionAtom.MakeCatalog(cat)
+		}
+		if e.ArrayMapSelector != nil {
+			meta.ArrayMapSelectorID = e.ArrayMapSelector.AstID
+			e.ArrayMapSelector.MakeCatalog(cat)
+		}
+		meta.VariableName = e.VariableName
+		meta.Negated = e.Negated
+	}
 }
 
 // ExpressionAtomReceiver contains function to be implemented by other AST graph to receive an ExpressionAtom AST graph

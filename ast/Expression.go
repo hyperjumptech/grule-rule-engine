@@ -81,6 +81,37 @@ type Expression struct {
 	Evaluated bool
 }
 
+// MakeCatalog will create a catalog entry from Expression node.
+func (e *Expression) MakeCatalog(cat *Catalog) {
+	meta := &ExpressionMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.LeftExpression != nil {
+			meta.LeftExpressionID = e.LeftExpression.AstID
+			e.LeftExpression.MakeCatalog(cat)
+		}
+		if e.RightExpression != nil {
+			meta.RightExpressionID = e.RightExpression.AstID
+			e.RightExpression.MakeCatalog(cat)
+		}
+		if e.SingleExpression != nil {
+			meta.SingleExpressionID = e.SingleExpression.AstID
+			e.SingleExpression.MakeCatalog(cat)
+		}
+		if e.ExpressionAtom != nil {
+			meta.ExpressionAtomID = e.ExpressionAtom.AstID
+			e.ExpressionAtom.MakeCatalog(cat)
+		}
+		meta.Operator = e.Operator
+		meta.Negated = e.Negated
+	}
+}
+
 // Clone will clone this Expression. The new clone will have an identical structure
 func (e *Expression) Clone(cloneTable *pkg.CloneTable) *Expression {
 	clone := &Expression{

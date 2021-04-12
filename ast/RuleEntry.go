@@ -47,6 +47,30 @@ type RuleEntry struct {
 	Retracted bool
 }
 
+// MakeCatalog will create a catalog entry from RuleEntry node.
+func (e *RuleEntry) MakeCatalog(cat *Catalog) {
+	meta := &RuleEntryMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.WhenScope != nil {
+			meta.WhenScopeID = e.WhenScope.AstID
+			e.WhenScope.MakeCatalog(cat)
+		}
+		if e.ThenScope != nil {
+			meta.ThenScopeID = e.ThenScope.AstID
+			e.ThenScope.MakeCatalog(cat)
+		}
+		meta.RuleName = e.RuleName
+		meta.RuleDescription = e.RuleDescription
+		meta.Salience = e.Salience
+	}
+}
+
 // RuleEntryReceiver should be implemented by any rule AST object that receive a RuleEntry
 type RuleEntryReceiver interface {
 	ReceiveRuleEntry(entry *RuleEntry) error

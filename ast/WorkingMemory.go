@@ -49,6 +49,38 @@ type WorkingMemory struct {
 	ID                        string
 }
 
+// MakeCatalog create a catalog entry of this working memory
+func (e *WorkingMemory) MakeCatalog(cat *Catalog) {
+	cat.MemoryName = e.Name
+	cat.MemoryVersion = e.Version
+	cat.MemoryExpressionSnapshotMap = make(map[string]string)
+	for k, v := range e.expressionSnapshotMap {
+		cat.MemoryExpressionSnapshotMap[k] = v.AstID
+	}
+	cat.MemoryExpressionAtomSnapshotMap = make(map[string]string)
+	for k, v := range e.expressionAtomSnapshotMap {
+		cat.MemoryExpressionAtomSnapshotMap[k] = v.AstID
+	}
+	cat.MemoryVariableSnapshotMap = make(map[string]string)
+	for k, v := range e.variableSnapshotMap {
+		cat.MemoryVariableSnapshotMap[k] = v.AstID
+	}
+	cat.MemoryExpressionVariableMap = make(map[string][]string)
+	for k, v := range e.expressionVariableMap {
+		cat.MemoryExpressionVariableMap[k.AstID] = make([]string, len(v))
+		for i, j := range v {
+			cat.MemoryExpressionVariableMap[k.AstID][i] = j.AstID
+		}
+	}
+	cat.MemoryExpressionAtomVariableMap = make(map[string][]string)
+	for k, v := range e.expressionAtomVariableMap {
+		cat.MemoryExpressionAtomVariableMap[k.AstID] = make([]string, len(v))
+		for i, j := range v {
+			cat.MemoryExpressionAtomVariableMap[k.AstID][i] = j.AstID
+		}
+	}
+}
+
 // DebugContent will shows the working memory mapping content
 func (e *WorkingMemory) DebugContent() {
 	if AstLog.Level <= logrus.DebugLevel {

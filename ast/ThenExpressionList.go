@@ -36,6 +36,26 @@ type ThenExpressionList struct {
 	ThenExpressions []*ThenExpression
 }
 
+// MakeCatalog create a catalog entry for this AST Node
+func (e *ThenExpressionList) MakeCatalog(cat *Catalog) {
+	meta := &ThenExpressionListMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.ThenExpressions != nil && len(e.ThenExpressions) > 0 {
+			meta.ThenExpressionIDs = make([]string, len(e.ThenExpressions))
+			for i, v := range e.ThenExpressions {
+				meta.ThenExpressionIDs[i] = v.AstID
+				v.MakeCatalog(cat)
+			}
+		}
+	}
+}
+
 // ThenExpressionListReceiver must be implemented by any AST object that hold a ThenExpression list AST object
 type ThenExpressionListReceiver interface {
 	AcceptThenExpressionList(list *ThenExpressionList) error

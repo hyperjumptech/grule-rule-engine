@@ -35,6 +35,23 @@ type ThenScope struct {
 	ThenExpressionList *ThenExpressionList
 }
 
+// MakeCatalog create a catalog entry for this AST Node
+func (e *ThenScope) MakeCatalog(cat *Catalog) {
+	meta := &ThenScopeMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.ThenExpressionList != nil {
+			meta.ThenExpressionListID = e.ThenExpressionList.AstID
+			e.ThenExpressionList.MakeCatalog(cat)
+		}
+	}
+}
+
 // ThenScopeReceiver must be implemented by any AST object that will hold a ThenScope
 type ThenScopeReceiver interface {
 	AcceptThenScope(thenScope *ThenScope) error

@@ -40,6 +40,24 @@ type FunctionCall struct {
 	Value        reflect.Value
 }
 
+// MakeCatalog will create a catalog entry from FunctionCall node.
+func (e *FunctionCall) MakeCatalog(cat *Catalog) {
+	meta := &FunctionCallMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.ArgumentList != nil {
+			meta.ArgumentListID = e.ArgumentList.AstID
+			e.ArgumentList.MakeCatalog(cat)
+		}
+		meta.FunctionName = e.FunctionName
+	}
+}
+
 // Clone will clone this FunctionCall. The new clone will have an identical structure
 func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 	clone := &FunctionCall{

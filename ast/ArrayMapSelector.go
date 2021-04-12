@@ -39,6 +39,23 @@ type ArrayMapSelector struct {
 	Value reflect.Value
 }
 
+// MakeCatalog will create a catalog entry from ArrayMapSelector node.
+func (e *ArrayMapSelector) MakeCatalog(cat *Catalog) {
+	meta := &ArrayMapSelectorMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Expression != nil {
+			meta.ExpressionID = e.Expression.AstID
+			e.Expression.MakeCatalog(cat)
+		}
+	}
+}
+
 // ArrayMapSelectorReceiver must be implemented by all other ast graph that uses map/array selector
 type ArrayMapSelectorReceiver interface {
 	AcceptArrayMapSelector(sel *ArrayMapSelector) error
