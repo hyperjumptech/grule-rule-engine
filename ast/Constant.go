@@ -19,6 +19,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"math"
 	"reflect"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -68,14 +69,14 @@ func (e *Constant) MakeCatalog(cat *Catalog) {
 		case reflect.Float32, reflect.Float64:
 			meta.ValueType = TypeFloat
 			floatData := make([]byte, 8)
-			binary.LittleEndian.PutUint64(floatData, uint64(e.Value.Float()))
+			binary.LittleEndian.PutUint64(floatData, math.Float64bits(e.Value.Float()))
 			buff.Write(floatData)
 		case reflect.Bool:
 			meta.ValueType = TypeBoolean
 			if e.Value.Bool() {
-				buff.WriteByte(0)
-			} else {
 				buff.WriteByte(1)
+			} else {
+				buff.WriteByte(0)
 			}
 		}
 		meta.ValueBytes = buff.Bytes()

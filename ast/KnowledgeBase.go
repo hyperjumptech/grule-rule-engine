@@ -103,6 +103,7 @@ func (e *KnowledgeBase) MakeCatalog() *Catalog {
 
 // IsIdentical will validate if two KnoledgeBase is identical. Used to validate if the origin and clone is identical.
 func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
+	fmt.Printf("%s\n%s\n", e.GetSnapshot(), that.GetSnapshot())
 	return e.GetSnapshot() == that.GetSnapshot()
 }
 

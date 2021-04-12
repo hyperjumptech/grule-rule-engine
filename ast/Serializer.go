@@ -15,9 +15,14 @@
 package ast
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/sirupsen/logrus"
 	"io"
+	"math"
+	"reflect"
 )
 
 type NodeType int
@@ -57,6 +62,358 @@ type Catalog struct {
 	MemoryExpressionAtomSnapshotMap map[string]string
 	MemoryExpressionVariableMap     map[string][]string
 	MemoryExpressionAtomVariableMap map[string][]string
+}
+
+func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
+	wm := &WorkingMemory{
+		Name:                      cat.MemoryName,
+		Version:                   cat.MemoryVersion,
+		expressionSnapshotMap:     make(map[string]*Expression),
+		expressionAtomSnapshotMap: make(map[string]*ExpressionAtom),
+		variableSnapshotMap:       make(map[string]*Variable),
+		expressionVariableMap:     make(map[*Variable][]*Expression),
+		expressionAtomVariableMap: make(map[*Variable][]*ExpressionAtom),
+		ID:                        unique.NewID(),
+	}
+	kb := &KnowledgeBase{
+		Name:          cat.KnowledgeBaseName,
+		Version:       cat.KnowledgeBaseVersion,
+		DataContext:   nil,
+		WorkingMemory: wm,
+		RuleEntries:   make(map[string]*RuleEntry),
+	}
+	importTable := make(map[string]Node)
+
+	// creating instances
+	for _, meta := range cat.Data {
+		switch meta.GetASTType() {
+		case TypeArgumentList:
+			amet := meta.(*ArgumentListMeta)
+			n := &ArgumentList{
+				AstID:     amet.AstID,
+				GrlText:   amet.GrlText,
+				Arguments: nil,
+			}
+			importTable[meta.GetAstID()] = n
+		case TypeArrayMapSelector:
+			n := &ArrayMapSelector{
+				AstID:      meta.GetAstID(),
+				GrlText:    meta.GetGrlText(),
+				Expression: nil,
+			}
+			importTable[meta.GetAstID()] = n
+		case TypeAssignment:
+			amet := meta.(*AssigmentMeta)
+			n := &Assignment{
+				AstID:         amet.AstID,
+				GrlText:       amet.GrlText,
+				Variable:      nil,
+				Expression:    nil,
+				IsAssign:      amet.IsAssign,
+				IsPlusAssign:  amet.IsPlusAssign,
+				IsMinusAssign: amet.IsMinusAssign,
+				IsDivAssign:   amet.IsDivAssign,
+				IsMulAssign:   amet.IsMulAssign,
+			}
+			importTable[amet.AstID] = n
+		case TypeExpression:
+			amet := meta.(*ExpressionMeta)
+			n := &Expression{
+				AstID:            amet.AstID,
+				GrlText:          amet.GrlText,
+				LeftExpression:   nil,
+				RightExpression:  nil,
+				SingleExpression: nil,
+				ExpressionAtom:   nil,
+				Operator:         amet.Operator,
+				Negated:          amet.Negated,
+			}
+			importTable[amet.AstID] = n
+		case TypeConstant:
+			amet := meta.(*ConstantMeta)
+			n := &Constant{
+				AstID:    amet.AstID,
+				GrlText:  amet.GrlText,
+				Snapshot: amet.Snapshot,
+				Value:    reflect.Value{},
+				IsNil:    amet.IsNil,
+			}
+			buffer := bytes.NewBuffer(amet.ValueBytes)
+			switch amet.ValueType {
+			case TypeString:
+				length := make([]byte, 8)
+				buffer.Read(length)
+				dLen := binary.LittleEndian.Uint64(length)
+				byteArr := make([]byte, dLen)
+				buffer.Read(byteArr)
+				n.Value = reflect.ValueOf(string(byteArr))
+			case TypeBoolean:
+				arr := make([]byte, 1)
+				buffer.Read(arr)
+				n.Value = reflect.ValueOf(arr[0] == 1)
+			case TypeInteger:
+				arr := make([]byte, 8)
+				buffer.Read(arr)
+				n.Value = reflect.ValueOf(int64(binary.LittleEndian.Uint64(arr)))
+			case TypeFloat:
+				arr := make([]byte, 8)
+				buffer.Read(arr)
+				bits := binary.LittleEndian.Uint64(arr)
+				float := math.Float64frombits(bits)
+				n.Value = reflect.ValueOf(float)
+			}
+			importTable[amet.AstID] = n
+		case TypeExpressionAtom:
+			amet := meta.(*ExpressionAtomMeta)
+			n := &ExpressionAtom{
+				AstID:            amet.AstID,
+				GrlText:          amet.GrlText,
+				VariableName:     amet.VariableName,
+				Constant:         nil,
+				FunctionCall:     nil,
+				Variable:         nil,
+				Negated:          amet.Negated,
+				ExpressionAtom:   nil,
+				ArrayMapSelector: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeFunctionCall:
+			amet := meta.(*FunctionCallMeta)
+			n := &FunctionCall{
+				AstID:        amet.AstID,
+				GrlText:      amet.GrlText,
+				FunctionName: amet.FunctionName,
+				ArgumentList: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeRuleEntry:
+			amet := meta.(*RuleEntryMeta)
+			n := &RuleEntry{
+				AstID:           amet.AstID,
+				GrlText:         amet.GrlText,
+				RuleName:        amet.RuleName,
+				RuleDescription: amet.RuleDescription,
+				Salience:        amet.Salience,
+				WhenScope:       nil,
+				ThenScope:       nil,
+			}
+			importTable[amet.AstID] = n
+			kb.RuleEntries[n.RuleName] = n
+		case TypeThenExpression:
+			amet := meta.(*ThenExpressionMeta)
+			n := &ThenExpression{
+				AstID:          amet.AstID,
+				GrlText:        amet.GrlText,
+				Assignment:     nil,
+				ExpressionAtom: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeThenExpressionList:
+			amet := meta.(*ThenExpressionListMeta)
+			n := &ThenExpressionList{
+				AstID:           amet.AstID,
+				GrlText:         amet.GrlText,
+				ThenExpressions: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeThenScope:
+			amet := meta.(*ThenScopeMeta)
+			n := &ThenScope{
+				AstID:              amet.AstID,
+				GrlText:            amet.GrlText,
+				ThenExpressionList: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeVariable:
+			amet := meta.(*VariableMeta)
+			n := &Variable{
+				AstID:            amet.AstID,
+				GrlText:          amet.GrlText,
+				Name:             amet.Name,
+				Variable:         nil,
+				ArrayMapSelector: nil,
+			}
+			importTable[amet.AstID] = n
+		case TypeWhenScope:
+			amet := meta.(*WhenScopeMeta)
+			n := &WhenScope{
+				AstID:      amet.AstID,
+				GrlText:    amet.GrlText,
+				Expression: nil,
+			}
+			importTable[amet.AstID] = n
+		default:
+			panic("Unrecognized meta type")
+		}
+	}
+
+	// Cross referencing
+	for astId, meta := range cat.Data {
+		node := importTable[astId]
+		switch meta.GetASTType() {
+		case TypeArgumentList:
+			n := node.(*ArgumentList)
+			amet := meta.(*ArgumentListMeta)
+			if amet.ArgumentASTIDs != nil && len(amet.ArgumentASTIDs) > 0 {
+				n.Arguments = make([]*Expression, len(amet.ArgumentASTIDs))
+				for k, v := range amet.ArgumentASTIDs {
+					n.Arguments[k] = importTable[v].(*Expression)
+				}
+			}
+		case TypeArrayMapSelector:
+			n := node.(*ArrayMapSelector)
+			amet := meta.(*ArrayMapSelectorMeta)
+			if len(amet.ExpressionID) > 0 {
+				n.Expression = importTable[amet.ExpressionID].(*Expression)
+			}
+		case TypeAssignment:
+			n := node.(*Assignment)
+			amet := meta.(*AssigmentMeta)
+			if len(amet.ExpressionID) > 0 {
+				n.Expression = importTable[amet.ExpressionID].(*Expression)
+			}
+			if len(amet.VariableID) > 0 {
+				n.Variable = importTable[amet.VariableID].(*Variable)
+			}
+		case TypeExpression:
+			n := node.(*Expression)
+			amet := meta.(*ExpressionMeta)
+			if len(amet.LeftExpressionID) > 0 {
+				n.LeftExpression = importTable[amet.LeftExpressionID].(*Expression)
+			}
+			if len(amet.RightExpressionID) > 0 {
+				n.RightExpression = importTable[amet.RightExpressionID].(*Expression)
+			}
+			if len(amet.SingleExpressionID) > 0 {
+				n.SingleExpression = importTable[amet.SingleExpressionID].(*Expression)
+			}
+			if len(amet.ExpressionAtomID) > 0 {
+				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+			}
+		case TypeConstant:
+			// nothing todo
+
+		case TypeExpressionAtom:
+			n := node.(*ExpressionAtom)
+			amet := meta.(*ExpressionAtomMeta)
+			if len(amet.ConstantID) > 0 {
+				n.Constant = importTable[amet.ConstantID].(*Constant)
+			}
+			if len(amet.ExpressionAtomID) > 0 {
+				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+			}
+			if len(amet.VariableID) > 0 {
+				n.Variable = importTable[amet.VariableID].(*Variable)
+			}
+			if len(amet.FunctionCallID) > 0 {
+				n.FunctionCall = importTable[amet.FunctionCallID].(*FunctionCall)
+			}
+			if len(amet.ArrayMapSelectorID) > 0 {
+				n.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
+			}
+		case TypeFunctionCall:
+			n := node.(*FunctionCall)
+			amet := meta.(*FunctionCallMeta)
+			if len(amet.ArgumentListID) > 0 {
+				n.ArgumentList = importTable[amet.ArgumentListID].(*ArgumentList)
+			}
+		case TypeRuleEntry:
+			n := node.(*RuleEntry)
+			amet := meta.(*RuleEntryMeta)
+			if len(amet.WhenScopeID) > 0 {
+				n.WhenScope = importTable[amet.WhenScopeID].(*WhenScope)
+			}
+			if len(amet.ThenScopeID) > 0 {
+				n.ThenScope = importTable[amet.ThenScopeID].(*ThenScope)
+			}
+		case TypeThenExpression:
+			n := node.(*ThenExpression)
+			amet := meta.(*ThenExpressionMeta)
+			if len(amet.AssignmentID) > 0 {
+				n.Assignment = importTable[amet.AssignmentID].(*Assignment)
+			}
+			if len(amet.ExpressionAtomID) > 0 {
+				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+			}
+		case TypeThenExpressionList:
+			n := node.(*ThenExpressionList)
+			amet := meta.(*ThenExpressionListMeta)
+			if amet.ThenExpressionIDs != nil && len(amet.ThenExpressionIDs) > 0 {
+				n.ThenExpressions = make([]*ThenExpression, len(amet.ThenExpressionIDs))
+				for k, v := range amet.ThenExpressionIDs {
+					if node, ok := importTable[v]; ok {
+						n.ThenExpressions[k] = node.(*ThenExpression)
+					} else {
+						logrus.Errorf("then expression with ast id %s not catalogued", v)
+					}
+				}
+			}
+		case TypeThenScope:
+			n := node.(*ThenScope)
+			amet := meta.(*ThenScopeMeta)
+			if len(amet.ThenExpressionListID) > 0 {
+				n.ThenExpressionList = importTable[amet.ThenExpressionListID].(*ThenExpressionList)
+			}
+		case TypeVariable:
+			n := node.(*Variable)
+			amet := meta.(*VariableMeta)
+			if len(amet.VariableID) > 0 {
+				n.Variable = importTable[amet.VariableID].(*Variable)
+			}
+			if len(amet.ArrayMapSelectorID) > 0 {
+				n.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
+			}
+		case TypeWhenScope:
+			n := node.(*WhenScope)
+			amet := meta.(*WhenScopeMeta)
+			if len(amet.ExpressionID) > 0 {
+				n.Expression = importTable[amet.ExpressionID].(*Expression)
+			}
+		default:
+			panic("Unrecognized meta type")
+		}
+	}
+
+	// Rebuilding Working Memory
+	if cat.MemoryVariableSnapshotMap != nil && len(cat.MemoryVariableSnapshotMap) > 0 {
+		for k, v := range cat.MemoryVariableSnapshotMap {
+			if n, ok := importTable[v]; ok {
+				wm.variableSnapshotMap[k] = n.(*Variable)
+			} else {
+				logrus.Warnf("snapshot %s in working memory have no referenced variable with ASTID %s", k, v)
+			}
+		}
+	}
+	if cat.MemoryExpressionSnapshotMap != nil && len(cat.MemoryExpressionSnapshotMap) > 0 {
+		for k, v := range cat.MemoryExpressionSnapshotMap {
+			wm.expressionSnapshotMap[k] = importTable[v].(*Expression)
+		}
+	}
+	if cat.MemoryExpressionAtomSnapshotMap != nil && len(cat.MemoryExpressionAtomSnapshotMap) > 0 {
+		for k, v := range cat.MemoryExpressionAtomSnapshotMap {
+			wm.expressionAtomSnapshotMap[k] = importTable[v].(*ExpressionAtom)
+		}
+	}
+	if cat.MemoryExpressionVariableMap != nil && len(cat.MemoryExpressionVariableMap) > 0 {
+		for k, v := range cat.MemoryExpressionVariableMap {
+			variable := importTable[k].(*Variable)
+			wm.expressionVariableMap[variable] = make([]*Expression, len(v))
+			for i, j := range v {
+				wm.expressionVariableMap[variable][i] = importTable[j].(*Expression)
+			}
+		}
+	}
+	if cat.MemoryExpressionAtomVariableMap != nil && len(cat.MemoryExpressionAtomVariableMap) > 0 {
+		for k, v := range cat.MemoryExpressionAtomVariableMap {
+			variable := importTable[k].(*Variable)
+			wm.expressionAtomVariableMap[variable] = make([]*ExpressionAtom, len(v))
+			for i, j := range v {
+				wm.expressionAtomVariableMap[variable][i] = importTable[j].(*ExpressionAtom)
+			}
+		}
+	}
+
+	return kb
 }
 
 func (cat *Catalog) Equals(that *Catalog) bool {
@@ -507,6 +864,7 @@ func (cat *Catalog) AddMeta(astID string, meta Meta) bool {
 	}
 	if _, ok := cat.Data[astID]; !ok {
 		cat.Data[astID] = meta
+		return true
 	}
 	return false
 }
@@ -1743,13 +2101,22 @@ func ReadBoolFromReader(r io.Reader) (bool, error) {
 }
 
 func WriteFloatToWriter(w io.Writer, f float64) error {
-	return WriteIntToWriter(w, uint64(f))
+	data := make([]byte, 8)
+	binary.LittleEndian.PutUint64(data, math.Float64bits(f))
+	c, err := WriteFull(w, data)
+	TotalWrite += uint64(c)
+	WriteCount++
+	return err
 }
 
 func ReadFloatFromReader(r io.Reader) (float64, error) {
-	i, err := ReadIntFromReader(r)
+	byteArray := make([]byte, 8)
+	c, err := io.ReadFull(r, byteArray)
+	TotalRead += uint64(c)
 	if err != nil {
 		return 0, err
 	}
-	return float64(i), nil
+	bits := binary.LittleEndian.Uint64(byteArray)
+	float := math.Float64frombits(bits)
+	return float, nil
 }

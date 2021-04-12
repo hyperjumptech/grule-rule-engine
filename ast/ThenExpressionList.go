@@ -49,6 +49,7 @@ func (e *ThenExpressionList) MakeCatalog(cat *Catalog) {
 			meta.ThenExpressionIDs = make([]string, len(e.ThenExpressions))
 			for i, v := range e.ThenExpressions {
 				meta.ThenExpressionIDs[i] = v.AstID
+				v.MakeCatalog(cat)
 			}
 		}
 	}
