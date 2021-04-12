@@ -15,6 +15,7 @@
 package examples
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -134,11 +135,21 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 
 	kb := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
 
+	buff := &bytes.Buffer{}
+	cat := kb.MakeCatalog()
+	err = cat.WriteCatalogToWriter(buff)
+	assert.Nil(t, err)
+
+	buff2 := bytes.NewBuffer(buff.Bytes())
+	cat2 := &ast.Catalog{}
+	cat2.ReadCatalogFromReader(buff2)
+	nkb := cat2.BuildKnowledgeBase()
+
 	for _, purchase := range Purchases {
 		dctx := ast.NewDataContext()
 		dctx.Add("CashFlow", cashFlow)
 		dctx.Add("Purchase", purchase)
-		err = engine.Execute(dctx, kb)
+		err = engine.Execute(dctx, nkb)
 		assert.NoError(t, err)
 	}
 
