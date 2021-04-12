@@ -47,6 +47,7 @@ type RuleEntry struct {
 	Retracted bool
 }
 
+// MakeCatalog will create a catalog entry from RuleEntry node.
 func (e *RuleEntry) MakeCatalog(cat *Catalog) {
 	meta := &RuleEntryMeta{
 		NodeMeta: NodeMeta{

@@ -49,6 +49,7 @@ type WorkingMemory struct {
 	ID                        string
 }
 
+// MakeCatalog create a catalog entry of this working memory
 func (e *WorkingMemory) MakeCatalog(cat *Catalog) {
 	cat.MemoryName = e.Name
 	cat.MemoryVersion = e.Version

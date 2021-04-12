@@ -44,6 +44,7 @@ type Variable struct {
 	Value     reflect.Value
 }
 
+// MakeCatalog create a catalog entry for this AST Node
 func (e *Variable) MakeCatalog(cat *Catalog) {
 	meta := &VariableMeta{
 		NodeMeta: NodeMeta{

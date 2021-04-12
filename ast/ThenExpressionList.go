@@ -36,6 +36,7 @@ type ThenExpressionList struct {
 	ThenExpressions []*ThenExpression
 }
 
+// MakeCatalog create a catalog entry for this AST Node
 func (e *ThenExpressionList) MakeCatalog(cat *Catalog) {
 	meta := &ThenExpressionListMeta{
 		NodeMeta: NodeMeta{

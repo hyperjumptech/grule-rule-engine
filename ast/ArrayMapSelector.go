@@ -39,6 +39,7 @@ type ArrayMapSelector struct {
 	Value reflect.Value
 }
 
+// MakeCatalog will create a catalog entry from ArrayMapSelector node.
 func (e *ArrayMapSelector) MakeCatalog(cat *Catalog) {
 	meta := &ArrayMapSelectorMeta{
 		NodeMeta: NodeMeta{

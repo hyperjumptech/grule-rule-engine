@@ -81,6 +81,7 @@ type Expression struct {
 	Evaluated bool
 }
 
+// MakeCatalog will create a catalog entry from Expression node.
 func (e *Expression) MakeCatalog(cat *Catalog) {
 	meta := &ExpressionMeta{
 		NodeMeta: NodeMeta{

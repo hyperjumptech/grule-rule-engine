@@ -38,6 +38,7 @@ type WhenScope struct {
 	Expression *Expression
 }
 
+// MakeCatalog create a catalog entry for this AST Node
 func (e *WhenScope) MakeCatalog(cat *Catalog) {
 	meta := &WhenScopeMeta{
 		NodeMeta: NodeMeta{

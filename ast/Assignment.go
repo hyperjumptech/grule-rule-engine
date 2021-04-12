@@ -42,6 +42,7 @@ type Assignment struct {
 	IsMulAssign   bool
 }
 
+// MakeCatalog will create a catalog entry from Assignment node.
 func (e *Assignment) MakeCatalog(cat *Catalog) {
 	meta := &AssigmentMeta{
 		NodeMeta: NodeMeta{

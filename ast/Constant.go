@@ -43,6 +43,7 @@ type Constant struct {
 	IsNil         bool
 }
 
+// MakeCatalog will create a catalog entry from Constant node.
 func (e *Constant) MakeCatalog(cat *Catalog) {
 	meta := &ConstantMeta{
 		NodeMeta: NodeMeta{

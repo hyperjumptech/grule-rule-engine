@@ -25,32 +25,66 @@ import (
 	"reflect"
 )
 
+// NodeType is to label a Meta information within catalog
 type NodeType int
+
+// ValueType will label the datatype when a constant its saved as binary
 type ValueType int
 
 const (
+	// TypeArgumentList meta type of ArgumentList
 	TypeArgumentList NodeType = iota
+	// TypeArrayMapSelector meta type of ArrayMapSelector
 	TypeArrayMapSelector
+	// TypeAssignment meta type of Assigment
 	TypeAssignment
+	// TypeExpression meta type of Expression
 	TypeExpression
+	// TypeConstant meta type of Constant
 	TypeConstant
+	// TypeExpressionAtom meta type of ExpressionAtom
 	TypeExpressionAtom
+	// TypeFunctionCall meta type of FunctionCall
 	TypeFunctionCall
+	// TypeRuleEntry meta type of RuleEntry
 	TypeRuleEntry
+	// TypeThenExpression meta type of ThenExpression
 	TypeThenExpression
+	// TypeThenExpressionList meta type of ThenExpressionList
 	TypeThenExpressionList
+	// TypeThenScope meta type of ThenScope
 	TypeThenScope
+	// TypeVariable meta type of Variable
 	TypeVariable
+	// TypeWhenScope meta type of WhenScope
 	TypeWhenScope
 
+	// TypeString variable type string label
 	TypeString ValueType = iota
+	// TypeInteger variable type integer label
 	TypeInteger
+	// TypeFloat variable type float label
 	TypeFloat
+	// TypeBoolean variable type boolean label
 	TypeBoolean
 
+	// Version will be written to the stream and used for compatibility check
 	Version = "1.8"
 )
 
+// Catalog used to catalog all AST nodes in a KnowledgeBase.
+// All nodes will be saved as their Meta information.
+// which includes relations between AST Node.
+// As RETE algorithm is a prominent aspect of the KnowledgeBase,
+// retaining RETE network is very important. The catalog
+// provides simple recording of Expression, ExpressionAtoms, Variables
+// that capable of supporting the network, enabling the network
+// to be saved and reloaded to/from a stream.
+//
+// This capability alone supposed to store and load huge ruleset
+// fast without having to read the rule set from their origin GRL which
+// some how a bit expensive due to string parsing and pattern operation
+// by ANTLR4
 type Catalog struct {
 	KnowledgeBaseName               string
 	KnowledgeBaseVersion            string
@@ -64,6 +98,9 @@ type Catalog struct {
 	MemoryExpressionAtomVariableMap map[string][]string
 }
 
+// BuildKnowledgeBase will rebuild a knowledgebase from this Catalog.
+// the rebuilt KnowledgeBase is identical to the original KnowledgeBase from
+// which this Catalog was built.
 func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 	wm := &WorkingMemory{
 		Name:                      cat.MemoryName,
@@ -248,8 +285,8 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 	}
 
 	// Cross referencing
-	for astId, meta := range cat.Data {
-		node := importTable[astId]
+	for astID, meta := range cat.Data {
+		node := importTable[astID]
 		switch meta.GetASTType() {
 		case TypeArgumentList:
 			n := node.(*ArgumentList)
@@ -416,6 +453,9 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 	return kb
 }
 
+// Equals used for testing purpose, to ensure that two catalog
+// can be compared straight away.
+// The comparison is Deep comparison.
 func (cat *Catalog) Equals(that *Catalog) bool {
 	if cat.KnowledgeBaseName != that.KnowledgeBaseName {
 		return false
@@ -500,6 +540,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 
 }
 
+// ReadCatalogFromReader would read a byte stream from reader
+// It will replace all values already sets in a catalog.
+// You are responsible for closing the reader stream once its done.
 func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// Read the catalog file version.
 	str, err := ReadStringFromReader(r) // V
@@ -705,6 +748,9 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	return nil
 }
 
+// WriteCatalogToWriter will store the content of this Catalog
+// into a byte stream using provided writer.
+// You are responsible for closing the writing stream once its done.
 func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// Write the catalog file version.
 	err := WriteStringToWriter(w, Version)
@@ -858,6 +904,8 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	return nil
 }
 
+// AddMeta will add AST Node meta information.
+// it will reject duplicated AST ID
 func (cat *Catalog) AddMeta(astID string, meta Meta) bool {
 	if cat.Data == nil {
 		cat.Data = make(map[string]Meta)
@@ -869,6 +917,7 @@ func (cat *Catalog) AddMeta(astID string, meta Meta) bool {
 	return false
 }
 
+// Meta interface as contract of all AST Node meta information.
 type Meta interface {
 	GetASTType() NodeType
 	GetAstID() string
@@ -879,21 +928,33 @@ type Meta interface {
 	Equals(that Meta) bool
 }
 
+// NodeMeta is a base struct for all ASTNode meta
 type NodeMeta struct {
 	AstID    string
 	GrlText  string
 	Snapshot string
 }
 
+// GetAstID return the node AST ID
 func (meta *NodeMeta) GetAstID() string {
 	return meta.AstID
 }
+
+// GetGrlText return the node original GRLText, this might not be needed
+// but useful for debuging future GRL issue
 func (meta *NodeMeta) GetGrlText() string {
 	return meta.GrlText
 }
+
+// GetSnapshot return the NodeSnapshot, this might not needed but
+// could be useful for consistency.
 func (meta *NodeMeta) GetSnapshot() string {
 	return meta.Snapshot
 }
+
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *NodeMeta) WriteMetaTo(w io.Writer) error {
 	// First write the AST ID. this may be redundant.
 	err := WriteStringToWriter(w, meta.AstID)
@@ -914,6 +975,9 @@ func (meta *NodeMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *NodeMeta) ReadMetaFrom(reader io.Reader) error {
 	str, err := ReadStringFromReader(reader)
 	if err != nil {
@@ -936,6 +1000,7 @@ func (meta *NodeMeta) ReadMetaFrom(reader io.Reader) error {
 	return nil
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *NodeMeta) Equals(that Meta) bool {
 	if meta.GetAstID() != that.GetAstID() {
 		return false
@@ -949,11 +1014,13 @@ func (meta *NodeMeta) Equals(that Meta) bool {
 	return true
 }
 
+// ArgumentListMeta meta data for an ArgumentList node
 type ArgumentListMeta struct {
 	NodeMeta
 	ArgumentASTIDs []string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ArgumentListMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ArgumentListMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -972,10 +1039,14 @@ func (meta *ArgumentListMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ArgumentListMeta) GetASTType() NodeType {
 	return TypeArgumentList
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -999,6 +1070,9 @@ func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ArgumentListMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1022,11 +1096,13 @@ func (meta *ArgumentListMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ArrayMapSelectorMeta meta data for an ArrayMapSelector node
 type ArrayMapSelectorMeta struct {
 	NodeMeta
 	ExpressionID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ArrayMapSelectorMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ArrayMapSelectorMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1040,10 +1116,14 @@ func (meta *ArrayMapSelectorMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ArrayMapSelectorMeta) GetASTType() NodeType {
 	return TypeArrayMapSelector
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1056,6 +1136,9 @@ func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ArrayMapSelectorMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1069,6 +1152,7 @@ func (meta *ArrayMapSelectorMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// AssigmentMeta meta data for an Assigment node
 type AssigmentMeta struct {
 	NodeMeta
 	VariableID    string
@@ -1080,6 +1164,7 @@ type AssigmentMeta struct {
 	IsMulAssign   bool
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *AssigmentMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*AssigmentMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1111,10 +1196,14 @@ func (meta *AssigmentMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *AssigmentMeta) GetASTType() NodeType {
 	return TypeAssignment
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1154,6 +1243,9 @@ func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *AssigmentMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1204,6 +1296,7 @@ func (meta *AssigmentMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ConstantMeta meta data for an Constant node
 type ConstantMeta struct {
 	NodeMeta
 
@@ -1212,6 +1305,7 @@ type ConstantMeta struct {
 	IsNil      bool
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ConstantMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ConstantMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1236,10 +1330,14 @@ func (meta *ConstantMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ConstantMeta) GetASTType() NodeType {
 	return TypeConstant
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1265,6 +1363,9 @@ func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ConstantMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1296,6 +1397,7 @@ func (meta *ConstantMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ExpressionMeta meta data for an Expression node
 type ExpressionMeta struct {
 	NodeMeta
 	LeftExpressionID   string
@@ -1306,6 +1408,7 @@ type ExpressionMeta struct {
 	Negated            bool
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ExpressionMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ExpressionMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1334,10 +1437,14 @@ func (meta *ExpressionMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ExpressionMeta) GetASTType() NodeType {
 	return TypeExpression
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1371,6 +1478,9 @@ func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1409,6 +1519,7 @@ func (meta *ExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ExpressionAtomMeta meta data for an ExpressionAtom node
 type ExpressionAtomMeta struct {
 	NodeMeta
 	VariableName       string
@@ -1420,6 +1531,7 @@ type ExpressionAtomMeta struct {
 	ArrayMapSelectorID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ExpressionAtomMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ExpressionAtomMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1451,10 +1563,14 @@ func (meta *ExpressionAtomMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ExpressionAtomMeta) GetASTType() NodeType {
 	return TypeExpressionAtom
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1492,6 +1608,9 @@ func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ExpressionAtomMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1535,12 +1654,14 @@ func (meta *ExpressionAtomMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// FunctionCallMeta meta data for an FunctionCall node
 type FunctionCallMeta struct {
 	NodeMeta
 	FunctionName   string
 	ArgumentListID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *FunctionCallMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*FunctionCallMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1557,10 +1678,14 @@ func (meta *FunctionCallMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *FunctionCallMeta) GetASTType() NodeType {
 	return TypeFunctionCall
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1578,6 +1703,9 @@ func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *FunctionCallMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1596,6 +1724,7 @@ func (meta *FunctionCallMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// RuleEntryMeta meta data for an RuleEntry node
 type RuleEntryMeta struct {
 	NodeMeta
 
@@ -1606,6 +1735,7 @@ type RuleEntryMeta struct {
 	ThenScopeID     string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *RuleEntryMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*RuleEntryMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1631,10 +1761,14 @@ func (meta *RuleEntryMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *RuleEntryMeta) GetASTType() NodeType {
 	return TypeRuleEntry
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1664,6 +1798,9 @@ func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *RuleEntryMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1697,6 +1834,7 @@ func (meta *RuleEntryMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ThenExpressionMeta meta data for an ThenExpression node
 type ThenExpressionMeta struct {
 	NodeMeta
 
@@ -1704,6 +1842,7 @@ type ThenExpressionMeta struct {
 	ExpressionAtomID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ThenExpressionMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenExpressionMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1720,10 +1859,14 @@ func (meta *ThenExpressionMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ThenExpressionMeta) GetASTType() NodeType {
 	return TypeThenExpression
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1741,6 +1884,9 @@ func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1759,12 +1905,14 @@ func (meta *ThenExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ThenExpressionListMeta meta data for an ThenExpressionList node
 type ThenExpressionListMeta struct {
 	NodeMeta
 
 	ThenExpressionIDs []string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ThenExpressionListMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenExpressionListMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1783,10 +1931,14 @@ func (meta *ThenExpressionListMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ThenExpressionListMeta) GetASTType() NodeType {
 	return TypeThenExpressionList
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1808,6 +1960,9 @@ func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenExpressionListMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1831,11 +1986,13 @@ func (meta *ThenExpressionListMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// ThenScopeMeta meta data for an ThenScope node
 type ThenScopeMeta struct {
 	NodeMeta
 	ThenExpressionListID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *ThenScopeMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenScopeMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1849,10 +2006,14 @@ func (meta *ThenScopeMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *ThenScopeMeta) GetASTType() NodeType {
 	return TypeThenScope
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1866,6 +2027,9 @@ func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *ThenScopeMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1879,6 +2043,7 @@ func (meta *ThenScopeMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// VariableMeta meta data for an Variable node
 type VariableMeta struct {
 	NodeMeta
 
@@ -1887,6 +2052,7 @@ type VariableMeta struct {
 	ArrayMapSelectorID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *VariableMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*VariableMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1906,10 +2072,14 @@ func (meta *VariableMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *VariableMeta) GetASTType() NodeType {
 	return TypeVariable
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1931,6 +2101,9 @@ func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *VariableMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -1954,11 +2127,13 @@ func (meta *VariableMeta) ReadMetaFrom(r io.Reader) error {
 	return nil
 }
 
+// WhenScopeMeta meta data for an WhenScope node
 type WhenScopeMeta struct {
 	NodeMeta
 	ExpressionID string
 }
 
+// Equals basic function to test equality of two MetaNode
 func (meta *WhenScopeMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*WhenScopeMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
@@ -1972,10 +2147,14 @@ func (meta *WhenScopeMeta) Equals(that Meta) bool {
 	return false
 }
 
+// GetASTType returns the meta type of this AST Node
 func (meta *WhenScopeMeta) GetASTType() NodeType {
 	return TypeWhenScope
 }
 
+// WriteMetaTo write basic AST Node information meta data into writer.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
@@ -1989,6 +2168,9 @@ func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
 	return nil
 }
 
+// ReadMetaFrom write basic AST Node information meta data from reader.
+// One should not use this function directly, unless for testing
+// serialization of single ASTNode.
 func (meta *WhenScopeMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
@@ -2003,12 +2185,17 @@ func (meta *WhenScopeMeta) ReadMetaFrom(r io.Reader) error {
 }
 
 var (
-	TotalRead  = uint64(0)
+	// TotalRead counter to track total byte read
+	TotalRead = uint64(0)
+	// TotalWrite counter to track total bytes written
 	TotalWrite = uint64(0)
-	ReadCount  = 0
+	// ReadCount read counter
+	ReadCount = 0
+	// WriteCount write counter
 	WriteCount = 0
 )
 
+// WriteFull will ensure that a byte array is fully written into writer
 func WriteFull(w io.Writer, bytes []byte) (int, error) {
 	toWrite := len(bytes)
 	written := 0
@@ -2022,6 +2209,9 @@ func WriteFull(w io.Writer, bytes []byte) (int, error) {
 	return written, nil
 }
 
+// WriteStringToWriter write a string into writer.
+// the structure is that there's length value written
+// prior writing the actual string.
 func WriteStringToWriter(w io.Writer, s string) error {
 	length := make([]byte, 8)
 	data := []byte(s)
@@ -2038,6 +2228,7 @@ func WriteStringToWriter(w io.Writer, s string) error {
 	return err
 }
 
+// ReadStringFromReader read a string from reader.
 func ReadStringFromReader(r io.Reader) (string, error) {
 	length := make([]byte, 8)
 
@@ -2057,6 +2248,7 @@ func ReadStringFromReader(r io.Reader) (string, error) {
 	return string(strByte), nil
 }
 
+// WriteIntToWriter write a 64 bit integer into writer.
 func WriteIntToWriter(w io.Writer, i uint64) error {
 	data := make([]byte, 8)
 	binary.LittleEndian.PutUint64(data, i)
@@ -2066,6 +2258,7 @@ func WriteIntToWriter(w io.Writer, i uint64) error {
 	return err
 }
 
+// ReadIntFromReader read a 64 bit integer from reader.
 func ReadIntFromReader(r io.Reader) (uint64, error) {
 	byteArray := make([]byte, 8)
 	c, err := io.ReadFull(r, byteArray)
@@ -2078,6 +2271,7 @@ func ReadIntFromReader(r io.Reader) (uint64, error) {
 	return i, nil
 }
 
+// WriteBoolToWriter writes a simple boolean into writer
 func WriteBoolToWriter(w io.Writer, b bool) error {
 	data := make([]byte, 1)
 	if b {
@@ -2090,6 +2284,7 @@ func WriteBoolToWriter(w io.Writer, b bool) error {
 	return err
 }
 
+// ReadBoolFromReader reads a simple boolean from writer
 func ReadBoolFromReader(r io.Reader) (bool, error) {
 	byteArray := make([]byte, 1)
 	c, err := io.ReadFull(r, byteArray)
@@ -2100,6 +2295,7 @@ func ReadBoolFromReader(r io.Reader) (bool, error) {
 	return byteArray[0] == 1, nil
 }
 
+// WriteFloatToWriter write a 64bit float into writer
 func WriteFloatToWriter(w io.Writer, f float64) error {
 	data := make([]byte, 8)
 	binary.LittleEndian.PutUint64(data, math.Float64bits(f))
@@ -2109,6 +2305,7 @@ func WriteFloatToWriter(w io.Writer, f float64) error {
 	return err
 }
 
+// ReadFloatFromReader reads a 64bit float from reader
 func ReadFloatFromReader(r io.Reader) (float64, error) {
 	byteArray := make([]byte, 8)
 	c, err := io.ReadFull(r, byteArray)

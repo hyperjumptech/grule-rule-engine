@@ -38,6 +38,7 @@ type ArgumentList struct {
 	Arguments []*Expression
 }
 
+// MakeCatalog will create a catalog entry from ArgumentList node.
 func (e *ArgumentList) MakeCatalog(cat *Catalog) {
 	meta := &ArgumentListMeta{
 		NodeMeta: NodeMeta{

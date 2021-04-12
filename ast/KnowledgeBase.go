@@ -17,6 +17,8 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"io"
 	"sort"
 	"strings"
 	"sync"
@@ -54,6 +56,46 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 	return kb
 }
 
+// LoadKnowledgeBaseFromReader will load the KnowledgeBase stored using StoreKnowledgeBaseToWriter function
+// be it from file, or anywhere. The reader we needed is a plain io.Reader, thus closing the source stream is your responsibility.
+// This should hopefully speedup loading huge ruleset by storing and reading them
+// without having to parse the GRL.
+func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overwrite bool) (retKb *KnowledgeBase, retErr error) {
+	defer func() {
+		if r := recover(); r != nil {
+			retKb = nil
+			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader. send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues")
+		}
+	}()
+
+	catalog := &Catalog{}
+	err := catalog.ReadCatalogFromReader(reader)
+	if err != nil {
+		return nil, err
+	}
+	kb := catalog.BuildKnowledgeBase()
+	if overwrite {
+		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+		return kb, nil
+	}
+	if _, ok := lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)]; !ok {
+		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+		return kb, nil
+	}
+	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", kb.Name, kb.Version)
+}
+
+// StoreKnowledgeBaseToWriter will store a KnowledgeBase in binary form
+// once store, the binary stream can be read using LoadKnowledgeBaseFromReader function.
+// This should hopefully speedup loading huge ruleset by storing and reading them
+// without having to parse the GRL.
+func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, version string) error {
+	kb := lib.GetKnowledgeBase(name, version)
+	cat := kb.MakeCatalog()
+	err := cat.WriteCatalogToWriter(writer)
+	return err
+}
+
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
@@ -81,6 +123,10 @@ type KnowledgeBase struct {
 	RuleEntries   map[string]*RuleEntry
 }
 
+// MakeCatalog will create a catalog entry for all AST Nodes under the KnowledgeBase
+// the catalog can be used to save the knowledge base into a Writer, or to
+// rebuild the KnowledgeBase from it.
+// This function also will catalog the WorkingMemory.
 func (e *KnowledgeBase) MakeCatalog() *Catalog {
 	catalog := &Catalog{
 		KnowledgeBaseName:               e.Name,

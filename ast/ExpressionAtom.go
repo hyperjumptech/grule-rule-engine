@@ -51,6 +51,7 @@ type ExpressionAtom struct {
 	Evaluated bool
 }
 
+// MakeCatalog will create a catalog entry from ExpressionAtom node.
 func (e *ExpressionAtom) MakeCatalog(cat *Catalog) {
 	meta := &ExpressionAtomMeta{
 		NodeMeta: NodeMeta{

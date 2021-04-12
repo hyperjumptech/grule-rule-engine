@@ -40,6 +40,7 @@ type FunctionCall struct {
 	Value        reflect.Value
 }
 
+// MakeCatalog will create a catalog entry from FunctionCall node.
 func (e *FunctionCall) MakeCatalog(cat *Catalog) {
 	meta := &FunctionCallMeta{
 		NodeMeta: NodeMeta{
