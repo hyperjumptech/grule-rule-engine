@@ -70,7 +70,7 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 
 	catalog := &Catalog{}
 	err := catalog.ReadCatalogFromReader(reader)
-	if err != nil {
+	if err != nil && err != io.EOF {
 		return nil, err
 	}
 	kb := catalog.BuildKnowledgeBase()
