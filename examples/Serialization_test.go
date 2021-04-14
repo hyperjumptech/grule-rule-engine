@@ -64,7 +64,7 @@ func TestSerializationOnFile(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Save the knowledge base into the file and close it.
-	err = lib.StoreKnowledgeBaseToWriter(f, "load_rules_test", "0.1.1")
+	err = lib.StoreKnowledgeBaseToWriter(f, "Purchase Calculator", "0.0.1")
 	assert.Nil(t, err)
 	_ = f.Close()
 
@@ -86,5 +86,5 @@ func TestSerializationOnFile(t *testing.T) {
 	assert.Nil(t, err)
 
 	// compare that the original knowledgebase is exacly the same to the loaded one.
-	assert.True(t, lib.GetKnowledgeBase("load_rules_test", "0.1.1").IsIdentical(kb2))
+	assert.True(t, lib.GetKnowledgeBase("Purchase Calculator", "0.0.1").IsIdentical(kb2))
 }
