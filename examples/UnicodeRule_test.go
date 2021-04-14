@@ -25,29 +25,29 @@ import (
 	"time"
 )
 
-type MyFact struct {
+type MyḞact struct {
 	IntAttribute     int64
-	StringAttribute  string
+	StringǍttribute  string
 	BooleanAttribute bool
-	FloatAttribute   float64
+	ḞloatAttribute   float64
 	TimeAttribute    time.Time
 	WhatToSay        string
 }
 
-func (mf *MyFact) GetWhatToSay(sentence string) string {
+func (mf *MyḞact) GetẀhatToSay(sentence string) string {
 	return fmt.Sprintf("Let say \"%s\"", sentence)
 }
 
-func TestTutorial(t *testing.T) {
-	myFact := &MyFact{
+func TestUnicodeTutorial(t *testing.T) {
+	myFact := &MyḞact{
 		IntAttribute:     123,
-		StringAttribute:  "Some string value",
+		StringǍttribute:  "Some string vǍlue",
 		BooleanAttribute: true,
-		FloatAttribute:   1.234,
+		ḞloatAttribute:   1.234,
 		TimeAttribute:    time.Now(),
 	}
 	dataCtx := ast.NewDataContext()
-	err := dataCtx.Add("MF", myFact)
+	err := dataCtx.Add("MḞ", myFact)
 	assert.NoError(t, err)
 
 	// Prepare knowledgebase library and load it with our rule.
@@ -55,12 +55,12 @@ func TestTutorial(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 
 	drls := `
-rule CheckValues "Check the default values" salience 10 {
+rule ChĕckValuĕs "Check the default values" salience 10 {
     when 
-        MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
+        MḞ.IntAttribute == 123 && MḞ.StringǍttribute == "Some string vǍlue"
     then
-        MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
-		Retract("CheckValues");
+        MḞ.WhatToSay = MḞ.GetẀhatToSay("HellǑ Grule");
+		Retract("ChĕckValuĕs");
 }
 `
 	byteArr := pkg.NewBytesResource([]byte(drls))
@@ -72,6 +72,6 @@ rule CheckValues "Check the default values" salience 10 {
 	engine := engine.NewGruleEngine()
 	err = engine.Execute(dataCtx, knowledgeBase)
 	assert.NoError(t, err)
-	assert.Equal(t, "Let say \"Hello Grule\"", myFact.WhatToSay)
+	assert.Equal(t, "Let say \"HellǑ Grule\"", myFact.WhatToSay)
 	println(myFact.WhatToSay)
 }

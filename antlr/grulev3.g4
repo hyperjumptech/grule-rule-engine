@@ -183,6 +183,28 @@ fragment X                  : [xX] ;
 fragment Y                  : [yY] ;
 fragment Z                  : [zZ] ;
 
+fragment ISC                : 'A' .. 'Z'
+                            | 'a' .. 'z'
+                            | '\u00C0' .. '\u00D6'
+                            | '\u00D8' .. '\u00F6'
+                            | '\u00F8' .. '\u02FF'
+                            | '\u0370' .. '\u037D'
+                            | '\u037F' .. '\u1FFF'
+                            | '\u200C' .. '\u200D'
+                            | '\u2070' .. '\u218F'
+                            | '\u2C00' .. '\u2FEF'
+                            | '\u3001' .. '\uD7FF'
+                            | '\uF900' .. '\uFDCF'
+                            | '\uFDF0' .. '\uFFFD'
+                            ;
+
+fragment IC                 : ISC
+                            | '0' .. '9'
+                            | '_'
+                            | '\u00B7'
+                            | '\u0300' .. '\u036F'
+                            | '\u203F' .. '\u2040'
+                            ;
 
 PLUS                        : '+' ;
 MINUS                       : '-' ;
@@ -225,15 +247,15 @@ NOTEQUALS                   : '!=' ;
 BITAND                      : '&';
 BITOR                       : '|';
 
-SIMPLENAME                  : [a-zA-Z] [a-zA-Z0-9]*;
+SIMPLENAME                  : ISC IC*;
 
 DQUOTA_STRING               : '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 SQUOTA_STRING               : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';
 
 
-DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_LIT DECIMAL_EXPONENT?
+DECIMAL_FLOAT_LIT           : DEC_LIT DOT DEC_DIGITS DECIMAL_EXPONENT?
                             | DEC_LIT DECIMAL_EXPONENT
-                            | DOT DEC_LIT DECIMAL_EXPONENT?
+                            | DOT DEC_DIGITS DECIMAL_EXPONENT?
                             ;
 
 DECIMAL_EXPONENT            : E (PLUS|MINUS)? DEC_DIGITS;

@@ -1,3 +1,17 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
@@ -20,6 +34,26 @@ type ThenExpressionList struct {
 	GrlText string
 
 	ThenExpressions []*ThenExpression
+}
+
+// MakeCatalog create a catalog entry for this AST Node
+func (e *ThenExpressionList) MakeCatalog(cat *Catalog) {
+	meta := &ThenExpressionListMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.ThenExpressions != nil && len(e.ThenExpressions) > 0 {
+			meta.ThenExpressionIDs = make([]string, len(e.ThenExpressions))
+			for i, v := range e.ThenExpressions {
+				meta.ThenExpressionIDs[i] = v.AstID
+				v.MakeCatalog(cat)
+			}
+		}
+	}
 }
 
 // ThenExpressionListReceiver must be implemented by any AST object that hold a ThenExpression list AST object

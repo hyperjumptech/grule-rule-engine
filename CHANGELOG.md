@@ -103,4 +103,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Removed
 
-- Grule Event Bus is removed from Grule as it seems too complicated and no one use them. They just expect grule to just works. 
+- Grule Event Bus is removed from Grule as it seems too complicated and no one use them. They just expect grule to just works.
+
+### [1.7.0] - 2020-11-06
+ 
+#### Changes
+ 
+- Change the Grule ANTLR4 grammar for better structure, tested with ANTLR4 hierarchy and AST Tree.
+- FunctionCall AST graph is now under ExpressionAtom instead of Variable
+
+#### Fix
+
+- Proper Integer and Float literals both support exponent format
+
+#### Added
+
+- Integer literal support Octal and Hexadecimal, Float literal support Hexadecimal.
+- Added more documentation about the new numbering literals and also re-arrange the menu in the documentation.
+- Support negation.
+  
+### [1.7.1] - 2020-12-02
+  
+##### Fix
+ 
+- Fixed ANTLR4 grammar to enable function chaining in the THEN scope
+- Fixed ANTLR4 grammar error that makes array/slice/map cannot be chained with function
+ 
+#### Change
+ 
+- Built-in function `Changed` is renamed to `Forget` to clearly tell the engine to forget about variable values or function invocation to make sure the engine look again into the underlying data context on the next cycle.
+
+### [1.7.2] - 2020-12-09
+  
+##### Fix
+
+- Fixes the cloning problem where Expression do not clone the negation attribute
+- Added mutex for unique.NewID() to make sure that this function is thread/concurrent safe.
+
+### [1.8.0] - 2020-12-19
+  
+#### Added
+ 
+- Support for JSON as Fact
+- Support native type variable to be added straight into `DataContext` not only `struct`

@@ -1,3 +1,17 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
@@ -26,6 +40,32 @@ type Assignment struct {
 	IsMinusAssign bool
 	IsDivAssign   bool
 	IsMulAssign   bool
+}
+
+// MakeCatalog will create a catalog entry from Assignment node.
+func (e *Assignment) MakeCatalog(cat *Catalog) {
+	meta := &AssigmentMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Variable != nil {
+			meta.VariableID = e.Variable.AstID
+			e.Variable.MakeCatalog(cat)
+		}
+		if e.Expression != nil {
+			meta.ExpressionID = e.Expression.AstID
+			e.Expression.MakeCatalog(cat)
+		}
+		meta.IsAssign = e.IsAssign
+		meta.IsPlusAssign = e.IsPlusAssign
+		meta.IsMinusAssign = e.IsMinusAssign
+		meta.IsDivAssign = e.IsDivAssign
+		meta.IsMulAssign = e.IsMulAssign
+	}
 }
 
 // AssignmentReceiver must be implemented by all other ast graph that uses an assigment expression

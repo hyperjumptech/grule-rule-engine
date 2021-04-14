@@ -1,3 +1,17 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
@@ -65,6 +79,37 @@ type Expression struct {
 	Value            reflect.Value
 
 	Evaluated bool
+}
+
+// MakeCatalog will create a catalog entry from Expression node.
+func (e *Expression) MakeCatalog(cat *Catalog) {
+	meta := &ExpressionMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.LeftExpression != nil {
+			meta.LeftExpressionID = e.LeftExpression.AstID
+			e.LeftExpression.MakeCatalog(cat)
+		}
+		if e.RightExpression != nil {
+			meta.RightExpressionID = e.RightExpression.AstID
+			e.RightExpression.MakeCatalog(cat)
+		}
+		if e.SingleExpression != nil {
+			meta.SingleExpressionID = e.SingleExpression.AstID
+			e.SingleExpression.MakeCatalog(cat)
+		}
+		if e.ExpressionAtom != nil {
+			meta.ExpressionAtomID = e.ExpressionAtom.AstID
+			e.ExpressionAtom.MakeCatalog(cat)
+		}
+		meta.Operator = e.Operator
+		meta.Negated = e.Negated
+	}
 }
 
 // Clone will clone this Expression. The new clone will have an identical structure

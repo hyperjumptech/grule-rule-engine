@@ -1,9 +1,25 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"math"
 	"reflect"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
@@ -25,6 +41,48 @@ type Constant struct {
 	WorkingMemory *WorkingMemory
 	Value         reflect.Value
 	IsNil         bool
+}
+
+// MakeCatalog will create a catalog entry from Constant node.
+func (e *Constant) MakeCatalog(cat *Catalog) {
+	meta := &ConstantMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		var buff bytes.Buffer
+		switch e.Value.Kind() {
+		case reflect.String:
+			meta.ValueType = TypeString
+			length := make([]byte, 8)
+			data := []byte(e.Value.String())
+			binary.LittleEndian.PutUint64(length, uint64(len(data)))
+			buff.Write(length)
+			buff.Write(data)
+		case reflect.Uint64, reflect.Uint32, reflect.Uint16, reflect.Uint8, reflect.Uint, reflect.Int64, reflect.Int32, reflect.Int16, reflect.Int8, reflect.Int:
+			meta.ValueType = TypeInteger
+			intData := make([]byte, 8)
+			binary.LittleEndian.PutUint64(intData, uint64(e.Value.Int()))
+			buff.Write(intData)
+		case reflect.Float32, reflect.Float64:
+			meta.ValueType = TypeFloat
+			floatData := make([]byte, 8)
+			binary.LittleEndian.PutUint64(floatData, math.Float64bits(e.Value.Float()))
+			buff.Write(floatData)
+		case reflect.Bool:
+			meta.ValueType = TypeBoolean
+			if e.Value.Bool() {
+				buff.WriteByte(1)
+			} else {
+				buff.WriteByte(0)
+			}
+		}
+		meta.ValueBytes = buff.Bytes()
+		meta.IsNil = e.IsNil
+	}
 }
 
 // Clone will clone this Constant. The new clone will have an identical structure

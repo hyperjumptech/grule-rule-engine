@@ -1,8 +1,24 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"io"
 	"sort"
 	"strings"
 	"sync"
@@ -40,6 +56,50 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 	return kb
 }
 
+// LoadKnowledgeBaseFromReader will load the KnowledgeBase stored using StoreKnowledgeBaseToWriter function
+// be it from file, or anywhere. The reader we needed is a plain io.Reader, thus closing the source stream is your responsibility.
+// This should hopefully speedup loading huge ruleset by storing and reading them
+// without having to parse the GRL.
+func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overwrite bool) (retKb *KnowledgeBase, retErr error) {
+	defer func() {
+		if r := recover(); r != nil {
+			retKb = nil
+			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader. send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues")
+		}
+	}()
+
+	catalog := &Catalog{}
+	err := catalog.ReadCatalogFromReader(reader)
+	if err != nil {
+		return nil, err
+	}
+	kb := catalog.BuildKnowledgeBase()
+	if overwrite {
+		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+		return kb, nil
+	}
+	if _, ok := lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)]; !ok {
+		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+		return kb, nil
+	}
+	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", kb.Name, kb.Version)
+}
+
+// StoreKnowledgeBaseToWriter will store a KnowledgeBase in binary form
+// once store, the binary stream can be read using LoadKnowledgeBaseFromReader function.
+// This should hopefully speedup loading huge ruleset by storing and reading them
+// without having to parse the GRL.
+//
+// The stored binary file is greatly increased (easily 10x fold) due to lots of generated keys for AST Nodes
+// that was also saved. To overcome this, the use of archive/zip package for Readers and Writers could cut down the
+// binary size quite a lot.
+func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, version string) error {
+	kb := lib.GetKnowledgeBase(name, version)
+	cat := kb.MakeCatalog()
+	err := cat.WriteCatalogToWriter(writer)
+	return err
+}
+
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
@@ -67,8 +127,33 @@ type KnowledgeBase struct {
 	RuleEntries   map[string]*RuleEntry
 }
 
+// MakeCatalog will create a catalog entry for all AST Nodes under the KnowledgeBase
+// the catalog can be used to save the knowledge base into a Writer, or to
+// rebuild the KnowledgeBase from it.
+// This function also will catalog the WorkingMemory.
+func (e *KnowledgeBase) MakeCatalog() *Catalog {
+	catalog := &Catalog{
+		KnowledgeBaseName:               e.Name,
+		KnowledgeBaseVersion:            e.Version,
+		Data:                            nil,
+		MemoryName:                      "",
+		MemoryVersion:                   "",
+		MemoryVariableSnapshotMap:       nil,
+		MemoryExpressionSnapshotMap:     nil,
+		MemoryExpressionAtomSnapshotMap: nil,
+		MemoryExpressionVariableMap:     nil,
+		MemoryExpressionAtomVariableMap: nil,
+	}
+	for _, v := range e.RuleEntries {
+		v.MakeCatalog(catalog)
+	}
+	e.WorkingMemory.MakeCatalog(catalog)
+	return catalog
+}
+
 // IsIdentical will validate if two KnoledgeBase is identical. Used to validate if the origin and clone is identical.
 func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
+	// fmt.Printf("%s\n%s\n", e.GetSnapshot(), that.GetSnapshot())
 	return e.GetSnapshot() == that.GetSnapshot()
 }
 

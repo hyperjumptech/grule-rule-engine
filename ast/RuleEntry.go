@@ -1,3 +1,17 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
@@ -31,6 +45,30 @@ type RuleEntry struct {
 	ThenScope       *ThenScope
 
 	Retracted bool
+}
+
+// MakeCatalog will create a catalog entry from RuleEntry node.
+func (e *RuleEntry) MakeCatalog(cat *Catalog) {
+	meta := &RuleEntryMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.WhenScope != nil {
+			meta.WhenScopeID = e.WhenScope.AstID
+			e.WhenScope.MakeCatalog(cat)
+		}
+		if e.ThenScope != nil {
+			meta.ThenScopeID = e.ThenScope.AstID
+			e.ThenScope.MakeCatalog(cat)
+		}
+		meta.RuleName = e.RuleName
+		meta.RuleDescription = e.RuleDescription
+		meta.Salience = e.Salience
+	}
 }
 
 // RuleEntryReceiver should be implemented by any rule AST object that receive a RuleEntry

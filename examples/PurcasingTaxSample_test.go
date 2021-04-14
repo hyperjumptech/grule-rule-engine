@@ -1,6 +1,21 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package examples
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -120,11 +135,21 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 
 	kb := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
 
+	buff := &bytes.Buffer{}
+	cat := kb.MakeCatalog()
+	err = cat.WriteCatalogToWriter(buff)
+	assert.Nil(t, err)
+
+	buff2 := bytes.NewBuffer(buff.Bytes())
+	cat2 := &ast.Catalog{}
+	cat2.ReadCatalogFromReader(buff2)
+	nkb := cat2.BuildKnowledgeBase()
+
 	for _, purchase := range Purchases {
 		dctx := ast.NewDataContext()
 		dctx.Add("CashFlow", cashFlow)
 		dctx.Add("Purchase", purchase)
-		err = engine.Execute(dctx, kb)
+		err = engine.Execute(dctx, nkb)
 		assert.NoError(t, err)
 	}
 

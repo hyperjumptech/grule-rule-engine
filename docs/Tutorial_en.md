@@ -6,12 +6,12 @@
 
 ## Preparation
 
-Please note that Grule is using Go 1.13
+Please note that Grule is using Go 1.13.
 
-To import Grule into your project you can simply import it.
+To import Grule into your project:
 
 ```Shell
-$go get github.com/hyperjumptech/grule-rule-engine
+$ go get github.com/hyperjumptech/grule-rule-engine
 ```
 
 From your `go` you can import Grule.
@@ -27,9 +27,10 @@ import (
 
 ## Creating Fact Structure
 
-A `fact` in grule is a mere **pointer** to an instance of a `struct`.
-This struct may contains properties like any normal Golang struct, as well
-as `function` or usually, in *OOP*, we call them `method`
+A `fact` in grule is a **pointer** to an instance of a `struct`.  The struct
+may also contain properties just as any normal Golang `struct`, including any
+`method` you wish to define, provided it adheres to the requirements for
+methods defined below.  As an example:
 
 ```go
 type MyFact struct {
@@ -40,13 +41,10 @@ type MyFact struct {
     TimeAttribute      time.Time
     WhatToSay          string
 }
-
 ```
 
-Just like normal Golang conventions, only **visible** attributes can be accessible
-from the Grule rule engine, those with capital first letter.
-
-Grule can also call Fact's functions.
+As with normal Golang conventions, Grule is only able to access those
+**visible** attributes and methods exposed with an initial capital letter.
 
 ```go
 func (mf *MyFact) GetWhatToSay(sentence string) string {
@@ -54,13 +52,19 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 ```
 
-Please note, that there are some conventions.
+**NOTE:** Member functions are subject to the following requirements:
 
-* Member function must be **Visible**, have capital first letter.
-* If the function have returns, there must be only 1 return.
-* Arguments and return, if it is an `int`, `uint` or `float`, must be their 64-bit variant. Eg. `int64`, `uint64`, `float64`.
-* The function are not encouraged to change the Fact's member attribute, this cause RETE's working memory detection impossible.
-If you **MUST** change some variable, you have to notify Grule using `Changed(varname string)` built-in function.
+* The member function must be **visible**; it's name must start with a capital
+  letter.
+* The member function must return `0` or `1` values. More than one return value
+  is not supported.
+* All numerical argument and return types must be their 64 bit variant. i.e.
+  `int64`, `uint64`, `float64`.
+* The member function **should not** change the Fact's internal state. The
+  algorithm cannot automatically detect these changes, things become more
+  difficult to reason about, and bugs can creep in.  If you **MUST** change
+  some internal state of the Fact, then you can notify Grule using
+  `Changed(varname string)` built-in function.
 
 ## Add Fact Into DataContext
 
@@ -76,9 +80,10 @@ myFact := &MyFact{
 }
 ```
 
-You can create as many fact as you wish.
+You can create as many facts as you wish.
 
-Next, you have to prepare a `DataContext` and add your instance(s) of facts into it.
+After the fact(s) have been created, you can then add those instances into the
+`DataContext`:
 
 ```go
 dataCtx := ast.NewDataContext()
@@ -88,24 +93,32 @@ if err != nil {
 }
 ```
 
-## Creating KnowledgeLibrary and Add Rules Into It
+### Creating a Fact from JSON
 
-A `KnowledgeLibrary` is basically collection of `KnowledgeBase` blue prints. 
-And `KnowledgeBase` is a collection of many rules sourced from rule definitions
-loaded from multiple sources.
-We use `RuleBuilder` to build `KnowledgeBase` and add it into `KnowledgeLibrary`
+JSON data can also be used to describe facts in Grule as of version 1.8.0.  For
+more detail, see [JSON as a Fact](JSON_Fact_en.md).
 
-The GRL, can be in the form of simple string, stored in a file or somewhere from the internet can each be
-used to build those rules.
+## Creating a KnowledgeLibrary and Adding Rules Into It
 
-Now lets create the `KnowledgeLibrary` and `RuleBuilder` to build the rule into prepared `KnowledgeLibrary`
+A `KnowledgeLibrary` is a collection of `KnowledgeBase` blue prints and a
+`KnowledgeBase` is a collection of many rules sourced from rule definitions
+loaded from multiple sources.  We use `RuleBuilder` to build `KnowledgeBase`
+instances and then add them to the `KnowledgeLibrary`.
+
+The source form of a GRL can be:
+
+* a raw string
+* contents of a file
+* a document at an HTTP endpoint
+
+Lets use the `RuleBuilder` to start populating our `KnowledgeLibrary`.
 
 ```go
 knowledgeLibrary := ast.NewKnowledgeLibrary()
 ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 ```
 
-Now we can add rules (defined within a GRL)
+Next we can define a basic rule as a raw string in the DSL:
 
 ```go
 // lets prepare a rule definition
@@ -118,20 +131,91 @@ rule CheckValues "Check the default values" salience 10 {
         Retract("CheckValues");
 }
 `
+```
 
+And finally we can use the builder to add the definition to the
+`knowledgeLibrary` from a declared `resource`:
+
+```go
 // Add the rule definition above into the library and name it 'TutorialRules'  version '0.0.1'
-byteArr := pkg.NewBytesResource([]byte(drls))
-err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", byteArr)
+bs := pkg.NewBytesResource([]byte(drls))
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", bs)
 if err != nil {
     panic(err)
 }
 ```
 
-### Resources
+The `KnowledgeLibrary` now contains a `KnowledgeBase` named `TutorialRules`
+with version `0.0.1`. To execute this particular rule we must obtain an
+instance from the `KnowledgeLibrary`. This will be explained on the next
+section.
 
-You can always load a GRL from multiple sources.
+## Executing Grule Rule Engine
 
-#### From File
+To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase`
+from `KnowledgeLibrary` 
+
+```go
+knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
+```
+
+Each instance you obtain from the `knowledgeLibrary` is a unique *clone* from
+the underlying `KnowledgeBase` *blueprint*.  Each unique instance also carries
+its own distinct `WorkingMemory`. As no instance shares any state with any
+other instance, you are free to use them in any multithreaded environment
+provided you aren't executing any single instance from multiple threads
+simultaneously.
+
+Constructing from the `KnowledgeBase` blueprint also ensures that we aren't
+recomputing work every time we want to construct an instance.  The
+computational work is only done once, making the work of cloning the `AST`
+extremely efficient.
+
+Now lets execute the `KnowledgeBase` instance using the prepared `DataContext`.
+
+```go
+engine = engine.NewGruleEngine()
+err = engine.Execute(dataCtx, knowledgeBase)
+if err != nil {
+    panic(err)
+}
+```
+
+## Obtaining Result
+
+Here's the rule we defined above, just for reference:
+
+```go
+rule CheckValues "Check the default values" salience 10 {
+    when 
+        MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
+    then
+        MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+        Retract("CheckValues");
+}
+```
+
+Assuming the condition is matched (which it is) the action will modify the
+`MF.WhatToSay` attribute.  In order to ensure that the rule is not then
+immediately re-evaluted, the rule is `Retract`ed from the set.  In this
+particular instance, if the rule failed to do this then it would match again on
+the next cycle, and again, and again.  Eventually Grule would terminate with an
+error, since it would be unable to converge on a terminal result.
+
+In this case, all you have to do in order to obtain the result is just examine
+your `myFact` instance for the modification your rule made:
+
+```go
+fmt.Println(myFact.WhatToSay)
+// this should prints
+// Lets Say "Hello Grule"
+```
+## Resources
+
+GRLs can be stored in external files and there are many ways to obtain and load
+the contents of those files.
+
+### From File
 
 ```go
 fileRes := pkg.NewFileResource("/path/to/rules.grl")
@@ -141,7 +225,7 @@ if err != nil {
 }
 ```
 
-or if you want to get file resource by their pattern
+You can also load multiple files into a bundle with paths and glob patterns:
 
 ```go
 bundle := pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
@@ -154,17 +238,17 @@ for _, res := range resources {
 }
 ```
 
-#### From String or ByteArray
+### From String or ByteArray
 
 ```go
-byteArr := pkg.NewBytesResource([]byte(rules))
-err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", byteArr)
+bs := pkg.NewBytesResource([]byte(rules))
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", bs)
 if err != nil {
     panic(err)
 }
 ```
 
-#### From URL
+### From URL
 
 ```go
 urlRes := pkg.NewUrlResource("http://host.com/path/to/rule.grl")
@@ -174,7 +258,7 @@ if err != nil {
 }
 ```
 
-#### From GIT
+### From GIT
 
 ```go
 bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
@@ -187,53 +271,6 @@ for _, res := range resources {
 }
 ```
 
-#### From JSON
+### From JSON
 
-You can now build rules from JSON!,  [Read how it works](GRL_JSON_en.md) 
-
-Now, in the `KnowledgeLibrary` we have a `KnowledgeBase` named `TutorialRules` with version `0.0.1`. To execute this particular rule, you have to obtain an instance of it from the `KnowledgeLibrary`. This will be explained on the next section.
-
-## Executing Grule Rule Engine
-
-To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase` from `KnowledgeLibrary` 
-
-```go
-knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
-```
-
-Each instance you obtained from knowledgeLibrary is a *clone* from the underlying `KnowledgeBase` *blue-print*. Its entirely different instance that makes it *thread-safe* for execution. Each *instance* also carries its own `WorkingMemory`. This is very useful when you want to have a multithreaded execution of rule engine (eg. In a web-server to serve each request using a rule).
-
-Its a significant performance improvement boost since you don't have to "recreate" a `KnowledgeBase` from GRL everytime you start another thread. The `KnowledgeLibrary` will clone the `AST` structure of `KnowledgeBase` into a new instance.
-
-Ok, now lets execute the `KnowledgeBase` instance using the prepared `DataContext`.
-
-```go
-engine = engine.NewGruleEngine()
-err = engine.Execute(dataCtx, knowledgeBase)
-if err != nil {
-    panic(err)
-}
-```
-
-## Obtaining Result
-
-If you see, on the rule's GRL above,
-
-```go
-rule CheckValues "Check the default values" salience 10 {
-    when 
-        MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
-    then
-        MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
-        Retract("CheckValues");
-}
-```
-
-The rule modify attribute `MF.WhatToSay` where this is revering to the `WhatToSay` in the
-`MyFact` struct. So simply access that member variable to get the result.
-
-```go
-fmt.Println(myFact.WhatToSay)
-// this should prints
-// Lets Say "Hello Grule"
-```
+You can now build rules from JSON! [Read how it works](GRL_JSON_en.md) 

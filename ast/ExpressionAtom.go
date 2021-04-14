@@ -1,3 +1,17 @@
+//  Copyright hyperjumptech/grule-rule-engine Authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 package ast
 
 import (
@@ -29,11 +43,47 @@ type ExpressionAtom struct {
 	Variable         *Variable
 	Negated          bool
 	ExpressionAtom   *ExpressionAtom
-	Value            reflect.Value
-	ValueNode        model.ValueNode
 	ArrayMapSelector *ArrayMapSelector
 
+	Value     reflect.Value
+	ValueNode model.ValueNode
+
 	Evaluated bool
+}
+
+// MakeCatalog will create a catalog entry from ExpressionAtom node.
+func (e *ExpressionAtom) MakeCatalog(cat *Catalog) {
+	meta := &ExpressionAtomMeta{
+		NodeMeta: NodeMeta{
+			AstID:    e.AstID,
+			GrlText:  e.GrlText,
+			Snapshot: e.GetSnapshot(),
+		},
+	}
+	if cat.AddMeta(e.AstID, meta) {
+		if e.Constant != nil {
+			meta.ConstantID = e.Constant.AstID
+			e.Constant.MakeCatalog(cat)
+		}
+		if e.FunctionCall != nil {
+			meta.FunctionCallID = e.FunctionCall.AstID
+			e.FunctionCall.MakeCatalog(cat)
+		}
+		if e.Variable != nil {
+			meta.VariableID = e.Variable.AstID
+			e.Variable.MakeCatalog(cat)
+		}
+		if e.ExpressionAtom != nil {
+			meta.ExpressionAtomID = e.ExpressionAtom.AstID
+			e.ExpressionAtom.MakeCatalog(cat)
+		}
+		if e.ArrayMapSelector != nil {
+			meta.ArrayMapSelectorID = e.ArrayMapSelector.AstID
+			e.ArrayMapSelector.MakeCatalog(cat)
+		}
+		meta.VariableName = e.VariableName
+		meta.Negated = e.Negated
+	}
 }
 
 // ExpressionAtomReceiver contains function to be implemented by other AST graph to receive an ExpressionAtom AST graph
