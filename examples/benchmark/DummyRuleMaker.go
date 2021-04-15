@@ -34,7 +34,6 @@ func init() {
 	dupCheck = make(map[string]bool)
 }
 
-// GetWord get a random english word
 func GetWord(t bool) string {
 	w := words[rand.Intn(len(words))]
 	if t {
@@ -43,7 +42,6 @@ func GetWord(t bool) string {
 	return w
 }
 
-// MakeRule make a single dummy rule
 func MakeRule(seq int) string {
 	var rname string
 	for true {
@@ -99,7 +97,6 @@ func MakeRule(seq int) string {
 	return buff.String()
 }
 
-// GenRandomRule simply generate count number of simple parse-able rule into a file
 func GenRandomRule(fileName string, count int) error {
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 666)
 	if err != nil {
