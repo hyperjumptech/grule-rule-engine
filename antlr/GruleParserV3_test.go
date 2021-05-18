@@ -19,6 +19,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"reflect"
@@ -137,19 +138,20 @@ func TestV3Parser(t *testing.T) {
 		lexer := parser.Newgrulev3Lexer(is)
 		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-		var parseError error
+		errReporter := &pkg.GruleErrorReporter{
+			Errors: make([]error, 0),
+		}
+
 		kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-		listener := NewGruleV3ParserListener(kb, func(e error) {
-			parseError = e
-		})
+		listener := NewGruleV3ParserListener(kb, errReporter)
 
 		psr := parser.Newgrulev3Parser(stream)
 		psr.BuildParseTrees = true
 		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
-		if parseError != nil {
-			t.Log(parseError)
+		if errReporter.HasError() {
+			t.Log(errReporter.Error())
 			t.FailNow()
 		}
 	}
@@ -164,20 +166,19 @@ func TestV3Parser2(t *testing.T) {
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
+	}
 	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV3ParserListener(kb, func(e error) {
-		parseError = e
-		panic(e)
-	})
+	listener := NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
-	if parseError != nil {
-		t.Log(parseError)
+	if errReporter.HasError() {
+		t.Log(errReporter.Error())
 		t.FailNow()
 	}
 }
@@ -189,18 +190,18 @@ func TestV3ParserEscapedStringInvalid(t *testing.T) {
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
+	}
 	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV3ParserListener(kb, func(e error) {
-		parseError = e
-	})
+	listener := NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
-	if parseError == nil {
+	if errReporter.HasError() == false {
 		t.Fatal("Successfully parsed invalid string literal, should have gotten an error")
 	}
 }
@@ -212,18 +213,18 @@ func TestV3ParserEscapedStringValid(t *testing.T) {
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
+	}
 	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV3ParserListener(kb, func(e error) {
-		parseError = e
-	})
+	listener := NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
-	if parseError != nil {
+	if errReporter.HasError() {
 		t.Fatal("Failed to parse rule with escaped string constant")
 	}
 }
@@ -245,18 +246,18 @@ rule SpeedUp "When testcar is speeding up we keep increase the speed." salience 
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
+	}
 	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV3ParserListener(kb, func(e error) {
-		parseError = e
-	})
+	listener := NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
-	if parseError != nil {
-		t.Log(parseError)
+	if errReporter.HasError() {
+		t.Log(errReporter.Error())
 		t.FailNow()
 	}
 
@@ -287,17 +288,17 @@ func prepareV3TestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *
 	lexer := parser.Newgrulev3Lexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
+	}
 	kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
 
-	listener := NewGruleV3ParserListener(kb, func(e error) {
-		parseError = e
-	})
+	listener := NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
-	assert.NoError(t, parseError)
+	assert.False(t, errReporter.HasError())
 	listener.KnowledgeBase.WorkingMemory.IndexVariables()
 	return kb, kb.WorkingMemory
 }

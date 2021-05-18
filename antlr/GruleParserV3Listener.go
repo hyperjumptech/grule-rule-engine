@@ -20,6 +20,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
@@ -34,7 +35,7 @@ var (
 )
 
 // NewGruleV3ParserListener create new instance of GruleV3ParserListener
-func NewGruleV3ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack func(e error)) *GruleV3ParserListener {
+func NewGruleV3ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack *pkg.GruleErrorReporter) *GruleV3ParserListener {
 	return &GruleV3ParserListener{
 		PreviousNode:  make([]string, 0),
 		ErrorCallback: errorCallBack,
@@ -52,7 +53,7 @@ type GruleV3ParserListener struct {
 	Grl           *ast.Grl
 	Stack         *stack
 	StopParse     bool
-	ErrorCallback func(e error)
+	ErrorCallback *pkg.GruleErrorReporter
 	KnowledgeBase *ast.KnowledgeBase
 }
 
@@ -71,7 +72,6 @@ func (s *GruleV3ParserListener) VisitTerminal(node antlr.TerminalNode) {
 func (s *GruleV3ParserListener) VisitErrorNode(node antlr.ErrorNode) {
 	LoggerV3.Errorf("GRL error, after '%v' and then unexpected '%s'", s.PreviousNode, node.GetText())
 	s.StopParse = true
-	s.ErrorCallback(fmt.Errorf("GRL error, after '%v' and then unexpected '%s'", s.PreviousNode, node.GetText()))
 }
 
 // EnterEveryRule is called when any rule is entered.
@@ -95,7 +95,7 @@ func (s *GruleV3ParserListener) ExitGrl(ctx *grulev3.GrlContext) {
 	for _, re := range s.Grl.RuleEntries {
 		err := s.KnowledgeBase.AddRuleEntry(re)
 		if err != nil {
-			s.ErrorCallback(err)
+			s.ErrorCallback.AddError(err)
 		}
 	}
 }
@@ -126,7 +126,7 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 	}
 	err := entryReceiver.ReceiveRuleEntry(entry)
 	if err != nil {
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	} else {
 		LoggerV3.Debugf("Added RuleEntry : %s", entry.RuleName)
 	}
@@ -168,7 +168,7 @@ func (s *GruleV3ParserListener) ExitWhenScope(ctx *grulev3.WhenScopeContext) {
 	err := receiver.AcceptWhenScope(when)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -192,7 +192,7 @@ func (s *GruleV3ParserListener) ExitThenScope(ctx *grulev3.ThenScopeContext) {
 	err := receiver.AcceptThenScope(then)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -216,7 +216,7 @@ func (s *GruleV3ParserListener) ExitThenExpressionList(ctx *grulev3.ThenExpressi
 	err := receiver.AcceptThenExpressionList(thenExpList)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -241,7 +241,7 @@ func (s *GruleV3ParserListener) ExitThenExpression(ctx *grulev3.ThenExpressionCo
 	err := receiver.AcceptThenExpression(thenExpr)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -271,7 +271,7 @@ func (s *GruleV3ParserListener) ExitAssignment(ctx *grulev3.AssignmentContext) {
 	err := receiver.AcceptAssignment(assign)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -300,7 +300,7 @@ func (s *GruleV3ParserListener) ExitExpression(ctx *grulev3.ExpressionContext) {
 	err := exprRec.AcceptExpression(s.KnowledgeBase.WorkingMemory.AddExpression(expr))
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -415,7 +415,7 @@ func (s *GruleV3ParserListener) ExitExpressionAtom(ctx *grulev3.ExpressionAtomCo
 	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -439,7 +439,7 @@ func (s *GruleV3ParserListener) ExitArrayMapSelector(ctx *grulev3.ArrayMapSelect
 	err := receiver.AcceptArrayMapSelector(sel)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -463,7 +463,7 @@ func (s *GruleV3ParserListener) ExitFunctionCall(ctx *grulev3.FunctionCallContex
 	err := metRec.AcceptFunctionCall(fun)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -488,7 +488,7 @@ func (s *GruleV3ParserListener) ExitArgumentList(ctx *grulev3.ArgumentListContex
 	err := argListRec.AcceptArgumentList(argList)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -519,7 +519,7 @@ func (s *GruleV3ParserListener) ExitVariable(ctx *grulev3.VariableContext) {
 	err := variRec.AcceptVariable(s.KnowledgeBase.WorkingMemory.AddVariable(vari))
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -555,7 +555,7 @@ func (s *GruleV3ParserListener) ExitConstant(ctx *grulev3.ConstantContext) {
 	err := conRec.AcceptConstant(cons)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	}
 }
 
@@ -570,7 +570,7 @@ func (s *GruleV3ParserListener) ExitStringLiteral(ctx *grulev3.StringLiteralCont
 	}
 	dec, err := unquoteString(ctx.GetText())
 	if err != nil {
-		s.ErrorCallback(fmt.Errorf("error parsing quoted string (%s): %s", ctx.GetText(), err.Error()))
+		s.ErrorCallback.AddError(fmt.Errorf("error parsing quoted string (%s): %s", ctx.GetText(), err.Error()))
 		return
 	}
 	receiver := s.Stack.Peek().(ast.StringLiteralReceiver)
@@ -606,7 +606,7 @@ func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralCo
 	i, err := strconv.ParseInt(ctx.GetText(), 0, 64)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	} else {
 		lit.Integer = i
 	}
@@ -623,7 +623,7 @@ func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContex
 	i, err := strconv.ParseFloat(ctx.GetText(), 64)
 	if err != nil {
 		s.StopParse = true
-		s.ErrorCallback(err)
+		s.ErrorCallback.AddError(err)
 	} else {
 		lit.Float = i
 	}
