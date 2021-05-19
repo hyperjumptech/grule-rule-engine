@@ -154,7 +154,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				return fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
 			}
 
-			var runner *ast.RuleEntry
+			runner := runnable[0]
 
 			// scan all runnables and pick the highest salience
 			if len(runnable) > 1 {
@@ -163,8 +163,6 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 						runner = pr
 					}
 				}
-			} else {
-				runner = runnable[0]
 			}
 			// notify listeners that we are about to execute a rule entry then scope
 			g.notifyExecuteRuleEntry(cycle, runner)
