@@ -5,7 +5,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
-	"io/fs"
 	"os"
 	"testing"
 	"time"
@@ -38,8 +37,7 @@ func TestSerializationPerformanceOnFile(t *testing.T) {
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource(knowledgeName, knowledgeVersion, pkg.NewFileResource(grlFile))
-	pathError := err.(*fs.PathError)
-	assert.NoError(t, pathError)
+	assert.NoError(t, err)
 
 	durationA := time.Since(timer)
 	t.Log("SAVING BINARY INTO GRB")
