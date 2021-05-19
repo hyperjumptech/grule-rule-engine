@@ -250,6 +250,49 @@ rule SetTime "When Distance Recorder time not set, set it." {
 }
 ```
 
+### Debugging GRL Syntax
+
+Your application, you can test if a GRL script or snippet contains a GRL syntax error.
+
+```go
+        RuleWithError := `
+        rule ErrorRule1 "Rule with error"  salience 10{
+            when
+              Pogo.Compare(User.Name, "Calo")  
+            then
+              User.Name = "Success";
+              Log(User.Name)
+              Retract("AgeNameCheck");
+        }
+        `
+
+	// Build normally
+	err := ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(RuleWithError)))
+
+	// If the err != nil something is wrong.
+	if err != nil {
+		// Cast the error into pkg.GruleErrorReporter with typecast checking.
+		// Typecast checking is necessary because the err might not only parsing error.
+		if reporter, ok := err.(*pkg.GruleErrorReporter); ok {
+			// Lets iterate all the error we get during parsing.
+			for i, er := range reporter.Errors {
+				fmt.Printf("detected error #%d : %s\n", i, er.Error())
+			}
+		} else {
+			// Well, its an error but not GruleErrorReporter instance. could be IO error.
+			t.Error("There should be GruleErrorReporter")
+			t.FailNow()
+		}
+	}
+```
+
+This will print
+
+```txt
+detected error #0 : grl error on 8:6 missing ';' at 'Retract'
+```
+
+
 ### IDE Support
 
 Visual Studio Code: [https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax](https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax)
