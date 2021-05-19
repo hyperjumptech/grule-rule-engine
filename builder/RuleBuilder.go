@@ -102,21 +102,28 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	// Immediately parse the loaded resource
 	is := antlr.NewInputStream(string(data))
 	lexer := parser.Newgrulev3Lexer(is)
-	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	var parseError error
-	errCall := func(e error) {
-		parseError = e
+	errReporter := &pkg.GruleErrorReporter{
+		Errors: make([]error, 0),
 	}
+
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(errReporter)
+
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	kb := builder.KnowledgeLibrary.GetKnowledgeBase(name, version)
 	if kb == nil {
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV3ParserListener(kb, errCall)
+	listener := antlr2.NewGruleV3ParserListener(kb, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
+
+	psr.RemoveErrorListeners()
+	psr.AddErrorListener(errReporter)
+
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
@@ -133,9 +140,12 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	// Get the loading duration.
 	dur := time.Now().Sub(startTime)
 
-	if parseError != nil {
-		BuilderLog.Errorf("Loading rule resource : %s failed. Got %v. Time take %d ms", resource.String(), parseError, dur.Nanoseconds()/1e6)
-		return fmt.Errorf("error were found before builder bailing out. Got %v", parseError)
+	if errReporter.HasError() {
+		BuilderLog.Errorf("GRL syntax error. got %s", errReporter.Error())
+		for i, errr := range errReporter.Errors {
+			BuilderLog.Errorf("%d : %s", i, errr.Error())
+		}
+		return errReporter
 	}
 
 	BuilderLog.Debugf("Loading rule resource : %s success. Time taken %d ms", resource.String(), dur.Nanoseconds()/1e6)

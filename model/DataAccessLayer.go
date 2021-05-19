@@ -206,6 +206,21 @@ func StrTrim(str string, arg []reflect.Value) (reflect.Value, error) {
 	return reflect.ValueOf(b), nil
 }
 
+// StrIn will check the string instance if its equals one of the arguments, if no argument specified it will return false
+func StrIn(str string, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(false), nil
+	}
+	for _, a := range arg {
+		if !a.IsNil() && a.IsValid() && a.Kind() == reflect.String {
+			if a.String() == str {
+				return reflect.ValueOf(true), nil
+			}
+		}
+	}
+	return reflect.ValueOf(false), nil
+}
+
 // ArrMapLen will return the size of underlying map, array or slice
 func ArrMapLen(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
 	if arg != nil && len(arg) != 0 {

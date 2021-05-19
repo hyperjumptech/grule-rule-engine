@@ -274,3 +274,9 @@ for _, res := range resources {
 ### From JSON
 
 You can now build rules from JSON! [Read how it works](GRL_JSON_en.md) 
+
+## Compile GRL into GRB
+
+If you want to have faster rule set loading performance (e.g. you have very
+large rule sets and loading GRL is too slow), you can save your rule set
+into GRB (Grules Rule Binary) file. [Read how to store and load GRB](Binary_Rule_File_en.md) 

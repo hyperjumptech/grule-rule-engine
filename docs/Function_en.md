@@ -558,6 +558,29 @@ rule ContainString "Do something when Fact.Text is contains XXX" {
 }
 ```
 
+### string.In(string ...) bool
+
+`In` will check if the any of the argument is equals to the receiver.
+
+#### Arguments
+
+* `string` The variadic string argument to check
+
+#### Returns
+
+* bolean `true` if any of the argument is equals to the receiver, or `false` if otherwise.
+
+#### Example
+
+```Shell
+rule CheckArgumentIn "Do something when Fact.Text is equals to 'ABC' or 'BCD' or 'CDE' " {
+    when
+        Fact.Text.In("ABC", "BCD", "CDE")
+    then
+        Fact.DoSomething();
+}
+```
+
 ### string.Count(string) int
 
 `Count` will count the number of occurences of argument in receiver string.

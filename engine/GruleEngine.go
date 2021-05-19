@@ -42,12 +42,40 @@ func NewGruleEngine() *GruleEngine {
 
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
-	MaxCycle uint64
+	MaxCycle  uint64
+	Listeners []GruleEngineListener
 }
 
 // Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
+}
+
+// notifyEvaluateRuleEntry will notify all registered listener that a rule is being evaluated.
+func (g *GruleEngine) notifyEvaluateRuleEntry(cycle uint64, entry *ast.RuleEntry, candidate bool) {
+	if g.Listeners != nil && len(g.Listeners) > 0 {
+		for _, gl := range g.Listeners {
+			gl.EvaluateRuleEntry(cycle, entry, candidate)
+		}
+	}
+}
+
+// notifyEvaluateRuleEntry will notify all registered listener that a rule is being executed.
+func (g *GruleEngine) notifyExecuteRuleEntry(cycle uint64, entry *ast.RuleEntry) {
+	if g.Listeners != nil && len(g.Listeners) > 0 {
+		for _, gl := range g.Listeners {
+			gl.ExecuteRuleEntry(cycle, entry)
+		}
+	}
+}
+
+// notifyEvaluateRuleEntry will notify all registered listener that a rule is being executed.
+func (g *GruleEngine) notifyBeginCycle(cycle uint64) {
+	if g.Listeners != nil && len(g.Listeners) > 0 {
+		for _, gl := range g.Listeners {
+			gl.BeginCycle(cycle)
+		}
+	}
 }
 
 // ExecuteWithContext function will execute a knowledge evaluation and action against data context.
@@ -88,19 +116,25 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			return ctx.Err()
 		}
 
+		g.notifyBeginCycle(cycle + 1)
+
 		// Select all rule entry that can be executed.
 		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
-			// test if this rule entry v can execute.
-			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
-			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
-				// No longer return error, since unavailability of variable or fact in context might be intentional.
-			}
-			// if can, add into runnable array
-			if can {
-				runnable = append(runnable, v)
+			if !v.Retracted {
+				// test if this rule entry v can execute.
+				can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
+				if err != nil {
+					log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+					// No longer return error, since unavailability of variable or fact in context might be intentional.
+				}
+				// if can, add into runnable array
+				if can {
+					runnable = append(runnable, v)
+				}
+				// notify all listeners that a rule's when scope is been evaluated.
+				g.notifyEvaluateRuleEntry(cycle+1, v, can)
 			}
 		}
 
@@ -120,7 +154,6 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				return fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
 			}
 
-			// execute the top most prioritized rule
 			runner := runnable[0]
 
 			// scan all runnables and pick the highest salience
@@ -131,6 +164,8 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 					}
 				}
 			}
+			// notify listeners that we are about to execute a rule entry then scope
+			g.notifyExecuteRuleEntry(cycle, runner)
 			// execute the top most prioritized rule
 			err := runner.Execute(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
