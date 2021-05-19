@@ -319,6 +319,8 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 	case reflect.String:
 		var strfunc func(string, []reflect.Value) (reflect.Value, error)
 		switch funcName {
+		case "In":
+			strfunc = StrIn
 		case "Compare":
 			strfunc = StrCompare
 		case "Contains":
