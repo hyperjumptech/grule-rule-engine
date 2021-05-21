@@ -149,10 +149,9 @@ rule CheckStartTime "Check device's starting time." {
 
 ### Retract(ruleName string)
 
-`Retract` will remove the specified rule from the next cycle evaluation. If a
-rule is retracted its `when` scope will not be evaluated on the next immediate
-cycle after the call to `Retract`. Before the following cycle, all retracted
-rules will be restored.
+`Retract` will exclude the specified rule from the subsequent cycle evaluations. If a
+rule is retracted its `when` scope will not be evaluated on the next cycles after the call to `Retract`. 
+The engine will automatically resets all rule back inplace when it start again from the beginning.
 
 #### Arguments
 

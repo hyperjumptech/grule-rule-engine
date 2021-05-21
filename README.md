@@ -108,7 +108,65 @@ By using Rules, you create a repository of knowledge (a knowledge base) which is
 
 Since business rules are actually treated as data. Adjusting the rule according to business dynamic nature become trivial. No need to re-build codes, deploy as normal software development do, you only need to roll out sets of rule and apply them to knowledge repository.
 
-### Docs
+## Use Cases
+
+The following cases are better solved with a rule-engine.
+
+1. An expert system that must evaluate facts to provide some sort of real-world
+   conclusion. If not using a a RETE-style rule engine, one would code up a
+   cascading set of `if`/`else` statements and the permutations of the
+   combinations of how those might be evaluated would quickly become impossible
+   to manage.  A table-based rule engine might suffice but it is still more
+   brittle against change and is not terribly easy to code. A system like Grule
+   allows you to describe the rules and facts of your system, releasing you from
+   the need to describe how the rules are evaluated against those facts, hiding
+   the bulk of that complexity from you.
+
+2. A rating system. For example, a bank system may want to create a "score" for
+   each customer based on the customer's transaction records (facts).  We could
+   see their score change based on how often they interact with the bank, how
+   much money they transfer in and out, how quickly they pay their bills, how
+   much interest they accrue earn for themselves or for the bank, and so on. A
+   rule engine is provided by the developer and the specification of the facts
+   and rules can then be supplied by subject matter experts in the bank's
+   customer business. Decoupling these different teams puts the responsbilities
+   where they should be.
+
+3. Computer games. Player status, rewards, penalties, damage, scores and
+   probability systems are many different examples of where rule play a
+   significant part of nearly all computer games. These rules can interact in
+   very complex ways, often times in ways that the developer didn't imagine.
+   Coding these dynamic situations in a scripting language (e.g. LUA) can get
+   quite complex, and a rule engine can help simplify the work tremendously.
+
+4. Classification systems. This is actually a generalization of the rating
+   system described above.  Using a rule engine, we can classify things such as
+   credit eligibility, bio chemical identification, risk assessment for
+   insurance products, potential security threats, and many more.
+
+5. Advice/Suggestion system. A "rule" is simply another kind of data, which
+   makes it a prime candidate for definition by another program.  This program
+   can be another expert system or artificial intelligence.  Rules can be
+   manipulated by another system in order to deal with new types of facts or
+   newly discovered information about the domain which the rule set is intending
+   to model.
+
+There are so many other use-cases that would benefit from the use of
+Rule-Engine. The above cases represent only a small number of the potential.
+
+However it is important to state that a Rule-Engine not a silver bullet, of
+course.  Many alternatives exist to solve "knowledge" problems in software and
+those should be employed when they are most appropriate. One would not employ a
+rule engine where a simple `if` / `else` branch would suffice, for instance.
+
+Theres's someting else to note: some rule engine implementations are extremely
+expensive yet many businesses gain so much value from them that the cost of
+running them is easily offset by that value.  For even moderately complex use
+cases, the benefit of a strong rule engine that can decouple teams and tame
+business complexity seems to be quite clear.
+
+
+## Docs
 
 Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
 
