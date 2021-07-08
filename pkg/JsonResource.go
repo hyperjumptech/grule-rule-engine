@@ -118,7 +118,7 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 		}
 	}
 	var sb strings.Builder
-	if len(rules) > 0 {
+	if rules != nil {
 		for i := 0; i < len(rules); i++ {
 			sb.WriteString(parseRule(&rules[i]))
 		}
