@@ -109,13 +109,21 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 		}
 	}()
 	var rules []GruleJSON
+	var rule GruleJSON
 	err = json.Unmarshal(data, &rules)
 	if err != nil {
-		return
+		err = json.Unmarshal(data, &rule)
+		if err != nil {
+			return
+		}
 	}
 	var sb strings.Builder
-	for i := 0; i < len(rules); i++ {
-		sb.WriteString(parseRule(&rules[i]))
+	if len(rules) > 0 {
+		for i := 0; i < len(rules); i++ {
+			sb.WriteString(parseRule(&rules[i]))
+		}
+	} else {
+		sb.WriteString(parseRule(&rule))
 	}
 	rs = sb.String()
 	return
