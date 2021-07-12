@@ -15,7 +15,9 @@
 package pkg
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -56,7 +58,17 @@ func (jr *JSONResource) Load() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	rs, err := ParseJSONRuleset(data)
+	firstRune := string(bytes.TrimSpace(data)[0])
+
+	var rs string
+
+	if firstRune == "[" {
+		rs, err = ParseJSONRuleset(data)
+	} else if firstRune == "{" {
+		rs, err = ParseJSONRule(data)
+	} else {
+		err = errors.New("invalid JSON input")
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +130,23 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 		sb.WriteString(parseRule(&rules[i]))
 	}
 	rs = sb.String()
+	return
+}
+
+// ParseJSONRule accepts a byte array containing an rule in JSON format to be parsed into GRule syntax.
+func ParseJSONRule(data []byte) (rs string, err error) {
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("%v", x)
+		}
+	}()
+	var rule GruleJSON
+	err = json.Unmarshal(data, &rule)
+	if err != nil {
+		return
+	}
+
+	rs = parseRule(&rule)
 	return
 }
 

@@ -18,7 +18,19 @@ import (
 	"testing"
 )
 
-const jsonData = `[{
+const jsonData = `{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the speed.",
+    "salience": 10,
+    "when": "TestCar.SpeedUp == true && TestCar.Speed < TestCar.MaxSpeed",
+    "then": [
+        "TestCar.Speed = TestCar.Speed + TestCar.SpeedIncrement",
+        "DistanceRecord.TotalDistance = DistanceRecord.TotalDistance + TestCar.Speed",
+        "Log(\"Speed increased\")"
+    ]
+}`
+
+const arrayJSONData = `[{
     "name": "SpeedUp",
     "desc": "When testcar is speeding up we keep increase the speed.",
     "salience": 10,
@@ -30,7 +42,24 @@ const jsonData = `[{
     ]
 }]`
 
-const jsonDataExpanded = `[{
+const jsonDataExpanded = `{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the speed.",
+    "salience": 10,
+    "when": {
+       "and": [
+           {"eq": ["TestCar.SpeedUp", true]},
+           {"lt": ["TestCar.Speed", "TestCar.MaxSpeed"]}
+       ]
+    },
+    "then": [
+        {"set": ["TestCar.Speed", {"plus": ["TestCar.Speed", "TestCar.SpeedIncrement"]}]},
+        {"set": ["DistanceRecord.TotalDistance", {"plus": ["DistanceRecord.TotalDistance", "TestCar.Speed"]}]},
+        {"call": ["Log", {"const": "Speed increased"}]}
+    ]
+}`
+
+const arrayJSONDataExpanded = `[{
     "name": "SpeedUp",
     "desc": "When testcar is speeding up we keep increase the speed.",
     "salience": 10,
@@ -47,7 +76,24 @@ const jsonDataExpanded = `[{
     ]
 }]`
 
-const jsonDataVerbose = `[{
+const jsonDataVerbose = `{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the speed.",
+    "salience": 10,
+    "when": {
+       "and": [
+           {"eq": [{"obj": "TestCar.SpeedUp"}, {"const": true}]},
+           {"lt": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.MaxSpeed"}]}
+       ]
+    },
+    "then": [
+        {"set": [{"obj": "TestCar.Speed"}, {"plus": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.SpeedIncrement"}]}]},
+        {"set": [{"obj": "DistanceRecord.TotalDistance"}, {"plus": [{"obj": "DistanceRecord.TotalDistance"}, {"obj": "TestCar.Speed"}]}]},
+        {"call": ["Log", {"const": "Speed increased"}]}
+    ]
+}`
+
+const arrayJSONDataVerbose = `[{
     "name": "SpeedUp",
     "desc": "When testcar is speeding up we keep increase the speed.",
     "salience": 10,
@@ -74,7 +120,24 @@ const expectedRule = `rule SpeedUp "When testcar is speeding up we keep increase
 }
 `
 
-const jsonDataEscaped = `[{
+const jsonDataEscaped = `{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the \"speed\".",
+    "salience": 10,
+    "when": {
+       "and": [
+           {"eq": [{"obj": "TestCar.SpeedUp"}, {"const": true}]},
+           {"lt": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.MaxSpeed"}]}
+       ]
+    },
+    "then": [
+        {"set": [{"obj": "TestCar.Speed"}, {"plus": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.SpeedIncrement"}]}]},
+        {"set": [{"obj": "DistanceRecord.TotalDistance"}, {"plus": [{"obj": "DistanceRecord.TotalDistance"}, {"obj": "TestCar.Speed"}]}]},
+        {"call": ["Log", {"const": "\"Speed\" increased\n"}]}
+    ]
+}`
+
+const arrayJSONDataEscaped = `[{
     "name": "SpeedUp",
     "desc": "When testcar is speeding up we keep increase the \"speed\".",
     "salience": 10,
@@ -101,7 +164,24 @@ const expectedEscaped = `rule SpeedUp "When testcar is speeding up we keep incre
 }
 `
 
-const jsonDataBigIntConversion = `[{
+const jsonDataBigIntConversion = `{
+    "name": "SpeedUp",
+    "desc": "When testcar is speeding up we keep increase the \"speed\".",
+    "salience": 10,
+    "when": {
+       "and": [
+           {"eq": [{"obj": "TestCar.SpeedUp"}, {"const": true}]},
+           {"lt": [{"obj": "TestCar.Speed"}, {"const": 10000000}]}
+       ]
+    },
+    "then": [
+        {"set": [{"obj": "TestCar.Speed"}, {"plus": [{"obj": "TestCar.Speed"}, {"obj": "TestCar.SpeedIncrement"}]}]},
+        {"set": [{"obj": "DistanceRecord.TotalDistance"}, {"plus": [{"obj": "DistanceRecord.TotalDistance"}, {"obj": "TestCar.Speed"}]}]},
+        {"call": ["Log", {"const": "\"Speed\" increased\n"}]}
+    ]
+}`
+
+const arrayJSONDataBigIntConversion = `[{
     "name": "SpeedUp",
     "desc": "When testcar is speeding up we keep increase the \"speed\".",
     "salience": 10,
@@ -129,7 +209,16 @@ const expectedBigIntConversion = `rule SpeedUp "When testcar is speeding up we k
 `
 
 func TestParseJSONRuleset(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonData))
+	rs, err := ParseJSONRule([]byte(jsonData))
+	if err != nil {
+		t.Fatal("Failed to parse flat rule: " + err.Error())
+	}
+	t.Log("Flat rule output:")
+	t.Log(rs)
+	if rs != expectedRule {
+		t.Fatal("Parsed rule does not match expected result")
+	}
+	rs, err = ParseJSONRuleset([]byte(arrayJSONData))
 	if err != nil {
 		t.Fatal("Failed to parse flat ruleset: " + err.Error())
 	}
@@ -138,7 +227,16 @@ func TestParseJSONRuleset(t *testing.T) {
 	if rs != expectedRule {
 		t.Fatal("Parsed rule does not match expected result")
 	}
-	rs, err = ParseJSONRuleset([]byte(jsonDataExpanded))
+	rs, err = ParseJSONRule([]byte(jsonDataExpanded))
+	if err != nil {
+		t.Fatal("Failed to parse expanded rule: " + err.Error())
+	}
+	t.Log("Expanded rule output:")
+	t.Log(rs)
+	if rs != expectedRule {
+		t.Fatal("Parsed rule does not match expected result")
+	}
+	rs, err = ParseJSONRuleset([]byte(arrayJSONDataExpanded))
 	if err != nil {
 		t.Fatal("Failed to parse expanded ruleset: " + err.Error())
 	}
@@ -147,7 +245,16 @@ func TestParseJSONRuleset(t *testing.T) {
 	if rs != expectedRule {
 		t.Fatal("Parsed rule does not match expected result")
 	}
-	rs, err = ParseJSONRuleset([]byte(jsonDataVerbose))
+	rs, err = ParseJSONRule([]byte(jsonDataVerbose))
+	if err != nil {
+		t.Fatal("Failed to parse verbose rule: " + err.Error())
+	}
+	t.Log("Verbose rule output:")
+	t.Log(rs)
+	if rs != expectedRule {
+		t.Fatal("Parsed rule does not match expected result")
+	}
+	rs, err = ParseJSONRuleset([]byte(arrayJSONDataVerbose))
 	if err != nil {
 		t.Fatal("Failed to parse verbose ruleset: " + err.Error())
 	}
@@ -163,6 +270,16 @@ func TestNewJSONResourceFromResource(t *testing.T) {
 	resource := NewJSONResourceFromResource(underlyingResource)
 	loaded, err := resource.Load()
 	if err != nil {
+		t.Fatal("Failed to load JSON rule: " + err.Error())
+	}
+	t.Log(string(loaded))
+	if string(loaded) != expectedRule {
+		t.Fatal("Loaded rule does not match expected result")
+	}
+	underlyingResource = NewBytesResource([]byte(arrayJSONDataExpanded))
+	resource = NewJSONResourceFromResource(underlyingResource)
+	loaded, err = resource.Load()
+	if err != nil {
 		t.Fatal("Failed to load JSON ruleset: " + err.Error())
 	}
 	t.Log(string(loaded))
@@ -172,7 +289,15 @@ func TestNewJSONResourceFromResource(t *testing.T) {
 }
 
 func TestJSONStringEscaping(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonDataEscaped))
+	rs, err := ParseJSONRule([]byte(jsonDataEscaped))
+	if err != nil {
+		t.Fatal("Failed to parse flat rule: " + err.Error())
+	}
+	t.Log(rs)
+	if rs != expectedEscaped {
+		t.Fatal("Rule output doe not match expected value")
+	}
+	rs, err = ParseJSONRuleset([]byte(arrayJSONDataEscaped))
 	if err != nil {
 		t.Fatal("Failed to parse flat ruleset: " + err.Error())
 	}
@@ -183,7 +308,15 @@ func TestJSONStringEscaping(t *testing.T) {
 }
 
 func TestJSONBigIntConversion(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonDataBigIntConversion))
+	rs, err := ParseJSONRule([]byte(jsonDataBigIntConversion))
+	if err != nil {
+		t.Fatal("Failed to parse flat rule: " + err.Error())
+	}
+	t.Log(rs)
+	if rs != expectedBigIntConversion {
+		t.Fatal("Rule output doe not match expected value")
+	}
+	rs, err = ParseJSONRuleset([]byte(arrayJSONDataBigIntConversion))
 	if err != nil {
 		t.Fatal("Failed to parse flat ruleset: " + err.Error())
 	}
