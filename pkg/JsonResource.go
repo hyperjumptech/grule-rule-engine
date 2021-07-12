@@ -65,6 +65,8 @@ func (jr *JSONResource) Load() ([]byte, error) {
 		rs, err = ParseJSONRuleset(data)
 	} else if firstRune == "{" {
 		rs, err = ParseJSONRule(data)
+	} else {
+		err = errors.New("invalid JSON input")
 	}
 	if err != nil {
 		return nil, err
