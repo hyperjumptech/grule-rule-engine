@@ -17,6 +17,7 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
