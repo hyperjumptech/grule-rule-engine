@@ -209,9 +209,9 @@ const expectedBigIntConversion = `rule SpeedUp "When testcar is speeding up we k
 `
 
 func TestParseJSONRuleset(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonData))
+	rs, err := ParseJSONRule([]byte(jsonData))
 	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
+		t.Fatal("Failed to parse flat rule: " + err.Error())
 	}
 	t.Log("Flat rule output:")
 	t.Log(rs)
@@ -227,9 +227,9 @@ func TestParseJSONRuleset(t *testing.T) {
 	if rs != expectedRule {
 		t.Fatal("Parsed rule does not match expected result")
 	}
-	rs, err = ParseJSONRuleset([]byte(jsonDataExpanded))
+	rs, err = ParseJSONRule([]byte(jsonDataExpanded))
 	if err != nil {
-		t.Fatal("Failed to parse expanded ruleset: " + err.Error())
+		t.Fatal("Failed to parse expanded rule: " + err.Error())
 	}
 	t.Log("Expanded rule output:")
 	t.Log(rs)
@@ -245,9 +245,9 @@ func TestParseJSONRuleset(t *testing.T) {
 	if rs != expectedRule {
 		t.Fatal("Parsed rule does not match expected result")
 	}
-	rs, err = ParseJSONRuleset([]byte(jsonDataVerbose))
+	rs, err = ParseJSONRule([]byte(jsonDataVerbose))
 	if err != nil {
-		t.Fatal("Failed to parse verbose ruleset: " + err.Error())
+		t.Fatal("Failed to parse verbose rule: " + err.Error())
 	}
 	t.Log("Verbose rule output:")
 	t.Log(rs)
@@ -270,7 +270,7 @@ func TestNewJSONResourceFromResource(t *testing.T) {
 	resource := NewJSONResourceFromResource(underlyingResource)
 	loaded, err := resource.Load()
 	if err != nil {
-		t.Fatal("Failed to load JSON ruleset: " + err.Error())
+		t.Fatal("Failed to load JSON rule: " + err.Error())
 	}
 	t.Log(string(loaded))
 	if string(loaded) != expectedRule {
@@ -289,9 +289,9 @@ func TestNewJSONResourceFromResource(t *testing.T) {
 }
 
 func TestJSONStringEscaping(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonDataEscaped))
+	rs, err := ParseJSONRule([]byte(jsonDataEscaped))
 	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
+		t.Fatal("Failed to parse flat rule: " + err.Error())
 	}
 	t.Log(rs)
 	if rs != expectedEscaped {
@@ -308,9 +308,9 @@ func TestJSONStringEscaping(t *testing.T) {
 }
 
 func TestJSONBigIntConversion(t *testing.T) {
-	rs, err := ParseJSONRuleset([]byte(jsonDataBigIntConversion))
+	rs, err := ParseJSONRule([]byte(jsonDataBigIntConversion))
 	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
+		t.Fatal("Failed to parse flat rule: " + err.Error())
 	}
 	t.Log(rs)
 	if rs != expectedBigIntConversion {
