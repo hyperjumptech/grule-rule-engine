@@ -16,14 +16,15 @@ package antlr
 
 import (
 	"fmt"
+	"io/ioutil"
+	"reflect"
+	"testing"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"reflect"
-	"testing"
 )
 
 const (
@@ -297,6 +298,10 @@ func prepareV3TestKnowledgeBase(t *testing.T, grl string) (*ast.KnowledgeBase, *
 
 	psr := parser.Newgrulev3Parser(stream)
 	psr.BuildParseTrees = true
+
+	psr.RemoveErrorListeners()
+	psr.AddErrorListener(errReporter)
+
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 	assert.False(t, errReporter.HasError())
 	listener.KnowledgeBase.WorkingMemory.IndexVariables()
@@ -424,4 +429,117 @@ rule RuleOne "RuleOneDesc" salience 123 {
 	assert.Equal(t, reflect.Bool, ret.Kind())
 	assert.False(t, ret.Bool())
 
+}
+
+func TestV3ParserGarbageInput(t *testing.T) {
+	testCases := []string{
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  when
+    <FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" when 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  salience
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  then
+    FACT.SomeField == "true"
+  when
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" then 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience "0"  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`then ExampleRuleName "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" rule 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  rule
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    rule FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" ); salience 2
+}`,
+		`rule ExampleRuleName then "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+		`rule ExampleRuleName  "One line rule description" salience 0  {
+  when
+    FACT.SomeField == "true"
+  then
+    FACT.WriteMessage( "message to write" );
+  then
+    FACT.WriteMessage( "message to write" );
+}`,
+	}
+
+	for i, tc := range testCases {
+		is := antlr.NewInputStream(tc)
+		lexer := parser.Newgrulev3Lexer(is)
+		stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+		errReporter := &pkg.GruleErrorReporter{
+			Errors: make([]error, 0),
+		}
+		kb := ast.NewKnowledgeLibrary().GetKnowledgeBase("T", "1")
+
+		listener := NewGruleV3ParserListener(kb, errReporter)
+
+		psr := parser.Newgrulev3Parser(stream)
+		psr.BuildParseTrees = true
+
+		psr.RemoveErrorListeners()
+		psr.AddErrorListener(errReporter)
+
+		antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
+		assert.True(t, errReporter.HasError(), fmt.Sprintf("Garbage test case %d should have resulted in a parse error", i))
+	}
 }
