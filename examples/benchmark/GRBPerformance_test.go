@@ -13,8 +13,8 @@ import (
 var (
 	ruleCount = 5000
 
-	grlFile = "5000_dummy_rules.grl"
-	grbFile = "5000_dummy_rules.grb"
+	grlFile = "/tmp/5000_dummy_rules.grl"
+	grbFile = "/tmp/5000_dummy_rules.grb"
 
 	knowledgeName    = "Dummy Knowledge"
 	knowledgeVersion = "v1.0.0"

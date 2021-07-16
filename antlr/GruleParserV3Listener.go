@@ -15,6 +15,7 @@
 package antlr
 
 import (
+	"errors"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
@@ -22,6 +23,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -32,6 +34,12 @@ var (
 		"lib":    "grule",
 		"struct": "GruleParserV3Listener",
 	})
+
+	// ErrAstStackInvalidParentNode is an error thrown if the parent node is not as expected
+	ErrAstStackInvalidParentNode = errors.New("invalid ast parent node error")
+
+	// ErrAstStackInvalidNode is an error thrown if the node is not as expected
+	ErrAstStackInvalidNode = errors.New("invalid ast node error")
 )
 
 // NewGruleV3ParserListener create new instance of GruleV3ParserListener
@@ -116,7 +124,14 @@ func (s *GruleV3ParserListener) ExitRuleEntry(ctx *grulev3.RuleEntryContext) {
 		return
 	}
 	entry := s.Stack.Pop().(*ast.RuleEntry)
-	entryReceiver := s.Stack.Peek().(ast.RuleEntryReceiver)
+
+	itv := s.Stack.Peek()
+	entryReceiver, ok := itv.(ast.RuleEntryReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.RuleEntryReceiver (Grl) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	if ctx.RuleName() != nil {
 		entry.RuleName = ctx.RuleName().GetText()
 	}
@@ -143,9 +158,21 @@ func (s *GruleV3ParserListener) ExitSalience(ctx *grulev3.SalienceContext) {
 	if s.StopParse {
 		return
 	}
+
 	salience := s.Stack.Pop().(*ast.Salience)
-	salienceReceiver := s.Stack.Peek().(ast.SalienceReceiver)
-	salienceReceiver.AcceptSalience(salience)
+
+	itv := s.Stack.Peek()
+	salienceReceiver, ok := itv.(ast.SalienceReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.SalienceReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
+	err := salienceReceiver.AcceptSalience(salience)
+	if err != nil {
+		s.StopParse = true
+		s.ErrorCallback.AddError(err)
+	}
 }
 
 // EnterWhenScope is called when production whenScope is entered.
@@ -164,7 +191,14 @@ func (s *GruleV3ParserListener) ExitWhenScope(ctx *grulev3.WhenScopeContext) {
 		return
 	}
 	when := s.Stack.Pop().(*ast.WhenScope)
-	receiver := s.Stack.Peek().(ast.WhenScopeReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.WhenScopeReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.WhenScopeReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := receiver.AcceptWhenScope(when)
 	if err != nil {
 		s.StopParse = true
@@ -188,7 +222,14 @@ func (s *GruleV3ParserListener) ExitThenScope(ctx *grulev3.ThenScopeContext) {
 		return
 	}
 	then := s.Stack.Pop().(*ast.ThenScope)
-	receiver := s.Stack.Peek().(ast.ThenScopeReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.ThenScopeReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenScopeReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := receiver.AcceptThenScope(then)
 	if err != nil {
 		s.StopParse = true
@@ -212,7 +253,14 @@ func (s *GruleV3ParserListener) ExitThenExpressionList(ctx *grulev3.ThenExpressi
 		return
 	}
 	thenExpList := s.Stack.Pop().(*ast.ThenExpressionList)
-	receiver := s.Stack.Peek().(ast.ThenExpressionListReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.ThenExpressionListReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenExpressionListReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := receiver.AcceptThenExpressionList(thenExpList)
 	if err != nil {
 		s.StopParse = true
@@ -237,7 +285,13 @@ func (s *GruleV3ParserListener) ExitThenExpression(ctx *grulev3.ThenExpressionCo
 	}
 	thenExpr := s.Stack.Pop().(*ast.ThenExpression)
 
-	receiver := s.Stack.Peek().(ast.ThenExpressionReceiver)
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.ThenExpressionReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenExpressionReceiver (ThenExpressionList) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := receiver.AcceptThenExpression(thenExpr)
 	if err != nil {
 		s.StopParse = true
@@ -261,7 +315,14 @@ func (s *GruleV3ParserListener) ExitAssignment(ctx *grulev3.AssignmentContext) {
 		return
 	}
 	assign := s.Stack.Pop().(*ast.Assignment)
-	receiver := s.Stack.Peek().(ast.AssignmentReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.AssignmentReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.AssignmentReceiver (ThenExpression) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	assign.IsAssign = ctx.ASSIGN() != nil
 	assign.IsPlusAssign = ctx.PLUS_ASIGN() != nil
 	assign.IsMinusAssign = ctx.MINUS_ASIGN() != nil
@@ -291,7 +352,14 @@ func (s *GruleV3ParserListener) ExitExpression(ctx *grulev3.ExpressionContext) {
 		return
 	}
 	expr := s.Stack.Pop().(*ast.Expression)
-	exprRec := s.Stack.Peek().(ast.ExpressionReceiver)
+
+	itv := s.Stack.Peek()
+	exprRec, ok := itv.(ast.ExpressionReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ExpressionReceiver (ArgumentList, ArrayMapSelector, Assignment, Expression, WhenScope) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 
 	if ctx.LR_BRACKET() != nil && ctx.RR_BRACKET() != nil && ctx.NEGATION() != nil {
 		expr.Negated = ctx.NEGATION() != nil
@@ -409,7 +477,15 @@ func (s *GruleV3ParserListener) ExitExpressionAtom(ctx *grulev3.ExpressionAtomCo
 		return
 	}
 	atm := s.Stack.Pop().(*ast.ExpressionAtom)
-	expr := s.Stack.Peek().(ast.ExpressionAtomReceiver)
+
+	itv := s.Stack.Peek()
+	expr, ok := itv.(ast.ExpressionAtomReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ExpressionAtomReceiver (Expression, ExpressionAtom, ThenExpression) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
+
 	atm.Negated = ctx.NEGATION() != nil
 
 	err := expr.AcceptExpressionAtom(s.KnowledgeBase.WorkingMemory.AddExpressionAtom(atm))
@@ -435,7 +511,14 @@ func (s *GruleV3ParserListener) ExitArrayMapSelector(ctx *grulev3.ArrayMapSelect
 		return
 	}
 	sel := s.Stack.Pop().(*ast.ArrayMapSelector)
-	receiver := s.Stack.Peek().(ast.ArrayMapSelectorReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.ArrayMapSelectorReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ArrayMapSelectorReceiver (ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := receiver.AcceptArrayMapSelector(sel)
 	if err != nil {
 		s.StopParse = true
@@ -459,7 +542,14 @@ func (s *GruleV3ParserListener) ExitFunctionCall(ctx *grulev3.FunctionCallContex
 		return
 	}
 	fun := s.Stack.Pop().(*ast.FunctionCall)
-	metRec := s.Stack.Peek().(ast.FunctionCallReceiver)
+
+	itv := s.Stack.Peek()
+	metRec, ok := itv.(ast.FunctionCallReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.FunctionCallReceiver (ExpressionAtom) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	err := metRec.AcceptFunctionCall(fun)
 	if err != nil {
 		s.StopParse = true
@@ -483,7 +573,14 @@ func (s *GruleV3ParserListener) ExitArgumentList(ctx *grulev3.ArgumentListContex
 		return
 	}
 	argList := s.Stack.Pop().(*ast.ArgumentList)
-	argListRec := s.Stack.Peek().(ast.ArgumentListReceiver)
+
+	itv := s.Stack.Peek()
+	argListRec, ok := itv.(ast.ArgumentListReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ArgumentListReceiver (FunctionCall) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	LoggerV3.Tracef("Adding Argument List To Receiver")
 	err := argListRec.AcceptArgumentList(argList)
 	if err != nil {
@@ -514,7 +611,14 @@ func (s *GruleV3ParserListener) ExitVariable(ctx *grulev3.VariableContext) {
 		return
 	}
 	vari := s.Stack.Pop().(*ast.Variable)
-	variRec := s.Stack.Peek().(ast.VariableReceiver)
+
+	itv := s.Stack.Peek()
+	variRec, ok := itv.(ast.VariableReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.VariableReceiver (Assignment, ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 
 	err := variRec.AcceptVariable(s.KnowledgeBase.WorkingMemory.AddVariable(vari))
 	if err != nil {
@@ -528,7 +632,13 @@ func (s *GruleV3ParserListener) EnterMemberVariable(ctx *grulev3.MemberVariableC
 
 // ExitMemberVariable is called when production memberVariable is exited.
 func (s *GruleV3ParserListener) ExitMemberVariable(ctx *grulev3.MemberVariableContext) {
-	vari := s.Stack.Peek().(ast.MemberVariableReceiver)
+	itv := s.Stack.Peek()
+	vari, ok := itv.(ast.MemberVariableReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.MemberVariableReceiver (ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	vari.AcceptMemberVariable(ctx.SIMPLENAME().GetText())
 }
 
@@ -548,7 +658,14 @@ func (s *GruleV3ParserListener) ExitConstant(ctx *grulev3.ConstantContext) {
 		return
 	}
 	cons := s.Stack.Pop().(*ast.Constant)
-	conRec := s.Stack.Peek().(ast.ConstantReceiver)
+
+	itv := s.Stack.Peek()
+	conRec, ok := itv.(ast.ConstantReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ConstantReceiver (ExpressionAtom) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	if ctx.NIL_LITERAL() != nil {
 		cons.IsNil = true
 	}
@@ -573,7 +690,13 @@ func (s *GruleV3ParserListener) ExitStringLiteral(ctx *grulev3.StringLiteralCont
 		s.ErrorCallback.AddError(fmt.Errorf("error parsing quoted string (%s): %s", ctx.GetText(), err.Error()))
 		return
 	}
-	receiver := s.Stack.Peek().(ast.StringLiteralReceiver)
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.StringLiteralReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.StringLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	receiver.AcceptStringLiteral(&ast.StringLiteral{String: dec})
 }
 
@@ -585,16 +708,22 @@ func (s *GruleV3ParserListener) ExitBooleanLiteral(ctx *grulev3.BooleanLiteralCo
 	if s.StopParse {
 		return
 	}
-	if receiver, ok := s.Stack.Peek().(ast.BooleanLiteralReceiver); ok {
-		lit := &ast.BooleanLiteral{}
-		switch strings.ToLower(ctx.GetText()) {
-		case "true":
-			lit.Boolean = true
-		case "false":
-			lit.Boolean = false
-		}
-		receiver.AcceptBooleanLiteral(lit)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.BooleanLiteralReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.BooleanLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
 	}
+	lit := &ast.BooleanLiteral{}
+	switch strings.ToLower(ctx.GetText()) {
+	case "true":
+		lit.Boolean = true
+	case "false":
+		lit.Boolean = false
+	}
+	receiver.AcceptBooleanLiteral(lit)
 }
 
 // EnterIntegerLiteral is called when production integerLiteral is entered.
@@ -610,7 +739,13 @@ func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralCo
 	} else {
 		lit.Integer = i
 	}
-	receiver := s.Stack.Peek().(ast.IntegerLiteralReceiver)
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.IntegerLiteralReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.IntegerLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	receiver.AcceptIntegerLiteral(lit)
 }
 
@@ -627,6 +762,13 @@ func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContex
 	} else {
 		lit.Float = i
 	}
-	receiver := s.Stack.Peek().(ast.FloatLiteralReceiver)
+
+	itv := s.Stack.Peek()
+	receiver, ok := itv.(ast.FloatLiteralReceiver)
+	if !ok {
+		s.StopParse = true
+		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.FloatLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		return
+	}
 	receiver.AcceptFloatLiteral(lit)
 }

@@ -101,11 +101,14 @@ func MakeRule(seq int) string {
 
 // GenRandomRule simply generate count number of simple parse-able rule into a file
 func GenRandomRule(fileName string, count int) error {
-	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 666)
+	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR, 666)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		f.Close()
+		os.Chmod(fileName, 0777)
+	}()
 	for i := 1; i <= count; i++ {
 		_, err := f.WriteString(MakeRule(i))
 		if err != nil {
