@@ -196,7 +196,7 @@ func (s *GruleV3ParserListener) ExitWhenScope(ctx *grulev3.WhenScopeContext) {
 	receiver, ok := itv.(ast.WhenScopeReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.WhenScopeReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of WhenScope. Receiver is not ast.WhenScopeReceiver (RuleEntry) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := receiver.AcceptWhenScope(when)
@@ -227,7 +227,7 @@ func (s *GruleV3ParserListener) ExitThenScope(ctx *grulev3.ThenScopeContext) {
 	receiver, ok := itv.(ast.ThenScopeReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenScopeReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ThenScope. Receiver is not ast.ThenScopeReceiver (RuleEntry) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := receiver.AcceptThenScope(then)
@@ -258,7 +258,7 @@ func (s *GruleV3ParserListener) ExitThenExpressionList(ctx *grulev3.ThenExpressi
 	receiver, ok := itv.(ast.ThenExpressionListReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenExpressionListReceiver (RuleEntry) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ThenExpressionList. Receiver is not ast.ThenExpressionListReceiver (RuleEntry) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := receiver.AcceptThenExpressionList(thenExpList)
@@ -289,7 +289,7 @@ func (s *GruleV3ParserListener) ExitThenExpression(ctx *grulev3.ThenExpressionCo
 	receiver, ok := itv.(ast.ThenExpressionReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ThenExpressionReceiver (ThenExpressionList) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ThenExpression. Receiver is not ast.ThenExpressionReceiver (ThenExpressionList) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := receiver.AcceptThenExpression(thenExpr)
@@ -320,7 +320,7 @@ func (s *GruleV3ParserListener) ExitAssignment(ctx *grulev3.AssignmentContext) {
 	receiver, ok := itv.(ast.AssignmentReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.AssignmentReceiver (ThenExpression) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of Assignment. Receiver is not ast.AssignmentReceiver (ThenExpression) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	assign.IsAssign = ctx.ASSIGN() != nil
@@ -357,7 +357,7 @@ func (s *GruleV3ParserListener) ExitExpression(ctx *grulev3.ExpressionContext) {
 	exprRec, ok := itv.(ast.ExpressionReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ExpressionReceiver (ArgumentList, ArrayMapSelector, Assignment, Expression, WhenScope) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of Expression. Receiver is not ast.ExpressionReceiver (ArgumentList, ArrayMapSelector, Assignment, Expression, WhenScope) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 
@@ -482,7 +482,7 @@ func (s *GruleV3ParserListener) ExitExpressionAtom(ctx *grulev3.ExpressionAtomCo
 	expr, ok := itv.(ast.ExpressionAtomReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ExpressionAtomReceiver (Expression, ExpressionAtom, ThenExpression) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ExpressionAtom. Receiver is not ast.ExpressionAtomReceiver (Expression, ExpressionAtom, ThenExpression) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 
@@ -516,7 +516,7 @@ func (s *GruleV3ParserListener) ExitArrayMapSelector(ctx *grulev3.ArrayMapSelect
 	receiver, ok := itv.(ast.ArrayMapSelectorReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ArrayMapSelectorReceiver (ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ArrayMapSelector. Receiver is not ast.ArrayMapSelectorReceiver (ExpressionAtom, Variable) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := receiver.AcceptArrayMapSelector(sel)
@@ -547,7 +547,7 @@ func (s *GruleV3ParserListener) ExitFunctionCall(ctx *grulev3.FunctionCallContex
 	metRec, ok := itv.(ast.FunctionCallReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.FunctionCallReceiver (ExpressionAtom) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of FunctionCall. Receiver is not ast.FunctionCallReceiver (ExpressionAtom) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	err := metRec.AcceptFunctionCall(fun)
@@ -578,7 +578,7 @@ func (s *GruleV3ParserListener) ExitArgumentList(ctx *grulev3.ArgumentListContex
 	argListRec, ok := itv.(ast.ArgumentListReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ArgumentListReceiver (FunctionCall) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of ArgumentList. Receiver is not ast.ArgumentListReceiver (FunctionCall) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	LoggerV3.Tracef("Adding Argument List To Receiver")
@@ -616,7 +616,7 @@ func (s *GruleV3ParserListener) ExitVariable(ctx *grulev3.VariableContext) {
 	variRec, ok := itv.(ast.VariableReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.VariableReceiver (Assignment, ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of Variable. Receiver is not ast.VariableReceiver (Assignment, ExpressionAtom, Variable) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 
@@ -636,7 +636,7 @@ func (s *GruleV3ParserListener) ExitMemberVariable(ctx *grulev3.MemberVariableCo
 	vari, ok := itv.(ast.MemberVariableReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.MemberVariableReceiver (ExpressionAtom, Variable) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of MemberVariable. Receiver is not ast.MemberVariableReceiver (ExpressionAtom, Variable) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	vari.AcceptMemberVariable(ctx.SIMPLENAME().GetText())
@@ -663,7 +663,7 @@ func (s *GruleV3ParserListener) ExitConstant(ctx *grulev3.ConstantContext) {
 	conRec, ok := itv.(ast.ConstantReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.ConstantReceiver (ExpressionAtom) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of Constant. Receiver is not ast.ConstantReceiver (ExpressionAtom) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	if ctx.NIL_LITERAL() != nil {
@@ -694,7 +694,7 @@ func (s *GruleV3ParserListener) ExitStringLiteral(ctx *grulev3.StringLiteralCont
 	receiver, ok := itv.(ast.StringLiteralReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.StringLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of StringLiteral. Receiver is not ast.StringLiteralReceiver (Constant) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	receiver.AcceptStringLiteral(&ast.StringLiteral{String: dec})
@@ -713,7 +713,7 @@ func (s *GruleV3ParserListener) ExitBooleanLiteral(ctx *grulev3.BooleanLiteralCo
 	receiver, ok := itv.(ast.BooleanLiteralReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.BooleanLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of BooleanLiteral. Receiver is not ast.BooleanLiteralReceiver (Constant) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	lit := &ast.BooleanLiteral{}
@@ -743,7 +743,7 @@ func (s *GruleV3ParserListener) ExitIntegerLiteral(ctx *grulev3.IntegerLiteralCo
 	receiver, ok := itv.(ast.IntegerLiteralReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.IntegerLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of IntegerLiteral. Receiver is not ast.IntegerLiteralReceiver (Constant) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	receiver.AcceptIntegerLiteral(lit)
@@ -767,7 +767,7 @@ func (s *GruleV3ParserListener) ExitFloatLiteral(ctx *grulev3.FloatLiteralContex
 	receiver, ok := itv.(ast.FloatLiteralReceiver)
 	if !ok {
 		s.StopParse = true
-		s.ErrorCallback.AddError(fmt.Errorf("expected node of type ast.FloatLiteralReceiver (Constant) but %s : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidParentNode))
+		s.ErrorCallback.AddError(fmt.Errorf("AST node %s cannot accept child node of FloatLiteral. Receiver is not ast.FloatLiteralReceiver (Constant) : %w", reflect.TypeOf(itv).String(), ErrAstStackInvalidNode))
 		return
 	}
 	receiver.AcceptFloatLiteral(lit)
