@@ -16,9 +16,10 @@ package model
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // ValueNode is an abstraction layer to access underlying dom style data.
@@ -208,14 +209,15 @@ func StrTrim(str string, arg []reflect.Value) (reflect.Value, error) {
 
 // StrIn will check the string instance if its equals one of the arguments, if no argument specified it will return false
 func StrIn(str string, arg []reflect.Value) (reflect.Value, error) {
-	if arg != nil && len(arg) != 0 {
+	if arg != nil && len(arg) == 0 {
 		return reflect.ValueOf(false), nil
 	}
 	for _, a := range arg {
-		if !a.IsNil() && a.IsValid() && a.Kind() == reflect.String {
-			if a.String() == str {
-				return reflect.ValueOf(true), nil
-			}
+		if a.Kind() != reflect.String {
+			return reflect.ValueOf(nil), fmt.Errorf("function StrIn requires string arguments")
+		}
+		if a.String() == str {
+			return reflect.ValueOf(true), nil
 		}
 	}
 	return reflect.ValueOf(false), nil
