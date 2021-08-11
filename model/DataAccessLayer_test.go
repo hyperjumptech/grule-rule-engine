@@ -163,3 +163,22 @@ func TestStrTrim(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, strings.TrimSpace(a), val.String())
 }
+
+func TestStrIn(t *testing.T) {
+	b := "Black"
+	val, err := StrIn(b, []reflect.Value{reflect.ValueOf("Black"), reflect.ValueOf("Yellow")})
+	assert.NoError(t, err)
+	assert.True(t, val.Bool())
+}
+
+func TestStrIn_Expects_Only_String_Arguments(t *testing.T) {
+	b := "Black"
+	_, err := StrIn(b, []reflect.Value{reflect.ValueOf(1)})
+	assert.Error(t, err)
+}
+
+func TestStrIn_Accepts_Empty_Arguments(t *testing.T) {
+	b := "Black"
+	_, err := StrIn(b, []reflect.Value{})
+	assert.NoError(t, err)
+}
