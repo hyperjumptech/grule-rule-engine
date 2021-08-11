@@ -209,9 +209,6 @@ func StrTrim(str string, arg []reflect.Value) (reflect.Value, error) {
 
 // StrIn will check the string instance if its equals one of the arguments, if no argument specified it will return false
 func StrIn(str string, arg []reflect.Value) (reflect.Value, error) {
-	if arg != nil && len(arg) == 0 {
-		return reflect.ValueOf(false), nil
-	}
 	for _, a := range arg {
 		if !a.IsValid() || a.Kind() != reflect.String {
 			return reflect.ValueOf(nil), fmt.Errorf("function StrIn requires string arguments")
