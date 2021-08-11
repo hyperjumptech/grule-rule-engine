@@ -25,7 +25,7 @@ import (
 
 const (
 	Rule1 = `
-rule ColorCheck "test 1"  salience 10{
+rule ColorCheck "test 1"  {
 	when
 	  Color.Name.In("Black", "Yellow")
 	then

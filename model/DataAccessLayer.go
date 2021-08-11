@@ -213,7 +213,7 @@ func StrIn(str string, arg []reflect.Value) (reflect.Value, error) {
 		return reflect.ValueOf(false), nil
 	}
 	for _, a := range arg {
-		if a.Kind() != reflect.String {
+		if !a.IsValid() || a.Kind() != reflect.String {
 			return reflect.ValueOf(nil), fmt.Errorf("function StrIn requires string arguments")
 		}
 		if a.String() == str {
