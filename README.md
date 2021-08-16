@@ -191,39 +191,28 @@ You can read the [detail report here](docs/Benchmarking_en.md)
 
 # Our Contributors
 
-
-<table width="100%">
-<tr><td align="center"><a href="https://github.com/newm4n"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/3471399?v=4"><br><br>newm4n</a><br><br></td>
-<td align="center"><a href="https://github.com/jinagamvasubabu"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/8560620?v=4"><br><br>jinagamvasubabu</a><br><br></td>
-<td align="center"><a href="https://github.com/niallnsec"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/21335031?v=4"><br><br>niallnsec</a><br><br></td>
-<td align="center"><a href="https://github.com/inhuman"><img width="80px" height="80px" src="https://avatars0.githubusercontent.com/u/2518263?v=4"><br><br>inhuman</a><br><br></td>
-<td align="center"><a href="https://github.com/ariya"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/7288?v=4"><br><br>ariya</a><br><br></td>
-<td align="center"><a href="https://github.com/sapiderman"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/964106?v=4"><br><br>sapiderman</a><br><br></td>
-</tr>
-<tr>
-<td align="center"><a href="https://github.com/jtr860830"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/13183797?v=4"><br><br>jtr860830</a><br><br></td>
-<td align="center"><a href="https://github.com/trancee"><img width="80px" height="80px" src="https://avatars0.githubusercontent.com/u/1520623?v=4"><br><br>trancee</a><br><br></td>
-<td align="center"><a href="https://github.com/liouxiao"><img width="80px" height="80px" src="https://avatars2.githubusercontent.com/u/3435699?v=4"><br><br>liouxiao</a><br><br></td>
-<td align="center"><a href="https://github.com/Troush"><img width="80px" height="80px" src="https://avatars0.githubusercontent.com/u/1163074?v=4"><br><br>Troush</a><br><br></td>
-<td align="center"><a href="https://github.com/shanhuhai5739"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/3794113?v=4"><br><br>shanhuhai5739</a><br><br></td>
-<td align="center"><a href="https://github.com/derekwyatt"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/62324?v=4"><br><br>derekwyatt</a><br><br></td>
-</tr>
-<tr>
-<td align="center"><a href="https://github.com/garychristianto"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/50298986?v=4"><br><br>garychristianto</a><br><br></td>
-<td align="center"><a href="https://github.com/sourcesoft"><img width="80px" height="80px" src="https://avatars2.githubusercontent.com/u/608906?v=4"><br><br>sourcesoft</a><br><br></td>
-<td align="center"><a href="https://github.com/sdowding-koho"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/62896133?v=4"><br><br>sdowding-koho</a><br><br></td>
-<td align="center"><a href="https://github.com/yomashExpel"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/25300754?v=4"><br><br>yomashExpel</a><br><br></td>
-<td align="center"><a href="https://github.com/avisdsouza"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/8979874?v=4"><br><br>avisdsouza</a><br><br></td>
-<td align="center"><a href="https://github.com/zct"><img width="80px" height="80px" src="https://avatars3.githubusercontent.com/u/4023051?v=4"><br><br>zct</a><br><br></td>
-</tr>
-<tr>
-<td align="center"><a href="https://github.com/enricoojf"><img width="80px" height="80px" src="https://avatars2.githubusercontent.com/u/17194541?v=4"><br><br>enricoojf</a><br><br></td>
-<td align="center"><a href="https://github.com/vlean"><img width="80px" height="80px" src="https://avatars1.githubusercontent.com/u/7309530?v=4"><br><br>vlean</a><br><br></td>
-</tr>
-</table>
-
-
-
+<a href="https://github.com/newm4n"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/3471399?s=60&v=4"></a>
+<a href="https://github.com/jinagamvasubabu"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/8560620?s=60&v=4"></a>
+<a href="https://github.com/niallnsec"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/21335031?s=60&v=4"></a>
+<a href="https://github.com/inhuman"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars0.githubusercontent.com/u/2518263?s=60&v=4"></a>
+<a href="https://github.com/ariya"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/7288?s=60&v=4"></a>
+<a href="https://github.com/sapiderman"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/964106?s=60&v=4"></a>
+<a href="https://github.com/jtr860830"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/13183797?s=60&v=4"></a>
+<a href="https://github.com/trancee"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars0.githubusercontent.com/u/1520623?s=60&v=4"></a>
+<a href="https://github.com/liouxiao"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars2.githubusercontent.com/u/3435699?s=60&v=4"></a>
+<a href="https://github.com/Troush"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars0.githubusercontent.com/u/1163074?s=60&v=4"></a>
+<a href="https://github.com/shanhuhai5739"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/3794113?s=60&v=4"></a>
+<a href="https://github.com/derekwyatt"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/62324?s=60&v=4"></a>
+<a href="https://github.com/garychristianto"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/50298986?s=60&v=4"></a>
+<a href="https://github.com/sourcesoft"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars2.githubusercontent.com/u/608906?s=60&v=4"></a>
+<a href="https://github.com/sdowding-koho"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/62896133?s=60&v=4"></a>
+<a href="https://github.com/yomashExpel"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/25300754?s=60&v=4"></a>
+<a href="https://github.com/avisdsouza"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/8979874?s=60&v=4"></a>
+<a href="https://github.com/zct"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars3.githubusercontent.com/u/4023051?s=60&v=4"></a>
+<a href="https://github.com/enricoojf"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars2.githubusercontent.com/u/17194541?s=60&v=4"></a>
+<a href="https://github.com/vlean"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars1.githubusercontent.com/u/7309530?s=60&v=4"></a>
+<a href="https://github.com/plasticmacaroni"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars.githubusercontent.com/u/9966671?s=60&v=4"></a>
+<a href="https://github.com/sw7190"><img style="border-radius: 50%;" width="50px" height="50px" src="https://avatars.githubusercontent.com/u/28668763?s=60&v=4"></a>
 
 
 # Tasks and Help Wanted
