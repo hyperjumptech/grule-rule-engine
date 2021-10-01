@@ -5,7 +5,7 @@
 
 ## Download ANTLR4 tools
 
-The latest version can be downloaded [here (antlr-4.8-complete.jar)](https://www.antlr.org/download/antlr-4.8-complete.jar)
+The latest version can be downloaded [here (antlr-4.9.2-complete.jar)](https://www.antlr.org/download/antlr-4.9.2-complete.jar)
 Or you can always go to [ANTLR4 download page](https://www.antlr.org/download.html)
 
 Download the `.jar` file and place it somewhere a directory.
@@ -16,7 +16,7 @@ Install java and you're ready to work with ANTLR4.
 ## Making ANTLR alias.
 
 ```bash
-alias antlr='java -jar /path/to/downloaded/antlr-4.8-complete.jar'
+alias antlr='java -jar /path/to/downloaded/antlr-4.9.2-complete.jar'
 ```
 
 ## Executing ANTLR
@@ -25,6 +25,6 @@ To build ANTLR4's golang listener or visitor, go to the directory where you
 have your antlr4 grammar `.g4` file. And then execute the following command.
 
 ```bash
-antlr -Dlanguage=Go -o parser -package grulev2 -lib . -listener -visitor grulev2.g4
+antlr -Dlanguage=Go -o parser -package grulev3 -lib . -listener -visitor grulev3.g4
 ```
 
