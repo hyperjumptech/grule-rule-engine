@@ -3,7 +3,7 @@ module github.com/hyperjumptech/grule-rule-engine
 go 1.16
 
 require (
-	github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20210928164016-886d244c73ef
+	github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20210930093333-01de314d7883
 	github.com/bmatcuk/doublestar v1.3.2
 	github.com/google/uuid v1.1.1
 	github.com/kr/pretty v0.2.1 // indirect
