@@ -56,6 +56,21 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 	return kb
 }
 
+//mark the rule as deleted and prefix the name of the existing rule to Deleted to avoid duplicate rule entry issue
+//Note: This is a workaround, will improve this logic a bit in near future
+func (lib *KnowledgeLibrary) RemoveRuleEntry(ruleName, name string, version string) {
+	_, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	if ok {
+		ruleEntry, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName]
+		if ok {
+			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName].RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
+			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName].Deleted = true
+			delete(lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries, ruleName)
+			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleEntry.RuleName] = ruleEntry
+		}
+	}
+}
+
 // LoadKnowledgeBaseFromReader will load the KnowledgeBase stored using StoreKnowledgeBaseToWriter function
 // be it from file, or anywhere. The reader we needed is a plain io.Reader, thus closing the source stream is your responsibility.
 // This should hopefully speedup loading huge ruleset by storing and reading them
@@ -222,13 +237,17 @@ func (e *KnowledgeBase) ContainsRuleEntry(name string) bool {
 
 // RemoveRuleEntry remove the rule entry with specified name from this knowledge base
 func (e *KnowledgeBase) RemoveRuleEntry(name string) {
-	//mark the rule as deleted and prefix the name of the existing rule to rule_deleted to avoid duplicate rule entry issue
-	//Note: This is a workaround, will improve this logic a bit in near future
-	ruleEntry := e.RuleEntries[name]
-	ruleEntry.RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
-	ruleEntry.Deleted = true
-	delete(e.RuleEntries, name)
-	e.RuleEntries[ruleEntry.RuleName] = ruleEntry
+	e.lock.Lock()
+	defer e.lock.Unlock()
+	if e.ContainsRuleEntry(name) {
+		//mark the rule as deleted and prefix the name of the existing rule to Deleted
+		//Note: This is a workaround, will improve this logic a bit in near future
+		ruleEntry := e.RuleEntries[name]
+		e.RuleEntries[name].RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
+		e.RuleEntries[name].Deleted = true
+		delete(e.RuleEntries, name)
+		e.RuleEntries[ruleEntry.RuleName] = ruleEntry
+	}
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
