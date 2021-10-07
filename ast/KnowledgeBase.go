@@ -222,11 +222,13 @@ func (e *KnowledgeBase) ContainsRuleEntry(name string) bool {
 
 // RemoveRuleEntry remove the rule entry with specified name from this knowledge base
 func (e *KnowledgeBase) RemoveRuleEntry(name string) {
-	e.lock.Lock()
-	defer e.lock.Unlock()
-	if e.ContainsRuleEntry(name) {
-		delete(e.RuleEntries, name)
-	}
+	//mark the rule as deleted and prefix the name of the existing rule to rule_deleted to avoid duplicate rule entry issue
+	//Note: This is a workaround, will improve this logic a bit in near future
+	ruleEntry := e.RuleEntries[name]
+	ruleEntry.RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
+	ruleEntry.Deleted = true
+	delete(e.RuleEntries, name)
+	e.RuleEntries[ruleEntry.RuleName] = ruleEntry
 }
 
 // InitializeContext will initialize this AST graph with data context and working memory before running rule on them.
