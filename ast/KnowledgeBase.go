@@ -58,14 +58,15 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 
 // RemoveRuleEntry mark the rule entry as deleted
 func (lib *KnowledgeLibrary) RemoveRuleEntry(ruleName, name string, version string) {
-	_, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	nameVersion := fmt.Sprintf("%s:%s", name, version)
+	_, ok := lib.Library[nameVersion]
 	if ok {
-		ruleEntry, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName]
+		ruleEntry, ok := lib.Library[nameVersion].RuleEntries[ruleName]
 		if ok {
-			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName].RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
-			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleName].Deleted = true
-			delete(lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries, ruleName)
-			lib.Library[fmt.Sprintf("%s:%s", name, version)].RuleEntries[ruleEntry.RuleName] = ruleEntry
+			lib.Library[nameVersion].RuleEntries[ruleName].RuleName = fmt.Sprintf("Deleted_%s", uuid.New().String())
+			lib.Library[nameVersion].RuleEntries[ruleName].Deleted = true
+			delete(lib.Library[nameVersion].RuleEntries, ruleName)
+			lib.Library[nameVersion].RuleEntries[ruleEntry.RuleName] = ruleEntry
 		}
 	}
 }
