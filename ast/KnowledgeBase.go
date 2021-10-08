@@ -241,7 +241,7 @@ func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 	e.lock.Lock()
 	defer e.lock.Unlock()
 	if e.ContainsRuleEntry(name) {
-		//mark the rule as deleted and prefix the name of the existing rule to rule_deleted to avoid duplicate rule entry issue
+		//mark the rule as deleted and change the rule name to DELETED_XXX_XXXXX to avoid duplicate rule entry issue
 		//Note: This is a workaround, will improve this logic a bit in near future
 		ruleEntry := e.RuleEntries[name]
 		e.RuleEntries[name].RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
