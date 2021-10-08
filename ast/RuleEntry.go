@@ -45,6 +45,7 @@ type RuleEntry struct {
 	ThenScope       *ThenScope
 
 	Retracted bool
+	Deleted   bool //If this is true, it will be ignored while execution and fetching the matching rules
 }
 
 // MakeCatalog will create a catalog entry from RuleEntry node.
@@ -103,6 +104,7 @@ func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 		RuleDescription: e.RuleDescription,
 		Salience:        e.Salience,
 		Retracted:       false,
+		Deleted:         e.Deleted,
 	}
 	if e.WhenScope != nil {
 		if cloneTable.IsCloned(e.WhenScope.AstID) {

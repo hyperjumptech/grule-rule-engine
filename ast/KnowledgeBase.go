@@ -17,6 +17,7 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"io"
 	"sort"
@@ -54,6 +55,21 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 	}
 	lib.Library[fmt.Sprintf("%s:%s", name, version)] = kb
 	return kb
+}
+
+// RemoveRuleEntry mark the rule entry as deleted
+func (lib *KnowledgeLibrary) RemoveRuleEntry(ruleName, name string, version string) {
+	nameVersion := fmt.Sprintf("%s:%s", name, version)
+	_, ok := lib.Library[nameVersion]
+	if ok {
+		ruleEntry, ok := lib.Library[nameVersion].RuleEntries[ruleName]
+		if ok {
+			lib.Library[nameVersion].RuleEntries[ruleName].RuleName = fmt.Sprintf("Deleted_%s", uuid.New().String())
+			lib.Library[nameVersion].RuleEntries[ruleName].Deleted = true
+			delete(lib.Library[nameVersion].RuleEntries, ruleName)
+			lib.Library[nameVersion].RuleEntries[ruleEntry.RuleName] = ruleEntry
+		}
+	}
 }
 
 // LoadKnowledgeBaseFromReader will load the KnowledgeBase stored using StoreKnowledgeBaseToWriter function
@@ -220,12 +236,18 @@ func (e *KnowledgeBase) ContainsRuleEntry(name string) bool {
 	return ok
 }
 
-// RemoveRuleEntry remove the rule entry with specified name from this knowledge base
+// RemoveRuleEntry mark the rule entry as deleted
 func (e *KnowledgeBase) RemoveRuleEntry(name string) {
 	e.lock.Lock()
 	defer e.lock.Unlock()
 	if e.ContainsRuleEntry(name) {
+		//mark the rule as deleted and prefix the name of the existing rule to rule_deleted to avoid duplicate rule entry issue
+		//Note: This is a workaround, will improve this logic a bit in near future
+		ruleEntry := e.RuleEntries[name]
+		e.RuleEntries[name].RuleName = fmt.Sprintf("Deleted_%s", ruleEntry.RuleName)
+		e.RuleEntries[name].Deleted = true
 		delete(e.RuleEntries, name)
+		e.RuleEntries[ruleEntry.RuleName] = ruleEntry
 	}
 }
 

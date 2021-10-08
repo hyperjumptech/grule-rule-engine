@@ -122,7 +122,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
-			if !v.Retracted {
+			if !v.Retracted && !v.Deleted {
 				// test if this rule entry v can execute.
 				can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 				if err != nil {
@@ -210,18 +210,19 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Tracef("Select all rule entry that can be executed.")
 	runnable := make([]*ast.RuleEntry, 0)
 	for _, v := range knowledge.RuleEntries {
-		// test if this rule entry v can execute.
-		can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
-		if err != nil {
-			log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
-			// No longer return error, since unavailability of variable or fact in context might be intentional.
-		}
-		// if can, add into runnable array
-		if can {
-			runnable = append(runnable, v)
+		if !v.Deleted {
+			// test if this rule entry v can execute.
+			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
+			if err != nil {
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+				// No longer return error, since unavailability of variable or fact in context might be intentional.
+			}
+			// if can, add into runnable array
+			if can {
+				runnable = append(runnable, v)
+			}
 		}
 	}
-
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
