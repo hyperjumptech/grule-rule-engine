@@ -17,6 +17,7 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"io"
 	"sort"
