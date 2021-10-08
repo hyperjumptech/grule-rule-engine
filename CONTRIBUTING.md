@@ -22,7 +22,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 3. Make sure `make test` always successful (you wont be able to create pull request if this fail, circle-ci, travis-ci and azure-devops will make sure of this.)
 4. Push your code to your project's master repository.
 5. Create PullRequest. 
-    * Go to `hithub.com/hyperjumptech/grule-ruleengine`
+    * Go to `github.com/hyperjumptech/grule-rule-engine`
     * Select `Pull Request` tab
     * Click "New pull request" button
     * Click "compare across fork"
