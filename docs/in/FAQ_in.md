@@ -1,10 +1,23 @@
 # FAQ
 
-<a href="FAQ_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="FAQ_cn" width="22"/></a>
-<a href="FAQ_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="FAQ_de" width="22"/></a>
-<a href="FAQ_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="FAQ_gb" width="22"/></a>
-<a href="FAQ_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="FAQ_id" width="22"/></a>
-<a href="FAQ_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="FAQ_in" width="22"/></a>
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![FAQ_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/FAQ_cn.md)
+[![FAQ_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/FAQ_de.md)
+[![FAQ_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/FAQ_en.md)
+[![FAQ_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/FAQ_id.md)
+[![FAQ_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/FAQ_in.md)
 
 [About](About_in.md) | [Tutorial](Tutorial_in.md) | [Rule Engine](RuleEngine_in.md) | [GRL](GRL_in.md) | [GRL JSON](GRL_JSON_in.md) | [RETE Algorithm](RETE_in.md) | [Functions](Function_in.md) | [FAQ](FAQ_in.md) | [Benchmark](Benchmarking_in.md)
 

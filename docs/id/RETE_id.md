@@ -1,10 +1,23 @@
 # Grule's RETE Algorithm
 
-<a href="RETE_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="RETE_cn" width="22"/></a>
-<a href="RETE_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="RETE_de" width="22"/></a>
-<a href="RETE_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="RETE_gb" width="22"/></a>
-<a href="RETE_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="RETE_id" width="22"/></a>
-<a href="RETE_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="RETE_in" width="22"/></a>
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![RETE_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/RETE_cn.md)
+[![RETE_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/RETE_de.md)
+[![RETE_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/RETE_en.md)
+[![RETE_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/RETE_id.md)
+[![RETE_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/RETE_in.md)
 
 [About](About_id.md) | [Tutorial](Tutorial_id.md) | [Rule Engine](RuleEngine_id.md) | [GRL](GRL_id.md) | [GRL JSON](GRL_JSON_id.md) | [RETE Algorithm](RETE_id.md) | [Functions](Function_id.md) | [FAQ](FAQ_id.md) | [Benchmark](Benchmarking_id.md)
 

@@ -1,10 +1,10 @@
 # Function in Grule
 
-<a href="Function_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="Function_cn" width="22"/></a>
-<a href="Function_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="Function_de" width="22"/></a>
-<a href="Function_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="Function_gb" width="22"/></a>
-<a href="Function_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="Function_id" width="22"/></a>
-<a href="Function_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="Function_in" width="22"/></a>
+[![Function_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Function_cn.md)
+[![Function_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Function_de.md)
+[![Function_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Function_en.md)
+[![Function_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Function_id.md)
+[![Function_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/Function_in.md)
 
 [About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 

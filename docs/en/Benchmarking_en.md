@@ -1,10 +1,11 @@
 # Benchmarking
 
-<a href="Benchmarking_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="Benchmarking_cn" width="22"/></a>
-<a href="Benchmarking_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="Benchmarking_de" width="22"/></a>
-<a href="Benchmarking_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="Benchmarking_gb" width="22"/></a>
-<a href="Benchmarking_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="Benchmarking_id" width="22"/></a>
-<a href="Benchmarking_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="Benchmarking_in" width="22"/></a>
+
+[![Benchmarking_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Benchmarking_cn.md)
+[![Benchmarking_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Benchmarking_de.md)
+[![Benchmarking_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Benchmarking_en.md)
+[![Benchmarking_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Benchmarking_id.md)
+[![Benchmarking_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/Benchmarking_in.md)
 
 [About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 
