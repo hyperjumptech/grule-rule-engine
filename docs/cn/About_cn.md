@@ -3,10 +3,9 @@
 
 __"Gopher Holds The Rules"__
 
-<table width="100%" border="1"><tr><td  bgcolor="yellow" color="black">
-This page is being translated. Contributors are invited. Please read the translation contribution guideline. (<a href="../../CONTRIBUTING.md">CONTRIBUTING.md</a> and <a href="../CONTRIBUTING_TRANSLATION.md">CONTRIBUTING_TRANSLATION.md</a>).
-<br>Please remove this note if you think you're done translating this page.
-</td></tr></table>
+<table width="100%" border="1" bgcolor="blue" ><tr><td><font color="white"><strong>
+This page is being translated. Contributors are welcome. Please read the translation contribution guideline. (<a href="../../CONTRIBUTING.md">CONTRIBUTING.md</a> and <a href="../CONTRIBUTING_TRANSLATION.md">CONTRIBUTING_TRANSLATION.md</a>).
+<br><br>When you're done translating this page, Please remove this note.</strong></font></td></tr></table>
 
 <a href="About_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="About_cn" width="22"/></a>
 <a href="About_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="About_de" width="22"/></a>
