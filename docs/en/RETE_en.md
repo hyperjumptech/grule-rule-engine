@@ -1,6 +1,12 @@
 # Grule's RETE Algorithm
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+<a href="RETE_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="RETE_cn" width="22"/></a>
+<a href="RETE_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="RETE_de" width="22"/></a>
+<a href="RETE_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="RETE_gb" width="22"/></a>
+<a href="RETE_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="RETE_id" width="22"/></a>
+<a href="RETE_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="RETE_in" width="22"/></a>
+
+[About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 
 ---
 

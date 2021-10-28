@@ -1,6 +1,12 @@
 # Grule Rule Language (GRL) Literals
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+<a href="GRL_Literals_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="GRL_Literals_cn" width="22"/></a>
+<a href="GRL_Literals_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="GRL_Literals_de" width="22"/></a>
+<a href="GRL_Literals_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="GRL_Literals_gb" width="22"/></a>
+<a href="GRL_Literals_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="GRL_Literals_id" width="22"/></a>
+<a href="GRL_Literals_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="GRL_Literals_in" width="22"/></a>
+
+[About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 
 ---
 

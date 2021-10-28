@@ -1,6 +1,12 @@
 # Storing and Loading GRB file.
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+<a href="Binary_Rule_File_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="Binary_Rule_File_cn" width="22"/></a>
+<a href="Binary_Rule_File_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="Binary_Rule_File_de" width="22"/></a>
+<a href="Binary_Rule_File_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="Binary_Rule_File_gb" width="22"/></a>
+<a href="Binary_Rule_File_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="Binary_Rule_File_id" width="22"/></a>
+<a href="Binary_Rule_File_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="Binary_Rule_File_in" width="22"/></a>
+
+[About](About_id.md) | [Tutorial](Tutorial_id.md) | [Rule Engine](RuleEngine_id.md) | [GRL](GRL_id.md) | [GRL JSON](GRL_JSON_id.md) | [RETE Algorithm](RETE_id.md) | [Functions](Function_id.md) | [FAQ](FAQ_id.md) | [Benchmark](Benchmarking_id.md)
 
 ---
 

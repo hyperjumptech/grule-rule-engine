@@ -187,7 +187,7 @@ To dive into the Tutorial, see the Wiki Docs [here on Github](https://github.com
 * To execute a fact against 1000 rules, Grule Engine took `~568959 ns/op` (took the highest value as base) that is hardly `~0.568959ms` and `293710 B/op` which is also pretty fast.
 
 
-You can read the [detail report here](docs/Benchmarking_en.md)
+You can read the [detail report here](docs/en/Benchmarking_en.md)
 
 # Our Contributors
 

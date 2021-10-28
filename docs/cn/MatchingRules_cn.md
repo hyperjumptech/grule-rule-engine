@@ -1,5 +1,11 @@
 ## Fetch Matching Rules (Order by Salience)
 
+<a href="FAQ_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="FAQ_cn" width="22"/></a>
+<a href="FAQ_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="FAQ_de" width="22"/></a>
+<a href="FAQ_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="FAQ_gb" width="22"/></a>
+<a href="FAQ_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="FAQ_id" width="22"/></a>
+<a href="FAQ_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="FAQ_in" width="22"/></a>
+
 `FetchMatchingRules` in `GruleEngine.go` fetches all the rules valid for a given fact and returns a list of `ast.RuleEntry` values ordered by salience property.
 
 ##### Rules:

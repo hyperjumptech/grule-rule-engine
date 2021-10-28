@@ -1,6 +1,12 @@
 # Grule Rule Language (GRL)
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+<a href="GRL_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="GRL_cn" width="22"/></a>
+<a href="GRL_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="GRL_de" width="22"/></a>
+<a href="GRL_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="GRL_gb" width="22"/></a>
+<a href="GRL_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="GRL_id" width="22"/></a>
+<a href="GRL_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="GRL_in" width="22"/></a>
+
+[About](About_in.md) | [Tutorial](Tutorial_in.md) | [Rule Engine](RuleEngine_in.md) | [GRL](GRL_in.md) | [GRL JSON](GRL_JSON_in.md) | [RETE Algorithm](RETE_in.md) | [Functions](Function_in.md) | [FAQ](FAQ_in.md) | [Benchmark](Benchmarking_in.md)
 
 ---
 
@@ -64,7 +70,7 @@ then
 | Real    | Holds a real value                                                         | `234.4553`, `-234.3`, `314E-2`, `.32`, `12.32E12`  |
 | Boolean | Holds a boolean value                                                      | `true`, `TRUE`, `False`                            |
 
-More examples can be found at [GRL Literals](GRL_Literals_en.md).
+More examples can be found at [GRL Literals](GRL_Literals_in.md).
 
 Note: Special characters in strings must be escaped following the same rules
 used for strings in Go.  However, backtick strings are not supported.
@@ -147,7 +153,7 @@ You can set an array value if the index you specify is valid.
 ```
 
 There are a couple of functions you can use to work with array/slice and map.
-Those can be found at [Function page](Function_en.md).
+Those can be found at [Function page](Function_in.md).
 
 ### Negation
 
@@ -212,7 +218,7 @@ example:
         Fact.Result = Fact.ReturnStringFunc().Trim().ToLower();
 ```
 
-For a list of available functions, consult [Function Page](Function_en.md).
+For a list of available functions, consult [Function Page](Function_in.md).
 
 #### Examples
 
