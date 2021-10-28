@@ -169,9 +169,9 @@ business complexity seems to be quite clear.
 
 ## Docs
 
-Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
+Documentation page [here](https://github.com/hyperjumptech/grule-rule-engine/blob/master/docs/Documentation.md)
 
-To dive into the Tutorial, see the Wiki Docs [here on Github](https://github.com/hyperjumptech/grule-rule-engine/blob/master/docs/Tutorial_en.md).
+To dive into the Tutorial, see the Wiki Docs [here on Github](https://github.com/hyperjumptech/grule-rule-engine/blob/master/docs/en/Tutorial_en.md).
 
 ### Benchmark
 `Loading rules into KnowledgeBase`:
