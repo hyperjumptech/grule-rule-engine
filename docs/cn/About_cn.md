@@ -3,15 +3,24 @@
 
 __"Gopher Holds The Rules"__
 
-<table width="100%" border="1" bgcolor="blue" ><tr><td><font color="white"><strong>
-This page is being translated. Contributors are welcome. Please read the translation contribution guideline. (<a href="../../CONTRIBUTING.md">CONTRIBUTING.md</a> and <a href="../CONTRIBUTING_TRANSLATION.md">CONTRIBUTING_TRANSLATION.md</a>).
-<br><br>When you're done translating this page, Please remove this note.</strong></font></td></tr></table>
+---
 
-<a href="About_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="About_cn" width="22"/></a>
-<a href="About_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="About_de" width="22"/></a>
-<a href="About_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="About_gb" width="22"/></a>
-<a href="About_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="About_id" width="22"/></a>
-<a href="About_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="About_in" width="22"/></a>
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines. 
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![About_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/About_cn.md)
+[![About_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/About_de.md)
+[![About_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/About_en.md)
+[![About_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/About_id.md)
+[![About_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/About_in.md)
 
 [About](About_cn.md) | [Tutorial](Tutorial_cn.md) | [Rule Engine](RuleEngine_cn.md) | [GRL](GRL_cn.md) | [GRL JSON](GRL_JSON_cn.md) | [RETE Algorithm](RETE_cn.md) | [Functions](Function_cn.md) | [FAQ](FAQ_cn.md) | [Benchmark](Benchmarking_cn.md)
 

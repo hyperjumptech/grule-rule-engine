@@ -1,10 +1,23 @@
 # Grule JSON Format
 
-<a href="GRL_JSON_cn.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/cn.svg?raw=true" alt="GRL_JSON_cn" width="22"/></a>
-<a href="GRL_JSON_de.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg?raw=true" alt="GRL_JSON_de" width="22"/></a>
-<a href="GRL_JSON_gb.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/gb.svg?raw=true" alt="GRL_JSON_gb" width="22"/></a>
-<a href="GRL_JSON_id.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/id.svg?raw=true" alt="GRL_JSON_id" width="22"/></a>
-<a href="GRL_JSON_in.md"><img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/in.svg?raw=true" alt="GRL_JSON_in" width="22"/></a>
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![GRL_JSON_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/GRL_JSON_cn.md)
+[![GRL_JSON_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_JSON_de.md)
+[![GRL_JSON_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_JSON_en.md)
+[![GRL_JSON_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/GRL_JSON_id.md)
+[![GRL_JSON_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/GRL_JSON_in.md)
 
 [About](About_cn.md) | [Tutorial](Tutorial_cn.md) | [Rule Engine](RuleEngine_cn.md) | [GRL](GRL_cn.md) | [GRL JSON](GRL_JSON_cn.md) | [RETE Algorithm](RETE_cn.md) | [Functions](Function_cn.md) | [FAQ](GRL_JSON_cn.md) | [Benchmark](Benchmarking_cn.md)
 
