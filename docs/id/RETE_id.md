@@ -1,4 +1,4 @@
-# Grule's RETE Algorithm
+# Algoritma RETE dalam Grule
 
 ---
 

@@ -1,4 +1,4 @@
-# Grule Short Tutorial
+# Tutorial Singkat GRULE
 
 ---
 

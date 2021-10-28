@@ -1,4 +1,4 @@
-# Storing and Loading GRB file.
+# 恢复和加载 GRB 文件
 
 ---
 

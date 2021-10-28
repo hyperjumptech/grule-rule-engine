@@ -1,4 +1,4 @@
-# Function in Grule
+# Grule 中的函数
 
 ---
 

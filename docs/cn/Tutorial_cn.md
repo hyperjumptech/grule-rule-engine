@@ -1,4 +1,4 @@
-# Grule Short Tutorial
+# Grule 简短教程
 
 ---
 

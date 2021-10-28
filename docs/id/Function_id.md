@@ -1,4 +1,4 @@
-# Function in Grule
+# Fungsi-fungsi didalam Grule
 
 ---
 

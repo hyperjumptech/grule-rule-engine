@@ -1,4 +1,4 @@
-# Grule Rule Language (GRL) Literals
+# Literal-literal Dalam Grule Rule Language (GRL)
 
 ---
 

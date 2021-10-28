@@ -1,4 +1,4 @@
-# Grule JSON Format
+# Grule Rule Dalam Format JSON
 
 ---
 

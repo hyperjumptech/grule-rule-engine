@@ -1,7 +1,7 @@
 [![Gopher Holds The Rules](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
 
-__"Gopher Holds The Rules"__
+__"Gopher 遵守规则"__
 
 ---
 
@@ -30,7 +30,7 @@ __THIS PAGE IS BEING TRANSLATED__
 import "github.com/hyperjumptech/grule-rule-engine"
 ```
 
-## Rule Engine for Go
+## Go 规则引擎
 
 **Grule** is a Rule Engine library for the Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
 

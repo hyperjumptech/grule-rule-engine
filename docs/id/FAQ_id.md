@@ -1,4 +1,4 @@
-# FAQ
+# Pertanyaan yang sering ditanyakan
 
 [![FAQ_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/FAQ_cn.md)
 [![FAQ_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/FAQ_de.md)
