@@ -23,20 +23,20 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-For any library `Benchmarking` is very much required in terms of evaluating the performance and helps us to improve the performance better.
+Bagi pustaka perangkat lunak, `Benchmarking` cukup penting guna mengevaluasi kinerja dan membantu kami meningkatkan performa menjadi lebih baik.
 
-I have benchmarked two things:
-* Loading 100 and 1000 rules into KnowledgeBase
-* Executing a fact against rules against 100 and 1000 rules
+Kami melakukan __benchmark__ kepada 2 tahap:
+* Memuat 100 dan 1000 buah __rules__ kedalam __Knowledgebase__
+* Menjalankan sebuah __fact__ terhadap 100 dan 1000 buah __rules__
 
-All the tests will run for multiple times to see how it is performing by changing the value of N 
+Semua ujicoba akan dijalankan beberapa kali untuk melihat bagaimana performa pustaka ini dengan merubah nilai dari N
 
-`N is b.N where b is an instance of *testing.B`
+`N adalah b.N dimana b adalah sebuah turunan dari *testing.B`
 
 ### Rules:
-refer `100_rules.grl` and `1000_rules.grl` files under `examples/benchmark` directory
+Menggunakan file `100_rules.grl` dan `1000_rules.grl` dalam direktori `examples/benchmark`
 
-Command to run: 
+Perintah yang digunakan:
 ---
 ```go
 > go test -bench=. -benchmem
@@ -72,12 +72,12 @@ Benchmark_Grule_Load_Rules/1000_rules#10-12                    4         2618574
 
 ```
 
-To load `100` rules into knowledgeBase it took `22628754 ns/op` (took the highest value) that is equal to `22.628754ms` and (`8871388 B/op`) `8.8MB` memory per operation
+Untuk memuat `100` __rules__ kedalam __knowledgebase__ memerlukan `22628754 ns/op` (mengambil nilai tertinggi) yang berarti sama dengan `22.628754ms` dan (`8871388 B/op`) `8.8MB` memory per-operasi
 
-To load `1000` rules into knowledgeBase it took `261857403 ns/op` (took the highest value) that is equal to `~261ms` and `88MB` memory per operation
+Untuk memuat `1000` __rules__ kedalam __knowledgebase__ memerlukan `261857403 ns/op` (mengambil nilai tertinggi) yang berarti sama dengan `~261ms` dan `88MB` memory per-operasi
 
-### Test2 - Executing a fact against rules
-Command to run: 
+### Test2 - Menjalankan fact terhadap rules
+Perintah yang digunakan:
 ```go
 Load 100 and 1000 Rules into Grule rule Engine
 Benchmark_Grule_Load_Rules/100_rules-12                       12          96674568 ns/op        49297966 B/op     731119 allocs/op
@@ -105,11 +105,11 @@ Benchmark_Grule_Load_Rules/1000_rules#09-12                    2         9304769
 
 ```
 
-To load `100` rules into knowledgeBase it took `99342047 ns/op` (took the highest value) that is equal to `~99.342047ms` and (`49295906 B/op`) `~49.295906MB` memory per operation
+Untuk memuat `100` __rules__ kedalam __knowledgebase__ memerlukan `99342047 ns/op` (mengambil nilai tertinggi) yang berarti sama dengan `~99.342047ms` `~49.295906MB` memory per-operasi
 
-To load `1000` rules into knowledgeBase it took `933617752 ns/op` (took the highest value) that is equal to `~933.617752ms` and (`488126636 B/op`) `~488.126636` memory per operation
+Untuk memuat `1000` __rules__ kedalam __knowledgebase__ memerlukan `933617752 ns/op` (mengambil nilai tertinggi) yang berarti sama dengan `~933.617752ms` `~488.126636MB` memory per-operasi
 
-### Test2 - Executing a fact against rules
+### Test2 - Menjalankan fact terhadap rules
 Result:
 ```go
 Benchmark_Grule_Execution_Engine/100_rules-12             140134              8175 ns/op            3939 B/op         59 allocs/op
@@ -138,8 +138,6 @@ Benchmark_Grule_Execution_Engine/1000_rules#09-12           1844            5436
 
 ```
 
-To execute a fact against 100 rules, Grule Engine took `~9697 ns/op` (took the highest value as base) that is hardly `~0.009697ms` and `3957 B/op` which is pretty fast.
+Untuk menjalankan sebuah __fact__ terhadap `100` Grule Engine memerlukan `9697 ns/op` (mengambil nilai tertinggi) yang berarti mendekati `~0.009697ms` dan `3957 B/op`. Operasi ini terlihat cukup cepat.
 
-To execute a fact against 1000 rules, Grule Engine took `~568959 ns/op` (took the highest value as base) that is hardly `~0.568959ms` and `293710 B/op` which is also pretty fast.
-
-
+Untuk menjalankan sebuah __fact__ terhadap `1000` Grule Engine memerlukan `~568959 ns/op` (mengambil nilai tertinggi) yang berarti mendekati `~0.568959ms` dan `293710 B/op`. Operasi ini juga terlihat cukup cepat.

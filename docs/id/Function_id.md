@@ -23,30 +23,30 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-## Built-In Functions
+## Fungsi-fungsi Built-In
 
-Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As of now, they are:
+Fungsi-fungsi built-in semuanya dapat ditemukan di file `ast/BuildInFunctions.go`. Saat ini, ia berisi :
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time
 
-`MakeTime` will create a `time.Time` with local `locale`.
+`MakeTime` akan membuat `time.Time` dengan `locale` yang lokal.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `year` is the Year number.
-* `month` is the Month number, January = 1.
-* `day` is the day number in a month.
-* `hour` the hour of the day starting from 0.
-* `minute` the minute of the hour starting from 0.
-* `second` the second of the minute starting from 0.
+* `year` Angka tahun.
+* `month` Angka bulan, Januari = 1.
+* `day` Angka tanggal dalam bulan.
+* `hour` Angka jam dalam hari dimulai dari 0.
+* `minute` Angka menit dalam jam dimulai dari 0.
+* `second` Angka detik dalam menit dimulai dari 0.
 
-#### Returns
+#### Mengembalikan
 
-* `time.Time` value representing the time as specified in the argument in `local` locale.
+* `time.Time` nilai yang merepresentasikan waktu dimana menggunakan zona waktu lokal.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule SetExpire "Set the expire date for Fact created before 2020" {
     when
        Fact.CreateTime < MakeTime(2020,1,1,0,0,0)
@@ -57,16 +57,15 @@ rule SetExpire "Set the expire date for Fact created before 2020" {
 
 ### Changed(variableName string)
 
-`Changed` will ensure the specified `variableName` is removed from the working
-memory before the next cycle.
+`Changed` akan membuang nilai pada nama variabel yang ter-rekam dalam __Working Memory__ menjadi hilang, sehingga nilai tersebut akan diambil lagi dari konteks data.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `variableName` the variable name to be removed from working memory.
+* `variableName` Nama variabel yang mana nilai yang tercatat dalam __working memory__ akan dibuang.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule SetExpire "Set new expire date" {
     when
         IsZero(Fact.ExpireTime)
@@ -78,15 +77,15 @@ rule SetExpire "Set new expire date" {
 
 ### Now() time.Time
 
-`Now` function will create a new `time.Time` value containing the current time.
+`Now` fungsi akan membuat nilai `time.Time` dengan nilai waktu saat fungsi ini dipanggil.
 
-#### Returns
+#### Mengembalikan
 
-* `time.Time` value representing the current value
+* `time.Time` nilai berisi waktu sekarang.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule ResetTime "Reset the lastUpdate time" {
     when
         Fact.LastUpdate < Now()
@@ -97,39 +96,39 @@ rule ResetTime "Reset the lastUpdate time" {
 
 ### Log(text string)
 
-`Log` will emit a log-debug string from within the rule.
+`Log` Akan mengeluarkan sebuah log dengan tingkat "Debug" dari dalam GRL
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `text` The text to emit into the Log-Debug
+* `text` Teks yang akan dikeluarkan dalam log
 
-#### Example
+#### Contoh
 
-```Shell
-rule SomeRule "Log candidate name if he is below 17 years old" {
+```text
+rule SomeRule "Log candidate name if he is bellow 17 years old" {
     when
         Candidate.Age < 17
     then
-        Log("Under aged: " + Candidate.Name);
+        Log("Under aged : " + Candidate.Name);
 }
 ```
 
 ### IsNil(i interface{}) bool
 
-`IsNil` will check if the argument is a `nil` value.
+`IsNil` melakukan pemeriksaan apakah nilai dalam argumen adalah `nil`.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `i` a variable to check.
+* `i` variabel yang akan diperiksa.
 
-#### Returns
+#### Mengembalikan
 
-* `true` if the specified argument is`nil` or an invalid `ptr` value.
-* `false` if the specified argument is a valid `ptr` value.
+* `true` Jika argumen berisi `nil` atau memiliki nilai `ptr` yang tidak valid.
+* `false` Jika argumen bukan `nil` atau memiliki nilai `ptr` yang valid.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule CheckEducation "Check candidate's education fact" {
     when
         IsNil(Candidate.Education) == false &&
@@ -141,23 +140,22 @@ rule CheckEducation "Check candidate's education fact" {
 
 ### IsZero(i interface{}) bool
 
-`IsZero` will check any variable in the argument for its `Zero` status value. Zero means
-that the variable is newly defined and has not been assigned an initial value.
-This is usually applied to types like `string`, `int64`, `uint64`, `bool`,
-`time.Time`, etc.
+`IsZero` akan memeriksa nilai argumen apakah berstatus `Zero`. Zero berarti
+argumen tersebut baru saja dibuat dan belum diberi nilai apapun oleh program (menggunakan nilai default)
+Ini biasanya berlaku pada beberapa tipe variabel seperti `string`, `int64`, `uint64`, `bool`, `time.Time`, etc.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `i` a variable to check.
+* `i` argumen yang akan diperiksa.
 
-#### Returns
+#### Mengembalikan
 
-* `true` if the specified argument is Zero.
-* `false` if the specified argument not Zero.
+* `true` Jika argumen berstatus Zero.
+* `false` Jika argumen tidak berstatus Zero.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule CheckStartTime "Check device's starting time." {
     when
         IsZero(Device.StartTime) == true
@@ -168,17 +166,17 @@ rule CheckStartTime "Check device's starting time." {
 
 ### Retract(ruleName string)
 
-`Retract` will exclude the specified rule from the subsequent cycle evaluations. If a
-rule is retracted its `when` scope will not be evaluated on the next cycles after the call to `Retract`. 
-The engine will automatically resets all rule back inplace when it start again from the beginning.
+`Retract` akan menarik __rule__ yang disebutkan dari evaluasi di siklus berikutnya.
+Jika sebuah __rule__ ditarik, maka skop `when` nya tidak akan dievaluasi. Saat __rule engine__ ini dijalankan kembail
+dari awal, maka semua __rule__ yang ditarik akan dikembalikan seperti sediakala.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `ruleName` name of the rule to retract.
+* `ruleName` Nama __rule__ yang akan ditarik.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule CheckStartTime "Check device's starting time." salience 1000 {
     when
         IsZero(Device.StartTime) == true
@@ -190,20 +188,20 @@ rule CheckStartTime "Check device's starting time." salience 1000 {
 
 ### GetTimeYear(time time.Time) int
 
-`GetTimeYear` will extract the Year value of the time argument.
+`GetTimeYear` Akan mengambil nilai tahun dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `time` The time variable
+* `time` Variabel `time.Time`
 
-#### Returns
+#### Mengembalikan
 
-* Year value of the time.
+* Nilai tahun
 
-#### Example
+#### Contoh
 
-```Shell
-rule StartNewYearProcess "Check if it's a new year to restart new FinancialYear." salience 1000 {
+```text
+rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
     when
         GetTimeYear(Now()) != GL.FinancialYear
     then
@@ -213,21 +211,19 @@ rule StartNewYearProcess "Check if it's a new year to restart new FinancialYear.
 
 ### GetTimeMonth(time time.Time) int
 
-`GetTimeMonth` will extract the Month value of the time argument.
+`GetTimeMonth` Akan mengambil nilai bulan dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `time` The time variable
 
-#### Returns
+#### Mengembalikan
 
 * Month value of the time. 1 = January.
 
-#### Example
+#### Contoh
 
-```Shell
-// TODO: something's not right here. The description is copy/pasted from above
-// but the condition/action doesn't make sense to me
+```text
 rule StartNewYearProcess "Check if its a new year to restart new FinancialYear." salience 1000 {
     when
         isZero(Process.Month)
@@ -238,19 +234,19 @@ rule StartNewYearProcess "Check if its a new year to restart new FinancialYear."
 
 ### GetTimeDay(time time.Time) int
 
-`GetTimeDay` will extract the Day of the month value of the time argument.
+`GetTimeDay` Akan mengambil nilai tanggal dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `time` The time variable
 
-#### Returns
+#### Mengembalikan
 
 * Day of month value of the time.
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule GreetEveryDay "Log a greeting every day." salience 1000 {
     when
         Greeting.Day != GetTimeDay(Now())
@@ -262,19 +258,19 @@ rule GreetEveryDay "Log a greeting every day." salience 1000 {
 
 ### GetTimeHour(time time.Time) int
 
-`GetTimeHour` will extract the Hour value of the time argument.
+`GetTimeHour` Akan mengambil nilai jam dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `time` The time variable
 
-#### Returns
+#### Mengembalikan
 
 * Hour value of the time. Is between 0 to 23
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule DailyCheckBuild "Execute build every 6AM and 6PM." {
     when
         GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18
@@ -286,19 +282,19 @@ rule DailyCheckBuild "Execute build every 6AM and 6PM." {
 
 ### GetTimeMinute(time time.Time) int
 
-`GetTimeMinute` will extract the Minute value of the time argument.
+`GetTimeMinute` Akan mengambil nilai menit dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `time` The time variable
 
-#### Returns
+#### Mengembalikan
 
 * Minute value of the time, between 0 to 59
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
@@ -311,19 +307,19 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ### GetTimeSecond(time time.Time) int
 
-`GetTimeSecond` will extract the Second value of the time argument.
+`GetTimeSecond` Akan mengambil nilai detik dari argumen.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `time` The time variable
 
-#### Returns
+#### Mengembalikan
 
 * Second value of the time, between 0 to 59
 
-#### Example
+#### Contoh
 
-```Shell
+```text
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
     when
         (GetTimeHour(Now()) == 6 || GetTimeHour(Now()) == 18) &&
@@ -336,22 +332,22 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ### IsTimeBefore(time, before time.Time) bool
 
-`IsTimeBefore` will check if a time value precedes another time value.
+`IsTimeBefore` akan memeriksa apakah sebuah waktu pada argumen 1 itu adalah waktu sebelum nilai waktu pada argumen 2.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `time` The time value you wish to have checked
-* `before` The time value against which the above is checked
+* `time` The time variable
+* `before` Another time variable
 
-#### Returns
+#### Mengembalikan
 
-* True if the `before` time value precedes the `time` value.
-* False if the `before` time value does not precede the `time` value.
+* True if the `before` time value is before the `time` value.
+* False if the `before` time value is not before the `time` value.
 
-#### Example
+#### Contoh
 
-```Shell
-rule PromotionExpireCheck "Apply a promotion if promotion hasn't yet expired." {
+```text
+rule PromotionExpireCheck  "Apply a promotion if the promotion's expired date is not due." {
     when
         IsTimeBefore(Now(), Promotion.ExpireDateTime)
     then
@@ -362,48 +358,48 @@ rule PromotionExpireCheck "Apply a promotion if promotion hasn't yet expired." {
 
 ### IsTimeAfter(time, after time.Time) bool
 
-`IsTimeAfter` will check if a time value follows another time value.
+`IsTimeAfter` akan memeriksa apakah sebuah waktu pada argumen 1 itu adalah waktu sesudah nilai waktu pada argumen 2.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `time` The time value you wish to have checked
-* `after` The time value against which the above is checked
+* `time` The time variable
+* `after` Another time variable
 
-#### Returns
+#### Mengembalikan
 
-* True if the `after` time value follows `time` value.
-* False if the `after` time value does not follow the `time` value.
+* True if the `after` time value is after the `time` value.
+* False if the `after` time value is not after the `time` value.
 
-#### Example
+#### Contoh
 
-```Shell
-rule AdditionalTax "Apply additional tax if new tax rules are in effect." {
+```text
+rule AdditionalTax  "Apply additional tax if purchase after date specified." {
     when
         IsTimeAfter(Purchase.TransactionTime, TaxRegulation.StartSince)
     then
-        Purchase.Tax = Purchase.Tax + 0.01;
+        Purchase.Tax = PurchaseTax + 0.01;
 }
 ```
 
 ### TimeFormat(time time.Time, layout string) string
 
-`TimeFormat` will format a time argument as specified by `layout` argument.
+`TimeFormat` akan mem-format nilai waktu pada argumen sesuai dengan format yang ditentukan pada argumen `layout`.
 
-#### Arguments
+#### Penjelasan Argumen
 
-* `time` The time value you wish to have formatted.
+* `time` The time variable
 * `layout` String variable specifying the date format layout.
 
-For the layout format, you can [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
+For layout format, you can [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
 
-#### Returns
+#### Mengembalikan
 
-* A string formatted as specified.
+* String contains the formatted time
 
-#### Example
+#### Contoh
 
-```Shell
-rule LogPurchaseDate "Log the purchase date." {
+```text
+rule LogPurchaseDate  "Log the purchase date." {
     when
         IsZero(Purchase.TransactionDate) == false
     then
@@ -417,7 +413,7 @@ rule LogPurchaseDate "Log the purchase date." {
 current cycle. This is useful if you want to terminate further rule evaluation
 under a set condition.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule DailyCheckBuild "Execute build at 6.30AM and 6.30PM." {
@@ -447,60 +443,60 @@ then
     Fact.X = Acosh(Fact.C);
 ```
 
-- Max(vals ...float64) float64 
-- Min(vals ...float64) float64 
-- Abs(x float64) float64 
-- Acos(x float64) float64 
-- Acosh(x float64) float64 
-- Asin(x float64) float64 
-- Asinh(x float64) float64 
-- Atan(x float64) float64 
-- Atan2(y, x float64) float64 
-- Atanh(x float64) float64 
-- Cbrt(x float64) float64 
-- Ceil(x float64) float64 
-- Copysign(x, y float64) float64 
-- Cos(x float64) float64 
-- Cosh(x float64) float64 
-- Dim(x, y float64) float64 
-- Erf(x float64) float64 
-- Erfc(x float64) float64 
-- Erfcinv(x float64) float64 
-- Erfinv(x float64) float64 
-- Exp(x float64) float64 
-- Exp2(x float64) float64 
-- Expm1(x float64) float64 
-- Float64bits(f float64) uint64 
-- Float64frombits(b uint64) float64 
-- Floor(x float64) float64 
-- Gamma(x float64) float64 
-- Hypot(p, q float64) float64 
-- Ilogb(x float64) int 
-- IsInf(f float64, sign int64) bool 
-- IsNaN(f float64) (is bool) 
-- J0(x float64) float64 
-- J1(x float64) float64 
-- Jn(n int64, x float64) float64 
-- Ldexp(frac float64, exp int64) float64 
-- MathLog(x float64) float64 
-- Log10(x float64) float64 
-- Log1p(x float64) float64 
-- Log2(x float64) float64 
-- Logb(x float64) float64 
-- Mod(x, y float64) float64 
-- NaN() float64 
-- Pow(x, y float64) float64 
-- Pow10(n int64) float64 
-- Remainder(x, y float64) float64 
-- Round(x float64) float64 
-- RoundToEven(x float64) float64 
-- Signbit(x float64) bool 
-- Sin(x float64) float64 
-- Sinh(x float64) float64 
-- Sqrt(x float64) float64 
-- Tan(x float64) float64 
-- Tanh(x float64) float64 
-- Trunc(x float64) float64 
+- Max(vals ...float64) float64
+- Min(vals ...float64) float64
+- Abs(x float64) float64
+- Acos(x float64) float64
+- Acosh(x float64) float64
+- Asin(x float64) float64
+- Asinh(x float64) float64
+- Atan(x float64) float64
+- Atan2(y, x float64) float64
+- Atanh(x float64) float64
+- Cbrt(x float64) float64
+- Ceil(x float64) float64
+- Copysign(x, y float64) float64
+- Cos(x float64) float64
+- Cosh(x float64) float64
+- Dim(x, y float64) float64
+- Erf(x float64) float64
+- Erfc(x float64) float64
+- Erfcinv(x float64) float64
+- Erfinv(x float64) float64
+- Exp(x float64) float64
+- Exp2(x float64) float64
+- Expm1(x float64) float64
+- Float64bits(f float64) uint64
+- Float64frombits(b uint64) float64
+- Floor(x float64) float64
+- Gamma(x float64) float64
+- Hypot(p, q float64) float64
+- Ilogb(x float64) int
+- IsInf(f float64, sign int64) bool
+- IsNaN(f float64) (is bool)
+- J0(x float64) float64
+- J1(x float64) float64
+- Jn(n int64, x float64) float64
+- Ldexp(frac float64, exp int64) float64
+- MathLog(x float64) float64
+- Log10(x float64) float64
+- Log1p(x float64) float64
+- Log2(x float64) float64
+- Logb(x float64) float64
+- Mod(x, y float64) float64
+- NaN() float64
+- Pow(x, y float64) float64
+- Pow10(n int64) float64
+- Remainder(x, y float64) float64
+- Round(x float64) float64
+- RoundToEven(x float64) float64
+- Signbit(x float64) bool
+- Sin(x float64) float64
+- Sinh(x float64) float64
+- Sqrt(x float64) float64
+- Tan(x float64) float64
+- Tanh(x float64) float64
+- Trunc(x float64) float64
 
 
 ## Constant Functions
@@ -512,11 +508,11 @@ value type is correct.
 
 `Len` will return string's length.
 
-#### Returns
+#### Mengembalikan
 
 * The length of string's receiver
 
-#### Example
+#### Contoh
 
 ```Shell
 rule DoSomething "Do something when string length is sufficient" {
@@ -531,17 +527,17 @@ rule DoSomething "Do something when string length is sufficient" {
 
 `Compare` will compare the receiver string to the argument.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The string to compare to
 
-#### Returns
+#### Mengembalikan
 
 * `< 0` if receiver is less than the argument
 * `0` if receiver is equal to the argument
 * `> 0` if receiver is greater thant the argument
 
-#### Example
+#### Contoh
 
 ```Shell
 rule CompareString "Do something when Fact.Text is greater than A" {
@@ -556,16 +552,16 @@ rule CompareString "Do something when Fact.Text is greater than A" {
 
 `Contains` will check if its argument is contained within the receiver.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The substring to check within the receiver
 
-#### Returns
+#### Mengembalikan
 
 * `true` if the argument string is contained within the receiver.
 * `false` if the argument string is not contained within the receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule ContainString "Do something when Fact.Text is contains XXX" {
@@ -576,42 +572,19 @@ rule ContainString "Do something when Fact.Text is contains XXX" {
 }
 ```
 
-### string.In(string ...) bool
-
-`In` will check if the any of the argument is equals to the receiver.
-
-#### Arguments
-
-* `string` The variadic string argument to check
-
-#### Returns
-
-* bolean `true` if any of the argument is equals to the receiver, or `false` if otherwise.
-
-#### Example
-
-```Shell
-rule CheckArgumentIn "Do something when Fact.Text is equals to 'ABC' or 'BCD' or 'CDE' " {
-    when
-        Fact.Text.In("ABC", "BCD", "CDE")
-    then
-        Fact.DoSomething();
-}
-```
-
 ### string.Count(string) int
 
 `Count` will count the number of occurences of argument in receiver string.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The substring to count within the receiver
 
-#### Returns
+#### Mengembalikan
 
 * number of occurences of the argument in the receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule CountString "Do something when Fact.Text contains 3 occurrences of 'ABC'" {
@@ -626,16 +599,16 @@ rule CountString "Do something when Fact.Text contains 3 occurrences of 'ABC'" {
 
 `HasPrefix` will check if the receiver string has a specific prefix.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The expected prefix.
 
-#### Returns
+#### Mengembalikan
 
 * `true` if the receiver has the argument as its prefix.
 * `false` if the receiver does not have the argument as its prefix.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule IsPrefixed "Do something when Fact.Text started with PREF" {
@@ -650,16 +623,16 @@ rule IsPrefixed "Do something when Fact.Text started with PREF" {
 
 `HasSuffix` will check if the receiver string has a specific suffix.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The expected suffix.
 
-#### Returns
+#### Mengembalikan
 
 * `true` if the receiver has the argument as its suffix.
 * `false` if the receiver does not have the argument as its suffix.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule IsSuffixed "Do something when Fact.Text ends with SUFF" {
@@ -674,15 +647,15 @@ rule IsSuffixed "Do something when Fact.Text ends with SUFF" {
 
 `Index` will return the index of the first occurrence of the argument in the receiver string.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The substring to search for.
 
-#### Returns
+#### Mengembalikan
 
 * The index value of the first occurrence of the argument.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule IndexCheck "Do something when Fact.Text ABC occurs as specified" {
@@ -697,15 +670,15 @@ rule IndexCheck "Do something when Fact.Text ABC occurs as specified" {
 
 `LastIndex` will return the index of last occurrence of the argument in the receiver string.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` The substring to search for.
 
-#### Returns
+#### Mengembalikan
 
 * The index of the last occurrence of the argument.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule LastIndexCheck "Do something when Fact.Text ABC occurs in the last position as specified" {
@@ -720,15 +693,15 @@ rule LastIndexCheck "Do something when Fact.Text ABC occurs in the last position
 
 `Repeat` will return a string containing `n` occurrences of the receiver string.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `int64` the repeat count
 
-#### Returns
+#### Mengembalikan
 
 * A new string containing `n` occurrences of the receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule StringRepeat "Do something when Fact.Text contains ABCABCABC" {
@@ -743,16 +716,16 @@ rule StringRepeat "Do something when Fact.Text contains ABCABCABC" {
 
 `Replace` will return a string with all occurrences of `old` replaced with `new`.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `old` the substring you wish to have replaced.
 * `new` the string you wish to replace all occurrences of `old`.
 
-#### Returns
+#### Mengembalikan
 
 * A string where all instances of `old` in the receiver have been replaced with `new`.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule ReplaceString "Do something when Fact.Text contains replaced string" {
@@ -769,15 +742,15 @@ rule ReplaceString "Do something when Fact.Text contains replaced string" {
 splitting the receiver by the string token argument.  The token will not be
 present in the resulting slice elements.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `string` the token you wish to use to split the receiver.
 
-#### Returns
+#### Mengembalikan
 
 * The string slice containing parts of the original string as split by the token.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule SplitString "Do something when Fact.Text is prefixed by 'ABC,'" {
@@ -793,11 +766,11 @@ rule SplitString "Do something when Fact.Text is prefixed by 'ABC,'" {
 `ToLower` will return a string whose contents are all lower case instances of
 characters in the receiver.
 
-#### Returns
+#### Mengembalikan
 
 * A new string that is a lower-cased version of the receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule LowerText "Do something when Fact.Text is equal to 'abc'" {
@@ -813,11 +786,11 @@ rule LowerText "Do something when Fact.Text is equal to 'abc'" {
 `ToUpper` will return a string whose contents are all upper case instances of
 characters in the receiver.
 
-#### Returns
+#### Mengembalikan
 
 * A new string that is an upper-cased version of the receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule UpperText "Do something when Fact.Text is equal to 'ABC'" {
@@ -832,11 +805,11 @@ rule UpperText "Do something when Fact.Text is equal to 'ABC'" {
 
 `Trim` will return a string where the whitespace on either end of the string has been removed.
 
-#### Returns
+#### Mengembalikan
 
 * A string with the whitespace removed from the beginning and end.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule TrimText "Do something when Fact.Text is 'ABC'" {
@@ -851,11 +824,11 @@ rule TrimText "Do something when Fact.Text is 'ABC'" {
 
 `Len` will return the length of the array/slice.
 
-#### Returns
+#### Mengembalikan
 
 * The length of array/slice.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule DoSomething "Do something when array length is sufficient" {
@@ -866,15 +839,15 @@ rule DoSomething "Do something when array length is sufficient" {
 }
 ```
 
-### array.Append(val) 
+### array.Append(val)
 
 `Append` will append `val` onto the end of the receiver array.
 
-#### Arguments
+#### Penjelasan Argumen
 
 * `val` value to have appended.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule DoSomething "Add a new child when the array has less than 2 children" {
@@ -886,14 +859,14 @@ rule DoSomething "Add a new child when the array has less than 2 children" {
 ```
 
 ### map.Len() int
-   
+
 `Len` will return map's length.
 
-#### Returns
+#### Mengembalikan
 
 * The length of map receiver.
 
-#### Example
+#### Contoh
 
 ```Shell
 rule DoSomething "Do something when map length is sufficient" {
@@ -904,15 +877,15 @@ rule DoSomething "Do something when map length is sufficient" {
 }
 ```
 
-## Custom Functions
+## Menambah Fungsi Sendiri (Custom)
 
-All functions that are acessible from the DataContext are **Invocable** from
-within the rule, both in the "When" scope and the "Then" scope.
+Semua fungsi yang mana bisa dijalankan dari `DataContext` bisa dijalankan dari dalam skrip __rule__,
+baik di dalam skop "When" atau "Then".
 
-You can create functions and have your Fact as receiver, and those functions
-can be called from GRL.
+Karenanya, anda dapat membuat sebuah fungsi dan menjadikan fungsi ini merupakan milik (method) dari data, maka fungsi/method itu
+bisa dijalankan dari dalam GRL.
 
-For example. Given:
+Diasumsikan anda memiliki sebuah `struct` dengan beberapa fungsi.
 
 ```go
 type MyPoGo struct {
@@ -927,23 +900,25 @@ func (p *MyPoGo) AppendString(aString, subString string) string {
 }
 ```
 
-You can make calls to the defined methods:
+Dan `struct` tersebut ditambahkan kedalam konteks data
 
 ```go
 dctx := grule.context.NewDataContext()
 dctx.Add("Pogo", &MyPoGo{})
-
-rule "If it's possible to Groool, Groool" {
-    when
-        Pogo.GetStringLength(some.variable) < 100
-    then
-        some.variable = Pogo.AppendString(some.variable, "Groooling");
-}
 ```
 
-### Variadic Function Arguments
+Anda dapat menjalan fungsi-fungsi tadi dalam __rule__
 
-Variadic arguments are supported for custom functions.
+```go
+when
+    Pogo.GetStringLength(some.variable) < 100
+then
+    some.variable = Pogo.AppendString(some.variable, "Groooling");
+```
+
+### Argumen-argumen fungsi Variadic
+
+Argumen-argumen Variadic dapat dipergunakan di dalam fungsi.
 
 ```go
 func (p *MyPoGo) GetLongestString(strs... string) string {
@@ -957,7 +932,7 @@ func (p *MyPoGo) GetLongestString(strs... string) string {
 }
 ```
 
-This function can then be called from within a rule with zero or more values supplied for the variadic argument.
+This function can then be called from within a rule with zero or more values supplied for the variadic argument
 
 ```go
 when
@@ -992,15 +967,10 @@ then
     some.cost = Pogo.AddTax(come.cost, 0.15);
 ```
 
-### The Laws of Custom Function in Grule
+### Important Thing you must know about Custom Function in Grule
 
-When you make your own function to be called from the rule engine, you need to know the following laws:
+When you make your own function to be called from the rule engine, you need to know the following rules.
 
-1. The function must be visible, meaning that functions must start with a
-   capital letter. Private functions cannot be executed.
-2. The function must only return one value type. Returning multiple values from
-   a function is not supported and the rule execution will fail if there are
-   multiple return values.
-3. The way number literals are treated in Grule's GRL is such that a
-   **integer** will always be taken as an `int64` type and a **real** as
-   `float64`, thus you must always define your numeric types accordingly.
+1. The function must be visible. The convention for public functions should start with a capital letter. Private functions cannot be executed.
+2. The function must only return 1 type. Returning multiple variables from a function is not supported, the rule execution will fail if there are multiple return variables.
+3. The way number literals are treated in Grule's DRL is such that a **decimal** will always be taken as an `int64` type and a **real** as `float64`, thus always consider to define your function arguments and returns from the types `int64` and `float64` when you work with numbers.
