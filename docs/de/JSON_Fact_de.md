@@ -1,6 +1,24 @@
 # JSON Fact
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![JSON_Fact_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/JSON_Fact_cn.md)
+[![JSON_Fact_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/JSON_Fact_de.md)
+[![JSON_Fact_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/JSON_Fact_en.md)
+[![JSON_Fact_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/JSON_Fact_id.md)
+
+[About](About_de.md) | [Tutorial](Tutorial_de.md) | [Rule Engine](RuleEngine_de.md) | [GRL](GRL_de.md) | [GRL JSON](GRL_JSON_de.md) | [RETE Algorithm](RETE_de.md) | [Functions](Function_de.md) | [FAQ](FAQ_de.md) | [Benchmark](Benchmarking_de.md)
 
 ---
 

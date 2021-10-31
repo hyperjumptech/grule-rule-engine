@@ -1,6 +1,11 @@
 # Storing and Loading GRB file.
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+[![Binary_Rule_File_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Binary_Rule_File_cn.md)
+[![Binary_Rule_File_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Binary_Rule_File_de.md)
+[![Binary_Rule_File_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Binary_Rule_File_en.md)
+[![Binary_Rule_File_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Binary_Rule_File_id.md)
+
+[About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 
 ---
 

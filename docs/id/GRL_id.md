@@ -1,6 +1,24 @@
 # Grule Rule Language (GRL)
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![GRL_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/GRL_cn.md)
+[![GRL_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_de.md)
+[![GRL_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_en.md)
+[![GRL_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/GRL_id.md)
+
+[Tentang Grule](About_id.md) | [Tutorial](Tutorial_id.md) | [Rule Engine](RuleEngine_id.md) | [GRL](GRL_id.md) | [GRL JSON](GRL_JSON_id.md) | [Algoritma RETE](RETE_id.md) | [Fungsi-fungsi](Function_id.md) | [FAQ](FAQ_id.md) | [Benchmark](Benchmarking_id.md)
 
 ---
 
@@ -64,7 +82,7 @@ then
 | Real    | Holds a real value                                                         | `234.4553`, `-234.3`, `314E-2`, `.32`, `12.32E12`  |
 | Boolean | Holds a boolean value                                                      | `true`, `TRUE`, `False`                            |
 
-More examples can be found at [GRL Literals](GRL_Literals_en.md).
+More examples can be found at [GRL Literals](GRL_Literals_id.md).
 
 Note: Special characters in strings must be escaped following the same rules
 used for strings in Go.  However, backtick strings are not supported.
@@ -147,7 +165,7 @@ You can set an array value if the index you specify is valid.
 ```
 
 There are a couple of functions you can use to work with array/slice and map.
-Those can be found at [Function page](Function_en.md).
+Those can be found at [Function page](Function_id.md).
 
 ### Negation
 
@@ -212,7 +230,7 @@ example:
         Fact.Result = Fact.ReturnStringFunc().Trim().ToLower();
 ```
 
-For a list of available functions, consult [Function Page](Function_en.md).
+For a list of available functions, consult [Function Page](Function_id.md).
 
 #### Examples
 

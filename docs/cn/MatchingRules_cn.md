@@ -1,5 +1,23 @@
 ## Fetch Matching Rules (Order by Salience)
 
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![MatchingRules_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/MatchingRules_cn.md)
+[![MatchingRules_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/MatchingRules_de.md)
+[![MatchingRules_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/MatchingRules_en.md)
+[![MatchingRules_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/MatchingRules_id.md)
+
 `FetchMatchingRules` in `GruleEngine.go` fetches all the rules valid for a given fact and returns a list of `ast.RuleEntry` values ordered by salience property.
 
 ##### Rules:

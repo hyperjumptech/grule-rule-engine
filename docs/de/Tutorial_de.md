@@ -1,6 +1,24 @@
 # Grule Short Tutorial
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![Tutorial_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Tutorial_cn.md)
+[![Tutorial_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Tutorial_de.md)
+[![Tutorial_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Tutorial_en.md)
+[![Tutorial_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Tutorial_id.md)
+
+[About](About_de.md) | [Tutorial](Tutorial_de.md) | [Rule Engine](RuleEngine_de.md) | [GRL](GRL_de.md) | [GRL JSON](GRL_JSON_de.md) | [RETE Algorithm](RETE_de.md) | [Functions](Function_de.md) | [FAQ](FAQ_de.md) | [Benchmark](Benchmarking_de.md)
 
 ---
 
@@ -96,7 +114,7 @@ if err != nil {
 ### Creating a Fact from JSON
 
 JSON data can also be used to describe facts in Grule as of version 1.8.0.  For
-more detail, see [JSON as a Fact](JSON_Fact_en.md).
+more detail, see [JSON as a Fact](../en/JSON_Fact_en.md).
 
 ## Creating a KnowledgeLibrary and Adding Rules Into It
 
@@ -273,10 +291,10 @@ for _, res := range resources {
 
 ### From JSON
 
-You can now build rules from JSON! [Read how it works](GRL_JSON_en.md) 
+You can now build rules from JSON! [Read how it works](../en/GRL_JSON_en.md) 
 
 ## Compile GRL into GRB
 
 If you want to have faster rule set loading performance (e.g. you have very
 large rule sets and loading GRL is too slow), you can save your rule set
-into GRB (Grules Rule Binary) file. [Read how to store and load GRB](Binary_Rule_File_en.md) 
+into GRB (Grules Rule Binary) file. [Read how to store and load GRB](../en/Binary_Rule_File_en.md) 

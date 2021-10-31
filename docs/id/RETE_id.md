@@ -1,6 +1,24 @@
-# Grule's RETE Algorithm
+# Algoritma RETE dalam Grule
 
-[Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
+---
+
+:construction:
+__THIS PAGE IS BEING TRANSLATED__
+:construction:
+
+:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
+
+:vulcan_salute: Please remove this note once you're done translating.
+
+---
+
+
+[![RETE_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/RETE_cn.md)
+[![RETE_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/RETE_de.md)
+[![RETE_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/RETE_en.md)
+[![RETE_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/RETE_id.md)
+
+[Tentang Grule](About_id.md) | [Tutorial](Tutorial_id.md) | [Rule Engine](RuleEngine_id.md) | [GRL](GRL_id.md) | [GRL JSON](GRL_JSON_id.md) | [Algoritma RETE](RETE_id.md) | [Fungsi-fungsi](Function_id.md) | [FAQ](FAQ_id.md) | [Benchmark](Benchmarking_id.md)
 
 ---
 
