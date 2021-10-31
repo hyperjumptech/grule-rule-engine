@@ -17,7 +17,6 @@ __THIS PAGE IS BEING TRANSLATED__
 [![GRL_JSON_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_JSON_de.md)
 [![GRL_JSON_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_JSON_en.md)
 [![GRL_JSON_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/GRL_JSON_id.md)
-[![GRL_JSON_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/GRL_JSON_in.md)
 
 [About](About_cn.md) | [Tutorial](Tutorial_cn.md) | [Rule Engine](RuleEngine_cn.md) | [GRL](GRL_cn.md) | [GRL JSON](GRL_JSON_cn.md) | [RETE Algorithm](RETE_cn.md) | [Functions](Function_cn.md) | [FAQ](GRL_JSON_cn.md) | [Benchmark](Benchmarking_cn.md)
 

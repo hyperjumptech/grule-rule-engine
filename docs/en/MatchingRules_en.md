@@ -4,7 +4,6 @@
 [![MatchingRules_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/MatchingRules_de.md)
 [![MatchingRules_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/MatchingRules_en.md)
 [![MatchingRules_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/MatchingRules_id.md)
-[![MatchingRules_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/MatchingRules_in.md)
 
 `FetchMatchingRules` in `GruleEngine.go` fetches all the rules valid for a given fact and returns a list of `ast.RuleEntry` values ordered by salience property.
 

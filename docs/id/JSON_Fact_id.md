@@ -17,7 +17,6 @@ __THIS PAGE IS BEING TRANSLATED__
 [![JSON_Fact_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/JSON_Fact_de.md)
 [![JSON_Fact_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/JSON_Fact_en.md)
 [![JSON_Fact_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/JSON_Fact_id.md)
-[![JSON_Fact_in](https://github.com/yammadev/flag-icons/blob/master/png/IN.png?raw=true)](../in/JSON_Fact_in.md)
 
 [Tentang Grule](About_id.md) | [Tutorial](Tutorial_id.md) | [Rule Engine](RuleEngine_id.md) | [GRL](GRL_id.md) | [GRL JSON](GRL_JSON_id.md) | [Algoritma RETE](RETE_id.md) | [Fungsi-fungsi](Function_id.md) | [FAQ](FAQ_id.md) | [Benchmark](Benchmarking_id.md)
 
