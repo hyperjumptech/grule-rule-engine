@@ -1,18 +1,5 @@
 # Grule 简短教程
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![Tutorial_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Tutorial_cn.md)
 [![Tutorial_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Tutorial_de.md)
 [![Tutorial_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Tutorial_en.md)
@@ -22,17 +9,17 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-## Preparation
+## 准备
 
-Please note that Grule is using Go 1.13.
+Grule 使用的Go 1.13版本。
 
-To import Grule into your project:
+以如下的方式在你的项目中引入Grule.
 
 ```Shell
 $ go get github.com/hyperjumptech/grule-rule-engine
 ```
 
-From your `go` you can import Grule.
+在使用之前请先import Grule.
 
 ```go
 import (
@@ -41,14 +28,11 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 ) 
-``` 
+```
 
-## Creating Fact Structure
+## 创建Fact结构体
 
-A `fact` in grule is a **pointer** to an instance of a `struct`.  The struct
-may also contain properties just as any normal Golang `struct`, including any
-`method` you wish to define, provided it adheres to the requirements for
-methods defined below.  As an example:
+在grule中事实`fact`，是一个`struct`的实例指针。结构可以像正常的Golang结构体一样包含属性，也可以有方法`method`, 当然在grule中`method`有一些限制。
 
 ```go
 type MyFact struct {
@@ -61,8 +45,7 @@ type MyFact struct {
 }
 ```
 
-As with normal Golang conventions, Grule is only able to access those
-**visible** attributes and methods exposed with an initial capital letter.
+正如Golang的理念，Grule只能访问可见的属性和方法，在Golang中，可见的属性和方法是大写字母开头。
 
 ```go
 func (mf *MyFact) GetWhatToSay(sentence string) string {
@@ -70,23 +53,16 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 }
 ```
 
-**NOTE:** Member functions are subject to the following requirements:
+**注意**：成员函数有以下一些限制：
 
-* The member function must be **visible**; it's name must start with a capital
-  letter.
-* The member function must return `0` or `1` values. More than one return value
-  is not supported.
-* All numerical argument and return types must be their 64 bit variant. i.e.
-  `int64`, `uint64`, `float64`.
-* The member function **should not** change the Fact's internal state. The
-  algorithm cannot automatically detect these changes, things become more
-  difficult to reason about, and bugs can creep in.  If you **MUST** change
-  some internal state of the Fact, then you can notify Grule using
-  `Changed(varname string)` built-in function.
+* 成员函数可见，即函数名的首字母大写。
+* 成员函数只能返回0个或者1个返回值。大于1个返回值不支持。
+*  所有的数字类型的参数和返回值都应该是64bit的。比如`int64`, `uint64`, `float64`。
+* 成员函数不应该改变Fact的内部状态。算法不能自动监测到这些变动，这就使得查原因变得很复杂，而且会有隐含的bug。如果你一定要改变Fact的内部状态，你可以通过调用`Changed(varname string)`函数通知Grule。
 
-## Add Fact Into DataContext
+## 添加 Fact 到 DataContext
 
-To add a fact into `DataContext` you have to create an instance of your `fact`
+添加 fact 到 `DataContext`，你需要创建 `fact`的实例。
 
 ```go
 myFact := &MyFact{
@@ -98,10 +74,9 @@ myFact := &MyFact{
 }
 ```
 
-You can create as many facts as you wish.
+你可以创建任意多的fact。
 
-After the fact(s) have been created, you can then add those instances into the
-`DataContext`:
+在fact创建之后，你可以添加这些实例到`DataContext`:
 
 ```go
 dataCtx := ast.NewDataContext()
@@ -111,32 +86,30 @@ if err != nil {
 }
 ```
 
-### Creating a Fact from JSON
+### 从json创建Fact
 
-JSON data can also be used to describe facts in Grule as of version 1.8.0.  For
-more detail, see [JSON as a Fact](../en/JSON_Fact_cn.md).
+在 Grule 1.8.0版本之后，描述fact的json数据可以被加载到`DataContext`中。详情参考 [JSON as a Fact](../en/JSON_Fact_cn.md).
 
-## Creating a KnowledgeLibrary and Adding Rules Into It
+## 创建一个知识库，添加规则进知识库
 
-A `KnowledgeLibrary` is a collection of `KnowledgeBase` blue prints and a
-`KnowledgeBase` is a collection of many rules sourced from rule definitions
-loaded from multiple sources.  We use `RuleBuilder` to build `KnowledgeBase`
-instances and then add them to the `KnowledgeLibrary`.
+`KnowledgeLibrary`是`KnowledgeBase`的集合，而`KnowledgeBase`是各种来源的规则的集合。
 
-The source form of a GRL can be:
+我们使用`RuleBuilder`去创建`KnowledgeBase`实例，然后添加到`KnowledgeLibrary`中。
 
-* a raw string
-* contents of a file
-* a document at an HTTP endpoint
+ GRL 有很多来源:
 
-Lets use the `RuleBuilder` to start populating our `KnowledgeLibrary`.
+* 原始字符串
+* 文件内容
+* http请求结果
+
+使用`RuleBuilder`去填充我们的 `KnowledgeLibrary`.
 
 ```go
 knowledgeLibrary := ast.NewKnowledgeLibrary()
 ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 ```
 
-Next we can define a basic rule as a raw string in the DSL:
+接下来我们使用DSL的原始字符串去定义一个基本的规则：
 
 ```go
 // lets prepare a rule definition
@@ -151,8 +124,7 @@ rule CheckValues "Check the default values" salience 10 {
 `
 ```
 
-And finally we can use the builder to add the definition to the
-`knowledgeLibrary` from a declared `resource`:
+最后我们使用builder将定义创建一个`resource`然后添加到`knowledgeLibrary`中。
 
 ```go
 // Add the rule definition above into the library and name it 'TutorialRules'  version '0.0.1'
@@ -163,33 +135,21 @@ if err != nil {
 }
 ```
 
-The `KnowledgeLibrary` now contains a `KnowledgeBase` named `TutorialRules`
-with version `0.0.1`. To execute this particular rule we must obtain an
-instance from the `KnowledgeLibrary`. This will be explained on the next
-section.
+ `KnowledgeLibrary` 现在包含了一个名字为`TutorialRules`的而且版本是`0.0.1`的``KnowledgeBase`。为了执行规则，我们需要从`KnowledgeLibrary`中获取一个实例，将在下面的章节阐述。
 
-## Executing Grule Rule Engine
+## 执行 Grule 规则引擎
 
-To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase`
-from `KnowledgeLibrary` 
+为了执行KnowledgeBase，我们需要先从`KnowledgeLibrary`获取这个`KnowledgeBase`。
 
 ```go
 knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
 ```
 
-Each instance you obtain from the `knowledgeLibrary` is a unique *clone* from
-the underlying `KnowledgeBase` *blueprint*.  Each unique instance also carries
-its own distinct `WorkingMemory`. As no instance shares any state with any
-other instance, you are free to use them in any multithreaded environment
-provided you aren't executing any single instance from multiple threads
-simultaneously.
+从`knowledgeLibrary`获得的每一个实例都是`KnowledgeBase`的唯一克隆。每个唯一的实例都有自己的独立的`WorkingMemory`。因为实例不会共享状态给其他的实例，所以你可以在多线程中随意使用，只要你不是在多线程中同时执行了同一个实例。
 
-Constructing from the `KnowledgeBase` blueprint also ensures that we aren't
-recomputing work every time we want to construct an instance.  The
-computational work is only done once, making the work of cloning the `AST`
-extremely efficient.
+从`KnowledgeBase`蓝图构造也保证了我们不需要每次使用实例的都再重新计算一次。计算工作只需要做一次，从`AST`拷贝是极其高效的。
 
-Now lets execute the `KnowledgeBase` instance using the prepared `DataContext`.
+然后使用准备好的`DataContext`去执行`KnowledgeBase`实例。
 
 ```go
 engine = engine.NewGruleEngine()
@@ -199,9 +159,9 @@ if err != nil {
 }
 ```
 
-## Obtaining Result
+## 获取结果
 
-Here's the rule we defined above, just for reference:
+下面是我们定义的规则：
 
 ```go
 rule CheckValues "Check the default values" salience 10 {
@@ -213,27 +173,23 @@ rule CheckValues "Check the default values" salience 10 {
 }
 ```
 
-Assuming the condition is matched (which it is) the action will modify the
-`MF.WhatToSay` attribute.  In order to ensure that the rule is not then
-immediately re-evaluted, the rule is `Retract`ed from the set.  In this
-particular instance, if the rule failed to do this then it would match again on
-the next cycle, and again, and again.  Eventually Grule would terminate with an
-error, since it would be unable to converge on a terminal result.
+假设满足了条件，所实施的动作是去改变`MF.WhatToSay`属性。为了保证规则不会立即被重新赋值，调用`Retract`去从集合中收回，即不再下次循环的时候执行这个规则。在这个特殊的实例中，如果规则没有执行，它将在下一个循环中继续匹配，然后一直重复。最终Grule将会以一个error终止，因为它无法收敛于终止结果。
 
-In this case, all you have to do in order to obtain the result is just examine
-your `myFact` instance for the modification your rule made:
+在这个案例中，你可以通过查看`myFact`去获取规则的结果。
 
 ```go
 fmt.Println(myFact.WhatToSay)
 // this should prints
 // Lets Say "Hello Grule"
 ```
-## Resources
+## 资源
 
 GRLs can be stored in external files and there are many ways to obtain and load
 the contents of those files.
 
-### From File
+GRLs 可以存储在外部文件里，有很多方式去获得然后加载这些文件内容。
+
+### 从文件获取
 
 ```go
 fileRes := pkg.NewFileResource("/path/to/rules.grl")
@@ -243,7 +199,7 @@ if err != nil {
 }
 ```
 
-You can also load multiple files into a bundle with paths and glob patterns:
+通过指定多个路径或者模式，你可以一次加载多个文件。
 
 ```go
 bundle := pkg.NewFileResourceBundle("/path/to/grls", "/path/to/grls/**/*.grl")
@@ -256,7 +212,7 @@ for _, res := range resources {
 }
 ```
 
-### From String or ByteArray
+### 从字符串或者ByteArray获取
 
 ```go
 bs := pkg.NewBytesResource([]byte(rules))
@@ -266,7 +222,7 @@ if err != nil {
 }
 ```
 
-### From URL
+### 从URL获取
 
 ```go
 urlRes := pkg.NewUrlResource("http://host.com/path/to/rule.grl")
@@ -276,7 +232,7 @@ if err != nil {
 }
 ```
 
-### From GIT
+### 从Git获取
 
 ```go
 bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
@@ -289,12 +245,10 @@ for _, res := range resources {
 }
 ```
 
-### From JSON
+### 从 JSON获取
 
-You can now build rules from JSON! [Read how it works](../en/GRL_JSON_cn.md) 
+你可以从JSON构建规则! [请阅读这里](../en/GRL_JSON_cn.md) 
 
-## Compile GRL into GRB
+## 编译 GRL 到 GRB
 
-If you want to have faster rule set loading performance (e.g. you have very
-large rule sets and loading GRL is too slow), you can save your rule set
-into GRB (Grules Rule Binary) file. [Read how to store and load GRB](../en/Binary_Rule_File_cn.md) 
+如果你想要更快的规则加载速度（比如你有很多特别大的规则集合，然后加载GRL很慢），你可以将这些规则集合存储为GRB（Grules Rule Binary）文件。详情参考[如何存储和加载GRB](../en/Binary_Rule_File_cn.md) 

@@ -1,18 +1,5 @@
 # 经常问的问题
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![FAQ_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/FAQ_cn.md)
 [![FAQ_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/FAQ_de.md)
 [![FAQ_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/FAQ_en.md)
@@ -22,27 +9,19 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-## 1. Grule Panicked on Maximum Cycle
+## 1. Grule 在最大循环引发Panic
 
-**Question**: I got the following panic message when Grule engine is executed.
+**问题**: 在Grule引擎执行的时候获取的如下的panic信息。
 
 ```Shell
 panic: GruleEngine successfully selected rule candidate for execution after 5000 cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries "When" and "Then" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable.
 ```
 
-**Answer**: This error indicates a potential problem with the rules you're
-having the engine evaluate. Grule continues to execute the RETE network on the
-working memory until there are no actions left to execute in the conflict set,
-which we will call the natural terminal state.  If your set of rules never
-allow the network to reach that terminal state then it would run forever.  The
-default configuration for `GruleEngine.MaxCycle` is `5000`, which is what is
-used to protect from an infinite cycle of runs in a non-terminal rule set.
+**回答**:  这个报错说明了你要评估的的规则有潜在的问题。Grule持续在内存中执行RETE网络，直到冲突集合中没有操作可以执行，这种情况我们叫做自然终止状态。如果你的规则不能使得RETE网络到达自然终止状态，程序将会永远执行下去。`GruleEngine.MaxCycle`的默认配置是`5000`，这会防止程序会无限循环执行下去。
 
-You can increase this value if you think your system of rules needs more cycles
-in order to terminate, but if you do not believe that is the case, then you
-probably have a non-terminating rule set.
+如果你觉得你系统中的规则需要更多循环才能终止，你可以增加这个值。但是你不相信是这样的，你可能有一个非终止规则集。
 
-Consider this fact:
+考虑一下事实:
 
 ```go
 type Fact struct {
@@ -51,7 +30,7 @@ type Fact struct {
 }
 ```
 
-And the following rules are defined:
+一下是定义好的规则:
 
 ```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
@@ -69,7 +48,7 @@ rule LogCashback "Emit log if cashback is given" {
 }
 ```
 
-Executing these rules on the following fact instance...
+用如下的Fact实例去执行规则
 
 ```go
 &Fact {
@@ -77,7 +56,7 @@ Executing these rules on the following fact instance...
 }
 ```
 
-... never terminates. 
+将不会停止下来。 
 
 ```
 Cycle 1: Execute "GiveCashback" .... because when F.Payment > 100 is a valid condition
@@ -88,11 +67,9 @@ Cycle 5000: Execute "GiveCashback" .... because when F.Payment > 100 is still a 
 panic
 ```
 
-Grule executes the same rule again and again because the **WHEN** condition
-continues to yield a valid result.
+Grule会在同一个规则上一直执行，因为**When**条件将持续产生一个有效的结果。
 
-One way to solve this problem is to change the "GiveCashback" rule to something
-like:
+一直有效解决方案是如下修改GiveCashback规则：
 
 ```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
@@ -104,15 +81,9 @@ rule GiveCashback "Give cashback if payment is above 100" {
 }
 ```
 
-This definition of the `GiveCashback` rule takes the changing state into
-account.  Initially the `Cashback` member will be `0` but because the action
-modifies that state, it will fail to match in the next cycle and the terminal
-state will be reached.
+`GiveCashback`这个规则定义将会考虑状态改变。初始`Cashback`值为0，但是操作将会这个值，在下一个循环中将不会匹配到这个规则，从而可以进入最终状态。
 
-The above method is somewhat "natural" in that it is the rule conditions that
-govern the termination. However, if you cannot terminate the execution in this
-natural manner, it is possible to modify the engine's state in the action using
-the following:
+上述方法有点自然，因为他是规则条件管理了终止。但是，如果你不能以自然方式终止执行，可以在操作里面改变规则引擎的状态，如下：
 
 ```Shell
 rule GiveCashback "Give cashback if payment is above 100" {
@@ -124,112 +95,67 @@ rule GiveCashback "Give cashback if payment is above 100" {
 }
 ```
 
-The `Retract` function removes the "GiveCashback" rule from the knowledge base
-for the next cycle. Since it's no longer present, it cannot be re-evaluated in
-that next run. Be aware, though that this only happens for the cycle immediately
-following the `Retract` call.  The subsequent cycle will re-introduce the call.
+`Retract`函数将会在下一个循环从knowledge base移除GiveCashback规则。因为它不在存在了，这个规则将不会在下个循环中被评估。主要注意的是，这只会在`Retract`调用后紧接着的信息中发生。在后续循环中将会重新引入调用。
 
 ---
 
-## 2. Saving Rule Entry to database
+## 2. 保存 Rule 入口到数据库
 
-**Question**: Is there a plan to integrate Grule with a database storage system?
+**问题**: 是否有计划将 Grule 集成到一个数据库?
 
-**Answer**: No. While it is a good idea to store your rule entries in some sort
-of database, Grule will not create any database adapter to automaticaly store
-and retrieve rules.  You can easily create such adapter yourself using the
-common interfaces on the Knowledgebase: *Reader*, *File*, *Byte Array*, *String*
-and *Git*. Strings can be easily inserted and selected from database, as you
-load them into Grule's knowledgebase. 
+**回答**: 没有. 尽管存储你的规则到一个数据库中是一个很好的想法，Grule将不会适配任何的数据库适配器去自动存储和获取规则。你可以很容易自己实现这样子的适配器，你可以实现Knowledgebase的通用接口：*Reader*, *File*, *Byte Array*, *String*
+and *Git*。字符串也是很容易插入数据库和查询数据库，你可以加载他们到Grule的knowledgebase。
 
-We don't want to couple Grule to any particular database implementation.
+我们不想绑定Grule到任意一个特殊的数据库。
 
 ---
 
-## 3. Maximum number of rule in one knowledge-base
+## 3. 在一个 knowledge-base最大的规则数
 
-**Question**: How many rule entry can be inserted into knowledgebase?
+**问题**:  knowledgebase可以保存多少个规则?
 
-**Answer**: You can have as many rule entries you want but there should be at
-least one minimum.
+**回答**: 你可以有任意多的规则，但是最少保证有一个。
 
 ---
 
-## 4. Fetch all rules valid for a given fact
+## 4. 获取给定fact匹配到所有规则
 
-**Question**: How can I test my rules for validity against given Facts?
+**问题**: 给定facts，我怎么测试我的规则有效性?
 
-**Answer**: You can use the `engine.FetchMatchingRule` function. Refer this
-[Matching Rules Doc](MatchingRules_cn.md) for more info
+**回答**: 你可以使用 `engine.FetchMatchingRule` 函数. 更多信息参考[Matching Rules Doc](MatchingRules_cn.md) 
 
 ---
 
 ## 5. Rule Engine use-case
 
-**Question**: I have read about the rule engine, but what real benefit it can bring? Give us some use-cases.
+**问题**: 我已经了解了规则引擎，但是我可以从中受益什么？可以举一些例子吗？
 
-**Answer**: The following cases are better solved with a rule-engine in my humble opinion.
+**回答**: 以我个人意见来看，以下的情况规则 引擎是一个比较好的解决方案。
 
-1. An expert system that must evaluate facts to provide some sort of real-world
-   conclusion. If not using a a RETE-style rule engine, one would code up a
-   cascading set of `if`/`else` statements and the permutations of the
-   combinations of how those might be evaluated would quickly become impossible
-   to manage.  A table-based rule engine might suffice but it is still more
-   brittle against change and is not terribly easy to code. A system like Grule
-   allows you to describe the rules and facts of your system, releasing you from
-   the need to describe how the rules are evaluated against those facts, hiding
-   the bulk of that complexity from you.
-
-2. A rating system. For example, a bank system may want to create a "score" for
-   each customer based on the customer's transaction records (facts).  We could
-   see their score change based on how often they interact with the bank, how
-   much money they transfer in and out, how quickly they pay their bills, how
-   much interest they accrue earn for themselves or for the bank, and so on. A
-   rule engine is provided by the developer and the specification of the facts
-   and rules can then be supplied by subject matter experts in the bank's
-   customer business. Decoupling these different teams puts the responsbilities
-   where they should be.
-
-3. Computer games. Player status, rewards, penalties, damage, scores and
-   probability systems are many different examples of where rule play a
-   significant part of nearly all computer games. These rules can interact in
-   very complex ways, often times in ways that the developer didn't imagine.
-   Coding these dynamic situations in a scripting language (e.g. LUA) can get
-   quite complex, and a rule engine can help simplify the work tremendously.
-
-4. Classification systems. This is actually a generalization of the rating
-   system described above.  Using a rule engine, we can classify things such as
-   credit eligibility, bio chemical identification, risk assessment for
-   insurance products, potential security threats, and many more.
-
+1. 一个专家系统，必须通过评估事实，然后得到一些现实中的结论。如果不使用RETE格式的规则引擎，一个人将会写出来一堆`if/else`表达式和组合去很快评估一些事情，但是很难管理。一个基于表格的规则引擎可以很有效，但是依然很难修改，而且不太容易编码。一个像Grule一样的系统可以使你描述规则和你系统里的事实，把你从规则描述和事实分离开，隐藏了大量的复杂度。
+2. 一个投票系统。比如，银行系统需要根据消费者的交易记录，对每个消费者创建一个积分。我们会根据他们与银行交易程度，买入卖出的金额，支付速度，利息收入等等，可以看到他们的分数变化。开发者提供的规则引擎，事实规范，规则，可以提供给主题专家去做银行的客户业务。分离这些团队，每个团队单独负责自己的业务。
+3. 游戏。玩家的状态，酬金，处罚，伤害，分数和概率体统是几乎所有计算机游戏中规则发挥重要作用的不同例子。这些规则可以以一种复杂的方式相互影响，常常是开发者想象不到的方式。针对这种动态场景使用脚本语言（比如LUA）可能会变得特别复杂，规则引擎可以极大地有效简化这部分工作。
+4. 分类系统。这实际是上面介绍的投票系统的一般化。使用规则引擎，我们可以划分为信用资格，生物识别特征，保险产品的风险评估，潜在的安全威胁等等。
 5. Advice/Suggestion system. A "rule" is simply another kind of data, which
    makes it a prime candidate for definition by another program.  This program
    can be another expert system or artificial intelligence.  Rules can be
    manipulated by another system in order to deal with new types of facts or
    newly discovered information about the domain which the rule set is intending
-   to model.
+   to model.建议系统。一个”规则“是一个简单的其他类型的数据，可以作为其他程序的基本定义。这个程序可以是一个专家系统，也可以是人工智能。规则可以由另一个系统操纵，以便处理新类型的事实或新发现的有关规则集打算建模的域的信息。
 
-There are so many other use-cases that would benefit from the use of
-Rule-Engine. The above cases represent only a small number of the potential. 
+还有很多其他的可以从规则引擎中收益使用案例。上面的只是很少的一部分潜在代表。
 
-However it is important to state that a Rule-Engine not a silver bullet, of
-course.  Many alternatives exist to solve "knowledge" problems in software and
-those should be employed when they are most appropriate. One would not employ a
-rule engine where a simple `if` / `else` branch would suffice, for instance.
+无论如何，需要强调的是规则引擎不是银弹。很多其他已有的方案可以去解决知识问题，并在合适的时候采用这些替代方案。举例，当只需要简单的 `if` / `else`就足够的时候就不要使用规则引擎。
 
-Theres's someting else to note: some rule engine implementations are extremely
-expensive yet many businesses gain so much value from them that the cost of
-running them is easily offset by that value.  For even moderately complex use
-cases, the benefit of a strong rule engine that can decouple teams and tame
-business complexity seems to be quite clear.
+还有一些其他的事情需要注意：有一些规则引擎的实现是很昂贵的，但是很多企业从中获得了如此多的价值，以至于运行他们的成本很容易被该价值抵消。即使对于中等复杂的用例，强大的规则引擎可以解耦团队和业务，复杂性可以看起来更明显。
 
 ---
 
-## 6. Logging
+## 6. 日志
 
-**Question**: Grule's logs are extremely verbose.  Can I turn off Grule's logger?
+**问题**: Grule的日志太冗长了，我可以关掉Grule的日志吗?
 
-**Answer**: Yes. You can reduce (or completely stop) Grule's logging by increasing it's log level.
+**回答**: 可以的.通过增加日志级别， 你可以减少 (或者完全关闭) Grule日志.
 
 ```go
 import (
@@ -241,8 +167,6 @@ import (
 logger.SetLogLevel(logrus.PanicLevel)
 ```
 
-This will set Grule's log to `Panic` level, where it will only emits log when it panicked.
+上面代码将会将Grule的日志级别设置成 `Panic` 级别, 只有当panic发生的时候才会记录日志.
 
-Of course, modifying the log level reduces your ability to debug the system so
-we suggest that a higher log level setting only be instituted in production
-environments.
+当然，修改日志级别可以减少你debug系统的能力，所以我们建议在生产环境才使用更高级别的日志级别。

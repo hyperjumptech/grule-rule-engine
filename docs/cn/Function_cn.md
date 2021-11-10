@@ -1,18 +1,5 @@
 # Grule 中的函数
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![Function_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Function_cn.md)
 [![Function_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Function_de.md)
 [![Function_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Function_en.md)
@@ -22,28 +9,28 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-## Built-In Functions
+## 内置函数
 
-Built-in functions are all defined within the `ast/BuiltInFunctions.go` file. As of now, they are:
+内置函数在 `ast/BuiltInFunctions.go` 文件中。
 
 ### MakeTime(year, month, day, hour, minute, second int64) time.Time
 
-`MakeTime` will create a `time.Time` with local `locale`.
+`MakeTime` 将会使用local `locale`去创建 `time.Time`
 
-#### Arguments
+#### 参数
 
-* `year` is the Year number.
-* `month` is the Month number, January = 1.
-* `day` is the day number in a month.
-* `hour` the hour of the day starting from 0.
-* `minute` the minute of the hour starting from 0.
-* `second` the second of the minute starting from 0.
+* `year` 年
+* `month` 月, January = 1.
+* `day`日.
+* `hour` 从0开始的小时.
+* `minute` 从0开始的分钟.
+* `second` 从 0开始的秒.
 
-#### Returns
+#### 发挥
 
-* `time.Time` value representing the time as specified in the argument in `local` locale.
+* `time.Time` 返回使用local `locale`的时间。
 
-#### Example
+#### 示例
 
 ```Shell
 rule SetExpire "Set the expire date for Fact created before 2020" {
@@ -56,14 +43,13 @@ rule SetExpire "Set the expire date for Fact created before 2020" {
 
 ### Changed(variableName string)
 
-`Changed` will ensure the specified `variableName` is removed from the working
-memory before the next cycle.
+`Changed` 将会保证指定的 `variableName` 在下一个循环中从工作内存中移除。
 
-#### Arguments
+#### 参数
 
-* `variableName` the variable name to be removed from working memory.
+* `variableName` 将从工作变量中移除的变量名称.
 
-#### Example
+#### 示例
 
 ```Shell
 rule SetExpire "Set new expire date" {
@@ -77,13 +63,13 @@ rule SetExpire "Set new expire date" {
 
 ### Now() time.Time
 
-`Now` function will create a new `time.Time` value containing the current time.
+`Now` 将会返回当前时间 `time.Time` .
 
-#### Returns
+#### 返回
 
-* `time.Time` value representing the current value
+* `time.Time` 代表着当前时间
 
-#### Example
+#### 示例
 
 ```Shell
 rule ResetTime "Reset the lastUpdate time" {
@@ -96,13 +82,13 @@ rule ResetTime "Reset the lastUpdate time" {
 
 ### Log(text string)
 
-`Log` will emit a log-debug string from within the rule.
+`Log` 将会打印规则的日志.
 
-#### Arguments
+#### 参数
 
-* `text` The text to emit into the Log-Debug
+* `text` 要打印的日志文本
 
-#### Example
+#### 示例
 
 ```Shell
 rule SomeRule "Log candidate name if he is below 17 years old" {
@@ -115,18 +101,18 @@ rule SomeRule "Log candidate name if he is below 17 years old" {
 
 ### IsNil(i interface{}) bool
 
-`IsNil` will check if the argument is a `nil` value.
+`IsNil` 将会检查参数是否是 `nil` .
 
-#### Arguments
+#### 参数
 
-* `i` a variable to check.
+* `i` 将要检查的变量.
 
-#### Returns
+#### 返回
 
-* `true` if the specified argument is`nil` or an invalid `ptr` value.
-* `false` if the specified argument is a valid `ptr` value.
+* `true` 指定的参数是`nil` 或者一个无效的 `ptr` 值.
+* `false`指定的参数是一个有效的 `ptr` 值.
 
-#### Example
+#### 示例
 
 ```Shell
 rule CheckEducation "Check candidate's education fact" {
@@ -140,21 +126,18 @@ rule CheckEducation "Check candidate's education fact" {
 
 ### IsZero(i interface{}) bool
 
-`IsZero` will check any variable in the argument for its `Zero` status value. Zero means
-that the variable is newly defined and has not been assigned an initial value.
-This is usually applied to types like `string`, `int64`, `uint64`, `bool`,
-`time.Time`, etc.
+`IsZero`将会检查参数的变量是否是  `Zero` . Zero 意味这个这个变量是新定义的，还没有赋予初始值。经常被用来检查`string`, `int64`, `uint64`, `bool`,`time.Time`, 等等.
 
-#### Arguments
+#### 参数
 
-* `i` a variable to check.
+* `i` 将要检查的变量
 
-#### Returns
+#### 返回
 
-* `true` if the specified argument is Zero.
-* `false` if the specified argument not Zero.
+* `true` 如果指定的参数是 Zero.
+* `false` 如果指定的参数不是 Zero.
 
-#### Example
+#### 示例
 
 ```Shell
 rule CheckStartTime "Check device's starting time." {
@@ -167,15 +150,13 @@ rule CheckStartTime "Check device's starting time." {
 
 ### Retract(ruleName string)
 
-`Retract` will exclude the specified rule from the subsequent cycle evaluations. If a
-rule is retracted its `when` scope will not be evaluated on the next cycles after the call to `Retract`. 
-The engine will automatically resets all rule back inplace when it start again from the beginning.
+`Retract` 将会在下一个循环评估中排查指定的规则.如果一个规则，在调用`Retract`之后在下一个循环中，在`when`中被排除。当引擎从头开始再次启动时，它将会自动将所有规则重置放回原处。
 
-#### Arguments
+#### 参数
 
-* `ruleName` name of the rule to retract.
+* `ruleName` 规则名称.
 
-#### Example
+#### 示例
 
 ```Shell
 rule CheckStartTime "Check device's starting time." salience 1000 {
@@ -189,17 +170,17 @@ rule CheckStartTime "Check device's starting time." salience 1000 {
 
 ### GetTimeYear(time time.Time) int
 
-`GetTimeYear` will extract the Year value of the time argument.
+`GetTimeYear` 将会从指定的日期中提取年份
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间变量
 
-#### Returns
+#### 返回
 
-* Year value of the time.
+* 对应的年份
 
-#### Example
+#### 示例
 
 ```Shell
 rule StartNewYearProcess "Check if it's a new year to restart new FinancialYear." salience 1000 {
@@ -212,17 +193,17 @@ rule StartNewYearProcess "Check if it's a new year to restart new FinancialYear.
 
 ### GetTimeMonth(time time.Time) int
 
-`GetTimeMonth` will extract the Month value of the time argument.
+`GetTimeMonth` 获取时间的月份.
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间变量
 
-#### Returns
+#### 返回
 
-* Month value of the time. 1 = January.
+* 月份. 1 = January.
 
-#### Example
+#### 示例
 
 ```Shell
 // TODO: something's not right here. The description is copy/pasted from above
@@ -237,17 +218,17 @@ rule StartNewYearProcess "Check if its a new year to restart new FinancialYear."
 
 ### GetTimeDay(time time.Time) int
 
-`GetTimeDay` will extract the Day of the month value of the time argument.
+`GetTimeDay` 获取时间的天.
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间
 
-#### Returns
+#### 返回
 
-* Day of month value of the time.
+* 时间月的天.
 
-#### Example
+#### 示例
 
 ```Shell
 rule GreetEveryDay "Log a greeting every day." salience 1000 {
@@ -261,17 +242,17 @@ rule GreetEveryDay "Log a greeting every day." salience 1000 {
 
 ### GetTimeHour(time time.Time) int
 
-`GetTimeHour` will extract the Hour value of the time argument.
+`GetTimeHour` 获取时间的小时数.
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间变量
 
-#### Returns
+#### 返回
 
-* Hour value of the time. Is between 0 to 23
+* 小时. 0 to 23
 
-#### Example
+#### 示例
 
 ```Shell
 rule DailyCheckBuild "Execute build every 6AM and 6PM." {
@@ -285,17 +266,17 @@ rule DailyCheckBuild "Execute build every 6AM and 6PM." {
 
 ### GetTimeMinute(time time.Time) int
 
-`GetTimeMinute` will extract the Minute value of the time argument.
+`GetTimeMinute` 获取分钟数.
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间
 
-#### Returns
+#### 返回
 
-* Minute value of the time, between 0 to 59
+* 时间的分钟,  0 to 59
 
-#### Example
+#### 示例
 
 ```Shell
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
@@ -310,17 +291,17 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ### GetTimeSecond(time time.Time) int
 
-`GetTimeSecond` will extract the Second value of the time argument.
+`GetTimeSecond` 时间的秒.
 
-#### Arguments
+#### 参数
 
-* `time` The time variable
+* `time` 时间
 
-#### Returns
+#### 返回
 
-* Second value of the time, between 0 to 59
+* 时间的秒,  0 to 59
 
-#### Example
+#### 示例
 
 ```Shell
 rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
@@ -335,17 +316,17 @@ rule DailyCheckBuild "Execute build every 6.30AM and 6.30PM." {
 
 ### IsTimeBefore(time, before time.Time) bool
 
-`IsTimeBefore` will check if a time value precedes another time value.
+`IsTimeBefore` 将会检查一个时间是否在另一个时间的前面
 
-#### Arguments
+#### 参数
 
-* `time` The time value you wish to have checked
-* `before` The time value against which the above is checked
+* `time` 你希望检查的时间
+* `before` 与上面参数对比的时间
 
-#### Returns
+#### 返回
 
-* True if the `before` time value precedes the `time` value.
-* False if the `before` time value does not precede the `time` value.
+* True 如果 `before` 领先 `time` 变量.
+* False如果 `before` 不领先 `time` 变量.
 
 #### Example
 
@@ -361,19 +342,19 @@ rule PromotionExpireCheck "Apply a promotion if promotion hasn't yet expired." {
 
 ### IsTimeAfter(time, after time.Time) bool
 
-`IsTimeAfter` will check if a time value follows another time value.
+`IsTimeAfter` 检查一个时间是否在另一个时间之后
 
-#### Arguments
+#### 参数
 
-* `time` The time value you wish to have checked
-* `after` The time value against which the above is checked
+* `time` 希望检查的时间
+* `after` 以上述参数对应的时间
 
-#### Returns
+#### 返回
 
-* True if the `after` time value follows `time` value.
-* False if the `after` time value does not follow the `time` value.
+* True 如果 `after` 在 `time` 之后.
+* False如果`after` 不在 `time` 之后.
 
-#### Example
+#### 示例
 
 ```Shell
 rule AdditionalTax "Apply additional tax if new tax rules are in effect." {
@@ -386,20 +367,20 @@ rule AdditionalTax "Apply additional tax if new tax rules are in effect." {
 
 ### TimeFormat(time time.Time, layout string) string
 
-`TimeFormat` will format a time argument as specified by `layout` argument.
+`TimeFormat` 将会返回`layout` 指定的时间格式
 
-#### Arguments
+#### 参数
 
-* `time` The time value you wish to have formatted.
-* `layout` String variable specifying the date format layout.
+* `time` 将被格式化的时间
+* `layout` 时间格式
 
-For the layout format, you can [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
+有关时间格式，参考 [read this article](https://yourbasic.org/golang/format-parse-string-time-date-example/)
 
-#### Returns
+#### 返回
 
-* A string formatted as specified.
+* 指定格式的时间字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule LogPurchaseDate "Log the purchase date." {
@@ -412,11 +393,9 @@ rule LogPurchaseDate "Log the purchase date." {
 
 ### Complete()
 
-`Complete` will cause the engine to stop processing further rules in its
-current cycle. This is useful if you want to terminate further rule evaluation
-under a set condition.
+`Complete` 将会在当前循环中使引擎停止执行后面的规则。如果你想停止执行后面的规则评估，这个很有用
 
-#### Example
+#### 举例
 
 ```Shell
 rule DailyCheckBuild "Execute build at 6.30AM and 6.30PM." {
@@ -429,15 +408,12 @@ rule DailyCheckBuild "Execute build at 6.30AM and 6.30PM." {
 }
 ```
 
-## Math Functions
+## Math Functions数学函数
 
-All the functions bellow is a wrapper to their golang math functions.
-You should read Golang math page to know how to use each function.
+所有的函数都是golang数学函数的封装。你可以阅读Golang 相关页面去了解每一个函数。
+不像go，你不需要在你的GRL中使用 `math.` 前缀。
 
-Unlike go, you don't have to use the `math.` prefix
-to use them in your GRL.
-
-Use them like normal built in function.
+.就像正常的内置函数一样使用他们
 
 ```go
 when 
@@ -502,20 +478,19 @@ then
 - Trunc(x float64) float64 
 
 
-## Constant Functions
+## Constant Functions常量函数
 
-The following functions can be called from within GRL as long as the receiver
-value type is correct.
+只要保证接收者的数据类型是正确的，接下来的函数都可以在GRL中调用。
 
 ### string.Len() int
 
-`Len` will return string's length.
+`Len` 返回字符串的长度.
 
-#### Returns
+#### 犯规
 
-* The length of string's receiver
+* 字符串接收者的长度
 
-#### Example
+#### 示例
 
 ```Shell
 rule DoSomething "Do something when string length is sufficient" {
@@ -528,19 +503,19 @@ rule DoSomething "Do something when string length is sufficient" {
 
 ### string.Compare(string) int
 
-`Compare` will compare the receiver string to the argument.
+`Compare` 对比接收者和参数。
 
-#### Arguments
+#### 参数
 
-* `string` The string to compare to
+* `string` 将要对比的字符串
 
-#### Returns
+#### 返回
 
-* `< 0` if receiver is less than the argument
-* `0` if receiver is equal to the argument
-* `> 0` if receiver is greater thant the argument
+* `< 0` 如果接收者比参数小 
+* `0` 如果接收者和参数相同
+* `> 0` 如果接收者比参数大
 
-#### Example
+#### 示例
 
 ```Shell
 rule CompareString "Do something when Fact.Text is greater than A" {
@@ -553,18 +528,18 @@ rule CompareString "Do something when Fact.Text is greater than A" {
 
 ### string.Contains(string) bool
 
-`Contains` will check if its argument is contained within the receiver.
+`Contains` 检查接收者是否包含参数指定的字符串
 
-#### Arguments
+#### 参数
 
-* `string` The substring to check within the receiver
+* `string` 将被检查的子串
 
-#### Returns
+#### 返回
 
-* `true` if the argument string is contained within the receiver.
-* `false` if the argument string is not contained within the receiver.
+* `true` 如果接收者包含参数字符串
+* `false` 如果接收者不包含参数字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule ContainString "Do something when Fact.Text is contains XXX" {
@@ -577,17 +552,17 @@ rule ContainString "Do something when Fact.Text is contains XXX" {
 
 ### string.In(string ...) bool
 
-`In` will check if the any of the argument is equals to the receiver.
+`In` 检查任一参数等于接收者
 
-#### Arguments
+#### 参数
 
-* `string` The variadic string argument to check
+* `string` 变长字符参数
 
-#### Returns
+#### 返回
 
-* bolean `true` if any of the argument is equals to the receiver, or `false` if otherwise.
+* boolean `true` 如果任一参数等于接收者, 反正是 `false`.
 
-#### Example
+#### 示例
 
 ```Shell
 rule CheckArgumentIn "Do something when Fact.Text is equals to 'ABC' or 'BCD' or 'CDE' " {
@@ -600,17 +575,17 @@ rule CheckArgumentIn "Do something when Fact.Text is equals to 'ABC' or 'BCD' or
 
 ### string.Count(string) int
 
-`Count` will count the number of occurences of argument in receiver string.
+`Count` 统计接收者中参数字符串出现的次数
 
-#### Arguments
+#### 参数
 
-* `string` The substring to count within the receiver
+* `string`将要检查的子串
 
-#### Returns
+#### 返回
 
-* number of occurences of the argument in the receiver.
+* 子串在接收者出现的次数
 
-#### Example
+#### 示例
 
 ```Shell
 rule CountString "Do something when Fact.Text contains 3 occurrences of 'ABC'" {
@@ -623,18 +598,18 @@ rule CountString "Do something when Fact.Text contains 3 occurrences of 'ABC'" {
 
 ### string.HasPrefix(string) bool
 
-`HasPrefix` will check if the receiver string has a specific prefix.
+`HasPrefix` 是否有前缀
 
-#### Arguments
+#### 参数
 
-* `string` The expected prefix.
+* `string` 期望的前缀
 
-#### Returns
+#### 返回
 
-* `true` if the receiver has the argument as its prefix.
-* `false` if the receiver does not have the argument as its prefix.
+* `true` 如果接收者有前缀
+* `false` 接收者没有前缀
 
-#### Example
+#### 示例
 
 ```Shell
 rule IsPrefixed "Do something when Fact.Text started with PREF" {
@@ -647,18 +622,18 @@ rule IsPrefixed "Do something when Fact.Text started with PREF" {
 
 ### string.HasSuffix(string) bool
 
-`HasSuffix` will check if the receiver string has a specific suffix.
+`HasSuffix` 后缀.
 
-#### Arguments
+#### 参数
 
-* `string` The expected suffix.
+* `string` 要检查的后缀
 
-#### Returns
+#### 返回
 
-* `true` if the receiver has the argument as its suffix.
-* `false` if the receiver does not have the argument as its suffix.
+* `true`接收者有后缀.
+* `false` 接收者没有后缀.
 
-#### Example
+#### 示例
 
 ```Shell
 rule IsSuffixed "Do something when Fact.Text ends with SUFF" {
@@ -671,17 +646,17 @@ rule IsSuffixed "Do something when Fact.Text ends with SUFF" {
 
 ### string.Index(string) int
 
-`Index` will return the index of the first occurrence of the argument in the receiver string.
+`Index` 将会返回参数第一次出现的索引
 
-#### Arguments
+#### 参数
 
-* `string` The substring to search for.
+* `string` 将要搜索的子串
 
-#### Returns
+#### 返回
 
-* The index value of the first occurrence of the argument.
+* 参数第一次出现的索引
 
-#### Example
+#### 示例
 
 ```Shell
 rule IndexCheck "Do something when Fact.Text ABC occurs as specified" {
@@ -694,17 +669,17 @@ rule IndexCheck "Do something when Fact.Text ABC occurs as specified" {
 
 ### string.LastIndex(string) int
 
-`LastIndex` will return the index of last occurrence of the argument in the receiver string.
+`LastIndex` 最后一次出现的子串索引
 
-#### Arguments
+#### 参数
 
-* `string` The substring to search for.
+* `string` 要检索的子串
 
-#### Returns
+#### 返回
 
-* The index of the last occurrence of the argument.
+* 最后一次出现的子串索引
 
-#### Example
+#### 示例
 
 ```Shell
 rule LastIndexCheck "Do something when Fact.Text ABC occurs in the last position as specified" {
@@ -717,17 +692,17 @@ rule LastIndexCheck "Do something when Fact.Text ABC occurs in the last position
 
 ### string.Repeat(int64) string
 
-`Repeat` will return a string containing `n` occurrences of the receiver string.
+`Repeat` 返回一个接收者重复`n`次的字符串
 
-#### Arguments
+#### 参数
 
-* `int64` the repeat count
+* `int64` 重复次数
 
-#### Returns
+#### 返回
 
-* A new string containing `n` occurrences of the receiver.
+* 重复 `n` 次的字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule StringRepeat "Do something when Fact.Text contains ABCABCABC" {
@@ -740,18 +715,18 @@ rule StringRepeat "Do something when Fact.Text contains ABCABCABC" {
 
 ### string.Replace(old, new string) string
 
-`Replace` will return a string with all occurrences of `old` replaced with `new`.
+`Replace` 返回一个用`new`替换`old`的字符串
 
-#### Arguments
+#### 参数
 
-* `old` the substring you wish to have replaced.
-* `new` the string you wish to replace all occurrences of `old`.
+* `old` 希望被替换的子串
+* `new` 要替换 `old`的新子串.
 
-#### Returns
+#### 返回
 
-* A string where all instances of `old` in the receiver have been replaced with `new`.
+* 一个被替换过的字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule ReplaceString "Do something when Fact.Text contains replaced string" {
@@ -764,19 +739,17 @@ rule ReplaceString "Do something when Fact.Text contains replaced string" {
 
 ### string.Split(string) []string
 
-`Split` will return a string slice whose elements are determined after
-splitting the receiver by the string token argument.  The token will not be
-present in the resulting slice elements.
+`Split` 将会把字符串切分成slice，分割符由参数指定。分隔符将不会出现在结果slice元素里面。
 
-#### Arguments
+#### 参数
 
-* `string` the token you wish to use to split the receiver.
+* `string`分隔符.
 
-#### Returns
+#### 返回
 
-* The string slice containing parts of the original string as split by the token.
+* 被分割完成之后的字符串切片
 
-#### Example
+#### 示例
 
 ```Shell
 rule SplitString "Do something when Fact.Text is prefixed by 'ABC,'" {
@@ -789,14 +762,13 @@ rule SplitString "Do something when Fact.Text is prefixed by 'ABC,'" {
 
 ### string.ToLower() string
 
-`ToLower` will return a string whose contents are all lower case instances of
-characters in the receiver.
+`ToLower` 字符串转小写
 
-#### Returns
+#### 返回
 
-* A new string that is a lower-cased version of the receiver.
+* 一个新的接收者转完小写的字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule LowerText "Do something when Fact.Text is equal to 'abc'" {
@@ -809,14 +781,13 @@ rule LowerText "Do something when Fact.Text is equal to 'abc'" {
 
 ### string.ToUpper() string
 
-`ToUpper` will return a string whose contents are all upper case instances of
-characters in the receiver.
+`ToUpper` 字符串转大写
 
-#### Returns
+#### 返回
 
-* A new string that is an upper-cased version of the receiver.
+* 一个接收者大写的字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule UpperText "Do something when Fact.Text is equal to 'ABC'" {
@@ -829,13 +800,13 @@ rule UpperText "Do something when Fact.Text is equal to 'ABC'" {
 
 ### string.Trim() string
 
-`Trim` will return a string where the whitespace on either end of the string has been removed.
+`Trim` 去除字符串前后空格
 
-#### Returns
+#### 返回
 
-* A string with the whitespace removed from the beginning and end.
+* 去除过前后空格的字符串
 
-#### Example
+#### 示例
 
 ```Shell
 rule TrimText "Do something when Fact.Text is 'ABC'" {
@@ -848,13 +819,13 @@ rule TrimText "Do something when Fact.Text is 'ABC'" {
 
 ### array.Len() int
 
-`Len` will return the length of the array/slice.
+`Len` 返回数据或者切片的长度.
 
-#### Returns
+#### 返回
 
-* The length of array/slice.
+* 数组或者切片的长度
 
-#### Example
+#### 示例
 
 ```Shell
 rule DoSomething "Do something when array length is sufficient" {
@@ -867,13 +838,13 @@ rule DoSomething "Do something when array length is sufficient" {
 
 ### array.Append(val) 
 
-`Append` will append `val` onto the end of the receiver array.
+`Append` 添加 `val` 到接收者切片
 
-#### Arguments
+#### 参数
 
-* `val` value to have appended.
+* `val` 将要被添加的元素
 
-#### Example
+#### 示例
 
 ```Shell
 rule DoSomething "Add a new child when the array has less than 2 children" {
@@ -885,14 +856,14 @@ rule DoSomething "Add a new child when the array has less than 2 children" {
 ```
 
 ### map.Len() int
-   
-`Len` will return map's length.
 
-#### Returns
+`Len` 返回map的长度
 
-* The length of map receiver.
+#### 返回
 
-#### Example
+* 接收者map的长度
+
+#### 示例
 
 ```Shell
 rule DoSomething "Do something when map length is sufficient" {
@@ -903,15 +874,13 @@ rule DoSomething "Do something when map length is sufficient" {
 }
 ```
 
-## Custom Functions
+## 自定义函数
 
-All functions that are acessible from the DataContext are **Invocable** from
-within the rule, both in the "When" scope and the "Then" scope.
+可从 DataContext 访问的所有函数都可以从规则内调用，无论是在“When”范围还是“Then”范围。
 
-You can create functions and have your Fact as receiver, and those functions
-can be called from GRL.
+你创建了一些函数，然后Fact是接收者，这些函数就可以在GRL中被调用。
 
-For example. Given:
+举例:
 
 ```go
 type MyPoGo struct {
@@ -926,7 +895,7 @@ func (p *MyPoGo) AppendString(aString, subString string) string {
 }
 ```
 
-You can make calls to the defined methods:
+你可以调用定义好的方法
 
 ```go
 dctx := grule.context.NewDataContext()
@@ -940,9 +909,9 @@ rule "If it's possible to Groool, Groool" {
 }
 ```
 
-### Variadic Function Arguments
+### 可变函数参数
 
-Variadic arguments are supported for custom functions.
+自定义函数是支持可变长度的参数的
 
 ```go
 func (p *MyPoGo) GetLongestString(strs... string) string {
@@ -956,7 +925,7 @@ func (p *MyPoGo) GetLongestString(strs... string) string {
 }
 ```
 
-This function can then be called from within a rule with zero or more values supplied for the variadic argument.
+这个函数可以被规则传递0个或者多个值。
 
 ```go
 when
@@ -965,7 +934,7 @@ then
     some.longest = Pogo.GetLongestString(some.stringA, some.stringB, some.stringC);
 ```
 
-Since it is possible to provide zero values to satisfy a variadic argument, they can also be used to simulate optional parameters.
+因为在可变参数中可以提供0个值，你可以模拟optional参数。
 
 ```go
 func (p *MyPoGo) AddTax(cost int64, optionalTaxRate... float64) int64 {
@@ -991,15 +960,10 @@ then
     some.cost = Pogo.AddTax(come.cost, 0.15);
 ```
 
-### The Laws of Custom Function in Grule
+### Grule中的自定义函数法则
 
-When you make your own function to be called from the rule engine, you need to know the following laws:
+当你在规则引擎中调用自己的函数，你需要知道以下的法则：
 
-1. The function must be visible, meaning that functions must start with a
-   capital letter. Private functions cannot be executed.
-2. The function must only return one value type. Returning multiple values from
-   a function is not supported and the rule execution will fail if there are
-   multiple return values.
-3. The way number literals are treated in Grule's GRL is such that a
-   **integer** will always be taken as an `int64` type and a **real** as
-   `float64`, thus you must always define your numeric types accordingly.
+1. 函数必须是可见的，意味着函数名称的第一个字母是大写字母。私有函数不能被执行。
+2. 函数只能返回一个值。多个函数返回值不支持，如果函数有多个返回值将会导致规则执行失败。
+3. Grule中GRL中的字面变量如果是整型，则应该被看做是`int64`，如果是有理数，则是`float64`，因此你对应的修改参数数字的定义。

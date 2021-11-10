@@ -1,18 +1,5 @@
 # Grule Rule Language (GRL)
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![GRL_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/GRL_cn.md)
 [![GRL_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_de.md)
 [![GRL_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_en.md)
@@ -22,11 +9,9 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-The **GRL** is a DSL (Domain Specific Language) designed for Grule. It's a
-simplified language to be used for defining rule condition criteria and actions
-to be executed if the criteria are met.
+**GRL**是为了Grule设计的DSL(Domain Specific Language). GRL是一种简单的语法，可以用来定义规则的条件和条件满足之后将执行哪些操作。
 
-The language has the following structure:
+语法将按照如下的结构:
 
 ```Shell
 rule <RuleName> <RuleDescription> [salience <priority>] {
@@ -37,33 +22,19 @@ rule <RuleName> <RuleDescription> [salience <priority>] {
 }
 ```
 
-**RuleName**: Identifies a specific rule. The name must be unique in the entire
-knowledge base, consist of one word and it must not contain white space.
+**RuleName**: 规则名称标识特定规则. 在整个knowledge base中，整个名字需要是唯一的。规则名字智能是一个单词而且不能包含空格。
 
-**RuleDescription**: Describes the rule for human consumption. The description
-should be enclosed in double quotes.
+**RuleDescription**: 关于规则的描述，便于理解。描述应该包在双引号内。
 
-**Salience** (optional, default 0): Defines the importance of the rule. Lower
-values indicate rules of lower priority. The salience value is used to specify a
-priority-sorted order when multiple rules are encountered. Salience will accept
-negative values, so you may wish to use those to mark rules that you barely even
-care about. Rule engines are *declarative* so you can't be guaranteed in which
-order your rules will be evaluated.  As such, consider `salience` to be a *hint*
-to the engine that helps it decide what to do in the event of a conflict.
+**Salience** (optional, default 0): 优先级，可选参数，默认为0. 定义了规则的重要性。值越低，优先级越低。优先级用于同时满足多个规则时的排序使用。优先级可以是负数，你可能希望去标识一些很少注意的规则。规则引擎是声明式的，所以你不能保证规则的执行顺序。因此，考虑使用` salience`去提示规则引擎当发生冲突的时候应该使用哪个规则。
 
-**Boolean Expression**: A predicate expression that will be evaluated by the
-rule engine to identify whether or not a specific rule's action is a candidate
-for execution with the current facts.
+**Boolean Expression**: 布尔表达式。一个断言表达式，规则引擎用来评估事实是否满足表达式，然后是否要执行操作。
 
-**Assignment or Operation Expression**: This is the action to be taken should
-the rule evaluate to `true`. You are not limited to a single expression and can
-supply a list of them, separated by the `;` character. The action statements are
-meant to modify the current fact values, make calculations, log some statements,
-etc...
+**Assignment or Operation Expression**: 赋值或者操作表达式。当规则评估为`true`就会执行这里的操作。这里你可以写多个表达式，使用`;`分割。操作可以是改变事实Fact的变量，继续一些计算，打日志等等。
 
-### Boolean Expression
+### 布尔表达式
 
-A boolean expression should be familiar to most, if not all programmers.
+布尔表达式对大多数人都很熟悉，不仅仅是研发。
 
 ```go
 when
@@ -73,32 +44,31 @@ then
      ...
 ```
 
-### Constants and Literals
+### 字面值常量
 
-| Literal | Description                                                                | Example                                            |
-| ------- | -------------------------------------------------------------------------- | -------------------------------------------------- |
-| String  | Holds a string literal, enclosed with double (&quot;) or single (') quotes | "This is a string" or 'this is a string'           |
-| Integer | Holds an integer value and may preceded with negative symbol -             | `1` or `34` or `42344` or `-553`                   |
-| Real    | Holds a real value                                                         | `234.4553`, `-234.3`, `314E-2`, `.32`, `12.32E12`  |
-| Boolean | Holds a boolean value                                                      | `true`, `TRUE`, `False`                            |
+| 类型    | 表述                                             | 示例                                              |
+| ------- | ------------------------------------------------ | ------------------------------------------------- |
+| String  | 存储了字符串，使用双引号 (&或者 (') 单引号包围。 | "This is a string" 或者 'this is a string'        |
+| Integer | 整数，可以是负数                                 | `1` or `34` or `42344` or `-553`                  |
+| Real    | 浮点数                                           | `234.4553`, `-234.3`, `314E-2`, `.32`, `12.32E12` |
+| Boolean | 布尔值                                           | `true`, `TRUE`, `False`                           |
 
-More examples can be found at [GRL Literals](GRL_Literals_cn.md).
+更多类型可以参考 [GRL Literals](GRL_Literals_cn.md).
 
-Note: Special characters in strings must be escaped following the same rules
-used for strings in Go.  However, backtick strings are not supported.
+注意: 如Go中的字符串，特殊字符应该使用转义.。不管怎么样，反引号字符串不支持。
 
-### Operators supported 
+### 操作符
 
-| Type                 | Operator                          |
-| -------------------- | --------------------------------- |
-| Math                 |  `+`, `-`, `/`, `*`, `%`          |
-| Bit-wise operators   | `\|`, `&`                         |
-| Logical operators    | `&&`, `\|\|`                      |
-| Comparison operators | `<`, `<=`, `>`, `>=`, `==`, `!=`  |
+| Type                 | Operator                         |
+| -------------------- | -------------------------------- |
+| Math                 | `+`, `-`, `/`, `*`, `%`          |
+| Bit-wise operators   | `|`, `&`                         |
+| Logical operators    | `&&`, `||`                       |
+| Comparison operators | `<`, `<=`, `>`, `>=`, `==`, `!=` |
 
-### Operator precedence
+### 操作符优先级
 
-Grule follows operator precedence in Go.
+Grule 的操作符优先级与Go保持一致。
 
 | Precedence | Operator                         |
 | ---------- | -------------------------------- |
@@ -108,9 +78,9 @@ Grule follows operator precedence in Go.
 |    2       | `&&`                             |
 |    1       | `\|\|`                           |
 
-### Comments
+### 注释
 
-Comments also follow the standard Go format.
+注释也与Go语法相同。
 
 ```go
 // This is a comment
@@ -123,11 +93,11 @@ Comments also follow the standard Go format.
 */
 ```
 
-### Array/Slice and Map
+### 数组/切片，map
 
-Since version 1.6.0, Grule supports accessing facts in array/slice or map.
+从版本1.6.0开始，Grule支持访问facts中的数组/切片或者map。
 
-Suppose you have a fact structure like the following:
+假设你的fact结构体如下：
 
 ```go
 type MyFact struct {
@@ -138,7 +108,7 @@ type MyFact struct {
 }
 ```
 
-You can evaluate those slices and maps from your rule with:
+你可以在你的规则中访问你的切片和map。
 
 ```go
     when 
@@ -150,12 +120,11 @@ You can evaluate those slices and maps from your rule with:
        ...
 ```
 
-Rule execution will panic if your rule tries to access an array element that
-is out of bounds.
+如果数组越界了，规则执行将会导致panic。
 
-#### Assigning values into Array/Slice and Map
+#### 赋值给 Array/Slice 和 Map
 
-You can set an array value if the index you specify is valid.
+只要索引有效，你可以给数组赋值。
 
 ```go
    then
@@ -164,15 +133,15 @@ You can set an array value if the index you specify is valid.
       Fact.AnotherMap[Fact.SomeFunction()] = "Another Value";
 ```
 
-There are a couple of functions you can use to work with array/slice and map.
-Those can be found at [Function page](Function_cn.md).
+有一些内置的可以操作array/slice,map 的函数。可以参考[Function page](Function_cn.md).
 
-### Negation
+### 否定
 
-A unary negation symbol `!` is supported by GRL in addition to NEQ `!=` symbol.
-It is to be used in front of a boolean expression or expression atom.
+GRL支持一元否定操作符 `!` ，等同于 `!=` 符号.
 
-For example in expression atom:
+可以在布尔表达式前使用。
+
+表达式原子中使用
 
 ```go
 when 
@@ -182,7 +151,7 @@ then
     ... 
 ```
 
-or in expression:
+或者在表达式中:
 
 ```go
 when
@@ -191,10 +160,9 @@ then
     ...
 ```
 
-### Function call
+### 函数调用
 
-Any visible function can be called from your rule so long as they return 0 or 1
-value.  For example:
+可见的函数而且返回一个或者0个值，就可以被调用。举例：
 
 ```go
     when
@@ -207,8 +175,7 @@ value.  For example:
         ...
 ```
 
-In version 1.6.0, Grule can chain function calls and value accessors.  For
-example;
+在1.6.0版本，Grule可以链式调用和值访问。比如：
 
 ```go
     when
@@ -220,8 +187,7 @@ example;
         ...
 ```
 
-Also introduced in 1.6.0, you can call functions on literatl constants.  For
-example:
+同样是1.6.0中引入的，你可以对常量进行函数调用。举例：
 
 ```go
     when
@@ -230,9 +196,9 @@ example:
         Fact.Result = Fact.ReturnStringFunc().Trim().ToLower();
 ```
 
-For a list of available functions, consult [Function Page](Function_cn.md).
+内置的函数列表参考 [Function Page](Function_cn.md).
 
-#### Examples
+#### 举例
 
 ```go
 rule SpeedUp "When testcar is speeding up we keep increase the speed."  {
@@ -268,9 +234,9 @@ rule SetTime "When Distance Recorder time not set, set it." {
 }
 ```
 
-### Debugging GRL Syntax
+### 调试 GRL 语法
 
-Your application, you can test if a GRL script or snippet contains a GRL syntax error.
+ 在你的应用中，你可以使用GRL脚本或者代码片段去测试GRL。
 
 ```go
         RuleWithError := `
@@ -304,13 +270,13 @@ Your application, you can test if a GRL script or snippet contains a GRL syntax 
 	}
 ```
 
-This will print
+将会打印出来
 
 ```txt
 detected error #0 : grl error on 8:6 missing ';' at 'Retract'
 ```
 
 
-### IDE Support
+### IDE 支持
 
-Visual Studio Code: [https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax](https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax)
+支持Visual Studio Code插件: [https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax](https://marketplace.visualstudio.com/items?itemName=avisdsouza.grule-syntax)

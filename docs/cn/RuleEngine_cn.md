@@ -1,18 +1,5 @@
 # 规则引擎简介
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![RuleEngine_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/RuleEngine_cn.md)
 [![RuleEngine_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/RuleEngine_de.md)
 [![RuleEngine_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/RuleEngine_en.md)
@@ -20,23 +7,15 @@ __THIS PAGE IS BEING TRANSLATED__
 
 [About](About_cn.md) | [Tutorial](Tutorial_cn.md) | [Rule Engine](RuleEngine_cn.md) | [GRL](GRL_cn.md) | [GRL JSON](GRL_JSON_cn.md) | [RETE Algorithm](RETE_cn.md) | [Functions](Function_cn.md) | [FAQ](RuleEngine_cn.md) | [Benchmark](Benchmarking_cn.md)
 
----
+正如Martin Fowler 阐述的，规则引擎是计算模型的替代方案，而不是评估了多个条件，如果满足了，然后选择适当的操作。
 
-A Rule Engine, as Martin Fowler explained, is an alternative to the computational model, instead
-evaluating multiple conditions, by which an appropriate action is selected if certain
-conditions are met. In the simplest explanation, each *Rule* depicts an *if-then* statement.
+你可以传给**KnowledgeBase**一些规则集合，然后引擎使用这些每条规则去评估一些**Facts**。如果一个规则满足了条件，将会进行该规则指定的操作。
 
-You feed a collection of rules into a **KnowledgeBase**, and then the *engine* uses each 
-rule inside the KnowledgeBase to evaluate some **Facts**. If a rule's requirements are met,
-the **action** specified by the selected rule will be executed.
+## Fact 事实
 
-## Fact
+`fact`是事实，虽然听上去有点点蠢，但是就是如此。存在规则引擎的上下文中的事实，是用来评估的基础信息。事实可以由多种来源，比如数据库，触发流程，销售系统一个点，报告等等。
 
-A `fact` is a fact, as silly it may sound, but that's what it is. A Fact, in rule engine context,
-is basically a piece of information that can be evaluated. Facts can be from any source, eg. a
-database, triggered process, point of sale system, report, etc.
-
-It might be much easier to just look at an example of a Fact. Suppose we have this Fact:
+举一个事实的例子可能更容易理解。假设我们有如下的一个事实
 
 ```Text
 Purchase Transaction
@@ -50,26 +29,17 @@ Purchase Transaction
     Final Price   : ?
 ```
 
-A **Fact** is basically any piece of information or collected data. 
+事实基本上是任何信息或者收集的数据。
 
-From this sample Purchasing Fact, we know lots of information: the item being purchased, the quantity,
-the purchase date, etc. However, we don't know how much tax should be assigned to that purchase,
-how much discount we can give, and the final price the buyer should pay.
+就Purchasing Fact这个例子来说，我们可以获取很多信息：要购买的是什么东西，数量，日期等等。但是我们不知道应该交多少税，我们可以拿到多少这块，以及购买者最终需要支付多少钱。
 
-## Rule
+## Rule 规则
 
-A Rule is a specification about how to evaluate a **Fact**. If a Rule's
-conditions are met by a Fact, then the Rule's action will be selected to be
-executed. Sometimes, multiple Rules are selected because their specifications
-all apply to a Fact, which results in a conflict. The collection of all Rules in
-a conflict are called **Conflict Set**. To resolve this conflict set, we
-specify a *strategy* (covered later, below).  
+规则是一种关于如果评估**Fact**的规格。如果Fact可以满足规则的条件，规则指定的操作将会被执行。有时候，一个Fact可以满足多个规则，这将会导致冲突。在冲突中的规则集合被叫做冲突集合。为了解决冲突集合的问题，我们需要指定一种策略，将会在后面进行讨论。
 
-Back to our example of a simple purchasing system: some business Rules should be established in order to
-calculate the final price, probably calculating the tax first, and then the discount. If both the tax and 
-discount are known, we can show the price.
+回到我们这个简单的购物系统案例：制定一些商业规则去计算最终的价格，可能需要先计算税，然后是折扣。当税和折扣都知道了，我们就可以知道价格。
 
-Let's specify some Rules (in psuedocode).
+以下是我们使用伪代码制定的一些规则。
 
 ```text
 Rule 1
@@ -127,29 +97,21 @@ Rule 7
      with given Tax and Discount
 ```
 
-If you examine the above Rules, you should easily understand the of **Rule** concept for Rule Engines. 
-These collection of rules will form a set of **Knowledge**. In this case, they form a Knowledge set of
-**"how to calculate Item's final price"**.
+如果你仔细检查以上的规则，你可以轻松的理解规则引擎中的规则这个概念。这些规则集合将会组成知识。在这个案例中，就组成了一个知识集合叫做**如果计算商品的最终价格**。
 
-## Cycle
+## Cycle 循环
 
-A Rule evaluation cycle starts by evaluating each Rule's requirements (the **IFs**)
-to select which Rules to potentially execute. Every time the engine finds a satisfied
-requirement, instead of executing the satisfied Rule's action (the **THENs**), it adds
-that Rule into a list of Rule candidates (called the Conflict Set).
+一个规则评估循环从评估每个规则的条件(the **IFs**)去选择可能要执行的规则开始。每一次引擎找到了一个满足的要求，不是立马执行满足条件的规则的操作，而是将这个规则加入到规则候选集合，也叫冲突集合。
 
-When all Rules' requirements have been evaluated, does the engine execute the selected Rules' actions?  
-That depends on the contents of the conflict set:
+当所有的规则要求都被评估过了，是立即执行满足条件的规则的操作吗？这依赖于冲突集合的内容。
 
-* If there's no Rule with a matching **IF** condition, the Engine execution can immediately finish.
-* If there's only one Rule inside the Conflict Set, then that Rule's action is executed before finishing.
-* If there are multiple Rules in the Conflict Set, the engine must apply a strategy to prioritize one Rule and execute its action.
+* 如果没有规则能够满足**IF**条件，引擎将会立即结束。
+* 如果冲突集合中只有一个规则，在结束之前将会执行这个规则的操作。
+* 如果冲突集合中有多个规则，引擎将会采取一种策略去优先选择一个规则，然后执行他的操作。
 
-If an action gets executed, the cycle repeats again, as long as there's an action that needs execution.
-When no more actions get executed, this indicates that there are no more Rules that are statisfied
-by the fact (no more matching **IF** statements), and the cycle stops, letting the Rule engine finish evalutation.
+如果一个操作被执行，只要有一个操作需要执行，循环将会再次重复。如果没有操作可以执行，说明fact满足不了任何规则了，即匹配不上IF了。循环将会结束, 规则引擎将会完成评估。
 
-The pseudocode for this conflict resolution strategy is depicted below:
+冲突解决策略的伪代码如下所示：
 
 ```text
 Start Engine With a FACT Using a KNOWLEDGE
@@ -174,24 +136,18 @@ BEGIN
         Clear CONFLICT SET
         Repeat Cycle from BEGIN
 END
+
 ```
 
-Grule will keep track of how many cycles it performs in a single evaluation of a ruleset. 
-If the Rule evaluation and execution have been repeated too many times, over and above an 
-amount specified upon instantiating a Grule engine instance, the engine will terminate and 
-an error will be returned.
+Grule将会记录在一次评估中运行了多少个循环。如果一个规则评估和执行重复了很多次，超过了实例化Grule引擎实例时指定的数据量，引擎将终止并返回错误。
 
-## Conflict Set Resolution Strategy
+##  冲突集合解决策略
 
-As explained above, the Rule engine will evaluate all Rules' requirements and add
-them into a list of conflicting Rules called the **Conflict Set**. If only one Rule is
-inside the list, it means that are no Rule(s) conflicting with that noe Rule. The engine
-will immediately execute the Rule's action.
+正如上面描述的，规则引擎将会评估所有规则的要求，然后将冲突规则放到一个列表中，叫冲突集合。如果集合中只有一个规则，意味着不会和其他规则冲突。引擎将会立即执行这个规则的操作。
 
-If there are multiple Rules inside the set, there maybe conflicts. There are many conflict resolution 
-strategies that can be implemented for this type of Ruel conflict resolution. The easiest way to resolve
-is through specification of a Rule's **salience** (also known as **priority** or **importance**). 
-We can add an indicator of Rule **salience** or importance into a Rule definition like in the pseudocode below:
+如果集合中有多个规则，将会产生冲突。有很多种冲突解决策略。最简单的一种是通过指定规则的优先级**salience**也可以叫priority，importance。
+
+如以下伪代码所示，我们可以给一个规则定义一个优先级salience.
 
 ```text
 Rule 1 - Priority 1
@@ -209,14 +165,8 @@ Rule 2 - Priority 10
    - Item's Tax is 7%
 ```
 
-By default, all Rules are assigned a salience of `0`.
+如果不指定，规则的优先级为0.
 
-Because all nonspecified Rules are salience 0, it's easy for the engine to pick which Rule 
-to execute when there are multiple Rules in the Conflict Set. If there are multiple Rules 
-with matching priorities, the engine will choose the first one found. Because Go's map types 
-are not guaranteed to preserve input order, it is not safe to assume that rule evaluation order 
-will match the order in which Rules are added to a Grule knowledge instance. 
+因为所有不指定的规则优先级都为0，引擎很容易从冲突集合中选取一个规则去执行。如果有多个规则满足了优先级，则选择第一个。因为Go的map是无序的，不能保证按照输入的顺序进行排序，所以假设会按照输入顺序去执行规则是不安全的。
 
-Salience for Grule Rules can be a value below zero (reaching into the negative) to ensure a 
-Rule has even lower priority than the default. This will ensure that a Rule's action will be 
-executed last, after all other Rules are evaluated.
+Grule中的规则的优先级可以是负数，意思是比默认的优先级还低。这将会保证在所有其他规则都执行玩之后，这个规则会最后执行。

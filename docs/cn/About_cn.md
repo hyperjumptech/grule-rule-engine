@@ -3,17 +3,6 @@
 
 __"Gopher 遵守规则"__
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines. 
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
 
 
 [![About_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/About_cn.md)
@@ -31,11 +20,11 @@ import "github.com/hyperjumptech/grule-rule-engine"
 
 ## Go 规则引擎
 
-**Grule** is a Rule Engine library for the Golang programming language. Inspired by the acclaimed JBOSS Drools, done in a much simple manner.
+Grule是Golang实现的规则引擎库。受业内称赞的JBOSS Drools的启发，我们实现了一种简单的规则引擎。
 
-Like **Drools**, **Grule** have its own *DSL* comparable as follows.
+正如**Drools**,**Grule**也有自己的*DSL*，对比如下。
 
-Drools's DRL be like :
+Drool的DRL如下：
 
 ```go
 rule "SpeedUp"
@@ -51,7 +40,7 @@ rule "SpeedUp"
 end
 ```
 
-And Grule's GRL be like :
+同时Grule的GRL如下：
 
 ```go
 rule SpeedUp "When testcar is speeding up we increase the speed." salience 10  {
@@ -63,27 +52,27 @@ rule SpeedUp "When testcar is speeding up we increase the speed." salience 10  {
 }
 ```
 
-# What is RuleEngine
+# 什么是 RuleEngine
 
-There isn't a better explanation than the article authored by Martin Fowler. You can read the article here ([RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)).
 
-Taken from the **TutorialsPoint** website (with slight modifications),
 
-**Grule** Rule Engine is a Production Rule System that uses the rule-based approach to implement an Expert System. Expert Systems are knowledge-based systems that use knowledge representations to process acquired knowledge into a knowledge base that can be used for reasoning.
+对于 Martin Fowler的文章，这不是一个比较好的诠释。你可以看原文[RulesEngine by Martin Fowler](https://martinfowler.com/bliki/RulesEngine.html)。
 
-A Production Rule System is Turing complete with a focus on knowledge representation to express propositional and first-order logic in a concise, non-ambiguous and declarative manner.
+以下内容摘自 **TutorialsPoint** 网站（做了一些小改动）
 
-The brain of a Production Rules System is an *Inference Engine* that can scale to a large number of rules and facts. The Inference Engine matches facts and data against Production Rules – also called **Productions** or just **Rules** – to infer conclusions which result in actions.
+**Grule**规则引擎是一种生产规则系统，使用了基于规则的方案去实现一个专家系统。专家系统是一种基于知识的系统，可以使用知识描述将获取的知识处理成可以用来推理的知识库。
 
-A Production Rule is a two-part structure that uses first-order logic for reasoning over knowledge representation. A business rule engine is a software system that executes one or more business rules in a runtime production environment.
+生产规则系统是图灵完备的，专注于使用知识描述以一种简洁、明确和声明式的方式去表达一阶的命题逻辑。
 
-A Rule Engine allows you to define **“What to Do”** and not **“How to do it.”**
+生产规则系统的大脑是推理引擎，可以扩展到大量的规则(rule)和事实(fact)。推理引擎用事实和数据去匹配生产规则（也称为生产或者规则），从而推理出一个可以产生行动的结论。
 
-## What is a Rule
+生产规则系统是一个两部分结构，使用了一阶逻辑对知识描述进行一个推理。业务规则引擎是在运行时生产环境中执行一个或多个业务规则的软件系统。
 
-*(also taken from TutorialsPoint)*
+规则引擎允许你定义 做什么(what)而不是怎么做(How)。
 
-Rules are pieces of knowledge often expressed as, "When some conditions occur, then do some tasks."
+## 什么是规则(Rule)
+
+规则是知识片段，经常被描述成 "当满足某些条件时，然后做一些动作"。
 
 ```go
 When
@@ -92,7 +81,7 @@ Then
    <Take desired Action>
 ```
 
-The most important part of a Rule is its `when` part. If the **when** part is satisfied, the **then** part is triggered.
+规则最重要的部分是`when`部分。如果`when`中的条件被满足了，则可以触发`then`操作。
 
 ```go
 rule  <rule_name> <rule_description>
@@ -105,21 +94,21 @@ rule  <rule_name> <rule_description>
 }
 ```
 
-## Advantages of a Rule Engine
+## 规则引擎的优势
 
-### Declarative Programming
+### 声明式编程
 
-Rules make it easy to express solutions to difficult problems and get the verifications as well. Unlike codes, Rules are written with less complex language; Business Analysts can easily read and verify a set of rules.
+规则可以很容易地表达对困难问题的解决方案并获得验证。不像代码，规则可以使用不复杂的语言描述。业务分析师可以轻松阅读和验证一组规则。
 
-### Logic and Data Separation
+### 逻辑与数据分离
 
-The data resides in the Domain Objects and the business logic resides in the Rules. Depending upon the kind of project, this kind of separation can be very advantageous.
+数据驻留在域对象中，业务逻辑驻留在规则中。 根据项目的类型，这种分离可能非常有利。
 
-### Centralization of Knowledge
+### 知识集中化
 
-By using Rules, you create a repository of knowledge (a knowledge base) which is executable. It is a single point of truth for business policy. Ideally, Rules are so readable that they can also serve as documentation.
+通过使用规则，您可以创建一个可执行的知识库（知识库）。 这是商业政策的一个真理。 理想情况下，规则具有可读性，它们也可以用作文档。
 
-### Agility To Change
+### 变化敏捷
 
-Since business rules are actually treated as data. Adjusting the rule according to business dynamic nature become trivial. No need to re-build codes, deploy as normal software development do, you only need to roll out sets of rule and apply them to knowledge repository.
+由于业务规则实际上被视为数据。 根据业务动态性质调整规则变得很容易。 无需像普通软件开发那样重新构建代码、部署，您只需要推出规则集并将它们应用到知识库中。
 

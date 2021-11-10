@@ -1,18 +1,5 @@
 # 基准测试
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![Benchmarking_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Benchmarking_cn.md)
 [![Benchmarking_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Benchmarking_de.md)
 [![Benchmarking_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Benchmarking_en.md)
@@ -22,20 +9,21 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-For any library `Benchmarking` is very much required in terms of evaluating the performance and helps us to improve the performance better.
+对于任意的库，`Benchmarking`在评估性能和提升性能的时候都是必须的。
 
-I have benchmarked two things:
-* Loading 100 and 1000 rules into KnowledgeBase
-* Executing a fact against rules against 100 and 1000 rules
+我基准测试了两个事情：
 
-All the tests will run for multiple times to see how it is performing by changing the value of N 
+*  加载100和1000个规则到KnowledgeBase
+* 针对100个规则和1000个规则，使用一个fact去执行规则。
+
+通过改变N值，所有的测试都将跑很多次去测试性能。
 
 `N is b.N where b is an instance of *testing.B`
 
-### Rules:
-refer `100_rules.grl` and `1000_rules.grl` files under `examples/benchmark` directory
+### 规则:
+ `100_rules.grl` 和 `1000_rules.grl` 文件 在 `examples/benchmark` 目录
 
-Command to run: 
+运行命令: 
 ---
 ```go
 > go test -bench=. -benchmem
@@ -71,12 +59,12 @@ Benchmark_Grule_Load_Rules/1000_rules#10-12                    4         2618574
 
 ```
 
-To load `100` rules into knowledgeBase it took `22628754 ns/op` (took the highest value) that is equal to `22.628754ms` and (`8871388 B/op`) `8.8MB` memory per operation
+加载`100`规则到knowledgeBase耗费`22628754 ns/op`（取最高值），等于`22.628754ms`，同时需要(`8871388 B/op`) `8.8MB` 内存。
 
-To load `1000` rules into knowledgeBase it took `261857403 ns/op` (took the highest value) that is equal to `~261ms` and `88MB` memory per operation
+加载`1000`规则到knowledgeBase耗费`261857403 ns/op`（取最高值），等于`~261ms`，同时需要 `88MB` 内存。
 
-### Test2 - Executing a fact against rules
-Command to run: 
+### 测试2 - 在规则上执行 fact
+运行命令: 
 ```go
 Load 100 and 1000 Rules into Grule rule Engine
 Benchmark_Grule_Load_Rules/100_rules-12                       12          96674568 ns/op        49297966 B/op     731119 allocs/op
@@ -104,12 +92,12 @@ Benchmark_Grule_Load_Rules/1000_rules#09-12                    2         9304769
 
 ```
 
-To load `100` rules into knowledgeBase it took `99342047 ns/op` (took the highest value) that is equal to `~99.342047ms` and (`49295906 B/op`) `~49.295906MB` memory per operation
+加载`100`规则到knowledgeBase耗费`99342047 ns/op`（取最高值），等于`~99.342047ms`，同时需要(`49295906 B/op`) `~49.295906MB` 内存。
 
-To load `1000` rules into knowledgeBase it took `933617752 ns/op` (took the highest value) that is equal to `~933.617752ms` and (`488126636 B/op`) `~488.126636` memory per operation
+加载`1000`规则到knowledgeBase耗费`933617752 ns/op`（取最高值），等于`~933.617752ms`，同时需要`488126636 B/op` `~488.126636MB` 内存。
 
-### Test2 - Executing a fact against rules
-Result:
+### 测试2 - 在规则上执行 fact
+结果:
 ```go
 Benchmark_Grule_Execution_Engine/100_rules-12             140134              8175 ns/op            3939 B/op         59 allocs/op
 Benchmark_Grule_Execution_Engine/100_rules#01-12          140442              8240 ns/op            3939 B/op         59 allocs/op
@@ -137,8 +125,7 @@ Benchmark_Grule_Execution_Engine/1000_rules#09-12           1844            5436
 
 ```
 
-To execute a fact against 100 rules, Grule Engine took `~9697 ns/op` (took the highest value as base) that is hardly `~0.009697ms` and `3957 B/op` which is pretty fast.
+在100个规则上执行fact，Grule引擎耗费`~9697 ns/op`（取最大值）, 约等于`~0.009697ms`, 和`3957 B/op`内存，这是相当快的了。
 
-To execute a fact against 1000 rules, Grule Engine took `~568959 ns/op` (took the highest value as base) that is hardly `~0.568959ms` and `293710 B/op` which is also pretty fast.
-
+在1000个规则上执行fact，Grule引擎耗费`~568959 ns/op`（取最大值）, 约等于`~0.568959ms`, 和`293710 B/op`内存，这是相当快的了。
 

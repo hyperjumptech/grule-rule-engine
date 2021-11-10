@@ -1,18 +1,5 @@
 # Grule's RETE 算法
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![RETE_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/RETE_cn.md)
 [![RETE_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/RETE_de.md)
 [![RETE_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/RETE_en.md)
@@ -22,16 +9,14 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-From Wikipedia : The Rete algorithm (/ˈriːtiː/ REE-tee, /ˈreɪtiː/ RAY-tee, rarely /ˈriːt/ REET, /rɛˈteɪ/ reh-TAY) is a pattern matching algorithm for implementing rule-based systems. The algorithm was developed to efficiently apply many rules or patterns to many objects, or facts, in a knowledge base. It is used to determine which of the system's rules should fire based on its data store, its facts.
+来自维基百科 :  Rete  (/ˈriːtiː/ REE-tee, /ˈreɪtiː/ RAY-tee, rarely /ˈriːt/ REET, /rɛˈteɪ/ reh-TAY)算法是一种模式匹配算法，用来实现基于规则的系统。这个算法是为了在知识库中有效得把很多规则或者模式应用到多个对象或者事实上而开发的。它被用来针对一些数据事实来决定使用系统的哪个规则。 
 
-Some form of the RETE algorithm was implemented in `grule-rule-engine` starting from version `1.1.0`.
-It replaces the __Naive__ approach when evaluating rules to add to `ConflictSet`.
+在`grule-rule-engine`的版本`1.1.0` 中开始引入RETE算法。
+当需要评估规则并加入`ConflictSet`时，它替代了稚嫩的解决方案
 
-The `ExpressionAtom` elements in the GRL are compiled and will not be duplicated within the working memory of the engine.
-This increases the engine performance significantly when you have many rules defined with many duplicated expressions
-or many heavy function/method calls.
+在GRL中的 `ExpressionAtom` 元素会被编译而且将不会被在引擎的工作内存中复制。当你有很多规则定义了重复的表达式或者很多重的函数调用时，这将会有效提升引擎的性能，
 
-Grule's RETE implementation does not have a `Class` selector, as one expression may involve multiple classes. For example an, expression such as:
+Grule RETE 实现不需要一个`Class`选择器，因为一个表达式可以被多个类需要。比如一个表达式如下：
 
 ```.go
 when
@@ -40,18 +25,17 @@ then
     ...
 ```
 
-The expression above involves attribute and function call result comparisons and math operations from 3 different classes. This makes
-RETE's class separation of expression tokens difficult.
+上面的表达式需要属性和函数调用结果对比以及来自三个不同类的数学操作。这将会使得RETE的类和表达式分离边等很困难。
 
-You can read about RETE algorithm here:
+你可以参考 RETE 算法:
 
 * https://en.wikipedia.org/wiki/Rete_algorithm
 * https://www.drdobbs.com/architecture-and-design/the-rete-matching-algorithm/184405218
 * https://www.sparklinglogic.com/rete-algorithm-demystified-part-2/ 
 
-### Why Rete Algorithm is necessary
+### 为什么需要Rete算法
 
-Suppose we have a fact.
+假设我们有一个事实如下
 
 ```go
 type Fact struct {
@@ -63,7 +47,7 @@ func (f *Fact) VeryHeavyAndLongFunction() bool {
 }
 ```
 
-And we add the fact to the data context:
+我们把事实添加到数据上下文中：
 
 ```go
 f := &Fact{}
@@ -71,7 +55,7 @@ dctx := context.NewDataContext()
 err := dctx.Add("Fact", f)
 ```
 
-And we have GRL like:
+我们的GRL如下：
 
 ```go
 rule ... {
@@ -105,15 +89,11 @@ rule ... {
 }
 ```
 
-Executing the GRL above might "kill" the engine because, when it tries to choose which rules to execute,
-the engine will call the `Fact.VeryHeavyAndLongFunction` function in every rule's `when` scope.
+执行上面的GRL将会杀掉引擎，因为当它要选择要执行的规则，引擎会调用每一个规则里面的`when`里面对应的`Fact.VeryHeavyAndLongFunction` 函数。
 
-Thus, instead of executing the `Fact.VeryHeavyAndLongFunction` while evaluating each
-rule, the Rete algorithm only evaluates them once (when the function call is first encountered), and it then remembers the result
-for the rest of the rules. (**Note** that this means your function call *must be referentially transparent* -- i.e. it must have no side effects)
+因此，替代在评估每个规则的时候都去执行 `Fact.VeryHeavyAndLongFunction` ,  Rete 算法将会评估他们一次（即在第一次调用这个函数的时候）, 然后它会记住结果，在剩余的规则中可以直接拿来使用。（注意这就意味着你的函数是参考透明的，比如他不会产生副作用）。
 
-The same with `Fact.StringValue`. The Rete algorithm will load the value from the object instance and
-remember it until it gets changed in a `then` scope, such as:
+对`Fact.StringValue`也是 一样的. Rete 算法将会从对象实例加载这个值，然后记住它，直到它在`then`里面被改变。 比如
 
 ```go
 rule ... {
@@ -124,21 +104,20 @@ rule ... {
 }
 ```
 
-### What is inside Grule's Working-Memory
+### Grule工作内存里面有什么
 
-Grule will try to remember all of the `Expression` elements defined within a rule's `when` scope of all rules
-in the KnowledgeBase.
+Grule 将会尝试保存所有在KnowledgeBase的规则`when`中的  `Expression` 元素 。
 
-First, it will try its best to make sure that none of the AST (Abstract Syntax Tree) nodes are duplicated.
+首先，会努力尝试确实AST (Abstract Syntax Tree) 节点不会重复。
 
-Second, each of these AST nodes can be evaluated only once, until it's relevant `variable` gets changed. For example:
+其次，每个语法树节点只会被评估一次，直到相关变量被修改。举例：
 
 ```Shell
     when
         Fact.A == Fact.B + Fact.Func(Fact.C) - 20
 ```
 
-This condition will be broken down into the following `Expression`s.
+条件将会被解析成如下的表达式`Expression`.
 
 ```Shell
 Expression "Fact.A" --> A variable
@@ -150,16 +129,16 @@ Expression "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable
 Expression "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable.
 ```
 
-The resulting values for each of the above `Expression`s will be remembered (memoized) upon their first invocation so that subsequent references to them will avoid a re-invocation of them, returning the remembered value immediately instead.
+上述每个 `Expression`的结果值都会在第一次调用的时候被保存到内存中，这样后续的访问都避免了重复调用，只需要返回保存好的值就可以了。
 
-If one of these values is altered inside the rule's `then` scope, for example...
+如果其中的一个值在`then`中被修改了，比如：
 
 ```Shell
     then
         Fact.B = Fact.A * 20
 ```
 
-... then all Expression containing `Fact.B` will be removed from Working memory:
+然后所有包含 `Fact.B`的表达式都将从工作内存中移除：
 
 ```Shell
 Expression "Fact.B"
@@ -167,19 +146,13 @@ Expression "Fact.B + Fact.Func(Fact.C)" --> A math operation contains 2 variable
 Expression "(Fact.B + Fact.Func(Fact.C))" - 20 -- A math operation also contains 2 variable. 
 ```
 
-Those `Expression`s will be removed from the working memory so that they get re-evaluated on the next cycle.
+这些表达式 `Expression`都将从工作内存中移除，方便他们在下一循环中被再次评估。
 
-### Known RETE issue with Functions or Methods
+### 已知的 RETE 关于函数的问题
 
-While Grule will try to remember any variable it evaluates within the `when`
-and `then` scope, if you change the variable value from outside the rule
-engine, for example changed from within a function call, Grule won't be able to
-see this change. As a result, Grule may mistakenly use the old (memoized) value
-for the variable, since it doesn't know that the value has changed.  You should
-endeavour to ensure your functions are **referentially transparent** in order
-to never have to deal with this issue.
+尽管Grule将会记住在`when`和`then`中要评估的每个变量，如果你在引擎之外修改了这个变量的值，比如在函数调用中修改了这个变量，Grule将看不到这个修改。最终将会导致，Grule会错误使用旧的变量的值，因为它不知道这个变量被修改了。你应该尝试保证你的函数是参考透明的以保证永远不会处理这种问题。
 
-Consider the following fact:
+考虑以下的事实:
 
 ```go
 type Fact struct {
@@ -191,7 +164,7 @@ func (f *Fact) SetStringValue(newValue string) {
 }
 ```
 
-Then you instantiate your fact and add it into data context:
+当你实例化你的事实，然后添加到数据上下文中:
 
 ```go
 f := &Fact{
@@ -201,7 +174,7 @@ dctx := context.NewDataContext()
 err := dctx.Add("Fact", f)
 ```
 
-In your GRL you then do something like this
+在你的GRL中，你可能会这么做：
 
 ```go
 rule one "One" {
@@ -223,10 +196,9 @@ rule two "Two" {
 }
 ```
 
-Thus the engine will finish without error, but the expected result, where `Fact.StringValue` should be `Two`
-is not met.
+因此引擎虽然不会报错，但是 `Fact.StringValue` 预期的应该是 `Two`，但是实际不是。
 
-To overcome this, you should tell grule if the variable has changed using `Changed` function.
+为了克服这个问题，如果变量发生了变化，你应该使用调用`Changed`函数告诉grule这个变量发生了变化。
 
 ```go
 rule one "One" {

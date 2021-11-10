@@ -1,26 +1,13 @@
-## Fetch Matching Rules (Order by Salience)
-
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
+## 获取匹配的规则 (按优先级排序)
 
 [![MatchingRules_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/MatchingRules_cn.md)
 [![MatchingRules_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/MatchingRules_de.md)
 [![MatchingRules_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/MatchingRules_en.md)
 [![MatchingRules_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/MatchingRules_id.md)
 
-`FetchMatchingRules` in `GruleEngine.go` fetches all the rules valid for a given fact and returns a list of `ast.RuleEntry` values ordered by salience property.
+`GruleEngine.go`中`FetchMatchingRules`函数的将会获取所有能够满足事实的所有有效规则，并返回按优先级排序的  `ast.RuleEntry` 列表。
 
-##### Rules:
+##### 规则:
 
 ```go
 rule DuplicateRule1 "Duplicate Rule 1" salience 5 {
@@ -62,9 +49,9 @@ rule UniqueRule5 "Unique Rule 5" salience 0 {
         Output.NetAmount=143.320007;
         Fact.Result=true;
 }
-``` 
+```
 
-All the above rules are duplicate ones except for a differing salience value, except `UniqueRule5`.  As we all know, a rule with higher salience has a higher priority and will get executed before a rule with lower salience if there is a conflict.
+除了 `UniqueRule5`规则之外，所有以上的规则除了优先级不一样之外都是重复的.  正如我们所了解的，有更高优先级的规则将会在发生冲突的时候会被优先执行。
 
 ```go
 fact := &Fact{
@@ -73,7 +60,7 @@ fact := &Fact{
 }
 ```
 
-##### FetchMatchingRules:
+##### 调用FetchMatchingRules:
 
 ```go
 engine := engine.NewGruleEngine()
@@ -83,7 +70,7 @@ if err != nil {
 }
 ```
 
-#### result:
+#### 返回结果:
 
 ```go
 Returns []*ast.RuleEntry (All Matching Rule Entries sorted by Salience)
