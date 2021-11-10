@@ -1,18 +1,5 @@
 # Grule JSON 格式
 
----
-
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
-
-
 [![GRL_JSON_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/GRL_JSON_cn.md)
 [![GRL_JSON_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_JSON_de.md)
 [![GRL_JSON_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_JSON_en.md)
@@ -22,11 +9,10 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-Grule rules can be represented in JSON form and translated for use by the rule
-engine into standard Grule syntax. The design of the JSON format is intended to
-offer a high level of flexibility to suit the needs of the user.
+Grule规则可以表达成json格式，而且可以翻译成标准的Grule语法表达。为了满足用户的需求，JSON格式的设计提供一种更高程度的灵活度 。
 
-The basic structure of a JSON rule is as follows:
+JSON格式的规则的基本结构如下：
+
 ```json
 {
     "name": "SpeedUp",
@@ -39,39 +25,31 @@ The basic structure of a JSON rule is as follows:
 }
 ```
 
-## Elements
+## 元素
 
-| Name       | Description                                                                                                        |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| `name`     | The name of the rule. **Required**.                                                                                |
-| `desc`     | The description for the rule. **Optional**, default is `""`                                                        |
-| `salience` | The salience value for the rule. **Optional**, default is `0`                                                      |
-| `when`     | The conndition for the rule. This field can either be a plain string value or a condition object (described below) |
-| `then`     | An array of actions for the rule. Each element can be a plain string or an action object (described below)         |
+| Name       | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `name`     | rule的名称，必填                               |
+| `desc`     | 规则的描述，非必填，默认是 `""`                |
+| `salience` | 规则的优先级，非必填，默认为`0`                |
+| `when`     | 规则的条件. 可以是字符串，也可以是条件对象。   |
+| `then`     | 规则的操作数组. 每个元素是字符串或者操作对象。 |
 
-## Condition Object
+## 条件对象
 
-In order to provide a great deal of flexability, the `when` condition of a rule
-can be broken down into individual components. This is particularly useful for
-structuring larger rules and supporting GUI applications used for rule editing
-and analysis.
+为了提供更高的灵活性，`when`条件可能会被分割成独立的组件。当组建更大的更大的规则，而且需要支持能够编辑和分析规则和GUI应用时，这一部分非常有用。
 
-Condition objects are parsed recursively, meaning that objects can be nested
-arbitarily to support even the most complex rules. Any time a condition object
-is expected by the parser, the user can choose to instead provide a constant
-string or numeric value which will be interpreted by the parser as raw input to
-be echoed into the output rule.
+条件对象将会被递归的解析，这就意味着对象可以任意嵌套，从而可以支持更复杂的规则。任何时候一个条件对象是解析器所期望的，用户可以选择提供一个常量解析器将解释为原始输入的字符串或数值被回显到输出规则中。
 
-Each condition object takes the following format:
+每个条件对象都将是一下的格式：
 
 ```json
 {"operator":[x, y, ...]}
 ```
 
-where `operator` is one of the operators described below and `x` and `y` are
-two or more condition objects or constants.
+其中 `operator` 是以下操作符中的一个。 `x` 和 `y` 是两个或者多个条件对象或者变量。
 
-### Operators
+### 操作符
 
 | Operator  | Description       |
 | --------- | ----------------- |
@@ -91,20 +69,20 @@ two or more condition objects or constants.
 | `"mul"`   | GRL * operator    |
 | `"mod"`   | GRL % operator    |
 
-### Special Operators
+### 特殊的操作符
 
-The following operators have slightly different behaviours than the standard operators.
+下面的操作与标准的操作符有稍微的不同。 
 
-| Operator  | Description                                                                                                                                                                                                                |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `"set"`   | GRL = operator. This operator will set the value of the first operand to the output of the second. This can only be used in the `then` section of the rule.                                                                |
-| `"call"`  | GRL function call. The operator will call the funtion name specified in the first operand. If more then one operand is specififed, the subsequent operands are interpreted as arguments to be passed to the funciton call. |
-| `"obj"`   | Explicitly identifies a GRL object. Unlike other operators, this object takes the form of a simple key/value pair. For example: `{"obj": "TestCar.Speed"}`                                                                 |
-| `"const"` | Explicitly identifies a GRL constant. This opertor takes the same form as the `obj` operator                                                                                                                               |
+| Operator  | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| `"set"`   | GRL = 操作符. 这个操作符将给第二个操作数的值付给第一个操作数。只能使用在规则的`then`中。 |
+| `"call"`  | GRL 函数调用。第一个操作数是函数名字，如果有大于一个操作数，后续的操作数是这个函数调用的参数。 |
+| `"obj"`   | 显式指定GRL对象。不像其他操作符，这个操作符由key/value 对组成。 比如: `{"obj": "TestCar.Speed"}` |
+| `"const"` | 显式指定GRL常量。这个操作符格式与 `obj` 操作符相同。         |
 
-### Supported Constants
+### 支持的常量
 
-The following constant types are supported:
+支持以下的常量类型:
 
 | Type      | Example                     |
 | --------- | --------------------------- |
@@ -114,13 +92,13 @@ The following constant types are supported:
 | `bool`    | `{"const": true}`           |
 
 
-## Then Actions
+## Then 操作
 
-The `then` actions are formed in the same way as the condition objects. The primary difference is that the root element for each `then` condition should be either a `set` or `call` operator.
+ `then` 操作组成方式跟条件对象相同。最主要的区别是每个`then`条件的根元素要么是`set`要么是`call`操作符。
 
-# Example
+# 示例
 
-To demonstrate the JSON representation capabilities, the following example rule is to be converted to JSON syntax:
+为了标识JSON的表示能力，下面的规则将会展示使用JSON语法进行展示。
 
 ```
 rule SpeedUp "When testcar is speeding up we increase the speed." salience 10 {
@@ -133,9 +111,9 @@ rule SpeedUp "When testcar is speeding up we increase the speed." salience 10 {
 }
 ```
 
-## Basic Representation
+## 基础表示形式
 
-The most basic representation of this rule in JSON is as follows:
+最基础的JSON表示方法:
 
 ```json
 {
@@ -151,17 +129,11 @@ The most basic representation of this rule in JSON is as follows:
 }
 ```
 
-This example presents the `when` and `then` conditions as raw input objects.
-This gives the greatest level of control over the output rule. In most cases
-the translator will output a rule that is an exact match to the original
-representaion.  However in some cases the translator may insert brackets around
-expressions where it is not required depending on operator presedence. This
-should not affect the logical meaning of the rule.
+在这个示例中，`when`和`then`都是原始输入。这种表达将会更高层次控制输出的规则。在大多数的情况下，翻译器可以很简单的输出规则的原始表达。但是在大多数情况下，在不依赖操作符的时候，翻译器将会插入在表达式周围插入括号。这个不应该影响规则的逻辑意思。
 
-## Expanded Representation
+## 扩展表示形式
 
-The above rule can also be represented in a more explicit format by breaking
-down the `when` and `then` conditions to a full object representation:
+通过继续拆分`when`和`then`条件成全对象形式，可以使上述规则可以表述成更详细的格式。
 
 ```json
 {
@@ -182,31 +154,31 @@ down the `when` and `then` conditions to a full object representation:
 }
 ```
 
-The translator will interpret the above rule and produce the same output as the example rule. This rule is much more verbose and can be easily parsed and formatted for display or analysis purposes.
+翻译器将会解释上述规则，并且会产出一样的规则。这个规则将会更冗长，而且对于展示或者分析更加容易解析和格式化。
 
-## Implicit Representation and String Escaping
+## 隐式表示和字符串转义
 
-Despite being more verbose, the rule above still represents objects and boolean constants implictly. It is not necessary to wrap each object and constant inside of a `const` or `obj` operator because the translator will implicitly interpret the type of input. However, in some cases it can be advantageous to use the `const` or `obj` wrappers, the most notable of which is to enforce escaping rules on string constants that would not be applied to an implicilt string.
+尽管更冗长上述规则仍然可以更隐式表示成对象和布尔常量。并不需要将每个规则中的对象和常量都使用`const`或者`obj`操作符去包装，因为翻译器将会隐式获取输入的类型。不管如何，在某些情况下，使用`const`或者`obj`包装反而会有优势， 最显著的是在需要转义字符串的地方将不会在需要转义。
 
-An example of string escaping behaviour shown in the rule above is in the `call` action. A string is being passed as an argument to the function, so in order to pass the argument as a raw object it is necessary for the user to wrap the constant in double quotes and escape them manually:
+比如在`call`操作中的转义字符串。一个字符串作为参数传递给函数，为了传递原始对象，需要使用双引号
 
 ```
 {"call": ["Log", "\"Speed increased\""]}
 ```
 
-While this gives the correct output, it somewhat obfuscates the rule by making it unclear which level of escaping is applied to the output.
+虽然这给出了正确的输出，但输出中包含某种程度的转义，使得规则变得不清晰，从而在某种程度上混淆了规则。
 
-If the escaping of the string is done incorrectly, the translator will generate an invalid rule output. In order to prevent this kind of error, it is preferable to wrap the constant in a `const` operator:
+如果字符串不能被正确转义，翻译器将会生成一个无效的规则输出。为了防止这种错误，可以使用`const`操作符包裹常量。
 
 ```
 {"call": ["Log", {"const": "Speed increased"}]}
 ```
 
-I this case, the translator will escape the constant string appropriately and output the constant correctly to the output rule.
+在这种情况下，翻译器将会正确转义常量字符串，而且也能够正确输出。
 
-## Verbose Representation
+## 详细表达形式
 
-The most verbose possible version of the example rule in JSON syntax is as follows. (Note that the additional `obj` and `const` operators here are completely unnecessary but can be useful for rendering engines or tools designed to edit or analyse rules in a visual form.)
+最详细的JSON语法表达如下。（注意额外附加的`obj`和`const`操作符实际不是完全必须的，但是对于可视形式用来编辑或者解析规则的渲染引擎或者工作很有用。）
 
 ```json
 {
@@ -227,9 +199,9 @@ The most verbose possible version of the example rule in JSON syntax is as follo
 }
 ```
 
-# Loading JSON Rules
+# 加载 JSON 规则
 
-JSON rules can be loaded from an underlying Resource or ResourceBundle provider using the functions `NewJSONResourceFromResource` and `NewJSONResourceBundleFromBundle` respectively. When the `Load()` function is called, the underlying Resource is loaded and the rules are translated from JSON syntax to standard GRL syntax. As a result the translation functions can very easily be integrated into existing code.
+通过使用`NewJSONResourceFromResource` 和 `NewJSONResourceBundleFromBundle`函数，JSON规则可以从底层资源或者资源包提供者加载规则。当调用`Load()`函数时，底层资源被加载，JSON语法的规则将会被翻译成标准GRL语法规则。翻译函数的结果可以很容易集成进已有的代码。
 
 ```go
 f, err := os.Open("rules.json")
@@ -241,7 +213,7 @@ resource := pkg.NewJSONResourceFromResource(underlying)
 ...
 ```
 
-It is also possible to parse a byte array containing JSON rules directly into a GRL syntax ruleset by calling the `ParseJSONRuleset` function.
+通过`ParseJSONRuleset`函数调用，可以解析包含JSON规则的字节数组并转换成GRL语法的规则集合。
 
 ```go
 jsonData, err := ioutil.ReadFile("rules.json")

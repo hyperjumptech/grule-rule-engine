@@ -1,16 +1,6 @@
 # 恢复和加载 GRB 文件
 
----
 
-:construction:
-__THIS PAGE IS BEING TRANSLATED__
-:construction:
-
-:construction_worker: Contributors are invited. Please read [CONTRIBUTING](../../CONTRIBUTING.md) and [CONTRIBUTING TRANSLATION](../CONTRIBUTING_TRANSLATION.md) guidelines.
-
-:vulcan_salute: Please remove this note once you're done translating.
-
----
 
 
 [![Binary_Rule_File_cn](https://github.com/yammadev/flag-icons/blob/master/png/CN.png?raw=true)](../cn/Binary_Rule_File_cn.md)
@@ -22,22 +12,18 @@ __THIS PAGE IS BEING TRANSLATED__
 
 ---
 
-When you loading huge amount (hundreds) of rules in GRL script into `KnowledgeLibrary`, e.g. when you start 
-the engine, you may notice that it may took some time to load, some time it could go up to a couple of minutes.
-This is due to the syntax parsing done by ANTLR4. Don't get me wrong, ANTLR is a great tools and it done the job very well.
-But obviously, tens of thousands of lines in a script file is no small task, for any parser tools.
+当你从GRL脚本中加载大量的(几百以上)规则到`KnowledgeLibrary`, 比如当你启动引擎的时候，你可能会注意到会花费很长的时候去加载，有时候可能会花几分钟。这个主要归结于ANTLR4语法解析。别误会，ANTLR是一个伟大的工具，能够很好的完成工作。但是明显的，对于任意解析工具，数十个几千行的脚本文件都不是一个小工作。
 
-So the idea is, to store all the rule in a binary file. So it load faster next time. Just like
-a compiler. You compile your text GRL script and the result is a binary file (GRB) which load 10 time faster.
+所以解决方案是，把所有的规则存储到二进制文件。这样下次的加载的时候会更快。就如编译器的工作原理一样。你可以编译你的GRL脚本，从二进制（GRB）中加载结果要快10倍。
 
-The workflow is as following : As a Rule author, you still work in the textual GRL script. When you want to release your rule set,
-you can "compile" it into GRB binary file. The you ditribute that GRB into your server and have the server load
-from GRB.
+工作流将会编程：作为规则的作者，你依然可以编辑文本的GRL脚本。当你想要发布你的规则集合时，你可以编译成GRB二进制文件。你发布GRB到你的服务，然后服务从GRB加载。
 
-## Storing KnowledgeBase into GRB
+## 存储 KnowledgeBase 到 GRB
 
 First, you should have a `KnowledgeLibrary` containing the `KnowledgeBase` you want to store into GRB.
 Normally you would load a GRL into your library as follows :
+
+首先你得有一个包含想要存储到GRB的`KnowledgeBase`的`KnowledgeLibrary`。如下，你可以正常加载GRL到你的知识库。
 
 ```go
 	lib := ast.NewKnowledgeLibrary()
@@ -46,7 +32,7 @@ Normally you would load a GRL into your library as follows :
 	assert.NoError(t, err)
 ```
 
-Second, you can now save the knowledge base into GRB as follows:
+然后,你可以如下存储knowledge base到GRB：
 
 ```go
 	f, err := os.OpenFile("HugeRuleSet.grb", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -58,16 +44,13 @@ Second, you can now save the knowledge base into GRB as follows:
 	_ = f.Close()
 ```
 
-Your GRB file is now contains all rules in the specified knowledge base
-and ready for future loading.
+你的GRB文件现在包含了knowledge base的所有规则，然后已经可以被用来加载。
 
-Yes, the GRB file size is inflated like 10 times compared to the GRL one, 
-But it, most of the time, like that when you compile some script into its 
-compiled binary form. (.java vs .class, .c vs .exe, go vs executable)
+是的，相对于GRL来说，GRB文件大小将会膨胀大概10倍。但是正如大部分时候，其他编译程序将脚本编译成二进制格式。(.java vs .class, .c vs .exe, go vs executable)
 
-## Loading GRB into KnowledgeLibrary
+## 加载 GRB 到 KnowledgeLibrary
 
-Loading GRB is much simpler. No need a builder.
+加载GRB更简单，不需要builder。
 
 ```go
 	lib := ast.NewKnowledgeLibrary()
@@ -83,12 +66,10 @@ Loading GRB is much simpler. No need a builder.
 	_ = f.Close()
 ```
 
-There you go !!!, the GRB is loaded into `KnowledgeLibrary`
-You can obtain the knowledge base normally.
+恭喜你,  GRB 会被加载到 `KnowledgeLibrary`，你可以像往常 一样获取knowledge base。
 
 ```go
     kb := lib.NewKnowledgeBaseInstance("HugeRuleSet", "0.0.1")
 ```
 
-One thing, if in your `KnowledgeLibrary` already contains the same `KnowledgeBase` name and version
-to the one in the GRB, that `KnowledgeBase` in the library will be overwritten.
+还有一件事，如果你的`KnowledgeLibrary`包含了名字和版本号和GRB中一样的`KnowledgeBase`，`KnowledgeBase`将会被覆盖。
