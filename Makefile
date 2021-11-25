@@ -1,5 +1,4 @@
 GO111MODULE=on
-LINTER="${GOPATH}/bin/golint"
 
 .PHONY: all test test-short fix-antlr4-bug build
 
@@ -11,9 +10,7 @@ build: fix-antlr4-bug
 	go build ./...
 
 lint: build
-	go get -d golang.org/x/lint/golint
-	go install golang.org/x/lint/golint
-	${LINTER} -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
+	${GOBIN}/golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
 
 test-short: lint
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
