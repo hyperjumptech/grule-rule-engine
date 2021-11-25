@@ -10,18 +10,13 @@ build: fix-antlr4-bug
 	go build ./...
 
 lint: build
-	go get -u golang.org/x/lint/golint
-	golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
+	${GOBIN}/golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
 
-test-short: lint
-	go install github.com/newm4n/goornogo
+test-short: build
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
-	goornogo -i coverage.out -c 40
 
-test: lint
-	go install github.com/newm4n/goornogo
+test: build
 	go test ./... -covermode=count -coverprofile=coverage.out
-	goornogo -i coverage.out -c 40
 
 test-coverage: test
 	go tool cover -html=coverage.out

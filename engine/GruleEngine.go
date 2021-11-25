@@ -99,6 +99,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
 	knowledge.WorkingMemory.ResetAll()
+	knowledge.Reset()
 
 	// Initialize all AST with datacontext and working memory
 	log.Debugf("Initializing Context")
