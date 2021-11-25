@@ -12,10 +12,10 @@ build: fix-antlr4-bug
 lint: build
 	${GOBIN}/golint -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
 
-test-short: lint
+test-short: build
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
 
-test: lint
+test: build
 	go test ./... -covermode=count -coverprofile=coverage.out
 
 test-coverage: test
