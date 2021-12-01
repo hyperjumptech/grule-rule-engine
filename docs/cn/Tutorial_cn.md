@@ -247,8 +247,8 @@ for _, res := range resources {
 
 ### 从 JSON获取
 
-你可以从JSON构建规则! [请阅读这里](../en/GRL_JSON_cn.md) 
+你可以从JSON构建规则! [请阅读这里](GRL_JSON_cn.md) 
 
 ## 编译 GRL 到 GRB
 
-如果你想要更快的规则加载速度（比如你有很多特别大的规则集合，然后加载GRL很慢），你可以将这些规则集合存储为GRB（Grules Rule Binary）文件。详情参考[如何存储和加载GRB](../en/Binary_Rule_File_cn.md) 
+如果你想要更快的规则加载速度（比如你有很多特别大的规则集合，然后加载GRL很慢），你可以将这些规则集合存储为GRB（Grules Rule Binary）文件。详情参考[如何存储和加载GRB](Binary_Rule_File_cn.md) 
