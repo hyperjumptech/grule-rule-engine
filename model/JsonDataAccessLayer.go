@@ -191,6 +191,9 @@ func (vn *JSONValueNode) GetObjectValueByField(field string) (reflect.Value, err
 		return reflect.ValueOf(nil), fmt.Errorf("not an object or map")
 	}
 	tmap := vn.data.MapIndex(reflect.ValueOf(field))
+	if tmap == reflect.ValueOf(nil) {
+		return reflect.ValueOf(nil), fmt.Errorf("json field '%s' is undefined", field)
+	}
 	return tmap.Elem(), nil
 }
 
