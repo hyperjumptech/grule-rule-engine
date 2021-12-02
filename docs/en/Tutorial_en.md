@@ -11,7 +11,7 @@
 
 ## Preparation
 
-Please note that Grule is using Go 1.13.
+Please note that Grule is using Go 1.16.
 
 To import Grule into your project:
 
