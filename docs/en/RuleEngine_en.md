@@ -56,7 +56,7 @@ Back to our example of a simple purchasing system: some business Rules should be
 calculate the final price, probably calculating the tax first, and then the discount. If both the tax and 
 discount are known, we can show the price.
 
-Let's specify some Rules (in psuedocode).
+Let's specify some Rules (in pseudocode).
 
 ```text
 Rule 1
@@ -114,8 +114,8 @@ Rule 7
      with given Tax and Discount
 ```
 
-If you examine the above Rules, you should easily understand the of **Rule** concept for Rule Engines. 
-These collection of rules will form a set of **Knowledge**. In this case, they form a Knowledge set of
+If you examine the above Rules, you should easily understand the **Rule** concept for Rule Engines. 
+These collections of rules will form a set of **Knowledge**. In this case, they form a Knowledge set of
 **"how to calculate Item's final price"**.
 
 ## Cycle
@@ -133,8 +133,8 @@ That depends on the contents of the conflict set:
 * If there are multiple Rules in the Conflict Set, the engine must apply a strategy to prioritize one Rule and execute its action.
 
 If an action gets executed, the cycle repeats again, as long as there's an action that needs execution.
-When no more actions get executed, this indicates that there are no more Rules that are statisfied
-by the fact (no more matching **IF** statements), and the cycle stops, letting the Rule engine finish evalutation.
+When no more actions get executed, this indicates that there are no more Rules that are satisfied
+by the fact (no more matching **IF** statements), and the cycle stops, letting the Rule engine finish evaluation.
 
 The pseudocode for this conflict resolution strategy is depicted below:
 
@@ -172,11 +172,11 @@ an error will be returned.
 
 As explained above, the Rule engine will evaluate all Rules' requirements and add
 them into a list of conflicting Rules called the **Conflict Set**. If only one Rule is
-inside the list, it means that are no Rule(s) conflicting with that noe Rule. The engine
+inside the list, it means that there are no Rule(s) conflicting with that one Rule. The engine
 will immediately execute the Rule's action.
 
-If there are multiple Rules inside the set, there maybe conflicts. There are many conflict resolution 
-strategies that can be implemented for this type of Ruel conflict resolution. The easiest way to resolve
+If there are multiple Rules inside the set, there may be conflicts. There are many conflict resolution 
+strategies that can be implemented for this type of Rule conflict resolution. The easiest way to resolve
 is through specification of a Rule's **salience** (also known as **priority** or **importance**). 
 We can add an indicator of Rule **salience** or importance into a Rule definition like in the pseudocode below:
 
