@@ -276,6 +276,18 @@ if err != nil {
 }
 ```
 
+#### With Headers
+
+```go
+headers := make(http.Header)
+headers.Set("Authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l")
+urlRes := pkg.NewURLResourceWithHeaders("http://host.com/path/to/rule.grl", headers)
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", urlRes)
+if err != nil {
+    panic(err)
+}
+```
+
 ### From GIT
 
 ```go
