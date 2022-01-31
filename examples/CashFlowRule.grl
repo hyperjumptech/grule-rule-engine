@@ -31,6 +31,7 @@ rule SumUpPurchase "When price after tax calculated, sum it up" {
         Purchase.PriceAfterTax > 0
     then
         CashFlow.PurchaseCount = CashFlow.PurchaseCount + 1;
+        Log("Count = " + CashFlow.PurchaseCount);
         CashFlow.TotalPurchases = CashFlow.TotalPurchases + Purchase.Price;
         CashFlow.TotalTax = CashFlow.TotalTax + Purchase.Tax;
         CashFlow.PurchasesAfterTax = CashFlow.PurchasesAfterTax + Purchase.PriceAfterTax;

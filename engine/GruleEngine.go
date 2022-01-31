@@ -17,11 +17,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"sort"
 	"time"
 
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
 )
 
@@ -42,8 +42,9 @@ func NewGruleEngine() *GruleEngine {
 
 // GruleEngine is the engine structure. It has the Execute method to start the engine to work.
 type GruleEngine struct {
-	MaxCycle  uint64
-	Listeners []GruleEngineListener
+	MaxCycle                        uint64
+	ReturnErrOnFailedRuleEvaluation bool
+	Listeners                       []GruleEngineListener
 }
 
 // Execute function is the same as ExecuteWithContext(context.Background())
@@ -98,6 +99,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
 	knowledge.WorkingMemory.ResetAll()
+	knowledge.Reset()
 
 	// Initialize all AST with datacontext and working memory
 	log.Debugf("Initializing Context")
@@ -127,7 +129,9 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 				if err != nil {
 					log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
-					// No longer return error, since unavailability of variable or fact in context might be intentional.
+					if g.ReturnErrOnFailedRuleEvaluation {
+						return err
+					}
 				}
 				// if can, add into runnable array
 				if can {
@@ -215,7 +219,9 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
-				// No longer return error, since unavailability of variable or fact in context might be intentional.
+				if g.ReturnErrOnFailedRuleEvaluation {
+					return nil, err
+				}
 			}
 			// if can, add into runnable array
 			if can {

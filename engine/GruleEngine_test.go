@@ -17,14 +17,15 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"sort"
 	"testing"
 	"time"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast"
+	"github.com/hyperjumptech/grule-rule-engine/builder"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/stretchr/testify/assert"
 )
 
 type Sorting struct {
@@ -136,6 +137,30 @@ func getTypeOf(i interface{}) string {
 		return fmt.Sprintf("*%s", t.Elem().Name())
 	}
 	return t.Name()
+}
+
+const ruleWithAccessErr = `rule AccessErrRule "test access error rule" salience 10 {
+    when
+        TestStruct.NotExist == 1
+    then
+		Retract("AccessErrRule");
+}`
+
+func TestEngine_ExecuteErr(t *testing.T) {
+	dctx := ast.NewDataContext()
+	err := dctx.Add("TestStruct", &TestStruct{})
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	engine.ReturnErrOnFailedRuleEvaluation = true
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	err = engine.Execute(dctx, kb)
+	assert.Error(t, err)
 }
 
 func TestEmptyValueEquality(t *testing.T) {
@@ -498,6 +523,24 @@ func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
 	//Then
 	assert.NoError(t, err)
 	assert.Equal(t, 5, len(ruleEntries))
+}
+
+func TestEngine_FetchMatchingRulesErr(t *testing.T) {
+	dctx := ast.NewDataContext()
+	err := dctx.Add("TestStruct", &TestStruct{})
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	engine.ReturnErrOnFailedRuleEvaluation = true
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	mr, err := engine.FetchMatchingRules(dctx, kb)
+	assert.Error(t, err)
+	assert.Nil(t, mr)
 }
 
 const duplicateRulesWithDiffSalience = `rule  DuplicateRule1  "Duplicate Rule 1"  salience 5 {

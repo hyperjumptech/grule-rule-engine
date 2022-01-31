@@ -153,6 +153,9 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 		assert.NoError(t, err)
 	}
 
+	assert.Equal(t, 11, cashFlow.PurchaseCount)
+	assert.Equal(t, 1100000.0, cashFlow.TotalPurchases)
+
 	fmt.Println(cashFlow.String())
 }
 

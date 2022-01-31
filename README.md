@@ -169,9 +169,9 @@ business complexity seems to be quite clear.
 
 ## Docs
 
-Grule's Documentation now viewable in ViewDocs. [http://hyperjumptech.viewdocs.io](http://hyperjumptech.viewdocs.io/grule-rule-engine)
+Documentation page [here](docs/Documentation.md)
 
-To dive into the Tutorial, see the Wiki Docs [here on Github](https://github.com/hyperjumptech/grule-rule-engine/blob/master/docs/Tutorial_en.md).
+To dive into the Tutorial, see the Wiki Docs [here on Github](docs/en/Tutorial_en.md).
 
 ### Benchmark
 `Loading rules into KnowledgeBase`:
@@ -187,7 +187,7 @@ To dive into the Tutorial, see the Wiki Docs [here on Github](https://github.com
 * To execute a fact against 1000 rules, Grule Engine took `~568959 ns/op` (took the highest value as base) that is hardly `~0.568959ms` and `293710 B/op` which is also pretty fast.
 
 
-You can read the [detail report here](docs/Benchmarking_en.md)
+You can read the [detail report here](docs/en/Benchmarking_en.md)
 
 # Our Contributors
 
