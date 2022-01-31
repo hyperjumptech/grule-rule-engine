@@ -24,23 +24,53 @@ import (
 )
 
 const (
-	Rule1 = `
-rule ColorCheck "test 1"  {
+	strInConditionRule = `
+rule StrInConditionCheck "test 1"  {
 	when
 	  Color.Name.In("Black", "Yellow")
 	then
 	  Color.Message = "Its either black or yellow!!!";
-	  Retract("ColorCheck");
+	  Retract("StrInConditionCheck");
+}
+`
+	strMatchStringConditionRule = `
+rule strMatchStringConditionCheck "test 2"  {
+	when
+	  Color.Name.MatchString("B([a-z]+)ck")
+	then
+	  Color.Message = "yes its Black!!!";
+	  Retract("strMatchStringConditionCheck");
 }
 `
 )
 
 type Color struct {
-	Name string
+	Name    string
 	Message string
 }
 
 func TestStringInExample(t *testing.T) {
+	color := &Color{
+		Name:    "Black",
+		Message: "",
+	}
+	dataContext := ast.NewDataContext()
+	err := dataContext.Add("Color", color)
+	assert.NoError(t, err)
+
+	// Prepare knowledgebase library and load it with our rule.
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(strInConditionRule)))
+	assert.NoError(t, err)
+	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	eng1 := &engine.GruleEngine{MaxCycle: 1}
+	err = eng1.Execute(dataContext, kb)
+	assert.NoError(t, err)
+	assert.Equal(t, "Its either black or yellow!!!", color.Message)
+}
+
+func TestStringMatchStringExample(t *testing.T) {
 	color := &Color{
 		Name:    "Black",
 		Message: "",
@@ -53,11 +83,11 @@ func TestStringInExample(t *testing.T) {
 	// Prepare knowledgebase library and load it with our rule.
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(Rule1)))
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(strMatchStringConditionRule)))
 	assert.NoError(t, err)
 	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
 	eng1 := &engine.GruleEngine{MaxCycle: 1}
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
-	assert.Equal(t, "Its either black or yellow!!!", color.Message)
+	assert.Equal(t, "yes its Black!!!", color.Message)
 }

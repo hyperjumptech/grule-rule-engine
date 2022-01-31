@@ -846,6 +846,27 @@ rule TrimText "Do something when Fact.Text is 'ABC'" {
 }
 ```
 
+
+### string.MatchString() string
+
+`MatchString` MatchString reports whether the string s contains any match of the regular expression pattern. Similar to golang [MatchString](https://pkg.go.dev/regexp#MatchString)
+
+#### Returns
+
+* True if the `regexPattern` matches the string s
+* False if the `regexPattern` doesn't match the string s
+
+#### Example
+
+```Shell
+rule MatchStringText "Return true when regex pattern matches the string"  {
+	when
+	  Fact.Text.MatchString("B([a-z]+)ck")
+	then
+	  Fact.DoSomething();
+}
+```
+
 ### array.Len() int
 
 `Len` will return the length of the array/slice.
