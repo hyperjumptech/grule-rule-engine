@@ -69,7 +69,7 @@ two or more condition objects or constants.
 | `"gt"`    | GRL > operator    |
 | `"gte"`   | GRL >= operator   |
 | `"lt"`    | GRL < operator    |
-| `"lte"`   | GRL <= operaotr   |
+| `"lte"`   | GRL <= operator   |
 | `"bor"`   | GRL \| operator   |
 | `"band"`  | GRL & operator    |
 | `"plus"`  | GRL + operator    |

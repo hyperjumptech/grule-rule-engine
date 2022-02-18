@@ -11,7 +11,7 @@
 
 ## Preparation
 
-Please note that Grule is using Go 1.13.
+Please note that Grule is using Go 1.16.
 
 To import Grule into your project:
 
@@ -257,6 +257,18 @@ if err != nil {
 
 ```go
 urlRes := pkg.NewUrlResource("http://host.com/path/to/rule.grl")
+err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", urlRes)
+if err != nil {
+    panic(err)
+}
+```
+
+#### With Headers
+
+```go
+headers := make(http.Header)
+headers.Set("Authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l")
+urlRes := pkg.NewURLResourceWithHeaders("http://host.com/path/to/rule.grl", headers)
 err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", urlRes)
 if err != nil {
     panic(err)

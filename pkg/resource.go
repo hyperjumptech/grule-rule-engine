@@ -16,11 +16,12 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 
 	"github.com/bmatcuk/doublestar"
 	"gopkg.in/src-d/go-billy.v4"
@@ -201,14 +202,24 @@ func (res *BytesResource) String() string {
 // NewURLResource will create a new Resource using a resource as located in the url
 func NewURLResource(url string) Resource {
 	return &URLResource{
-		URL: url,
+		URL:    url,
+		Header: make(http.Header),
+	}
+}
+
+// NewURLResourceWithHeaders will create a new Resource using a resource as located in the url with headers
+func NewURLResourceWithHeaders(url string, Header http.Header) Resource {
+	return &URLResource{
+		URL:    url,
+		Header: Header,
 	}
 }
 
 // URLResource is a struct that will hold the byte array data and URL source
 type URLResource struct {
-	URL   string
-	Bytes []byte
+	URL    string
+	Header http.Header
+	Bytes  []byte
 }
 
 // String will state the resource url.
@@ -224,7 +235,15 @@ func (res *URLResource) Load() ([]byte, error) {
 	if res.Bytes != nil {
 		return res.Bytes, nil
 	}
-	resp, err := http.Get(res.URL)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", res.URL, nil)
+	if len(res.Header) > 0 {
+		req.Header = res.Header
+	}
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
