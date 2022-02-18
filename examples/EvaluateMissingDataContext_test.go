@@ -2,15 +2,16 @@ package examples
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"testing"
 )
 
 const (
-	input_rule = `
+	inputRule = `
 	rule TestRule "" {
 		when
 			R.Result == 'NoResult' &&
@@ -22,7 +23,6 @@ const (
 	`
 )
 
-
 func TestDataContextMissingFact(t *testing.T) {
 
 	oresult := &ObjectResult{
@@ -32,7 +32,7 @@ func TestDataContextMissingFact(t *testing.T) {
 	// build rules
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	err := rb.BuildRuleFromResource("Test", "0.0.1", pkg.NewBytesResource([]byte(input_rule)))
+	err := rb.BuildRuleFromResource("Test", "0.0.1", pkg.NewBytesResource([]byte(inputRule)))
 
 	// 	add JSON fact
 	json := []byte(`{"blabla":"bla","name":{"first":"john","last":"doe"}}`)
