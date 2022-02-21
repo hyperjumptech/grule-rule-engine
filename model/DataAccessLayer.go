@@ -17,8 +17,8 @@ package model
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
-
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -218,6 +218,18 @@ func StrIn(str string, arg []reflect.Value) (reflect.Value, error) {
 		}
 	}
 	return reflect.ValueOf(false), nil
+}
+
+// StrMatchRegexPattern reports whether the string s contains any match of the regular expression pattern.
+func StrMatchRegexPattern(str string, arg []reflect.Value) (reflect.Value, error) {
+	if arg == nil || len(arg) != 1 || arg[0].Kind() != reflect.String {
+		return reflect.ValueOf(nil), fmt.Errorf("function StrMatchRegexPattern requires 1 string argument")
+	}
+	m, err := regexp.MatchString(arg[0].String(), str)
+	if err != nil {
+		return reflect.ValueOf(nil), fmt.Errorf("function StrMatchRegexPattern requires valid regex pattern")
+	}
+	return reflect.ValueOf(m), nil
 }
 
 // ArrMapLen will return the size of underlying map, array or slice

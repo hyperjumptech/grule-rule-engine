@@ -349,6 +349,8 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			strfunc = StrTrim
 		case "Len":
 			strfunc = StrLen
+		case "MatchString":
+			strfunc = StrMatchRegexPattern	
 		}
 		if strfunc != nil {
 			val, err := strfunc(node.thisValue.String(), args)

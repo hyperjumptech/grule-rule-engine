@@ -182,3 +182,30 @@ func TestStrIn_Accepts_Empty_Arguments(t *testing.T) {
 	_, err := StrIn(b, []reflect.Value{})
 	assert.NoError(t, err)
 }
+
+
+func TestStrMatchRegexPattern_Valid_Regex_Pattern(t *testing.T) {
+	regex := "p([a-z]+)ch"
+	str := "peach"
+
+	val, err := StrMatchRegexPattern(str, []reflect.Value{reflect.ValueOf(regex)})
+	assert.NoError(t, err)
+	assert.True(t, val.Bool())
+}
+
+func TestStrMatchRegexPattern_InValid_Regex_Pattern(t *testing.T) {
+	regex := "p([a-z]ch"
+	str := "peach"
+
+	_, err := StrMatchRegexPattern(str, []reflect.Value{reflect.ValueOf(regex)})
+	assert.Error(t, err)
+}
+
+func TestStrMatchRegexPattern_Not_Match(t *testing.T) {
+	regex := "p([a-z]+)ch"
+	str := "pe1ch"
+
+	val, err := StrMatchRegexPattern(str, []reflect.Value{reflect.ValueOf(regex)})
+	assert.NoError(t, err)
+	assert.False(t, val.Bool())
+}
