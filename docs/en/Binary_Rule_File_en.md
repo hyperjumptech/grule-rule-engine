@@ -10,8 +10,8 @@
 ---
 
 When you loading huge amount (hundreds) of rules in GRL script into `KnowledgeLibrary`, e.g. when you start 
-the engine, you may notice that it may took some time to load, some time it could go up to a couple of minutes.
-This is due to the syntax parsing done by ANTLR4. Don't get me wrong, ANTLR is a great tools and it done the job very well.
+the engine, you may notice that it may take some time to load, some times it could go up for a couple of minutes.
+This is due to the syntax parsing done by ANTLR4. Don't get me wrong, ANTLR is a great tool and it does its job very well.
 But obviously, tens of thousands of lines in a script file is no small task, for any parser tools.
 
 So the idea is, to store all the rule in a binary file. So it load faster next time. Just like

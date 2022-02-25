@@ -80,7 +80,8 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 	defer func() {
 		if r := recover(); r != nil {
 			retKb = nil
-			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader. send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues")
+			retErr = fmt.Errorf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
+			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
 		}
 	}()
 
