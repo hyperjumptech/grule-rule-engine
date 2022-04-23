@@ -4,7 +4,7 @@
 [![GRL_Literals_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/GRL_Literals_de.md)
 [![GRL_Literals_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/GRL_Literals_en.md)
 [![GRL_Literals_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/GRL_Literals_id.md)
-[![GRL_Literals_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../id/GRL_Literals_pl.md)
+[![GRL_Literals_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/GRL_Literals_pl.md)
 
 [About](About_pl.md) | [Tutorial](Tutorial_pl.md) | [Rule Engine](RuleEngine_pl.md) | [GRL](GRL_pl.md) | [GRL JSON](GRL_JSON_pl.md) | [RETE Algorithm](RETE_pl.md) | [Functions](Function_pl.md) | [FAQ](FAQ_pl.md) | [Benchmark](Benchmarking_pl.md)
 

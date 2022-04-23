@@ -4,7 +4,7 @@
 [![MatchingRules_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/MatchingRules_de.md)
 [![MatchingRules_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/MatchingRules_en.md)
 [![MatchingRules_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/MatchingRules_id.md)
-[![MatchingRules_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../id/MatchingRules_pl.md)
+[![MatchingRules_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/MatchingRules_pl.md)
 
 `FetchMatchingRules` w `GruleEngine.go` pobiera wszystkie reguły ważne dla danego faktu i zwraca listę wartości `ast.RuleEntry` uporządkowanych według właściwości salience.
 

@@ -7,7 +7,7 @@ __"Gopher Trzyma Się Zasad"__
 [![About_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/About_de.md)
 [![About_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/About_en.md)
 [![About_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/About_id.md)
-[![About_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../id/About_pl.md)
+[![About_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/About_pl.md)
 
 [About](About_pl.md) | [Tutorial](Tutorial_pl.md) | [Rule Engine](RuleEngine_pl.md) | [GRL](GRL_pl.md) | [GRL JSON](GRL_JSON_pl.md) | [RETE Algorithm](RETE_pl.md) | [Functions](Function_pl.md) | [FAQ](FAQ_pl.md) | [Benchmark](Benchmarking_pl.md)
 

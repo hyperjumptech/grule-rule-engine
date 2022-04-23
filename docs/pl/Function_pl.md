@@ -4,7 +4,7 @@
 [![Function_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Function_de.md)
 [![Function_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Function_en.md)
 [![Function_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Function_id.md)
-[![Function_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../id/Function_pl.md)
+[![Function_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/Function_pl.md)
 
 [About](About_pl.md) | [Tutorial](Tutorial_pl.md) | [Rule Engine](RuleEngine_pl.md) | [GRL](GRL_pl.md) | [GRL JSON](GRL_JSON_pl.md) | [RETE Algorithm](RETE_pl.md) | [Functions](Function_pl.md) | [FAQ](FAQ_pl.md) | [Benchmark](Benchmarking_pl.md)
 

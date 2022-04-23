@@ -4,7 +4,7 @@
 [![Binary_Rule_File_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Binary_Rule_File_de.md)
 [![Binary_Rule_File_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Binary_Rule_File_en.md)
 [![Binary_Rule_File_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Binary_Rule_File_id.md)
-[![Binary_Rule_File_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../id/Binary_Rule_File_pl.md)
+[![Binary_Rule_File_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/Binary_Rule_File_pl.md)
 
 [About](About_pl.md) | [Tutorial](Tutorial_pl.md) | [Rule Engine](RuleEngine_pl.md) | [GRL](GRL_pl.md) | [GRL JSON](GRL_JSON_pl.md) | [RETE Algorithm](RETE_pl.md) | [Functions](Function_pl.md) | [FAQ](FAQ_pl.md) | [Benchmark](Benchmarking_pl.md)
 
