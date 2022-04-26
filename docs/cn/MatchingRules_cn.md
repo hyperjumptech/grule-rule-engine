@@ -4,6 +4,7 @@
 [![MatchingRules_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/MatchingRules_de.md)
 [![MatchingRules_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/MatchingRules_en.md)
 [![MatchingRules_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/MatchingRules_id.md)
+[![MatchingRules_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/MatchingRules_pl.md)
 
 `GruleEngine.go`中`FetchMatchingRules`函数的将会获取所有能够满足事实的所有有效规则，并返回按优先级排序的  `ast.RuleEntry` 列表。
 

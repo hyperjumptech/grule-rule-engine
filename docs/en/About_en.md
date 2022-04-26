@@ -7,6 +7,7 @@ __"Gopher Holds The Rules"__
 [![About_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/About_de.md)
 [![About_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/About_en.md)
 [![About_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/About_id.md)
+[![About_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/About_pl.md)
 
 [About](About_en.md) | [Tutorial](Tutorial_en.md) | [Rule Engine](RuleEngine_en.md) | [GRL](GRL_en.md) | [GRL JSON](GRL_JSON_en.md) | [RETE Algorithm](RETE_en.md) | [Functions](Function_en.md) | [FAQ](FAQ_en.md) | [Benchmark](Benchmarking_en.md)
 

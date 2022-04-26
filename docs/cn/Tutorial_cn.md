@@ -4,6 +4,7 @@
 [![Tutorial_de](https://github.com/yammadev/flag-icons/blob/master/png/DE.png?raw=true)](../de/Tutorial_de.md)
 [![Tutorial_en](https://github.com/yammadev/flag-icons/blob/master/png/GB.png?raw=true)](../en/Tutorial_en.md)
 [![Tutorial_id](https://github.com/yammadev/flag-icons/blob/master/png/ID.png?raw=true)](../id/Tutorial_id.md)
+[![Tutorial_pl](https://github.com/yammadev/flag-icons/blob/master/png/PL.png?raw=true)](../pl/Tutorial_pl.md)
 
 [About](About_cn.md) | [Tutorial](Tutorial_cn.md) | [Rule Engine](RuleEngine_cn.md) | [GRL](GRL_cn.md) | [GRL JSON](GRL_JSON_cn.md) | [RETE Algorithm](RETE_cn.md) | [Functions](Function_cn.md) | [FAQ](Tutorial_cn.md) | [Benchmark](Benchmarking_cn.md)
 
