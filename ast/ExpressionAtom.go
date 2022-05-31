@@ -234,7 +234,8 @@ func (e *ExpressionAtom) GetSnapshot() string {
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 		buff.WriteString("->MV:")
 		buff.WriteString(e.VariableName)
-	} else if e.ArrayMapSelector != nil && e.ExpressionAtom != nil {
+	}
+	if e.ArrayMapSelector != nil && e.ExpressionAtom != nil {
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 		buff.WriteString("-[]>")
 		buff.WriteString(e.ArrayMapSelector.GetSnapshot())
