@@ -144,7 +144,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			} else {
-				panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
+				panic(fmt.Sprintf("expression  %s is not on the clone table - %s", expr.GrlText, expr.GetSnapshot()))
 			}
 		}
 	}
