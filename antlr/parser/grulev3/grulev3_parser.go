@@ -1,186 +1,206 @@
-// Code generated from grulev3.g4 by ANTLR 4.9.2. DO NOT EDIT.
+// Code generated from C:/Users/Ferdinand/WSL/workspace/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev3.g4 by ANTLR 4.10.1. DO NOT EDIT.
 
 package grulev3 // grulev3
-
 import (
 	"fmt"
-	"reflect"
 	"strconv"
+	"sync"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // Suppress unused import errors
 var _ = fmt.Printf
-var _ = reflect.Copy
 var _ = strconv.Itoa
-
-var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 52, 265,
-	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
-	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
-	9, 13, 4, 14, 9, 14, 4, 15, 9, 15, 4, 16, 9, 16, 4, 17, 9, 17, 4, 18, 9,
-	18, 4, 19, 9, 19, 4, 20, 9, 20, 4, 21, 9, 21, 4, 22, 9, 22, 4, 23, 9, 23,
-	4, 24, 9, 24, 4, 25, 9, 25, 4, 26, 9, 26, 4, 27, 9, 27, 4, 28, 9, 28, 4,
-	29, 9, 29, 4, 30, 9, 30, 4, 31, 9, 31, 4, 32, 9, 32, 4, 33, 9, 33, 4, 34,
-	9, 34, 3, 2, 7, 2, 70, 10, 2, 12, 2, 14, 2, 73, 11, 2, 3, 2, 3, 2, 3, 3,
-	3, 3, 3, 3, 5, 3, 80, 10, 3, 3, 3, 5, 3, 83, 10, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 4, 3, 4, 3, 4, 3, 5, 3, 5, 3, 6, 3, 6, 3, 7, 3, 7, 3, 7, 3,
-	8, 3, 8, 3, 8, 3, 9, 3, 9, 3, 9, 6, 9, 106, 10, 9, 13, 9, 14, 9, 107, 3,
-	10, 3, 10, 5, 10, 112, 10, 10, 3, 11, 3, 11, 3, 11, 3, 11, 3, 12, 3, 12,
-	5, 12, 120, 10, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 5, 12, 127, 10,
-	12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12,
-	3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 7,
-	12, 149, 10, 12, 12, 12, 14, 12, 152, 11, 12, 3, 13, 3, 13, 3, 14, 3, 14,
-	3, 15, 3, 15, 3, 16, 3, 16, 3, 17, 3, 17, 3, 18, 3, 18, 3, 18, 3, 18, 3,
-	18, 3, 18, 5, 18, 170, 10, 18, 3, 18, 3, 18, 3, 18, 3, 18, 3, 18, 3, 18,
-	7, 18, 178, 10, 18, 12, 18, 14, 18, 181, 11, 18, 3, 19, 3, 19, 3, 19, 3,
-	19, 3, 19, 5, 19, 188, 10, 19, 3, 20, 3, 20, 3, 20, 3, 20, 3, 20, 3, 20,
-	3, 20, 7, 20, 197, 10, 20, 12, 20, 14, 20, 200, 11, 20, 3, 21, 3, 21, 3,
-	21, 3, 21, 3, 22, 3, 22, 3, 22, 3, 23, 3, 23, 3, 23, 5, 23, 212, 10, 23,
-	3, 23, 3, 23, 3, 24, 3, 24, 3, 24, 3, 25, 3, 25, 3, 25, 7, 25, 222, 10,
-	25, 12, 25, 14, 25, 225, 11, 25, 3, 26, 3, 26, 5, 26, 229, 10, 26, 3, 27,
-	5, 27, 232, 10, 27, 3, 27, 3, 27, 3, 28, 5, 28, 237, 10, 28, 3, 28, 3,
-	28, 3, 29, 3, 29, 3, 29, 5, 29, 244, 10, 29, 3, 30, 5, 30, 247, 10, 30,
-	3, 30, 3, 30, 3, 31, 5, 31, 252, 10, 31, 3, 31, 3, 31, 3, 32, 5, 32, 257,
-	10, 32, 3, 32, 3, 32, 3, 33, 3, 33, 3, 34, 3, 34, 3, 34, 2, 5, 22, 34,
-	38, 35, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34,
-	36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 2, 8, 3,
-	2, 41, 42, 3, 2, 28, 32, 3, 2, 6, 8, 4, 2, 4, 5, 38, 39, 4, 2, 27, 27,
-	33, 37, 3, 2, 22, 23, 2, 265, 2, 71, 3, 2, 2, 2, 4, 76, 3, 2, 2, 2, 6,
-	89, 3, 2, 2, 2, 8, 92, 3, 2, 2, 2, 10, 94, 3, 2, 2, 2, 12, 96, 3, 2, 2,
-	2, 14, 99, 3, 2, 2, 2, 16, 105, 3, 2, 2, 2, 18, 111, 3, 2, 2, 2, 20, 113,
-	3, 2, 2, 2, 22, 126, 3, 2, 2, 2, 24, 153, 3, 2, 2, 2, 26, 155, 3, 2, 2,
-	2, 28, 157, 3, 2, 2, 2, 30, 159, 3, 2, 2, 2, 32, 161, 3, 2, 2, 2, 34, 169,
-	3, 2, 2, 2, 36, 187, 3, 2, 2, 2, 38, 189, 3, 2, 2, 2, 40, 201, 3, 2, 2,
-	2, 42, 205, 3, 2, 2, 2, 44, 208, 3, 2, 2, 2, 46, 215, 3, 2, 2, 2, 48, 218,
-	3, 2, 2, 2, 50, 228, 3, 2, 2, 2, 52, 231, 3, 2, 2, 2, 54, 236, 3, 2, 2,
-	2, 56, 243, 3, 2, 2, 2, 58, 246, 3, 2, 2, 2, 60, 251, 3, 2, 2, 2, 62, 256,
-	3, 2, 2, 2, 64, 260, 3, 2, 2, 2, 66, 262, 3, 2, 2, 2, 68, 70, 5, 4, 3,
-	2, 69, 68, 3, 2, 2, 2, 70, 73, 3, 2, 2, 2, 71, 69, 3, 2, 2, 2, 71, 72,
-	3, 2, 2, 2, 72, 74, 3, 2, 2, 2, 73, 71, 3, 2, 2, 2, 74, 75, 7, 2, 2, 3,
-	75, 3, 3, 2, 2, 2, 76, 77, 7, 17, 2, 2, 77, 79, 5, 8, 5, 2, 78, 80, 5,
-	10, 6, 2, 79, 78, 3, 2, 2, 2, 79, 80, 3, 2, 2, 2, 80, 82, 3, 2, 2, 2, 81,
-	83, 5, 6, 4, 2, 82, 81, 3, 2, 2, 2, 82, 83, 3, 2, 2, 2, 83, 84, 3, 2, 2,
-	2, 84, 85, 7, 11, 2, 2, 85, 86, 5, 12, 7, 2, 86, 87, 5, 14, 8, 2, 87, 88,
-	7, 12, 2, 2, 88, 5, 3, 2, 2, 2, 89, 90, 7, 26, 2, 2, 90, 91, 5, 56, 29,
-	2, 91, 7, 3, 2, 2, 2, 92, 93, 7, 40, 2, 2, 93, 9, 3, 2, 2, 2, 94, 95, 9,
-	2, 2, 2, 95, 11, 3, 2, 2, 2, 96, 97, 7, 18, 2, 2, 97, 98, 5, 22, 12, 2,
-	98, 13, 3, 2, 2, 2, 99, 100, 7, 19, 2, 2, 100, 101, 5, 16, 9, 2, 101, 15,
-	3, 2, 2, 2, 102, 103, 5, 18, 10, 2, 103, 104, 7, 10, 2, 2, 104, 106, 3,
-	2, 2, 2, 105, 102, 3, 2, 2, 2, 106, 107, 3, 2, 2, 2, 107, 105, 3, 2, 2,
-	2, 107, 108, 3, 2, 2, 2, 108, 17, 3, 2, 2, 2, 109, 112, 5, 20, 11, 2, 110,
-	112, 5, 34, 18, 2, 111, 109, 3, 2, 2, 2, 111, 110, 3, 2, 2, 2, 112, 19,
-	3, 2, 2, 2, 113, 114, 5, 38, 20, 2, 114, 115, 9, 3, 2, 2, 115, 116, 5,
-	22, 12, 2, 116, 21, 3, 2, 2, 2, 117, 119, 8, 12, 1, 2, 118, 120, 7, 25,
-	2, 2, 119, 118, 3, 2, 2, 2, 119, 120, 3, 2, 2, 2, 120, 121, 3, 2, 2, 2,
-	121, 122, 7, 13, 2, 2, 122, 123, 5, 22, 12, 2, 123, 124, 7, 14, 2, 2, 124,
-	127, 3, 2, 2, 2, 125, 127, 5, 34, 18, 2, 126, 117, 3, 2, 2, 2, 126, 125,
-	3, 2, 2, 2, 127, 150, 3, 2, 2, 2, 128, 129, 12, 9, 2, 2, 129, 130, 5, 24,
-	13, 2, 130, 131, 5, 22, 12, 10, 131, 149, 3, 2, 2, 2, 132, 133, 12, 8,
-	2, 2, 133, 134, 5, 26, 14, 2, 134, 135, 5, 22, 12, 9, 135, 149, 3, 2, 2,
-	2, 136, 137, 12, 7, 2, 2, 137, 138, 5, 28, 15, 2, 138, 139, 5, 22, 12,
-	8, 139, 149, 3, 2, 2, 2, 140, 141, 12, 6, 2, 2, 141, 142, 5, 30, 16, 2,
-	142, 143, 5, 22, 12, 7, 143, 149, 3, 2, 2, 2, 144, 145, 12, 5, 2, 2, 145,
-	146, 5, 32, 17, 2, 146, 147, 5, 22, 12, 6, 147, 149, 3, 2, 2, 2, 148, 128,
-	3, 2, 2, 2, 148, 132, 3, 2, 2, 2, 148, 136, 3, 2, 2, 2, 148, 140, 3, 2,
-	2, 2, 148, 144, 3, 2, 2, 2, 149, 152, 3, 2, 2, 2, 150, 148, 3, 2, 2, 2,
-	150, 151, 3, 2, 2, 2, 151, 23, 3, 2, 2, 2, 152, 150, 3, 2, 2, 2, 153, 154,
-	9, 4, 2, 2, 154, 25, 3, 2, 2, 2, 155, 156, 9, 5, 2, 2, 156, 27, 3, 2, 2,
-	2, 157, 158, 9, 6, 2, 2, 158, 29, 3, 2, 2, 2, 159, 160, 7, 20, 2, 2, 160,
-	31, 3, 2, 2, 2, 161, 162, 7, 21, 2, 2, 162, 33, 3, 2, 2, 2, 163, 164, 8,
-	18, 1, 2, 164, 170, 5, 36, 19, 2, 165, 170, 5, 38, 20, 2, 166, 170, 5,
-	44, 23, 2, 167, 168, 7, 25, 2, 2, 168, 170, 5, 34, 18, 3, 169, 163, 3,
-	2, 2, 2, 169, 165, 3, 2, 2, 2, 169, 166, 3, 2, 2, 2, 169, 167, 3, 2, 2,
-	2, 170, 179, 3, 2, 2, 2, 171, 172, 12, 6, 2, 2, 172, 178, 5, 46, 24, 2,
-	173, 174, 12, 5, 2, 2, 174, 178, 5, 42, 22, 2, 175, 176, 12, 4, 2, 2, 176,
-	178, 5, 40, 21, 2, 177, 171, 3, 2, 2, 2, 177, 173, 3, 2, 2, 2, 177, 175,
-	3, 2, 2, 2, 178, 181, 3, 2, 2, 2, 179, 177, 3, 2, 2, 2, 179, 180, 3, 2,
-	2, 2, 180, 35, 3, 2, 2, 2, 181, 179, 3, 2, 2, 2, 182, 188, 5, 64, 33, 2,
-	183, 188, 5, 56, 29, 2, 184, 188, 5, 50, 26, 2, 185, 188, 5, 66, 34, 2,
-	186, 188, 7, 24, 2, 2, 187, 182, 3, 2, 2, 2, 187, 183, 3, 2, 2, 2, 187,
-	184, 3, 2, 2, 2, 187, 185, 3, 2, 2, 2, 187, 186, 3, 2, 2, 2, 188, 37, 3,
-	2, 2, 2, 189, 190, 8, 20, 1, 2, 190, 191, 7, 40, 2, 2, 191, 198, 3, 2,
-	2, 2, 192, 193, 12, 5, 2, 2, 193, 197, 5, 42, 22, 2, 194, 195, 12, 4, 2,
-	2, 195, 197, 5, 40, 21, 2, 196, 192, 3, 2, 2, 2, 196, 194, 3, 2, 2, 2,
-	197, 200, 3, 2, 2, 2, 198, 196, 3, 2, 2, 2, 198, 199, 3, 2, 2, 2, 199,
-	39, 3, 2, 2, 2, 200, 198, 3, 2, 2, 2, 201, 202, 7, 15, 2, 2, 202, 203,
-	5, 22, 12, 2, 203, 204, 7, 16, 2, 2, 204, 41, 3, 2, 2, 2, 205, 206, 7,
-	9, 2, 2, 206, 207, 7, 40, 2, 2, 207, 43, 3, 2, 2, 2, 208, 209, 7, 40, 2,
-	2, 209, 211, 7, 13, 2, 2, 210, 212, 5, 48, 25, 2, 211, 210, 3, 2, 2, 2,
-	211, 212, 3, 2, 2, 2, 212, 213, 3, 2, 2, 2, 213, 214, 7, 14, 2, 2, 214,
-	45, 3, 2, 2, 2, 215, 216, 7, 9, 2, 2, 216, 217, 5, 44, 23, 2, 217, 47,
-	3, 2, 2, 2, 218, 223, 5, 22, 12, 2, 219, 220, 7, 3, 2, 2, 220, 222, 5,
-	22, 12, 2, 221, 219, 3, 2, 2, 2, 222, 225, 3, 2, 2, 2, 223, 221, 3, 2,
-	2, 2, 223, 224, 3, 2, 2, 2, 224, 49, 3, 2, 2, 2, 225, 223, 3, 2, 2, 2,
-	226, 229, 5, 52, 27, 2, 227, 229, 5, 54, 28, 2, 228, 226, 3, 2, 2, 2, 228,
-	227, 3, 2, 2, 2, 229, 51, 3, 2, 2, 2, 230, 232, 7, 5, 2, 2, 231, 230, 3,
-	2, 2, 2, 231, 232, 3, 2, 2, 2, 232, 233, 3, 2, 2, 2, 233, 234, 7, 43, 2,
-	2, 234, 53, 3, 2, 2, 2, 235, 237, 7, 5, 2, 2, 236, 235, 3, 2, 2, 2, 236,
-	237, 3, 2, 2, 2, 237, 238, 3, 2, 2, 2, 238, 239, 7, 45, 2, 2, 239, 55,
-	3, 2, 2, 2, 240, 244, 5, 58, 30, 2, 241, 244, 5, 60, 31, 2, 242, 244, 5,
-	62, 32, 2, 243, 240, 3, 2, 2, 2, 243, 241, 3, 2, 2, 2, 243, 242, 3, 2,
-	2, 2, 244, 57, 3, 2, 2, 2, 245, 247, 7, 5, 2, 2, 246, 245, 3, 2, 2, 2,
-	246, 247, 3, 2, 2, 2, 247, 248, 3, 2, 2, 2, 248, 249, 7, 47, 2, 2, 249,
-	59, 3, 2, 2, 2, 250, 252, 7, 5, 2, 2, 251, 250, 3, 2, 2, 2, 251, 252, 3,
-	2, 2, 2, 252, 253, 3, 2, 2, 2, 253, 254, 7, 48, 2, 2, 254, 61, 3, 2, 2,
-	2, 255, 257, 7, 5, 2, 2, 256, 255, 3, 2, 2, 2, 256, 257, 3, 2, 2, 2, 257,
-	258, 3, 2, 2, 2, 258, 259, 7, 49, 2, 2, 259, 63, 3, 2, 2, 2, 260, 261,
-	9, 2, 2, 2, 261, 65, 3, 2, 2, 2, 262, 263, 9, 7, 2, 2, 263, 67, 3, 2, 2,
-	2, 26, 71, 79, 82, 107, 111, 119, 126, 148, 150, 169, 177, 179, 187, 196,
-	198, 211, 223, 228, 231, 236, 243, 246, 251, 256,
-}
-var literalNames = []string{
-	"", "','", "'+'", "'-'", "'/'", "'*'", "'%'", "'.'", "';'", "'{'", "'}'",
-	"'('", "')'", "'['", "']'", "", "", "", "'&&'", "'||'", "", "", "", "'!'",
-	"", "'=='", "'='", "'+='", "'-='", "'/='", "'*='", "'>'", "'<'", "'>='",
-	"'<='", "'!='", "'&'", "'|'",
-}
-var symbolicNames = []string{
-	"", "", "PLUS", "MINUS", "DIV", "MUL", "MOD", "DOT", "SEMICOLON", "LR_BRACE",
-	"RR_BRACE", "LR_BRACKET", "RR_BRACKET", "LS_BRACKET", "RS_BRACKET", "RULE",
-	"WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NIL_LITERAL", "NEGATION",
-	"SALIENCE", "EQUALS", "ASSIGN", "PLUS_ASIGN", "MINUS_ASIGN", "DIV_ASIGN",
-	"MUL_ASIGN", "GT", "LT", "GTE", "LTE", "NOTEQUALS", "BITAND", "BITOR",
-	"SIMPLENAME", "DQUOTA_STRING", "SQUOTA_STRING", "DECIMAL_FLOAT_LIT", "DECIMAL_EXPONENT",
-	"HEX_FLOAT_LIT", "HEX_EXPONENT", "DEC_LIT", "HEX_LIT", "OCT_LIT", "SPACE",
-	"COMMENT", "LINE_COMMENT",
-}
-
-var ruleNames = []string{
-	"grl", "ruleEntry", "salience", "ruleName", "ruleDescription", "whenScope",
-	"thenScope", "thenExpressionList", "thenExpression", "assignment", "expression",
-	"mulDivOperators", "addMinusOperators", "comparisonOperator", "andLogicOperator",
-	"orLogicOperator", "expressionAtom", "constant", "variable", "arrayMapSelector",
-	"memberVariable", "functionCall", "methodCall", "argumentList", "floatLiteral",
-	"decimalFloatLiteral", "hexadecimalFloatLiteral", "integerLiteral", "decimalLiteral",
-	"hexadecimalLiteral", "octalLiteral", "stringLiteral", "booleanLiteral",
-}
+var _ = sync.Once{}
 
 type grulev3Parser struct {
 	*antlr.BaseParser
 }
 
-// Newgrulev3Parser produces a new parser instance for the optional input antlr.TokenStream.
-//
-// The *grulev3Parser instance produced may be reused by calling the SetInputStream method.
-// The initial parser configuration is expensive to construct, and the object is not thread-safe;
-// however, if used within a Golang sync.Pool, the construction cost amortizes well and the
-// objects can be used in a thread-safe manner.
-func Newgrulev3Parser(input antlr.TokenStream) *grulev3Parser {
-	this := new(grulev3Parser)
-	deserializer := antlr.NewATNDeserializer(nil)
-	deserializedATN := deserializer.DeserializeFromUInt16(parserATN)
-	decisionToDFA := make([]*antlr.DFA, len(deserializedATN.DecisionToState))
-	for index, ds := range deserializedATN.DecisionToState {
-		decisionToDFA[index] = antlr.NewDFA(ds, index)
-	}
-	this.BaseParser = antlr.NewBaseParser(input)
+var grulev3ParserStaticData struct {
+	once                   sync.Once
+	serializedATN          []int32
+	literalNames           []string
+	symbolicNames          []string
+	ruleNames              []string
+	predictionContextCache *antlr.PredictionContextCache
+	atn                    *antlr.ATN
+	decisionToDFA          []*antlr.DFA
+}
 
-	this.Interpreter = antlr.NewParserATNSimulator(this, deserializedATN, decisionToDFA, antlr.NewPredictionContextCache())
-	this.RuleNames = ruleNames
-	this.LiteralNames = literalNames
-	this.SymbolicNames = symbolicNames
+func grulev3ParserInit() {
+	staticData := &grulev3ParserStaticData
+	staticData.literalNames = []string{
+		"", "','", "'+'", "'-'", "'/'", "'*'", "'%'", "'.'", "';'", "'{'", "'}'",
+		"'('", "')'", "'['", "']'", "", "", "", "'&&'", "'||'", "", "", "",
+		"'!'", "", "'=='", "'='", "'+='", "'-='", "'/='", "'*='", "'>'", "'<'",
+		"'>='", "'<='", "'!='", "'&'", "'|'",
+	}
+	staticData.symbolicNames = []string{
+		"", "", "PLUS", "MINUS", "DIV", "MUL", "MOD", "DOT", "SEMICOLON", "LR_BRACE",
+		"RR_BRACE", "LR_BRACKET", "RR_BRACKET", "LS_BRACKET", "RS_BRACKET",
+		"RULE", "WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NIL_LITERAL",
+		"NEGATION", "SALIENCE", "EQUALS", "ASSIGN", "PLUS_ASIGN", "MINUS_ASIGN",
+		"DIV_ASIGN", "MUL_ASIGN", "GT", "LT", "GTE", "LTE", "NOTEQUALS", "BITAND",
+		"BITOR", "SIMPLENAME", "DQUOTA_STRING", "SQUOTA_STRING", "DECIMAL_FLOAT_LIT",
+		"DECIMAL_EXPONENT", "HEX_FLOAT_LIT", "HEX_EXPONENT", "DEC_LIT", "HEX_LIT",
+		"OCT_LIT", "SPACE", "COMMENT", "LINE_COMMENT",
+	}
+	staticData.ruleNames = []string{
+		"grl", "ruleEntry", "salience", "ruleName", "ruleDescription", "whenScope",
+		"thenScope", "thenExpressionList", "thenExpression", "assignment", "expression",
+		"mulDivOperators", "addMinusOperators", "comparisonOperator", "andLogicOperator",
+		"orLogicOperator", "expressionAtom", "constant", "variable", "arrayMapSelector",
+		"memberVariable", "functionCall", "methodCall", "argumentList", "floatLiteral",
+		"decimalFloatLiteral", "hexadecimalFloatLiteral", "integerLiteral",
+		"decimalLiteral", "hexadecimalLiteral", "octalLiteral", "stringLiteral",
+		"booleanLiteral",
+	}
+	staticData.predictionContextCache = antlr.NewPredictionContextCache()
+	staticData.serializedATN = []int32{
+		4, 1, 50, 263, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
+		10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 2, 15, 7, 15,
+		2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 7, 19, 2, 20, 7, 20, 2,
+		21, 7, 21, 2, 22, 7, 22, 2, 23, 7, 23, 2, 24, 7, 24, 2, 25, 7, 25, 2, 26,
+		7, 26, 2, 27, 7, 27, 2, 28, 7, 28, 2, 29, 7, 29, 2, 30, 7, 30, 2, 31, 7,
+		31, 2, 32, 7, 32, 1, 0, 5, 0, 68, 8, 0, 10, 0, 12, 0, 71, 9, 0, 1, 0, 1,
+		0, 1, 1, 1, 1, 1, 1, 3, 1, 78, 8, 1, 1, 1, 3, 1, 81, 8, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 3, 1, 4, 1, 4, 1, 5, 1, 5,
+		1, 5, 1, 6, 1, 6, 1, 6, 1, 7, 1, 7, 1, 7, 4, 7, 104, 8, 7, 11, 7, 12, 7,
+		105, 1, 8, 1, 8, 3, 8, 110, 8, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 10, 1, 10,
+		3, 10, 118, 8, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 3, 10, 125, 8, 10,
+		1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1,
+		10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 1, 10, 5, 10,
+		147, 8, 10, 10, 10, 12, 10, 150, 9, 10, 1, 11, 1, 11, 1, 12, 1, 12, 1,
+		13, 1, 13, 1, 14, 1, 14, 1, 15, 1, 15, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16,
+		1, 16, 3, 16, 168, 8, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 5,
+		16, 176, 8, 16, 10, 16, 12, 16, 179, 9, 16, 1, 17, 1, 17, 1, 17, 1, 17,
+		1, 17, 3, 17, 186, 8, 17, 1, 18, 1, 18, 1, 18, 1, 18, 1, 18, 1, 18, 1,
+		18, 5, 18, 195, 8, 18, 10, 18, 12, 18, 198, 9, 18, 1, 19, 1, 19, 1, 19,
+		1, 19, 1, 20, 1, 20, 1, 20, 1, 21, 1, 21, 1, 21, 3, 21, 210, 8, 21, 1,
+		21, 1, 21, 1, 22, 1, 22, 1, 22, 1, 23, 1, 23, 1, 23, 5, 23, 220, 8, 23,
+		10, 23, 12, 23, 223, 9, 23, 1, 24, 1, 24, 3, 24, 227, 8, 24, 1, 25, 3,
+		25, 230, 8, 25, 1, 25, 1, 25, 1, 26, 3, 26, 235, 8, 26, 1, 26, 1, 26, 1,
+		27, 1, 27, 1, 27, 3, 27, 242, 8, 27, 1, 28, 3, 28, 245, 8, 28, 1, 28, 1,
+		28, 1, 29, 3, 29, 250, 8, 29, 1, 29, 1, 29, 1, 30, 3, 30, 255, 8, 30, 1,
+		30, 1, 30, 1, 31, 1, 31, 1, 32, 1, 32, 1, 32, 0, 3, 20, 32, 36, 33, 0,
+		2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
+		40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 0, 6, 1, 0, 39, 40,
+		1, 0, 26, 30, 1, 0, 4, 6, 2, 0, 2, 3, 36, 37, 2, 0, 25, 25, 31, 35, 1,
+		0, 20, 21, 263, 0, 69, 1, 0, 0, 0, 2, 74, 1, 0, 0, 0, 4, 87, 1, 0, 0, 0,
+		6, 90, 1, 0, 0, 0, 8, 92, 1, 0, 0, 0, 10, 94, 1, 0, 0, 0, 12, 97, 1, 0,
+		0, 0, 14, 103, 1, 0, 0, 0, 16, 109, 1, 0, 0, 0, 18, 111, 1, 0, 0, 0, 20,
+		124, 1, 0, 0, 0, 22, 151, 1, 0, 0, 0, 24, 153, 1, 0, 0, 0, 26, 155, 1,
+		0, 0, 0, 28, 157, 1, 0, 0, 0, 30, 159, 1, 0, 0, 0, 32, 167, 1, 0, 0, 0,
+		34, 185, 1, 0, 0, 0, 36, 187, 1, 0, 0, 0, 38, 199, 1, 0, 0, 0, 40, 203,
+		1, 0, 0, 0, 42, 206, 1, 0, 0, 0, 44, 213, 1, 0, 0, 0, 46, 216, 1, 0, 0,
+		0, 48, 226, 1, 0, 0, 0, 50, 229, 1, 0, 0, 0, 52, 234, 1, 0, 0, 0, 54, 241,
+		1, 0, 0, 0, 56, 244, 1, 0, 0, 0, 58, 249, 1, 0, 0, 0, 60, 254, 1, 0, 0,
+		0, 62, 258, 1, 0, 0, 0, 64, 260, 1, 0, 0, 0, 66, 68, 3, 2, 1, 0, 67, 66,
+		1, 0, 0, 0, 68, 71, 1, 0, 0, 0, 69, 67, 1, 0, 0, 0, 69, 70, 1, 0, 0, 0,
+		70, 72, 1, 0, 0, 0, 71, 69, 1, 0, 0, 0, 72, 73, 5, 0, 0, 1, 73, 1, 1, 0,
+		0, 0, 74, 75, 5, 15, 0, 0, 75, 77, 3, 6, 3, 0, 76, 78, 3, 8, 4, 0, 77,
+		76, 1, 0, 0, 0, 77, 78, 1, 0, 0, 0, 78, 80, 1, 0, 0, 0, 79, 81, 3, 4, 2,
+		0, 80, 79, 1, 0, 0, 0, 80, 81, 1, 0, 0, 0, 81, 82, 1, 0, 0, 0, 82, 83,
+		5, 9, 0, 0, 83, 84, 3, 10, 5, 0, 84, 85, 3, 12, 6, 0, 85, 86, 5, 10, 0,
+		0, 86, 3, 1, 0, 0, 0, 87, 88, 5, 24, 0, 0, 88, 89, 3, 54, 27, 0, 89, 5,
+		1, 0, 0, 0, 90, 91, 5, 38, 0, 0, 91, 7, 1, 0, 0, 0, 92, 93, 7, 0, 0, 0,
+		93, 9, 1, 0, 0, 0, 94, 95, 5, 16, 0, 0, 95, 96, 3, 20, 10, 0, 96, 11, 1,
+		0, 0, 0, 97, 98, 5, 17, 0, 0, 98, 99, 3, 14, 7, 0, 99, 13, 1, 0, 0, 0,
+		100, 101, 3, 16, 8, 0, 101, 102, 5, 8, 0, 0, 102, 104, 1, 0, 0, 0, 103,
+		100, 1, 0, 0, 0, 104, 105, 1, 0, 0, 0, 105, 103, 1, 0, 0, 0, 105, 106,
+		1, 0, 0, 0, 106, 15, 1, 0, 0, 0, 107, 110, 3, 18, 9, 0, 108, 110, 3, 32,
+		16, 0, 109, 107, 1, 0, 0, 0, 109, 108, 1, 0, 0, 0, 110, 17, 1, 0, 0, 0,
+		111, 112, 3, 36, 18, 0, 112, 113, 7, 1, 0, 0, 113, 114, 3, 20, 10, 0, 114,
+		19, 1, 0, 0, 0, 115, 117, 6, 10, -1, 0, 116, 118, 5, 23, 0, 0, 117, 116,
+		1, 0, 0, 0, 117, 118, 1, 0, 0, 0, 118, 119, 1, 0, 0, 0, 119, 120, 5, 11,
+		0, 0, 120, 121, 3, 20, 10, 0, 121, 122, 5, 12, 0, 0, 122, 125, 1, 0, 0,
+		0, 123, 125, 3, 32, 16, 0, 124, 115, 1, 0, 0, 0, 124, 123, 1, 0, 0, 0,
+		125, 148, 1, 0, 0, 0, 126, 127, 10, 7, 0, 0, 127, 128, 3, 22, 11, 0, 128,
+		129, 3, 20, 10, 8, 129, 147, 1, 0, 0, 0, 130, 131, 10, 6, 0, 0, 131, 132,
+		3, 24, 12, 0, 132, 133, 3, 20, 10, 7, 133, 147, 1, 0, 0, 0, 134, 135, 10,
+		5, 0, 0, 135, 136, 3, 26, 13, 0, 136, 137, 3, 20, 10, 6, 137, 147, 1, 0,
+		0, 0, 138, 139, 10, 4, 0, 0, 139, 140, 3, 28, 14, 0, 140, 141, 3, 20, 10,
+		5, 141, 147, 1, 0, 0, 0, 142, 143, 10, 3, 0, 0, 143, 144, 3, 30, 15, 0,
+		144, 145, 3, 20, 10, 4, 145, 147, 1, 0, 0, 0, 146, 126, 1, 0, 0, 0, 146,
+		130, 1, 0, 0, 0, 146, 134, 1, 0, 0, 0, 146, 138, 1, 0, 0, 0, 146, 142,
+		1, 0, 0, 0, 147, 150, 1, 0, 0, 0, 148, 146, 1, 0, 0, 0, 148, 149, 1, 0,
+		0, 0, 149, 21, 1, 0, 0, 0, 150, 148, 1, 0, 0, 0, 151, 152, 7, 2, 0, 0,
+		152, 23, 1, 0, 0, 0, 153, 154, 7, 3, 0, 0, 154, 25, 1, 0, 0, 0, 155, 156,
+		7, 4, 0, 0, 156, 27, 1, 0, 0, 0, 157, 158, 5, 18, 0, 0, 158, 29, 1, 0,
+		0, 0, 159, 160, 5, 19, 0, 0, 160, 31, 1, 0, 0, 0, 161, 162, 6, 16, -1,
+		0, 162, 168, 3, 34, 17, 0, 163, 168, 3, 36, 18, 0, 164, 168, 3, 42, 21,
+		0, 165, 166, 5, 23, 0, 0, 166, 168, 3, 32, 16, 1, 167, 161, 1, 0, 0, 0,
+		167, 163, 1, 0, 0, 0, 167, 164, 1, 0, 0, 0, 167, 165, 1, 0, 0, 0, 168,
+		177, 1, 0, 0, 0, 169, 170, 10, 4, 0, 0, 170, 176, 3, 44, 22, 0, 171, 172,
+		10, 3, 0, 0, 172, 176, 3, 40, 20, 0, 173, 174, 10, 2, 0, 0, 174, 176, 3,
+		38, 19, 0, 175, 169, 1, 0, 0, 0, 175, 171, 1, 0, 0, 0, 175, 173, 1, 0,
+		0, 0, 176, 179, 1, 0, 0, 0, 177, 175, 1, 0, 0, 0, 177, 178, 1, 0, 0, 0,
+		178, 33, 1, 0, 0, 0, 179, 177, 1, 0, 0, 0, 180, 186, 3, 62, 31, 0, 181,
+		186, 3, 54, 27, 0, 182, 186, 3, 48, 24, 0, 183, 186, 3, 64, 32, 0, 184,
+		186, 5, 22, 0, 0, 185, 180, 1, 0, 0, 0, 185, 181, 1, 0, 0, 0, 185, 182,
+		1, 0, 0, 0, 185, 183, 1, 0, 0, 0, 185, 184, 1, 0, 0, 0, 186, 35, 1, 0,
+		0, 0, 187, 188, 6, 18, -1, 0, 188, 189, 5, 38, 0, 0, 189, 196, 1, 0, 0,
+		0, 190, 191, 10, 3, 0, 0, 191, 195, 3, 40, 20, 0, 192, 193, 10, 2, 0, 0,
+		193, 195, 3, 38, 19, 0, 194, 190, 1, 0, 0, 0, 194, 192, 1, 0, 0, 0, 195,
+		198, 1, 0, 0, 0, 196, 194, 1, 0, 0, 0, 196, 197, 1, 0, 0, 0, 197, 37, 1,
+		0, 0, 0, 198, 196, 1, 0, 0, 0, 199, 200, 5, 13, 0, 0, 200, 201, 3, 20,
+		10, 0, 201, 202, 5, 14, 0, 0, 202, 39, 1, 0, 0, 0, 203, 204, 5, 7, 0, 0,
+		204, 205, 5, 38, 0, 0, 205, 41, 1, 0, 0, 0, 206, 207, 5, 38, 0, 0, 207,
+		209, 5, 11, 0, 0, 208, 210, 3, 46, 23, 0, 209, 208, 1, 0, 0, 0, 209, 210,
+		1, 0, 0, 0, 210, 211, 1, 0, 0, 0, 211, 212, 5, 12, 0, 0, 212, 43, 1, 0,
+		0, 0, 213, 214, 5, 7, 0, 0, 214, 215, 3, 42, 21, 0, 215, 45, 1, 0, 0, 0,
+		216, 221, 3, 20, 10, 0, 217, 218, 5, 1, 0, 0, 218, 220, 3, 20, 10, 0, 219,
+		217, 1, 0, 0, 0, 220, 223, 1, 0, 0, 0, 221, 219, 1, 0, 0, 0, 221, 222,
+		1, 0, 0, 0, 222, 47, 1, 0, 0, 0, 223, 221, 1, 0, 0, 0, 224, 227, 3, 50,
+		25, 0, 225, 227, 3, 52, 26, 0, 226, 224, 1, 0, 0, 0, 226, 225, 1, 0, 0,
+		0, 227, 49, 1, 0, 0, 0, 228, 230, 5, 3, 0, 0, 229, 228, 1, 0, 0, 0, 229,
+		230, 1, 0, 0, 0, 230, 231, 1, 0, 0, 0, 231, 232, 5, 41, 0, 0, 232, 51,
+		1, 0, 0, 0, 233, 235, 5, 3, 0, 0, 234, 233, 1, 0, 0, 0, 234, 235, 1, 0,
+		0, 0, 235, 236, 1, 0, 0, 0, 236, 237, 5, 43, 0, 0, 237, 53, 1, 0, 0, 0,
+		238, 242, 3, 56, 28, 0, 239, 242, 3, 58, 29, 0, 240, 242, 3, 60, 30, 0,
+		241, 238, 1, 0, 0, 0, 241, 239, 1, 0, 0, 0, 241, 240, 1, 0, 0, 0, 242,
+		55, 1, 0, 0, 0, 243, 245, 5, 3, 0, 0, 244, 243, 1, 0, 0, 0, 244, 245, 1,
+		0, 0, 0, 245, 246, 1, 0, 0, 0, 246, 247, 5, 45, 0, 0, 247, 57, 1, 0, 0,
+		0, 248, 250, 5, 3, 0, 0, 249, 248, 1, 0, 0, 0, 249, 250, 1, 0, 0, 0, 250,
+		251, 1, 0, 0, 0, 251, 252, 5, 46, 0, 0, 252, 59, 1, 0, 0, 0, 253, 255,
+		5, 3, 0, 0, 254, 253, 1, 0, 0, 0, 254, 255, 1, 0, 0, 0, 255, 256, 1, 0,
+		0, 0, 256, 257, 5, 47, 0, 0, 257, 61, 1, 0, 0, 0, 258, 259, 7, 0, 0, 0,
+		259, 63, 1, 0, 0, 0, 260, 261, 7, 5, 0, 0, 261, 65, 1, 0, 0, 0, 24, 69,
+		77, 80, 105, 109, 117, 124, 146, 148, 167, 175, 177, 185, 194, 196, 209,
+		221, 226, 229, 234, 241, 244, 249, 254,
+	}
+	deserializer := antlr.NewATNDeserializer(nil)
+	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
+	atn := staticData.atn
+	staticData.decisionToDFA = make([]*antlr.DFA, len(atn.DecisionToState))
+	decisionToDFA := staticData.decisionToDFA
+	for index, state := range atn.DecisionToState {
+		decisionToDFA[index] = antlr.NewDFA(state, index)
+	}
+}
+
+// grulev3ParserInit initializes any static state used to implement grulev3Parser. By default the
+// static state used to implement the parser is lazily initialized during the first call to
+// Newgrulev3Parser(). You can call this function if you wish to initialize the static state ahead
+// of time.
+func Grulev3ParserInit() {
+	staticData := &grulev3ParserStaticData
+	staticData.once.Do(grulev3ParserInit)
+}
+
+// Newgrulev3Parser produces a new parser instance for the optional input antlr.TokenStream.
+func Newgrulev3Parser(input antlr.TokenStream) *grulev3Parser {
+	Grulev3ParserInit()
+	this := new(grulev3Parser)
+	this.BaseParser = antlr.NewBaseParser(input)
+	staticData := &grulev3ParserStaticData
+	this.Interpreter = antlr.NewParserATNSimulator(this, staticData.atn, staticData.decisionToDFA, staticData.predictionContextCache)
+	this.RuleNames = staticData.ruleNames
+	this.LiteralNames = staticData.literalNames
+	this.SymbolicNames = staticData.symbolicNames
 	this.GrammarFileName = "grulev3.g4"
 
 	return this
@@ -321,12 +341,20 @@ func (s *GrlContext) EOF() antlr.TerminalNode {
 }
 
 func (s *GrlContext) AllRuleEntry() []IRuleEntryContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IRuleEntryContext)(nil)).Elem())
-	var tst = make([]IRuleEntryContext, len(ts))
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IRuleEntryContext); ok {
+			len++
+		}
+	}
 
-	for i, t := range ts {
-		if t != nil {
+	tst := make([]IRuleEntryContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IRuleEntryContext); ok {
 			tst[i] = t.(IRuleEntryContext)
+			i++
 		}
 	}
 
@@ -334,7 +362,17 @@ func (s *GrlContext) AllRuleEntry() []IRuleEntryContext {
 }
 
 func (s *GrlContext) RuleEntry(i int) IRuleEntryContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IRuleEntryContext)(nil)).Elem(), i)
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IRuleEntryContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -363,7 +401,20 @@ func (s *GrlContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *GrlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitGrl(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Grl() (localctx IGrlContext) {
+	this := p
+	_ = this
+
 	localctx = NewGrlContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 0, grulev3ParserRULE_grl)
 	var _la int
@@ -450,7 +501,13 @@ func (s *RuleEntryContext) RULE() antlr.TerminalNode {
 }
 
 func (s *RuleEntryContext) RuleName() IRuleNameContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IRuleNameContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IRuleNameContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -464,7 +521,13 @@ func (s *RuleEntryContext) LR_BRACE() antlr.TerminalNode {
 }
 
 func (s *RuleEntryContext) WhenScope() IWhenScopeContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IWhenScopeContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IWhenScopeContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -474,7 +537,13 @@ func (s *RuleEntryContext) WhenScope() IWhenScopeContext {
 }
 
 func (s *RuleEntryContext) ThenScope() IThenScopeContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IThenScopeContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IThenScopeContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -488,7 +557,13 @@ func (s *RuleEntryContext) RR_BRACE() antlr.TerminalNode {
 }
 
 func (s *RuleEntryContext) RuleDescription() IRuleDescriptionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IRuleDescriptionContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IRuleDescriptionContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -498,7 +573,13 @@ func (s *RuleEntryContext) RuleDescription() IRuleDescriptionContext {
 }
 
 func (s *RuleEntryContext) Salience() ISalienceContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*ISalienceContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ISalienceContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -527,7 +608,20 @@ func (s *RuleEntryContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RuleEntryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitRuleEntry(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
+	this := p
+	_ = this
+
 	localctx = NewRuleEntryContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 2, grulev3ParserRULE_ruleEntry)
 	var _la int
@@ -642,7 +736,13 @@ func (s *SalienceContext) SALIENCE() antlr.TerminalNode {
 }
 
 func (s *SalienceContext) IntegerLiteral() IIntegerLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IIntegerLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IIntegerLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -671,7 +771,20 @@ func (s *SalienceContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *SalienceContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitSalience(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Salience() (localctx ISalienceContext) {
+	this := p
+	_ = this
+
 	localctx = NewSalienceContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 4, grulev3ParserRULE_salience)
 
@@ -766,7 +879,20 @@ func (s *RuleNameContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RuleNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitRuleName(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) RuleName() (localctx IRuleNameContext) {
+	this := p
+	_ = this
+
 	localctx = NewRuleNameContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 6, grulev3ParserRULE_ruleName)
 
@@ -861,7 +987,20 @@ func (s *RuleDescriptionContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *RuleDescriptionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitRuleDescription(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) RuleDescription() (localctx IRuleDescriptionContext) {
+	this := p
+	_ = this
+
 	localctx = NewRuleDescriptionContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 8, grulev3ParserRULE_ruleDescription)
 	var _la int
@@ -941,7 +1080,13 @@ func (s *WhenScopeContext) WHEN() antlr.TerminalNode {
 }
 
 func (s *WhenScopeContext) Expression() IExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -970,7 +1115,20 @@ func (s *WhenScopeContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *WhenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitWhenScope(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) WhenScope() (localctx IWhenScopeContext) {
+	this := p
+	_ = this
+
 	localctx = NewWhenScopeContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 10, grulev3ParserRULE_whenScope)
 
@@ -1046,7 +1204,13 @@ func (s *ThenScopeContext) THEN() antlr.TerminalNode {
 }
 
 func (s *ThenScopeContext) ThenExpressionList() IThenExpressionListContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IThenExpressionListContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IThenExpressionListContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1075,7 +1239,20 @@ func (s *ThenScopeContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ThenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitThenScope(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ThenScope() (localctx IThenScopeContext) {
+	this := p
+	_ = this
+
 	localctx = NewThenScopeContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 12, grulev3ParserRULE_thenScope)
 
@@ -1147,12 +1324,20 @@ func NewThenExpressionListContext(parser antlr.Parser, parent antlr.ParserRuleCo
 func (s *ThenExpressionListContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ThenExpressionListContext) AllThenExpression() []IThenExpressionContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IThenExpressionContext)(nil)).Elem())
-	var tst = make([]IThenExpressionContext, len(ts))
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IThenExpressionContext); ok {
+			len++
+		}
+	}
 
-	for i, t := range ts {
-		if t != nil {
+	tst := make([]IThenExpressionContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IThenExpressionContext); ok {
 			tst[i] = t.(IThenExpressionContext)
+			i++
 		}
 	}
 
@@ -1160,7 +1345,17 @@ func (s *ThenExpressionListContext) AllThenExpression() []IThenExpressionContext
 }
 
 func (s *ThenExpressionListContext) ThenExpression(i int) IThenExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IThenExpressionContext)(nil)).Elem(), i)
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IThenExpressionContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1197,7 +1392,20 @@ func (s *ThenExpressionListContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ThenExpressionListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitThenExpressionList(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ThenExpressionList() (localctx IThenExpressionListContext) {
+	this := p
+	_ = this
+
 	localctx = NewThenExpressionListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 14, grulev3ParserRULE_thenExpressionList)
 	var _la int
@@ -1223,7 +1431,7 @@ func (p *grulev3Parser) ThenExpressionList() (localctx IThenExpressionListContex
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserMINUS)|(int64(1)<<grulev3ParserTRUE)|(int64(1)<<grulev3ParserFALSE)|(int64(1)<<grulev3ParserNIL_LITERAL)|(int64(1)<<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-38)))&((int64(1)<<(grulev3ParserSIMPLENAME-38))|(int64(1)<<(grulev3ParserDQUOTA_STRING-38))|(int64(1)<<(grulev3ParserSQUOTA_STRING-38))|(int64(1)<<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserDEC_LIT-38))|(int64(1)<<(grulev3ParserHEX_LIT-38))|(int64(1)<<(grulev3ParserOCT_LIT-38)))) != 0) {
+	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((int64(1) <<uint(_la))&((int64(1) <<grulev3ParserMINUS)|(int64(1) <<grulev3ParserTRUE)|(int64(1) <<grulev3ParserFALSE)|(int64(1) <<grulev3ParserNIL_LITERAL)|(int64(1) <<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1) <<uint((_la-38)))&((int64(1) <<(grulev3ParserSIMPLENAME-38))|(int64(1) <<(grulev3ParserDQUOTA_STRING-38))|(int64(1) <<(grulev3ParserSQUOTA_STRING-38))|(int64(1) <<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1) <<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1) <<(grulev3ParserDEC_LIT-38))|(int64(1) <<(grulev3ParserHEX_LIT-38))|(int64(1) <<(grulev3ParserOCT_LIT-38)))) != 0) {
 		{
 			p.SetState(100)
 			p.ThenExpression()
@@ -1280,7 +1488,13 @@ func NewThenExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContex
 func (s *ThenExpressionContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ThenExpressionContext) Assignment() IAssignmentContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAssignmentContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IAssignmentContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1290,7 +1504,13 @@ func (s *ThenExpressionContext) Assignment() IAssignmentContext {
 }
 
 func (s *ThenExpressionContext) ExpressionAtom() IExpressionAtomContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionAtomContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionAtomContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1319,7 +1539,20 @@ func (s *ThenExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ThenExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitThenExpression(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ThenExpression() (localctx IThenExpressionContext) {
+	this := p
+	_ = this
+
 	localctx = NewThenExpressionContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 16, grulev3ParserRULE_thenExpression)
 
@@ -1400,7 +1633,13 @@ func NewAssignmentContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *AssignmentContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *AssignmentContext) Variable() IVariableContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IVariableContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1410,7 +1649,13 @@ func (s *AssignmentContext) Variable() IVariableContext {
 }
 
 func (s *AssignmentContext) Expression() IExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1459,7 +1704,20 @@ func (s *AssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *AssignmentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitAssignment(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Assignment() (localctx IAssignmentContext) {
+	this := p
+	_ = this
+
 	localctx = NewAssignmentContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 18, grulev3ParserRULE_assignment)
 	var _la int
@@ -1489,7 +1747,7 @@ func (p *grulev3Parser) Assignment() (localctx IAssignmentContext) {
 		p.SetState(112)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserASSIGN)|(int64(1)<<grulev3ParserPLUS_ASIGN)|(int64(1)<<grulev3ParserMINUS_ASIGN)|(int64(1)<<grulev3ParserDIV_ASIGN)|(int64(1)<<grulev3ParserMUL_ASIGN))) != 0) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1) <<uint(_la))&((int64(1) <<grulev3ParserASSIGN)|(int64(1) <<grulev3ParserPLUS_ASIGN)|(int64(1) <<grulev3ParserMINUS_ASIGN)|(int64(1) <<grulev3ParserDIV_ASIGN)|(int64(1) <<grulev3ParserMUL_ASIGN))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -1547,12 +1805,20 @@ func (s *ExpressionContext) LR_BRACKET() antlr.TerminalNode {
 }
 
 func (s *ExpressionContext) AllExpression() []IExpressionContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IExpressionContext)(nil)).Elem())
-	var tst = make([]IExpressionContext, len(ts))
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IExpressionContext); ok {
+			len++
+		}
+	}
 
-	for i, t := range ts {
-		if t != nil {
+	tst := make([]IExpressionContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IExpressionContext); ok {
 			tst[i] = t.(IExpressionContext)
+			i++
 		}
 	}
 
@@ -1560,7 +1826,17 @@ func (s *ExpressionContext) AllExpression() []IExpressionContext {
 }
 
 func (s *ExpressionContext) Expression(i int) IExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), i)
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1578,7 +1854,13 @@ func (s *ExpressionContext) NEGATION() antlr.TerminalNode {
 }
 
 func (s *ExpressionContext) ExpressionAtom() IExpressionAtomContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionAtomContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionAtomContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1588,7 +1870,13 @@ func (s *ExpressionContext) ExpressionAtom() IExpressionAtomContext {
 }
 
 func (s *ExpressionContext) MulDivOperators() IMulDivOperatorsContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IMulDivOperatorsContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IMulDivOperatorsContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1598,7 +1886,13 @@ func (s *ExpressionContext) MulDivOperators() IMulDivOperatorsContext {
 }
 
 func (s *ExpressionContext) AddMinusOperators() IAddMinusOperatorsContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAddMinusOperatorsContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IAddMinusOperatorsContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1608,7 +1902,13 @@ func (s *ExpressionContext) AddMinusOperators() IAddMinusOperatorsContext {
 }
 
 func (s *ExpressionContext) ComparisonOperator() IComparisonOperatorContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IComparisonOperatorContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IComparisonOperatorContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1618,7 +1918,13 @@ func (s *ExpressionContext) ComparisonOperator() IComparisonOperatorContext {
 }
 
 func (s *ExpressionContext) AndLogicOperator() IAndLogicOperatorContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAndLogicOperatorContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IAndLogicOperatorContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1628,7 +1934,13 @@ func (s *ExpressionContext) AndLogicOperator() IAndLogicOperatorContext {
 }
 
 func (s *ExpressionContext) OrLogicOperator() IOrLogicOperatorContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IOrLogicOperatorContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IOrLogicOperatorContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1657,11 +1969,24 @@ func (s *ExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitExpression(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Expression() (localctx IExpressionContext) {
 	return p.expression(0)
 }
 
 func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
+	this := p
+	_ = this
+
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
 	_parentState := p.GetState()
 	localctx = NewExpressionContext(p, p.GetParserRuleContext(), _parentState)
@@ -1905,7 +2230,20 @@ func (s *MulDivOperatorsContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *MulDivOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitMulDivOperators(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
+	this := p
+	_ = this
+
 	localctx = NewMulDivOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 22, grulev3ParserRULE_mulDivOperators)
 	var _la int
@@ -1931,7 +2269,7 @@ func (p *grulev3Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
 		p.SetState(151)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserDIV)|(int64(1)<<grulev3ParserMUL)|(int64(1)<<grulev3ParserMOD))) != 0) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1) <<uint(_la))&((int64(1) <<grulev3ParserDIV)|(int64(1) <<grulev3ParserMUL)|(int64(1) <<grulev3ParserMOD))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2016,7 +2354,20 @@ func (s *AddMinusOperatorsContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *AddMinusOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitAddMinusOperators(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext) {
+	this := p
+	_ = this
+
 	localctx = NewAddMinusOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 24, grulev3ParserRULE_addMinusOperators)
 	var _la int
@@ -2135,7 +2486,20 @@ func (s *ComparisonOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ComparisonOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitComparisonOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ComparisonOperator() (localctx IComparisonOperatorContext) {
+	this := p
+	_ = this
+
 	localctx = NewComparisonOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 26, grulev3ParserRULE_comparisonOperator)
 	var _la int
@@ -2161,7 +2525,7 @@ func (p *grulev3Parser) ComparisonOperator() (localctx IComparisonOperatorContex
 		p.SetState(155)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la-25)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-25)))&((int64(1)<<(grulev3ParserEQUALS-25))|(int64(1)<<(grulev3ParserGT-25))|(int64(1)<<(grulev3ParserLT-25))|(int64(1)<<(grulev3ParserGTE-25))|(int64(1)<<(grulev3ParserLTE-25))|(int64(1)<<(grulev3ParserNOTEQUALS-25)))) != 0) {
+		if !(((_la-25)&-(0x1f+1)) == 0 && ((int64(1) <<uint((_la-25)))&((int64(1) <<(grulev3ParserEQUALS-25))|(int64(1) <<(grulev3ParserGT-25))|(int64(1) <<(grulev3ParserLT-25))|(int64(1) <<(grulev3ParserGTE-25))|(int64(1) <<(grulev3ParserLTE-25))|(int64(1) <<(grulev3ParserNOTEQUALS-25)))) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2234,7 +2598,20 @@ func (s *AndLogicOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *AndLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitAndLogicOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) AndLogicOperator() (localctx IAndLogicOperatorContext) {
+	this := p
+	_ = this
+
 	localctx = NewAndLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 28, grulev3ParserRULE_andLogicOperator)
 
@@ -2325,7 +2702,20 @@ func (s *OrLogicOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *OrLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitOrLogicOperator(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) OrLogicOperator() (localctx IOrLogicOperatorContext) {
+	this := p
+	_ = this
+
 	localctx = NewOrLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 30, grulev3ParserRULE_orLogicOperator)
 
@@ -2393,7 +2783,13 @@ func NewExpressionAtomContext(parser antlr.Parser, parent antlr.ParserRuleContex
 func (s *ExpressionAtomContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ExpressionAtomContext) Constant() IConstantContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IConstantContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IConstantContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2403,7 +2799,13 @@ func (s *ExpressionAtomContext) Constant() IConstantContext {
 }
 
 func (s *ExpressionAtomContext) Variable() IVariableContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IVariableContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2413,7 +2815,13 @@ func (s *ExpressionAtomContext) Variable() IVariableContext {
 }
 
 func (s *ExpressionAtomContext) FunctionCall() IFunctionCallContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFunctionCallContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IFunctionCallContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2427,7 +2835,13 @@ func (s *ExpressionAtomContext) NEGATION() antlr.TerminalNode {
 }
 
 func (s *ExpressionAtomContext) ExpressionAtom() IExpressionAtomContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionAtomContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionAtomContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2437,7 +2851,13 @@ func (s *ExpressionAtomContext) ExpressionAtom() IExpressionAtomContext {
 }
 
 func (s *ExpressionAtomContext) MethodCall() IMethodCallContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IMethodCallContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IMethodCallContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2447,7 +2867,13 @@ func (s *ExpressionAtomContext) MethodCall() IMethodCallContext {
 }
 
 func (s *ExpressionAtomContext) MemberVariable() IMemberVariableContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IMemberVariableContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IMemberVariableContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2457,7 +2883,13 @@ func (s *ExpressionAtomContext) MemberVariable() IMemberVariableContext {
 }
 
 func (s *ExpressionAtomContext) ArrayMapSelector() IArrayMapSelectorContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArrayMapSelectorContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IArrayMapSelectorContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2486,11 +2918,24 @@ func (s *ExpressionAtomContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ExpressionAtomContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitExpressionAtom(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	return p.expressionAtom(0)
 }
 
 func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext) {
+	this := p
+	_ = this
+
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
 	_parentState := p.GetState()
 	localctx = NewExpressionAtomContext(p, p.GetParserRuleContext(), _parentState)
@@ -2653,7 +3098,13 @@ func NewConstantContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 func (s *ConstantContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ConstantContext) StringLiteral() IStringLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IStringLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IStringLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2663,7 +3114,13 @@ func (s *ConstantContext) StringLiteral() IStringLiteralContext {
 }
 
 func (s *ConstantContext) IntegerLiteral() IIntegerLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IIntegerLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IIntegerLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2673,7 +3130,13 @@ func (s *ConstantContext) IntegerLiteral() IIntegerLiteralContext {
 }
 
 func (s *ConstantContext) FloatLiteral() IFloatLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFloatLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IFloatLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2683,7 +3146,13 @@ func (s *ConstantContext) FloatLiteral() IFloatLiteralContext {
 }
 
 func (s *ConstantContext) BooleanLiteral() IBooleanLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IBooleanLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IBooleanLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2716,7 +3185,20 @@ func (s *ConstantContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ConstantContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitConstant(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Constant() (localctx IConstantContext) {
+	this := p
+	_ = this
+
 	localctx = NewConstantContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 34, grulev3ParserRULE_constant)
 
@@ -2822,7 +3304,13 @@ func (s *VariableContext) SIMPLENAME() antlr.TerminalNode {
 }
 
 func (s *VariableContext) Variable() IVariableContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IVariableContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2832,7 +3320,13 @@ func (s *VariableContext) Variable() IVariableContext {
 }
 
 func (s *VariableContext) MemberVariable() IMemberVariableContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IMemberVariableContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IMemberVariableContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2842,7 +3336,13 @@ func (s *VariableContext) MemberVariable() IMemberVariableContext {
 }
 
 func (s *VariableContext) ArrayMapSelector() IArrayMapSelectorContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArrayMapSelectorContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IArrayMapSelectorContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -2871,11 +3371,24 @@ func (s *VariableContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *VariableContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitVariable(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) Variable() (localctx IVariableContext) {
 	return p.variable(0)
 }
 
 func (p *grulev3Parser) variable(_p int) (localctx IVariableContext) {
+	this := p
+	_ = this
+
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
 	_parentState := p.GetState()
 	localctx = NewVariableContext(p, p.GetParserRuleContext(), _parentState)
@@ -3002,7 +3515,13 @@ func (s *ArrayMapSelectorContext) LS_BRACKET() antlr.TerminalNode {
 }
 
 func (s *ArrayMapSelectorContext) Expression() IExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3035,7 +3554,20 @@ func (s *ArrayMapSelectorContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ArrayMapSelectorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitArrayMapSelector(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ArrayMapSelector() (localctx IArrayMapSelectorContext) {
+	this := p
+	_ = this
+
 	localctx = NewArrayMapSelectorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 38, grulev3ParserRULE_arrayMapSelector)
 
@@ -3138,7 +3670,20 @@ func (s *MemberVariableContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *MemberVariableContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitMemberVariable(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) MemberVariable() (localctx IMemberVariableContext) {
+	this := p
+	_ = this
+
 	localctx = NewMemberVariableContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 40, grulev3ParserRULE_memberVariable)
 
@@ -3222,7 +3767,13 @@ func (s *FunctionCallContext) RR_BRACKET() antlr.TerminalNode {
 }
 
 func (s *FunctionCallContext) ArgumentList() IArgumentListContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArgumentListContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IArgumentListContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3251,7 +3802,20 @@ func (s *FunctionCallContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *FunctionCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitFunctionCall(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) FunctionCall() (localctx IFunctionCallContext) {
+	this := p
+	_ = this
+
 	localctx = NewFunctionCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 42, grulev3ParserRULE_functionCall)
 	var _la int
@@ -3285,7 +3849,7 @@ func (p *grulev3Parser) FunctionCall() (localctx IFunctionCallContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if (((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserMINUS)|(int64(1)<<grulev3ParserLR_BRACKET)|(int64(1)<<grulev3ParserTRUE)|(int64(1)<<grulev3ParserFALSE)|(int64(1)<<grulev3ParserNIL_LITERAL)|(int64(1)<<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-38)))&((int64(1)<<(grulev3ParserSIMPLENAME-38))|(int64(1)<<(grulev3ParserDQUOTA_STRING-38))|(int64(1)<<(grulev3ParserSQUOTA_STRING-38))|(int64(1)<<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserDEC_LIT-38))|(int64(1)<<(grulev3ParserHEX_LIT-38))|(int64(1)<<(grulev3ParserOCT_LIT-38)))) != 0) {
+	if (((_la)&-(0x1f+1)) == 0 && ((int64(1) <<uint(_la))&((int64(1) <<grulev3ParserMINUS)|(int64(1) <<grulev3ParserLR_BRACKET)|(int64(1) <<grulev3ParserTRUE)|(int64(1) <<grulev3ParserFALSE)|(int64(1) <<grulev3ParserNIL_LITERAL)|(int64(1) <<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1) <<uint((_la-38)))&((int64(1) <<(grulev3ParserSIMPLENAME-38))|(int64(1) <<(grulev3ParserDQUOTA_STRING-38))|(int64(1) <<(grulev3ParserSQUOTA_STRING-38))|(int64(1) <<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1) <<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1) <<(grulev3ParserDEC_LIT-38))|(int64(1) <<(grulev3ParserHEX_LIT-38))|(int64(1) <<(grulev3ParserOCT_LIT-38)))) != 0) {
 		{
 			p.SetState(208)
 			p.ArgumentList()
@@ -3343,7 +3907,13 @@ func (s *MethodCallContext) DOT() antlr.TerminalNode {
 }
 
 func (s *MethodCallContext) FunctionCall() IFunctionCallContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFunctionCallContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IFunctionCallContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3372,7 +3942,20 @@ func (s *MethodCallContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *MethodCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitMethodCall(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) MethodCall() (localctx IMethodCallContext) {
+	this := p
+	_ = this
+
 	localctx = NewMethodCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 44, grulev3ParserRULE_methodCall)
 
@@ -3444,12 +4027,20 @@ func NewArgumentListContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 func (s *ArgumentListContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ArgumentListContext) AllExpression() []IExpressionContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IExpressionContext)(nil)).Elem())
-	var tst = make([]IExpressionContext, len(ts))
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IExpressionContext); ok {
+			len++
+		}
+	}
 
-	for i, t := range ts {
-		if t != nil {
+	tst := make([]IExpressionContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IExpressionContext); ok {
 			tst[i] = t.(IExpressionContext)
+			i++
 		}
 	}
 
@@ -3457,7 +4048,17 @@ func (s *ArgumentListContext) AllExpression() []IExpressionContext {
 }
 
 func (s *ArgumentListContext) Expression(i int) IExpressionContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), i)
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3486,7 +4087,20 @@ func (s *ArgumentListContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitArgumentList(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) ArgumentList() (localctx IArgumentListContext) {
+	this := p
+	_ = this
+
 	localctx = NewArgumentListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 46, grulev3ParserRULE_argumentList)
 	var _la int
@@ -3573,7 +4187,13 @@ func NewFloatLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 func (s *FloatLiteralContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *FloatLiteralContext) DecimalFloatLiteral() IDecimalFloatLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IDecimalFloatLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IDecimalFloatLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3583,7 +4203,13 @@ func (s *FloatLiteralContext) DecimalFloatLiteral() IDecimalFloatLiteralContext 
 }
 
 func (s *FloatLiteralContext) HexadecimalFloatLiteral() IHexadecimalFloatLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IHexadecimalFloatLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IHexadecimalFloatLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3612,7 +4238,20 @@ func (s *FloatLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *FloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitFloatLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) FloatLiteral() (localctx IFloatLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 48, grulev3ParserRULE_floatLiteral)
 
@@ -3720,7 +4359,20 @@ func (s *DecimalFloatLiteralContext) ExitRule(listener antlr.ParseTreeListener) 
 	}
 }
 
+func (s *DecimalFloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitDecimalFloatLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) DecimalFloatLiteral() (localctx IDecimalFloatLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewDecimalFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 50, grulev3ParserRULE_decimalFloatLiteral)
 	var _la int
@@ -3827,7 +4479,20 @@ func (s *HexadecimalFloatLiteralContext) ExitRule(listener antlr.ParseTreeListen
 	}
 }
 
+func (s *HexadecimalFloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitHexadecimalFloatLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) HexadecimalFloatLiteral() (localctx IHexadecimalFloatLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewHexadecimalFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 52, grulev3ParserRULE_hexadecimalFloatLiteral)
 	var _la int
@@ -3907,7 +4572,13 @@ func NewIntegerLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContex
 func (s *IntegerLiteralContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *IntegerLiteralContext) DecimalLiteral() IDecimalLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IDecimalLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IDecimalLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3917,7 +4588,13 @@ func (s *IntegerLiteralContext) DecimalLiteral() IDecimalLiteralContext {
 }
 
 func (s *IntegerLiteralContext) HexadecimalLiteral() IHexadecimalLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IHexadecimalLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IHexadecimalLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3927,7 +4604,13 @@ func (s *IntegerLiteralContext) HexadecimalLiteral() IHexadecimalLiteralContext 
 }
 
 func (s *IntegerLiteralContext) OctalLiteral() IOctalLiteralContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IOctalLiteralContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IOctalLiteralContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -3956,7 +4639,20 @@ func (s *IntegerLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *IntegerLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitIntegerLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) IntegerLiteral() (localctx IIntegerLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewIntegerLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 54, grulev3ParserRULE_integerLiteral)
 
@@ -4071,7 +4767,20 @@ func (s *DecimalLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *DecimalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitDecimalLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) DecimalLiteral() (localctx IDecimalLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewDecimalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 56, grulev3ParserRULE_decimalLiteral)
 	var _la int
@@ -4178,7 +4887,20 @@ func (s *HexadecimalLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *HexadecimalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitHexadecimalLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) HexadecimalLiteral() (localctx IHexadecimalLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewHexadecimalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 58, grulev3ParserRULE_hexadecimalLiteral)
 	var _la int
@@ -4285,7 +5007,20 @@ func (s *OctalLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *OctalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitOctalLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) OctalLiteral() (localctx IOctalLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewOctalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 60, grulev3ParserRULE_octalLiteral)
 	var _la int
@@ -4392,7 +5127,20 @@ func (s *StringLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *StringLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitStringLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) StringLiteral() (localctx IStringLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewStringLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 62, grulev3ParserRULE_stringLiteral)
 	var _la int
@@ -4495,7 +5243,20 @@ func (s *BooleanLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+func (s *BooleanLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case grulev3Visitor:
+		return t.VisitBooleanLiteral(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
 func (p *grulev3Parser) BooleanLiteral() (localctx IBooleanLiteralContext) {
+	this := p
+	_ = this
+
 	localctx = NewBooleanLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 64, grulev3ParserRULE_booleanLiteral)
 	var _la int
@@ -4561,6 +5322,9 @@ func (p *grulev3Parser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex
 }
 
 func (p *grulev3Parser) Expression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
+	this := p
+	_ = this
+
 	switch predIndex {
 	case 0:
 		return p.Precpred(p.GetParserRuleContext(), 7)
@@ -4583,6 +5347,9 @@ func (p *grulev3Parser) Expression_Sempred(localctx antlr.RuleContext, predIndex
 }
 
 func (p *grulev3Parser) ExpressionAtom_Sempred(localctx antlr.RuleContext, predIndex int) bool {
+	this := p
+	_ = this
+
 	switch predIndex {
 	case 5:
 		return p.Precpred(p.GetParserRuleContext(), 4)
@@ -4599,6 +5366,9 @@ func (p *grulev3Parser) ExpressionAtom_Sempred(localctx antlr.RuleContext, predI
 }
 
 func (p *grulev3Parser) Variable_Sempred(localctx antlr.RuleContext, predIndex int) bool {
+	this := p
+	_ = this
+
 	switch predIndex {
 	case 8:
 		return p.Precpred(p.GetParserRuleContext(), 3)
