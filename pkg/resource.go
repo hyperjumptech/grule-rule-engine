@@ -27,8 +27,8 @@ import (
 	"gopkg.in/src-d/go-billy.v4"
 )
 
-// ResouceBundle is a helper struct to help load multiple resource at once.
-type ResouceBundle interface {
+// ResourceBundle is a helper struct to help load multiple resource at once.
+type ResourceBundle interface {
 	Load() ([]Resource, error)
 	MustLoad() []Resource
 }
