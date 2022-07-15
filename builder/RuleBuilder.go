@@ -64,7 +64,7 @@ func (builder *RuleBuilder) MustBuildRuleFromResource(name, version string, reso
 }
 
 // BuildRulesFromBundle will load rules from a bundle into knowledge base.
-func (builder *RuleBuilder) BuildRulesFromBundle(name, version string, bundle pkg.ResouceBundle) error {
+func (builder *RuleBuilder) BuildRulesFromBundle(name, version string, bundle pkg.ResourceBundle) error {
 	bundles, err := bundle.Load()
 	if err != nil {
 		return err
@@ -73,7 +73,7 @@ func (builder *RuleBuilder) BuildRulesFromBundle(name, version string, bundle pk
 }
 
 // MustBuildRulesFromBundle is the same with BuildRulesFromBundle but it will panic if any error arises during loading resource and inserting it to knowledgebase
-func (builder *RuleBuilder) MustBuildRulesFromBundle(name, version string, bundle pkg.ResouceBundle) {
+func (builder *RuleBuilder) MustBuildRulesFromBundle(name, version string, bundle pkg.ResourceBundle) {
 	builder.MustBuildRuleFromResources(name, version, bundle.MustLoad())
 }
 

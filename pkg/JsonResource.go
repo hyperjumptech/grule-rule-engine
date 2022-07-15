@@ -39,7 +39,7 @@ type JSONResource struct {
 
 // JSONResourceBundle will parse a set of rules in JSON format from an underlying bundle resource provider.
 type JSONResourceBundle struct {
-	subRes ResouceBundle
+	subRes ResourceBundle
 }
 
 // NewJSONResourceFromResource innstantiates a new JSON resource parser from an underlying Resource.
@@ -81,7 +81,7 @@ func (jr *JSONResource) String() string {
 }
 
 // NewJSONResourceBundleFromBundle innstantiates a new bundled JSON resource parser from an underlying ResourceBundle.
-func NewJSONResourceBundleFromBundle(bundle ResouceBundle) ResouceBundle {
+func NewJSONResourceBundleFromBundle(bundle ResourceBundle) ResourceBundle {
 	if _, ok := bundle.(*JSONResourceBundle); ok {
 		panic("cannot create JSON resource bundle from JSON resource bundle")
 	}
