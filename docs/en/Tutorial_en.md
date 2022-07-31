@@ -289,6 +289,21 @@ for _, res := range resources {
 }
 ```
 
+#### GIT with authentication
+For private GIT repositories, you may supply username and password or an auth token.
+In the case of an auth token, supply the token as the `password` argument, and set the `username` argument to be any string with length >= 1
+
+```go
+bundle := pkg.NewGITResourceBundleWithAuth("https://github.com/hyperjumptech/grule-rule-engine.git", "username", "password|token", "/**/*.grl")
+resources := bundle.MustLoad()
+for _, res := range resources {
+    err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
 ### From JSON
 
 You can now build rules from JSON! [Read how it works](GRL_JSON_en.md) 
