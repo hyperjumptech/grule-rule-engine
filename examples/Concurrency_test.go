@@ -21,7 +21,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
@@ -57,7 +56,7 @@ var (
 	// syncD is a mutex object to protect threadFinishMap from concurrent map read/write
 	syncD = sync.Mutex{}
 
-	concurrencyTestlog = logger.Log.WithFields(logrus.Fields{
+	concurrencyTestlog = logger.Log.WithFields(logger.Fields{
 		"lib":  "grule",
 		"file": "examples/Concurrency_test.go",
 	})

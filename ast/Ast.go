@@ -17,6 +17,7 @@ package ast
 import (
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 const (
@@ -49,11 +50,39 @@ const (
 )
 
 var (
-	// AstLog is a logrus instance twith default fields for grule
-	AstLog = logger.Log.WithFields(logrus.Fields{
+	// astLogFields default fields for grule
+	astLogFields = logger.Fields{
 		"package": "ast",
-	})
+	}
+
+	// AstLog is a logger instance twith default fields for grule
+	AstLog = logger.Log.WithFields(astLogFields)
 )
+
+// SetLogger changes default logger on external
+func SetLogger(log interface{}) {
+	var entry logger.LogEntry
+
+	switch log.(type) {
+	case *zap.Logger:
+		log, ok := log.(*zap.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZap(log)
+	case *logrus.Logger:
+		log, ok := log.(*logrus.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewLogrus(log)
+	default:
+		return
+	}
+
+	AstLog = entry.WithFields(astLogFields)
+	GrlLogger = entry.WithFields(grlLoggerFields)
+}
 
 // Node defines interface to implement by all AST node models
 type Node interface {

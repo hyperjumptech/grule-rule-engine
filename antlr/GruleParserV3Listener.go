@@ -16,6 +16,8 @@ package antlr
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"strconv"
 	"strings"
 
@@ -24,16 +26,42 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 )
 
 var (
-	// LoggerV3 is a logrus instance twith default fields for grule
-	LoggerV3 = logger.Log.WithFields(logrus.Fields{
+	// loggerV3Fields default fields for grule
+	loggerV3Fields = logger.Fields{
 		"lib":    "grule",
 		"struct": "GruleParserV3Listener",
-	})
+	}
+
+	// LoggerV3 is a logger instance twith default fields for grule
+	LoggerV3 = logger.Log.WithFields(loggerV3Fields)
 )
+
+// SetLogger changes default logger on external
+func SetLogger(log interface{}) {
+	var entry logger.LogEntry
+
+	switch log.(type) {
+	case *zap.Logger:
+		log, ok := log.(*zap.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZap(log)
+	case *logrus.Logger:
+		log, ok := log.(*logrus.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewLogrus(log)
+	default:
+		return
+	}
+
+	LoggerV3 = entry.WithFields(loggerV3Fields)
+}
 
 // NewGruleV3ParserListener create new instance of GruleV3ParserListener
 func NewGruleV3ParserListener(KnowledgeBase *ast.KnowledgeBase, errorCallBack *pkg.GruleErrorReporter) *GruleV3ParserListener {

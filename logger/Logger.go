@@ -14,19 +14,102 @@
 
 package logger
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+)
+
+// Level type
+type Level uint32
+
+const (
+	// PanicLevel level, highest level of severity. Logs and then calls panic with the
+	// message passed to Debug, Info, ...
+	PanicLevel Level = iota
+	// FatalLevel level. Logs and then calls `logger.Exit(1)`. It will exit even if the
+	// logging level is set to Panic.
+	FatalLevel
+	// ErrorLevel level. Logs. Used for errors that should definitely be noted.
+	// Commonly used for hooks to send errors to an error tracking service.
+	ErrorLevel
+	// WarnLevel level. Non-critical entries that deserve eyes.
+	WarnLevel
+	// InfoLevel level. General operational entries about what's going on inside the
+	// application.
+	InfoLevel
+	// DebugLevel level. Usually only enabled when debugging. Very verbose logging.
+	DebugLevel
+	// TraceLevel level. Designates finer-grained informational events than the Debug.
+	TraceLevel
+)
+
+type LogEntry struct {
+	Logger
+	Level Level
+}
+
+type Fields map[string]interface{}
+
+type Logger interface {
+	Debug(args ...interface{})
+	Info(args ...interface{})
+	Warn(args ...interface{})
+	Error(args ...interface{})
+	Panic(args ...interface{})
+	Fatal(args ...interface{})
+
+	Debugf(template string, args ...interface{})
+	Infof(template string, args ...interface{})
+	Warnf(template string, args ...interface{})
+	Errorf(template string, args ...interface{})
+	Panicf(template string, args ...interface{})
+	Fatalf(template string, args ...interface{})
+
+	Trace(args ...interface{})
+	Tracef(format string, args ...interface{})
+
+	Print(args ...interface{})
+	Println(args ...interface{})
+	Printf(format string, args ...interface{})
+
+	WithFields(keyValues Fields) LogEntry
+}
 
 var (
-	Log = logrus.WithFields(logrus.Fields{
-		"lib": "grule-rule-engine",
-	})
+	Log LogEntry
 )
 
 func init() {
-	Log.Level = logrus.InfoLevel
+	logger := logrus.New()
+	logger.Level = logrus.InfoLevel
+
+	Log = LogEntry{
+		Logger: NewLogrus(logger).WithFields(Fields{"lib": "grule-rule-engine"}),
+		Level:  DebugLevel,
+	}
 }
 
-// SetLogLevel will set the logrus log level
-func SetLogLevel(lvl logrus.Level) {
+// SetLogger changes default logger on external
+func SetLogger(externalLog interface{}) {
+	switch externalLog.(type) {
+	case *zap.Logger:
+		log, ok := externalLog.(*zap.Logger)
+		if !ok {
+			return
+		}
+		Log = NewZap(log)
+	case *logrus.Logger:
+		log, ok := externalLog.(*logrus.Logger)
+		if !ok {
+			return
+		}
+		Log = NewLogrus(log)
+	default:
+		return
+	}
+}
+
+// SetLogLevel will set the logger log level
+func SetLogLevel(lvl Level) {
 	Log.Level = lvl
 }
