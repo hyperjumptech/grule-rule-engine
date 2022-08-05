@@ -250,6 +250,8 @@ func (vn *JSONValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 			strfunc = StrTrim
 		case "Len":
 			strfunc = StrLen
+		case "MatchString":
+			strfunc = StrMatchRegexPattern
 		}
 		if strfunc != nil {
 			val, err := strfunc(vn.data.String(), args)
