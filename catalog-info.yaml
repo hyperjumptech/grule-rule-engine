@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: grule-rule-engine
+  annotations:
+    github.com/project-slug: OlaIsaac/grule-rule-engine
+  tags:
+    - go
+spec:
+  type: service
+  owner: b2c-cx-tools
+  lifecycle: experimental
