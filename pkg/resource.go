@@ -266,6 +266,13 @@ func NewGITResourceBundle(url string, pathPattern ...string) *GITResourceBundle 
 	}
 }
 
+func NewGITResourceBundleWithAuth(url string, user string, password string, pathPattern ...string) *GITResourceBundle {
+	resource := NewGITResourceBundle(url, pathPattern...)
+	resource.User = user
+	resource.Password = password
+	return resource
+}
+
 // GITResourceBundle is a helper struct to load multiple files from GIT all at once by specifying
 // the necessary information needed to communicate to the GIT server.
 // It will look into sub-directories, in the git, for the file with pattern matching.
