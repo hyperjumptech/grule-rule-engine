@@ -19,6 +19,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -28,11 +29,38 @@ import (
 )
 
 var (
-	// BuilderLog is a logrus instance twith default fields for grule
-	BuilderLog = logger.Log.WithFields(logrus.Fields{
+	// builderLogFields default fields for grule
+	builderLogFields = logger.Fields{
 		"package": "builder",
-	})
+	}
+
+	// BuilderLog is a logger instance twith default fields for grule
+	BuilderLog = logger.Log.WithFields(builderLogFields)
 )
+
+// SetLogger changes default logger on external
+func SetLogger(log interface{}) {
+	var entry logger.LogEntry
+
+	switch log.(type) {
+	case *zap.Logger:
+		log, ok := log.(*zap.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZap(log)
+	case *logrus.Logger:
+		log, ok := log.(*logrus.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewLogrus(log)
+	default:
+		return
+	}
+
+	BuilderLog = entry.WithFields(builderLogFields)
+}
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
 func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {

@@ -22,15 +22,17 @@ import (
 	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 )
 
 var (
-	// GrlLogger is the logger that be used from within the rule engine GRL
-	GrlLogger = logger.Log.WithFields(logrus.Fields{
+	// grlLoggerFields default fields for grule
+	grlLoggerFields = logger.Fields{
 		"package": "AST",
 		"source":  "GRL",
-	})
+	}
+
+	// GrlLogger is the logger that be used from within the rule engine GRL
+	GrlLogger = logger.Log.WithFields(grlLoggerFields)
 )
 
 // BuiltInFunctions struct hosts the built-in functions ready to invoke from the rule engine execution.

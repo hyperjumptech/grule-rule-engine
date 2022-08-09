@@ -17,8 +17,8 @@ package ast
 import (
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )
@@ -83,7 +83,7 @@ func (e *WorkingMemory) MakeCatalog(cat *Catalog) {
 
 // DebugContent will shows the working memory mapping content
 func (e *WorkingMemory) DebugContent() {
-	if AstLog.Level <= logrus.DebugLevel {
+	if AstLog.Level <= logger.DebugLevel {
 		for varName, vari := range e.variableSnapshotMap {
 			AstLog.Debugf("Variable %s : %s : %s", varName, vari.GrlText, vari.AstID)
 
@@ -218,7 +218,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 
 // IndexVariables will index all expression and expression atoms that contains a speciffic variable name
 func (e *WorkingMemory) IndexVariables() {
-	if AstLog.Level <= logrus.DebugLevel {
+	if AstLog.Level <= logger.DebugLevel {
 		AstLog.Debugf("Indexing %d expressions, %d expression atoms and %d variables.", len(e.expressionSnapshotMap), len(e.expressionAtomSnapshotMap), len(e.variableSnapshotMap))
 	}
 	start := time.Now()
@@ -318,7 +318,7 @@ func (e *WorkingMemory) Reset(name string) bool {
 // Returns true if any expression was reset, false if otherwise
 func (e *WorkingMemory) ResetVariable(variable *Variable) bool {
 	AstLog.Tracef("------- resetting variable %s : %s", variable.GrlText, variable.AstID)
-	if AstLog.Level == logrus.TraceLevel {
+	if AstLog.Level == logger.TraceLevel {
 		AstLog.Tracef("%s : Resetting %s", e.ID, variable.GetSnapshot())
 	}
 	reseted := false

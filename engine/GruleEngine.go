@@ -17,20 +17,48 @@ package engine
 import (
 	"context"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"sort"
 	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
-	"github.com/sirupsen/logrus"
 )
 
 var (
-	// Logger is a logrus instance with default fields for grule
-	log = logger.Log.WithFields(logrus.Fields{
+	// logFields default fields for grule
+	logFields = logger.Fields{
 		"package": "engine",
-	})
+	}
+
+	// Logger is a logger instance with default fields for grule
+	log = logger.Log.WithFields(logFields)
 )
+
+// SetLogger changes default logger on external
+func SetLogger(externalLog interface{}) {
+	var entry logger.LogEntry
+
+	switch externalLog.(type) {
+	case *zap.Logger:
+		log, ok := externalLog.(*zap.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZap(log)
+	case *logrus.Logger:
+		log, ok := externalLog.(*logrus.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewLogrus(log)
+	default:
+		return
+	}
+
+	log = entry.WithFields(logFields)
+}
 
 // NewGruleEngine will create new instance of GruleEngine struct.
 // It will set the max cycle to 5000
