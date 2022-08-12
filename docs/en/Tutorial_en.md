@@ -60,7 +60,7 @@ func (mf *MyFact) GetWhatToSay(sentence string) string {
 
 **NOTE:** Member functions are subject to the following requirements:
 
-* The member function must be **visible**; it's name must start with a capital
+* The member function must be **visible**; its name must start with a capital
   letter.
 * The member function must return `0` or `1` values. More than one return value
   is not supported.
