@@ -89,7 +89,7 @@ if err != nil {
 
 ### 从json创建Fact
 
-在 Grule 1.8.0版本之后，描述fact的json数据可以被加载到`DataContext`中。详情参考 [JSON as a Fact](../en/JSON_Fact_cn.md).
+在 Grule 1.8.0版本之后，描述fact的json数据可以被加载到`DataContext`中。详情参考 [JSON as a Fact](../cn/JSON_Fact_cn.md).
 
 ## 创建一个知识库，添加规则进知识库
 
