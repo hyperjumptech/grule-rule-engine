@@ -127,7 +127,7 @@ rule CheckEducation "Check candidate's education fact" {
 
 ### IsZero(i interface{}) bool
 
-`IsZero`将会检查参数的变量是否是  `Zero` . Zero 意味这个这个变量是新定义的，还没有赋予初始值。经常被用来检查`string`, `int64`, `uint64`, `bool`,`time.Time`, 等等.
+`IsZero`将会检查参数的变量是否是  `Zero` . Zero 意味着这个变量是新定义的，还没有赋予初始值。经常被用来检查`string`, `int64`, `uint64`, `bool`,`time.Time`, 等等.
 
 #### 参数
 

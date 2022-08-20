@@ -12,7 +12,7 @@
 
 ## 准备
 
-Grule 使用的Go 1.13版本。
+Grule 使用的Go 1.16版本。
 
 以如下的方式在你的项目中引入Grule.
 
@@ -89,11 +89,11 @@ if err != nil {
 
 ### 从json创建Fact
 
-在 Grule 1.8.0版本之后，描述fact的json数据可以被加载到`DataContext`中。详情参考 [JSON as a Fact](../en/JSON_Fact_cn.md).
+在 Grule 1.8.0版本之后，描述fact的json数据可以被加载到`DataContext`中。详情参考 [JSON as a Fact](../cn/JSON_Fact_cn.md).
 
 ## 创建一个知识库，添加规则进知识库
 
-`KnowledgeLibrary`是`KnowledgeBase`的集合，而`KnowledgeBase`是各种来源的规则的集合。
+`KnowledgeLibrary`是`KnowledgeBase`的集合，而`KnowledgeBase`是各种来源规则的集合。
 
 我们使用`RuleBuilder`去创建`KnowledgeBase`实例，然后添加到`KnowledgeLibrary`中。
 
@@ -136,7 +136,7 @@ if err != nil {
 }
 ```
 
- `KnowledgeLibrary` 现在包含了一个名字为`TutorialRules`的而且版本是`0.0.1`的``KnowledgeBase`。为了执行规则，我们需要从`KnowledgeLibrary`中获取一个实例，将在下面的章节阐述。
+ `KnowledgeLibrary` 现在包含了一个名字为`TutorialRules`的而且版本是`0.0.1`的`KnowledgeBase`。为了执行规则，我们需要从`KnowledgeLibrary`中获取一个实例，将在下面的章节阐述。
 
 ## 执行 Grule 规则引擎
 
@@ -188,7 +188,7 @@ fmt.Println(myFact.WhatToSay)
 GRLs can be stored in external files and there are many ways to obtain and load
 the contents of those files.
 
-GRLs 可以存储在外部文件里，有很多方式去获得然后加载这些文件内容。
+GRLs 规则列表可以存储在外部文件中，有很多方式去获取、加载这些文件内容。
 
 ### 从文件获取
 
@@ -233,7 +233,7 @@ if err != nil {
 }
 ```
 
-#### 帶標題
+#### 携带Headers
 
 ```go
 headers := make(http.Header)
@@ -264,4 +264,4 @@ for _, res := range resources {
 
 ## 编译 GRL 到 GRB
 
-如果你想要更快的规则加载速度（比如你有很多特别大的规则集合，然后加载GRL很慢），你可以将这些规则集合存储为GRB（Grules Rule Binary）文件。详情参考[如何存储和加载GRB](Binary_Rule_File_cn.md) 
+如果你想要更快的规则加载速度（比如你有很多特别大的规则集合，然后加载GRL很慢），你可以将这些规则集合存储为GRB（Grules Rule Binary）文件。详情参考[如何存储和加载GRB](Binary_Rule_File_cn.md)
