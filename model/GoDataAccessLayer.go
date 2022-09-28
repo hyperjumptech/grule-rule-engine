@@ -16,8 +16,9 @@ package model
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // NewGoValueNode creates new instance of ValueNode backed by golang reflection
@@ -96,9 +97,14 @@ func (node *GoValueNode) GetArrayType() (reflect.Type, error) {
 }
 
 // GetArrayValueAt to get the value of an array element if the current underlying value is an array
-func (node *GoValueNode) GetArrayValueAt(index int) (reflect.Value, error) {
+func (node *GoValueNode) GetArrayValueAt(index int) (val reflect.Value, err error) {
 	if node.IsArray() {
-		return node.thisValue.Index(index), nil
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("recovered : %v", r)
+			}
+		}()
+		return node.thisValue.Index(index), err
 	}
 	return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" is not referring to an array or slice", node.IdentifiedAs())
 }
@@ -350,7 +356,7 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		case "Len":
 			strfunc = StrLen
 		case "MatchString":
-			strfunc = StrMatchRegexPattern	
+			strfunc = StrMatchRegexPattern
 		}
 		if strfunc != nil {
 			val, err := strfunc(node.thisValue.String(), args)
