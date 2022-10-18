@@ -1,0 +1,20 @@
+name: 'PR Size Label'
+
+on:
+  pull_request
+
+jobs:
+  pr-labeler:
+    runs-on: ubuntu-latest
+    name: Label the PR size
+    steps:
+      - name: Labeling PR by size
+        uses: coverwallet/pr-labeler@v1.2.1
+        with:
+          xs_max_size: '10'
+          s_max_size: '100'
+          m_max_size: '250'
+          l_max_size: '1000'
+          exclude_files: '.txt,.json,.md,go.mod,go.sum,.github/CODEOWNERS'
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

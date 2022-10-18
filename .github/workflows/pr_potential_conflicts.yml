@@ -1,0 +1,13 @@
+name: 'Conflict Bot'
+on:
+  pull_request
+
+jobs:
+  conflibot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Warn potential conflicts
+        uses: wktk/conflibot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

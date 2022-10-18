@@ -1,0 +1,20 @@
+name: 'PR Updater'
+
+on:
+  pull_request:
+    types: [assigned, auto_merge_enabled, edited, opened, ready_for_review, reopened, review_requested, synchronize]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: update all prs
+        uses: maxkomarychev/pr-updater-action@v1.0.0
+        with:
+          token: ${{ secrets.GH_ACTIONS_AS_USER }}

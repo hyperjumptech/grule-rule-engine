@@ -1,0 +1,71 @@
+name: Quality and Security Gate
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.18.x]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Prepare GIT
+      run: |
+        git config --global url."git@github.com:OlaIsaac".insteadOf "https://github.com/OlaIsaac"
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.GH_SECRET_ACCESS_KEY }}
+        name: id_rsa
+        known_hosts: ${{ secrets.GLOBAL_KNOWN_HOSTS }}
+        if_key_exists: replace
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: |
+        curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x gotest
+        go get -u github.com/axw/gocov/gocov
+        go mod tidy
+
+    - name: Tests
+      env:
+
+      run: make test/action/all
+
+    - name: Coverage
+      run: |
+        make cover/all
+        cp .cover/unit.out coverage.out
+
+    - name: Checkout deployment repo
+      uses: actions/checkout@v2
+      with:
+        repository: OlaIsaac/deployment
+        ssh-key: ${{ secrets.GH_SECRET_ACCESS_KEY }}
+        path: '.github/deployment'
+
+    - name: Publish code coverage
+      uses: paambaati/codeclimate-action@v3.0.0
+      env:
+        CC_TEST_REPORTER_ID: {{codeclimate_id}}
+      with:
+        prefix: github.com/OlaIsaac/grule-rule-engine
+        coverageLocations: ${{github.workspace}}/.cover/*.out:gocov
+
+    - name: SonarCloud Scan (Sec + Quality)
+      uses: ./.github/deployment/actions/security/v1/langs/go
+      with:
+        gh_secret_access_key: ${{ secrets.GH_SECRET_ACCESS_KEY }}
+        slack_webhook_url: ${{ secrets.HEIMDALL_WEBHOOK }}
+        sonar_token: ${{ secrets.SONAR_TOKEN }}
