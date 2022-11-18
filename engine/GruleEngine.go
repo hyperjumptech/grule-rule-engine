@@ -152,9 +152,13 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
 		for _, v := range knowledge.RuleEntries {
+			if ctx.Err() != nil {
+				log.Error("Context canceled")
+				return ctx.Err()
+			}
 			if !v.Retracted && !v.Deleted {
 				// test if this rule entry v can execute.
-				can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
+				can, err := v.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
 				if err != nil {
 					log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 					if g.ReturnErrOnFailedRuleEvaluation {
@@ -199,7 +203,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// notify listeners that we are about to execute a rule entry then scope
 			g.notifyExecuteRuleEntry(cycle, runner)
 			// execute the top most prioritized rule
-			err := runner.Execute(dataCtx, knowledge.WorkingMemory)
+			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
 				return err
@@ -244,7 +248,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	for _, v := range knowledge.RuleEntries {
 		if !v.Deleted {
 			// test if this rule entry v can execute.
-			can, err := v.Evaluate(dataCtx, knowledge.WorkingMemory)
+			can, err := v.Evaluate(context.Background(), dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
 				if g.ReturnErrOnFailedRuleEvaluation {

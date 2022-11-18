@@ -16,6 +16,7 @@ package ast
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
@@ -160,7 +161,10 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *RuleEntry) Evaluate(dataContext IDataContext, memory *WorkingMemory) (bool, error) {
+func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (bool, error) {
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
 	if e.Retracted {
 		return false, nil
 	}
@@ -176,7 +180,10 @@ func (e *RuleEntry) Evaluate(dataContext IDataContext, memory *WorkingMemory) (b
 }
 
 // Execute will execute this graph in the Then scope
-func (e *RuleEntry) Execute(dataContext IDataContext, memory *WorkingMemory) (err error) {
+func (e *RuleEntry) Execute(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (err error) {
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
 	if e.ThenScope == nil {
 		return fmt.Errorf("RuleEntry %s have no then scope", e.RuleName)
 	}
