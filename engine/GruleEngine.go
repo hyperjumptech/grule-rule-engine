@@ -206,7 +206,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
-				return err
+				return fmt.Errorf("error while executing rule %s. got %w", runner.RuleName, err)
 			}
 
 			if dataCtx.IsComplete() {
