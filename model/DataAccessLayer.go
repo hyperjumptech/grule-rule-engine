@@ -16,10 +16,10 @@ package model
 
 import (
 	"fmt"
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 	"regexp"
 	"strings"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 // ValueNode is an abstraction layer to access underlying dom style data.
@@ -47,6 +47,7 @@ type ValueNode interface {
 	SetMapValueAt(index, newValue reflect.Value) error
 	GetChildNodeBySelector(index reflect.Value) (ValueNode, error)
 
+	IsInterface() bool
 	IsObject() bool
 	GetObjectValueByField(field string) (reflect.Value, error)
 	GetObjectTypeByField(field string) (reflect.Type, error)
