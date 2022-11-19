@@ -88,6 +88,10 @@ func (node *GoValueNode) IsArray() bool {
 	return node.thisValue.Kind() == reflect.Array || node.thisValue.Kind() == reflect.Slice
 }
 
+func (node *GoValueNode) IsInterface() bool {
+	return node.thisValue.Kind() == reflect.Interface
+}
+
 // GetArrayType to get the type of underlying value array element types.
 func (node *GoValueNode) GetArrayType() (reflect.Type, error) {
 	if node.IsArray() {
@@ -408,7 +412,7 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for map", node.IdentifiedAs(), funcName)
 	}
 
-	if node.IsObject() {
+	if node.IsObject() || node.IsInterface() {
 		funcValue := node.thisValue.MethodByName(funcName)
 		if funcValue.IsValid() {
 			rets := funcValue.Call(args)
@@ -422,7 +426,7 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		}
 		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" have no function named %s", node.IdentifiedAs(), funcName)
 	}
-	return reflect.ValueOf(nil), fmt.Errorf("this node identified as \"%s\" is not referencing an object thus function %s call is not supported", node.IdentifiedAs(), funcName)
+	return reflect.ValueOf(nil), fmt.Errorf("this node identified as \"%s\" is not referencing an object thus function %s call is not supported. Kind %s", node.IdentifiedAs(), funcName, node.thisValue.Kind().String())
 }
 
 // GetChildNodeByField will retrieve the underlying struct's field and return the ValueNode wraper.

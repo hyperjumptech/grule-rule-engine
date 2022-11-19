@@ -185,6 +185,10 @@ func (vn *JSONValueNode) IsObject() bool {
 	return vn.data.Kind() == reflect.Map
 }
 
+func (vn *JSONValueNode) IsInterface() bool {
+	return vn.data.Kind() == reflect.Interface
+}
+
 // GetObjectValueByField get the value of this node by the specified field.
 func (vn *JSONValueNode) GetObjectValueByField(field string) (reflect.Value, error) {
 	if !vn.IsObject() {
@@ -303,7 +307,7 @@ func (vn *JSONValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		return reflect.Value{}, fmt.Errorf("this node identified as \"%s\" call function %s is not supported for map", vn.IdentifiedAs(), funcName)
 	}
 
-	if vn.IsObject() {
+	if vn.IsObject() || vn.IsInterface() {
 		funcValue := vn.data.MethodByName(funcName)
 		if funcValue.IsValid() {
 			rets := funcValue.Call(args)
