@@ -40,6 +40,16 @@ type DataContext struct {
 	complete            bool
 }
 
+func (ctx *DataContext) GetKeys() []string {
+	ret := make([]string, len(ctx.ObjectStore))
+	c := 0
+	for k, _ := range ctx.ObjectStore {
+		ret[c] = k
+		c++
+	}
+	return ret
+}
+
 // Complete marks the DataContext as completed, telling the engine to stop processing rules
 func (ctx *DataContext) Complete() {
 	ctx.complete = true
@@ -59,6 +69,7 @@ type IDataContext interface {
 	Add(key string, obj interface{}) error
 	AddJSON(key string, JSON []byte) error
 	Get(key string) model.ValueNode
+	GetKeys() []string
 
 	Retract(key string)
 	IsRetracted(key string) bool
