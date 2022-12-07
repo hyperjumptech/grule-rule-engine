@@ -28,3 +28,24 @@ func TestNoPanic(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(GRL)))
 	assert.NoError(t, err)
 }
+
+func TestRuleEntry_Clone(t *testing.T) {
+	testRule := `rule  CloneRule  "Duplicate Rule 1"  salience 5 {
+when
+	(Fact.Distance > 5000  &&   Fact.Duration > 120) && (Fact.Result == false)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+}`
+	lib := ast.NewKnowledgeLibrary()
+	rb := NewRuleBuilder(lib)
+	err := rb.BuildRuleFromResource("testrule", "0.1.1", pkg.NewBytesResource([]byte(testRule)))
+	assert.NoError(t, err)
+	kb := lib.GetKnowledgeBase("testrule", "0.1.1")
+	re := kb.RuleEntries["CloneRule"]
+
+	ct := &pkg.CloneTable{Records: make(map[string]*pkg.CloneRecord)}
+	reClone := re.Clone(ct)
+
+	assert.Equal(t, re.GetSnapshot(), reClone.GetSnapshot())
+}
