@@ -17,9 +17,10 @@ package ast
 import (
 	"bytes"
 	"fmt"
+	"reflect"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/model"
-	"reflect"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )

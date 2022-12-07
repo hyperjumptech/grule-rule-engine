@@ -17,10 +17,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"sort"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -202,12 +203,17 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			}
 			// notify listeners that we are about to execute a rule entry then scope
 			g.notifyExecuteRuleEntry(cycle, runner)
+
+			dataCtx.SetRule(runner)
+
 			// execute the top most prioritized rule
 			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
 				return fmt.Errorf("error while executing rule %s. got %w", runner.RuleName, err)
 			}
+
+			dataCtx.SetRule(nil)
 
 			if dataCtx.IsComplete() {
 				break

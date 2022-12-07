@@ -17,8 +17,9 @@ package ast
 //go:generate mockgen -destination=../mocks/ast/DataContext.go -package=mocksAst . IDataContext
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
+
+	"github.com/hyperjumptech/grule-rule-engine/model"
 )
 
 // NewDataContext will create a new DataContext instance
@@ -38,6 +39,15 @@ type DataContext struct {
 	retracted           []string
 	variableChangeCount uint64
 	complete            bool
+	ruleEntry           *RuleEntry
+}
+
+func (ctx *DataContext) SetRule(entry *RuleEntry) {
+	ctx.ruleEntry = entry
+}
+
+func (ctx *DataContext) GetRule() *RuleEntry {
+	return ctx.ruleEntry
 }
 
 // Complete marks the DataContext as completed, telling the engine to stop processing rules
@@ -66,6 +76,9 @@ type IDataContext interface {
 	IsComplete() bool
 	Retracted() []string
 	Reset()
+
+	SetRule(entry *RuleEntry)
+	GetRule() *RuleEntry
 }
 
 // ResetVariableChangeCount will reset the variable change count
