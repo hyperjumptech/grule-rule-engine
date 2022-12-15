@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRULE Playground</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row  g-2">
+            <div class="col-12" style="background: black; color: white">
+                <div class="row  g-2">
+                    <div class="col-6" >
+                        <h3>
+                            GRULE
+                            <small class="text-muted">Playground</small>
+                        </h3>
+                    </div>
+                    <div class="col-6" style="padding-top:5px;padding-bottom:5px; padding-right: 5px">
+                        <button type="button" class="btn btn-danger  float-end">Execute</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row g-2">
+                    <div class="col-2">
+                        <ul  class="nav nav-pills flex-column">
+                            <li class="nav-item"><a id="navGRL" class="nav-link active" aria-current="page" href="#" onclick="ShowGRL()">GRL</a></li>
+                            <li class="nav-item"><a id="navContext" class="nav-link" aria-current="page" href="#" onclick="ShowContext()">Data Context</a></li>
+                            <li class="nav-item"><a id="navResult" class="nav-link" aria-current="page" href="#" onclick="ShowResult()">Result</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-10">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div id="panelGRL" class="row-12">
+                                    <div class="card  border-primary">
+                                        <div class="card-header border-success">
+                                            Grule Rule Language (GRL)
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grleditor" contenteditable="true" style="white-space: pre-wrap; font-family: monospace; border: solid; padding: 15px 15px 15px 15px;" onkeydown="GrlEditorTab(event);" role="textbox"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="panelContext" class="row-12" style="display: none">
+                                <div class="col-12">
+                                    <div class="card  border-primary">
+                                        <div class="card-header border-success">
+                                            Data Context
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="jsoneditor" contenteditable="true" style="white-space: pre-wrap; font-family: monospace; border: solid; padding: 15px 15px 15px 15px;" onkeydown="JsonEditorTab(event);" role="textbox"></div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" class="btn btn-danger">Delete Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <br>
+                                    <button type="button" class="btn btn-primary">Add Another Data</button>
+                                </div>
+                            </div>
+                            <div id="panelResult" class="row-12" style="display: none">
+                                <div class="col-12">
+                                    <div class="card  border-primary">
+                                        <div class="card-header border-success">
+                                            Execution Result
+                                        </div>
+                                        <div class="card-body">
+                                            <textarea class="flex-box" rows="15" cols="100" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script src="js/jquery.mark.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@ require (
 	github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20220527190237-ee62e23da966
 	github.com/bmatcuk/doublestar v1.3.2
 	github.com/google/uuid v1.1.1
+	github.com/hyperjumptech/hyper-mux v1.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.21.0

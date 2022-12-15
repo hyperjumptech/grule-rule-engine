@@ -127,10 +127,6 @@ func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 		}
 	}
 
-	if e.GetSnapshot() != clone.GetSnapshot() {
-		panic(fmt.Sprintf("RuleEntry clone failed : \noriginal [%s] \nclone    [%s]", e.GetSnapshot(), clone.GetSnapshot()))
-	}
-
 	return clone
 }
 
