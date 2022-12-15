@@ -272,8 +272,11 @@ func (vn *JSONValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		case "Len":
 			arrFunc = ArrMapLen
 		case "Append":
-			vn.AppendValue(args)
-			return reflect.Value{}, nil
+			err := vn.AppendValue(args)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			return vn.data, nil
 		}
 		if arrFunc != nil {
 			if funcName == "Clear" {
