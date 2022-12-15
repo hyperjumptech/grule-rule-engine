@@ -10,3 +10,7 @@ body {
     display: flex;
     justify-content: center;
 }
+
+.rule {
+    font-weight: bold;
+}
