@@ -20,11 +20,23 @@ import (
 )
 
 var (
-	intVal   = reflect.ValueOf(12)
-	int8Val  = reflect.ValueOf(int8(12))
-	int16Val = reflect.ValueOf(int16(12))
-	int32Val = reflect.ValueOf(int32(12))
-	int64Val = reflect.ValueOf(int64(12))
+	intVar   = 12
+	int8Var  = int8(12)
+	int16Var = int16(12)
+	int32Var = int32(12)
+	int64Var = int64(12)
+
+	intVal   = reflect.ValueOf(intVar)
+	int8Val  = reflect.ValueOf(int8Var)
+	int16Val = reflect.ValueOf(int16Var)
+	int32Val = reflect.ValueOf(int32Var)
+	int64Val = reflect.ValueOf(int64Var)
+
+	intPtr   = reflect.ValueOf(&intVar)
+	int8Ptr  = reflect.ValueOf(&int8Var)
+	int16Ptr = reflect.ValueOf(&int16Var)
+	int32Ptr = reflect.ValueOf(&int32Var)
+	int64Ptr = reflect.ValueOf(&int64Var)
 
 	uintVal   = reflect.ValueOf(uint(12))
 	uint8Val  = reflect.ValueOf(uint8(12))
@@ -35,11 +47,23 @@ var (
 	float32Val = reflect.ValueOf(float32(12))
 	float64Val = reflect.ValueOf(float64(12))
 
-	intVal2   = reflect.ValueOf(3)
-	int8Val2  = reflect.ValueOf(int8(3))
-	int16Val2 = reflect.ValueOf(int16(3))
-	int32Val2 = reflect.ValueOf(int32(3))
-	int64Val2 = reflect.ValueOf(int64(3))
+	intVar2   = 3
+	int8Var2  = int8(3)
+	int16Var2 = int16(3)
+	int32Var2 = int32(3)
+	int64Var2 = int64(3)
+
+	intVal2   = reflect.ValueOf(intVar2)
+	int8Val2  = reflect.ValueOf(int8Var2)
+	int16Val2 = reflect.ValueOf(int16Var2)
+	int32Val2 = reflect.ValueOf(int32Var2)
+	int64Val2 = reflect.ValueOf(int64Var2)
+
+	intPtr2   = reflect.ValueOf(&intVar2)
+	int8Ptr2  = reflect.ValueOf(&int8Var2)
+	int16Ptr2 = reflect.ValueOf(&int16Var2)
+	int32Ptr2 = reflect.ValueOf(&int32Var2)
+	int64Ptr2 = reflect.ValueOf(&int64Var2)
 
 	uintVal2   = reflect.ValueOf(uint(3))
 	uint8Val2  = reflect.ValueOf(uint8(3))
@@ -50,8 +74,8 @@ var (
 	float32Val2 = reflect.ValueOf(float32(3))
 	float64Val2 = reflect.ValueOf(float64(3))
 
-	valuesA = []reflect.Value{intVal, int8Val, int16Val, int32Val, int64Val, uintVal, uint8Val, uint16Val, uint32Val, uint64Val, float32Val, float64Val}
-	valuesB = []reflect.Value{intVal2, int8Val2, int16Val2, int32Val2, int64Val2, uintVal2, uint8Val2, uint16Val2, uint32Val2, uint64Val2, float32Val2, float64Val2}
+	valuesA = []reflect.Value{intVal, int8Val, int16Val, int32Val, int64Val, uintVal, uint8Val, uint16Val, uint32Val, uint64Val, float32Val, float64Val, intPtr, int8Ptr, int16Ptr, int32Ptr, int64Ptr}
+	valuesB = []reflect.Value{intVal2, int8Val2, int16Val2, int32Val2, int64Val2, uintVal2, uint8Val2, uint16Val2, uint32Val2, uint64Val2, float32Val2, float64Val2, intPtr2, int8Ptr2, int16Ptr2, int32Ptr2, int64Ptr2}
 
 	intVal3   = reflect.ValueOf(0x55)
 	int8Val3  = reflect.ValueOf(int8(0x55))
@@ -177,6 +201,8 @@ func TestValueAdd(t *testing.T) {
 			} else {
 				t.Errorf("Math Add expect number types return")
 			}
+
+			va, vb = GetValueElem(va), GetValueElem(vb)
 			if GetBaseKind(va) == reflect.Float64 || GetBaseKind(vb) == reflect.Float64 {
 				if vc.Kind() != reflect.Float64 {
 					t.Errorf("Any Add to float should yield Float64, but %s", vc.Kind().String())
@@ -213,6 +239,30 @@ func TestValueAdd(t *testing.T) {
 		} else if GetBaseKind(va) == reflect.Float64 && vs.String() != "Text12.000000" {
 			t.Errorf("Should be \"Text12.000000\". Got \"%s\"", vd.String())
 		}
+
+		str := "Text"
+		stringPtr := reflect.ValueOf(&str)
+		vp, err := EvaluateAddition(va, stringPtr)
+		if err != nil {
+			t.Errorf("Error while adding string. Got %v", err)
+		} else if vp.Kind() != reflect.String {
+			t.Errorf("Add to string should yield a string. Got %s", vp.Kind().String())
+		} else if GetBaseKind(va) != reflect.Float64 && vp.String() != "12Text" {
+			t.Errorf("Should be \"12Text\". Got \"%s\"", vp.String())
+		} else if GetBaseKind(va) == reflect.Float64 && vp.String() != "12.000000Text" {
+			t.Errorf("Should be \"12.000000Text\". Got \"%s\"", vp.String())
+		}
+
+		vq, err := EvaluateAddition(stringPtr, va)
+		if err != nil {
+			t.Errorf("Error while adding string. Got %v", err)
+		} else if vq.Kind() != reflect.String {
+			t.Errorf("Add to string should yield a string. Got %s", vq.Kind().String())
+		} else if GetBaseKind(va) != reflect.Float64 && vq.String() != "Text12" {
+			t.Errorf("Should be \"Text12\". Got \"%s\"", vq.String())
+		} else if GetBaseKind(va) == reflect.Float64 && vq.String() != "Text12.000000" {
+			t.Errorf("Should be \"Text12.000000\". Got \"%s\"", vq.String())
+		}
 	}
 }
 
@@ -239,6 +289,8 @@ func TestValueSub(t *testing.T) {
 			} else {
 				t.Errorf("Math Sub expect number types return")
 			}
+
+			va, vb = GetValueElem(va), GetValueElem(vb)
 			if GetBaseKind(va) == reflect.Float64 || GetBaseKind(vb) == reflect.Float64 {
 				if vc.Kind() != reflect.Float64 {
 					t.Errorf("Any Sub to float should yield Float64, but %s", vc.Kind().String())
@@ -285,6 +337,8 @@ func TestValueMul(t *testing.T) {
 			} else {
 				t.Errorf("Math Mul expect number types return")
 			}
+
+			va, vb = GetValueElem(va), GetValueElem(vb)
 			if GetBaseKind(va) == reflect.Float64 || GetBaseKind(vb) == reflect.Float64 {
 				if vc.Kind() != reflect.Float64 {
 					t.Errorf("Any Mul to float should yield Float64, but %s", vc.Kind().String())
@@ -331,6 +385,8 @@ func TestValueDiv(t *testing.T) {
 			} else {
 				t.Errorf("Math div expect number types return")
 			}
+
+			va, vb = GetValueElem(va), GetValueElem(vb)
 			if GetBaseKind(va) == reflect.Float64 || GetBaseKind(vb) == reflect.Float64 {
 				if vc.Kind() != reflect.Float64 {
 					t.Errorf("Any Div to float should yield Float64, but %s", vc.Kind().String())
