@@ -22,6 +22,7 @@ import (
 
 // EvaluateMultiplication will evaluate multiplication operation over two value
 func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -75,6 +76,7 @@ func EvaluateMultiplication(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateDivision will evaluate division operation over two value
 func EvaluateDivision(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -128,6 +130,7 @@ func EvaluateDivision(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateModulo will evaluate modulo operation over two value
 func EvaluateModulo(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -160,6 +163,7 @@ func EvaluateModulo(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateAddition will evaluate addition operation over two value
 func EvaluateAddition(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -247,6 +251,7 @@ func EvaluateAddition(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateSubtraction will evaluate subtraction operation over two value
 func EvaluateSubtraction(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -300,6 +305,7 @@ func EvaluateSubtraction(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateBitAnd will evaluate Bitwise And operation over two value
 func EvaluateBitAnd(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -332,6 +338,7 @@ func EvaluateBitAnd(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateBitOr will evaluate Bitwise Or operation over two value
 func EvaluateBitOr(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		lv := left.Int()
@@ -364,6 +371,7 @@ func EvaluateBitOr(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateGreaterThan will evaluate GreaterThan operation over two value
 func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -431,6 +439,7 @@ func EvaluateGreaterThan(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateLesserThan will evaluate LesserThan operation over two value
 func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -498,6 +507,7 @@ func EvaluateLesserThan(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateGreaterThanEqual will evaluate GreaterThanEqual operation over two value
 func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -565,6 +575,7 @@ func EvaluateGreaterThanEqual(left, right reflect.Value) (reflect.Value, error) 
 
 // EvaluateLesserThanEqual will evaluate LesserThanEqual operation over two value
 func EvaluateLesserThanEqual(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -632,6 +643,7 @@ func EvaluateLesserThanEqual(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateEqual will evaluate Equal operation over two value
 func EvaluateEqual(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -704,6 +716,7 @@ func EvaluateEqual(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateNotEqual will evaluate NotEqual operation over two value
 func EvaluateNotEqual(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	switch left.Kind() {
 	case reflect.String:
 		lv := left.String()
@@ -776,6 +789,7 @@ func EvaluateNotEqual(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateLogicAnd will evaluate LogicalAnd operation over two value
 func EvaluateLogicAnd(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	if left.Kind() == reflect.Bool && right.Kind() == reflect.Bool {
 		lv := left.Bool()
 		rv := right.Bool()
@@ -786,6 +800,7 @@ func EvaluateLogicAnd(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateLogicOr will evaluate LogicalOr operation over two value
 func EvaluateLogicOr(left, right reflect.Value) (reflect.Value, error) {
+	left, right = GetValueElem(left), GetValueElem(right)
 	if left.Kind() == reflect.Bool && right.Kind() == reflect.Bool {
 		lv := left.Bool()
 		rv := right.Bool()
@@ -796,6 +811,7 @@ func EvaluateLogicOr(left, right reflect.Value) (reflect.Value, error) {
 
 // EvaluateLogicSingle will evaluate single expression value
 func EvaluateLogicSingle(left reflect.Value) (reflect.Value, error) {
+	left = GetValueElem(left)
 	if left.Kind() == reflect.Bool {
 		lv := left.Bool()
 		return reflect.ValueOf(lv), nil

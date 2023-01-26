@@ -16,9 +16,10 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"math"
 	"reflect"
+
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 )
 
 // GetFunctionList get list of functions in a struct instance
@@ -557,4 +558,13 @@ func IsNumber(val reflect.Value) bool {
 		return true
 	}
 	return false
+}
+
+// GetValueElem will return the value val contains if val is of Kind Interface or Pointer
+func GetValueElem(val reflect.Value) reflect.Value {
+	if val.Kind() == reflect.Pointer || val.Kind() == reflect.Interface {
+		return GetValueElem(val.Elem())
+	}
+
+	return val
 }
