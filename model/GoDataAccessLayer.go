@@ -401,6 +401,10 @@ func (node *GoValueNode) CallFunction(funcName string, args ...reflect.Value) (r
 		switch funcName {
 		case "Len":
 			mapFunc = ArrMapLen
+		case "EqualValues":
+			mapFunc = MapEqualValues
+		case "CountValue":
+			mapFunc = MapCountValue
 		}
 		if mapFunc != nil {
 			val, err := mapFunc(node.thisValue, args)

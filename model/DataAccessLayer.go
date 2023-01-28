@@ -240,3 +240,46 @@ func ArrMapLen(arr reflect.Value, arg []reflect.Value) (reflect.Value, error) {
 	}
 	return reflect.ValueOf(arr.Len()), nil
 }
+
+// MapEqualValues will check all values are equal
+func MapEqualValues(val reflect.Value, arg []reflect.Value) (reflect.Value, error) {
+	if arg != nil && len(arg) != 0 {
+		return reflect.ValueOf(false), fmt.Errorf("function EqualValues requires no argument")
+	}
+	m, ok := val.Interface().(map[string]string)
+	if !ok || len(m) == 0 {
+		return reflect.ValueOf(false), fmt.Errorf("function EqualValues requires map[string]string")
+	}
+
+	last := ""
+	for _, v := range m {
+		if last == "" {
+			last = v
+		} else if last != v {
+			return reflect.ValueOf(false), nil
+		}
+	}
+
+	return reflect.ValueOf(true), nil
+}
+
+// MapCountValue will return number of value which is equal to arg[0]
+func MapCountValue(val reflect.Value, arg []reflect.Value) (reflect.Value, error) {
+	if arg == nil || len(arg) != 1 || arg[0].Kind() != reflect.String {
+		return reflect.ValueOf(0), fmt.Errorf("function MapCountValue requires no argument")
+	}
+	m, ok := val.Interface().(map[string]string)
+	if !ok || len(m) == 0 {
+		return reflect.ValueOf(0), fmt.Errorf("function MapCountValue requires map[string]string")
+	}
+
+	to := arg[0].String()
+	cnt := int(0)
+	for _, v := range m {
+		if v == to {
+			cnt++
+		}
+	}
+
+	return reflect.ValueOf(cnt), nil
+}
