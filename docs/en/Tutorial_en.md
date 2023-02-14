@@ -170,7 +170,7 @@ the underlying `KnowledgeBase` *blueprint*.  Each unique instance also carries
 its own distinct `WorkingMemory`. As no instance shares any state with any
 other instance, you are free to use them in any multithreaded environment
 provided you aren't executing any single instance from multiple threads
-simultaneously.
+simultaneously.  ( we can use patterns like [object pools](https://en.wikipedia.org/wiki/Object_pool_pattern) to maintain knowledgeBase instances for optimization in terms of cpu and memory ).
 
 Constructing from the `KnowledgeBase` blueprint also ensures that we aren't
 recomputing work every time we want to construct an instance.  The
