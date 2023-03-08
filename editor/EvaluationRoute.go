@@ -19,8 +19,8 @@ type JSONData struct {
 }
 
 type EvaluateRequest struct {
-	GrlText string      `json:"grlText"`
-	Input   []*JSONData `json:"jsonInput"`
+	GrlText string   `json:"grlText"`
+	Input   []string `json:"jsonInput"`
 }
 
 func InitializeEvaluationRoute(router *mux.HyperMux) {
@@ -41,14 +41,22 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 
 		dataContext := ast.NewDataContext()
 
-		for _, jd := range evReq.Input {
-			jsonByte, err := base64.StdEncoding.DecodeString(jd.JSONData)
+		for _, input := range evReq.Input {
+			jsonByte, err := base64.StdEncoding.DecodeString(input)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte(fmt.Sprintf("json data named %s should be sent using base64. got %v", jd.Name, err)))
+				_, _ = w.Write([]byte(fmt.Sprintf("jsonInput data should be sent using base64.", err)))
 				return
 			}
-			err = dataContext.AddJSON(jd.Name, jsonByte)
+			var jd JSONData
+			err = json.Unmarshal(jsonByte, &jd)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte(fmt.Sprintf("unmarshal json data named got err %v", err)))
+				return
+			}
+
+			err = dataContext.AddJSON(jd.Name, []byte(jd.JSONData))
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte(fmt.Sprintf("invalid JSON data named %s when add json to context got %v", jd.Name, err)))
@@ -72,7 +80,6 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 			_, _ = w.Write([]byte(fmt.Sprintf("invalid GRL : %s", err.Error())))
 			return
 		}
-
 		eng1 := &engine.GruleEngine{MaxCycle: 5}
 		kb := lib.NewKnowledgeBaseInstance("Evaluator", "0.0.1")
 		err = eng1.Execute(dataContext, kb)
@@ -84,7 +91,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 
 		respData := make(map[string]interface{})
 		for _, keyName := range dataContext.GetKeys() {
-			respData[keyName] = dataContext.Get(keyName)
+			respData[keyName] = dataContext.Get(keyName).Value().Interface()
 		}
 
 		resultBytes, err := json.Marshal(respData)

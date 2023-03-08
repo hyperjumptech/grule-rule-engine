@@ -29,13 +29,17 @@ function ShowResult() {
 }
 
 function executeRule() {
-    let grl = $("#grlText").val();
-    let json = $("#jsonText").val()
+    let grl = $("#grleditor").text();
     let grlB64 = btoa(grl);
-    let jsonB64 = btoa(json);
-
-    $.post( "/evaluate", JSON.stringify({"grlText": grlB64, "jsonText": jsonB64})  , function( data, status ) {
-        $("#response").val(status + " : " + JSON.stringify(data) );
+    let size = $('div#panelContext').find('div.jsoneditor').length;
+    let jsonBlob = new Array(size);
+    $('div#panelContext').find('div.jsoneditor').each(function(index, editor) {
+        let json = $(editor).text();
+        let jsonB64 = btoa(json);
+        jsonBlob[index] = jsonB64;
+    })
+    $.post( "/evaluate", JSON.stringify({"grlText": grlB64, "jsonInput": jsonBlob})  , function( data, status ) {
+        $("#response").text(status + " : " + JSON.stringify(data) );
     }, "json") .fail(function(data) {
         $("#response").val( "Status " + data.status + " : " + data.statusText + ". ResponseText : " + data.responseText);
     });
@@ -69,24 +73,42 @@ function Mark() {
     // do nothing
 }
 
-function JsonEditorTab(e) {
-    if (e.keyCode === 9) { // tab key
-        e.preventDefault();  // this will prevent us from tabbing out of the editor
+function AddData(e) {
+    var div = document.createElement('div');
+    var divBody = document.createElement('div');
+    divBody.className = "card-body";
+    var editor = document.createElement('div');
+    editor.className = "jsoneditor";
+    editor.setAttribute("contenteditable", true);
+    editor.setAttribute("style", style="white-space: pre-wrap; font-family: monospace; border: solid; padding: 15px 15px 15px 15px;");
+    editor.setAttribute("role","textbox");
+    divBody.appendChild(editor);
 
-        // now insert four non-breaking spaces for the tab key
-        var editor = document.getElementById("jsoneditor");
-        var doc = editor.ownerDocument.defaultView;
-        var sel = doc.getSelection();
-        var range = sel.getRangeAt(0);
+    var divFooter = document.createElement('div');
+    divFooter.className = "card-footer";
+    var button = document.createElement('button');
+    button.setAttribute("type","button");
+    button.className="btn btn-danger delete";
+    button.innerHTML = "Delete Data";
+    divFooter.appendChild(button);
 
-        var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
-        range.insertNode(tabNode);
+    div.appendChild(divBody);
+    div.appendChild(divFooter);
+    $('div#panelContext').find("div.card-header").after(div);
+}
 
-        range.setStartAfter(tabNode);
-        range.setEndAfter(tabNode);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
+function JsonEditorTab(editor) {
+    var doc = editor.ownerDocument.defaultView;
+    var sel = doc.getSelection();
+    var range = sel.getRangeAt(0);
+
+    var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+    range.insertNode(tabNode);
+
+    range.setStartAfter(tabNode);
+    range.setEndAfter(tabNode);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 function GrlEditorTab(e) {
@@ -108,4 +130,18 @@ function GrlEditorTab(e) {
         sel.addRange(range);
     }
 }
+
+$(document).ready(function() {
+    $("div#panelContext").on('click','button.delete', function(event) {
+        event.preventDefault();
+        $(this).parent().parent().remove();
+    })
+
+    $("div#panelContext").on('keydown', 'div.jsoneditor', function(event) {
+        if (event.keyCode === 9) {
+            event.preventDefault();
+            JsonEditorTab(this);
+        }
+    })
+})
 
