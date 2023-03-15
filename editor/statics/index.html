@@ -18,7 +18,7 @@
                         </h3>
                     </div>
                     <div class="col-6" style="padding-top:5px;padding-bottom:5px; padding-right: 5px">
-                        <button type="button" class="btn btn-danger  float-end">Execute</button>
+                        <button type="button" class="btn btn-danger float-end" onclick="executeRule()">Execute</button>
                     </div>
                 </div>
             </div>
@@ -51,17 +51,19 @@
                                         <div class="card-header border-success">
                                             Data Context
                                         </div>
-                                        <div class="card-body">
-                                            <div id="jsoneditor" contenteditable="true" style="white-space: pre-wrap; font-family: monospace; border: solid; padding: 15px 15px 15px 15px;" onkeydown="JsonEditorTab(event);" role="textbox"></div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <button type="button" class="btn btn-danger">Delete Data</button>
+                                        <div>
+                                            <div class="card-body">
+                                                <div class="jsoneditor" contenteditable="true" style="white-space: pre-wrap; font-family: monospace; border: solid; padding: 15px 15px 15px 15px;" role="textbox"></div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <button type="button" class="btn btn-danger delete">Delete Data</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <br>
-                                    <button type="button" class="btn btn-primary">Add Another Data</button>
+                                    <button type="button" class="btn btn-primary" onclick="AddData(event)">Add Another Data</button>
                                 </div>
                             </div>
                             <div id="panelResult" class="row-12" style="display: none">
@@ -71,7 +73,7 @@
                                             Execution Result
                                         </div>
                                         <div class="card-body">
-                                            <textarea class="flex-box" rows="15" cols="100" readonly></textarea>
+                                            <textarea id="response" class="flex-box" rows="15" cols="100" readonly></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -82,6 +84,7 @@
             </div>
         </div>
     </div>
+
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jquery-3.6.1.min.js"></script>
     <script src="js/jquery.mark.js"></script>
