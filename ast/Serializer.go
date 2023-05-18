@@ -18,11 +18,12 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
-	"github.com/sirupsen/logrus"
 	"io"
 	"math"
 	"reflect"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/sirupsen/logrus"
 )
 
 // NodeType is to label a Meta information within catalog
@@ -1382,9 +1383,12 @@ func (meta *ConstantMeta) ReadMetaFrom(r io.Reader) error {
 		return err
 	}
 	byteArr := make([]byte, length)
-	_, err = r.Read(byteArr)
+	n, err := r.Read(byteArr)
 	if err != nil {
 		return err
+	}
+	if uint64(n) != length {
+		return io.ErrShortBuffer
 	}
 	meta.ValueBytes = byteArr
 
