@@ -157,10 +157,15 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (bool, error) {
+func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (bool, err error) {
 	if ctx.Err() != nil {
 		return false, ctx.Err()
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("Error while evaluating rule %s, panic recovered", e.RuleName)
+		}
+	}()
 	if e.Retracted {
 		return false, nil
 	}
