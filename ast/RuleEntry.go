@@ -157,7 +157,7 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 }
 
 // Evaluate will evaluate this AST graph for when scope evaluation
-func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (bool, err error) {
+func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (can bool, err error) {
 	if ctx.Err() != nil {
 		return false, ctx.Err()
 	}
