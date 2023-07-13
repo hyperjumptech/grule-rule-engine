@@ -259,6 +259,8 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 			if can {
 				runnable = append(runnable, v)
 			}
+			// notify all listeners that a rule's when scope has been evaluated.
+			g.notifyEvaluateRuleEntry(0, v, can)
 		}
 	}
 	log.Debugf("Matching rules length %d.", len(runnable))
