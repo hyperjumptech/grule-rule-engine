@@ -124,7 +124,7 @@ following the `Retract` call.  The subsequent cycle will re-introduce the call.
 **Question**: Is there a plan to integrate Grule with a database storage system?
 
 **Answer**: No. While it is a good idea to store your rule entries in some sort
-of database, Grule will not create any database adapter to automaticaly store
+of database, Grule will not create any database adapter to automatically store
 and retrieve rules.  You can easily create such adapter yourself using the
 common interfaces on the Knowledgebase: *Reader*, *File*, *Byte Array*, *String*
 and *Git*. Strings can be easily inserted and selected from database, as you
