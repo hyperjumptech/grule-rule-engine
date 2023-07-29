@@ -39,7 +39,7 @@ The basic structure of a JSON rule is as follows:
 
 ## Condition Object
 
-In order to provide a great deal of flexability, the `when` condition of a rule
+In order to provide a great deal of flexibility, the `when` condition of a rule
 can be broken down into individual components. This is particularly useful for
 structuring larger rules and supporting GUI applications used for rule editing
 and analysis.
