@@ -134,9 +134,9 @@ We don't want to couple Grule to any particular database implementation.
 
 ---
 
-## 3. Maximum number of rule in one knowledge-base
+## 3. Maximum number of rules in one knowledge-base
 
-**Question**: How many rule entry can be inserted into knowledgebase?
+**Question**: How many rule entries can be inserted into knowledgebase?
 
 **Answer**: You can have as many rule entries you want but there should be at
 least one minimum.
@@ -154,7 +154,7 @@ least one minimum.
 
 ## 5. Rule Engine use-case
 
-**Question**: I have read about the rule engine, but what real benefit it can bring? Give us some use-cases.
+**Question**: I have read about the rule engine, but what real benefits can bring it? Give us some use-cases.
 
 **Answer**: The following cases are better solved with a rule-engine in my humble opinion.
 
