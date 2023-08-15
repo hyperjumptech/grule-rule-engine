@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright kalyan-arepalle/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/builder"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 	"io/ioutil"
 	"testing"
 )
 
-/**
-  Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
-  Please refer docs/benchmarking_en.md for more info
+/*
+*
+
+	Benchmarking `ast.KnowledgeBase` by loading 100 and 1000 rules into knowledgeBase
+	Please refer docs/benchmarking_en.md for more info
 */
 type RideFact struct {
 	Distance           int32

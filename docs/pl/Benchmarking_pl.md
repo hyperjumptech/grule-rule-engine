@@ -32,7 +32,7 @@ goos: darwin
 goarch: amd64
 Number of Cores - 6
 Ram - 16 GB 2400 MHz DDR4
-pkg: github.com/hyperjumptech/grule-rule-engine/examples/benchmark
+pkg: github.com/kalyan-arepalle/grule-rule-engine/examples/benchmark
 
 Benchmark_Grule_Load_Rules/100_rules-12                       60          20968700 ns/op         8871574 B/op     216554 allocs/op
 Benchmark_Grule_Load_Rules/100_rules#01-12                    60          20800060 ns/op         8871255 B/op     216552 allocs/op

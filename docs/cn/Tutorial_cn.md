@@ -17,17 +17,17 @@ Grule 使用的Go 1.16版本。
 以如下的方式在你的项目中引入Grule.
 
 ```Shell
-$ go get github.com/hyperjumptech/grule-rule-engine
+$ go get github.com/kalyan-arepalle/grule-rule-engine
 ```
 
 在使用之前请先import Grule.
 
 ```go
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/builder"
+	"github.com/kalyan-arepalle/grule-rule-engine/engine"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 ) 
 ```
 
@@ -248,7 +248,7 @@ if err != nil {
 ### 从Git获取
 
 ```go
-bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle := pkg.NewGITResourceBundle("https://github.com/kalyan-arepalle/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)

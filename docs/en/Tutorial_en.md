@@ -17,17 +17,17 @@ Please note that Grule is using Go 1.16.
 To import Grule into your project:
 
 ```Shell
-$ go get github.com/hyperjumptech/grule-rule-engine
+$ go get github.com/kalyan-arepalle/grule-rule-engine
 ```
 
 From your `go` you can import Grule.
 
 ```go
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/builder"
+	"github.com/kalyan-arepalle/grule-rule-engine/engine"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 ) 
 ``` 
 
@@ -279,7 +279,7 @@ if err != nil {
 ### From GIT
 
 ```go
-bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle := pkg.NewGITResourceBundle("https://github.com/kalyan-arepalle/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
@@ -294,7 +294,7 @@ For private GIT repositories, you may supply username and password or an auth to
 In the case of an auth token, supply the token as the `password` argument, and set the `username` argument to be any string with length >= 1
 
 ```go
-bundle := pkg.NewGITResourceBundleWithAuth("https://github.com/hyperjumptech/grule-rule-engine.git", "username", "password|token", "/**/*.grl")
+bundle := pkg.NewGITResourceBundleWithAuth("https://github.com/kalyan-arepalle/grule-rule-engine.git", "username", "password|token", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)

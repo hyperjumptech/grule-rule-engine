@@ -160,7 +160,7 @@ and *Git*。字符串也是很容易插入数据库和查询数据库，你可�
 
 ```go
 import (
-    "github.com/hyperjumptech/grule-rule-engine/logger"
+    "github.com/kalyan-arepalle/grule-rule-engine/logger"
     "github.com/sirupsen/logrus"
 )
 ...

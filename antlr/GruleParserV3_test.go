@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright kalyan-arepalle/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import (
 	"testing"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	parser "github.com/kalyan-arepalle/grule-rule-engine/antlr/parser/grulev3"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
 )
 

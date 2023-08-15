@@ -1,4 +1,4 @@
-[![Gopher Holds The Rules](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+[![Gopher Holds The Rules](https://github.com/kalyan-arepalle/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/kalyan-arepalle/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
 
 __"Gopher Trzyma Się Zasad"__
@@ -14,7 +14,7 @@ __"Gopher Trzyma Się Zasad"__
 # Grule
 
 ```go
-import "github.com/hyperjumptech/grule-rule-engine"
+import "github.com/kalyan-arepalle/grule-rule-engine"
 ```
 
 ## Silnik reguł dla Go

@@ -1,8 +1,8 @@
 
-[![Gopheer Holds The Rule](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+[![Gopheer Holds The Rule](https://github.com/kalyan-arepalle/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/kalyan-arepalle/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
-[![Go Report Card](https://github.com/hyperjumptech/grule-rule-engine/actions/workflows/build-test-workflow.yml/badge.svg)](https://github.com/hyperjumptech/grule-rule-engine/actions/workflows/build-test-workflow.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/hyperjumptech/grule-rule-engine)](https://goreportcard.com/report/github.com/hyperjumptech/grule-rule-engine)
+[![Go Report Card](https://github.com/kalyan-arepalle/grule-rule-engine/actions/workflows/build-test-workflow.yml/badge.svg)](https://github.com/kalyan-arepalle/grule-rule-engine/actions/workflows/build-test-workflow.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kalyan-arepalle/grule-rule-engine)](https://goreportcard.com/report/github.com/kalyan-arepalle/grule-rule-engine)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 __"Gopher Holds The Rules"__
@@ -10,7 +10,7 @@ __"Gopher Holds The Rules"__
 # Grule-Rule-Engine
 
 ```go
-import "github.com/hyperjumptech/grule-rule-engine"
+import "github.com/kalyan-arepalle/grule-rule-engine"
 ```
 
 ## Rule Engine for Go

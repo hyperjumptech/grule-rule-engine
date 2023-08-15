@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright kalyan-arepalle/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/builder"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -613,7 +613,7 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	assert.Equal(t, 5, ruleEntries[3].Salience)
 }
 
-//This TestCase is to test whether grule-rule-engine follows logical operator precedence
+// This TestCase is to test whether grule-rule-engine follows logical operator precedence
 // ! - Highest Priority
 // && - Medium Priority
 // || - Lowest Priority
@@ -628,13 +628,15 @@ Then
    Complete();
 }`
 
-/**
+/*
+*
 Evaluation must be done below way if you follow logical operator precedence (identify parentheses arrangement)
 (Fact.Distance > 5000  ||   Fact.Duration > 120 || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true))
 Result:
 Logical Operator Precedence: true
 No precedence: false
-**/
+*
+*/
 type LogicalOperatorRuleFact struct {
 	Distance           int32
 	Duration           int32

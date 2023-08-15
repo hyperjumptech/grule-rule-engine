@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright kalyan-arepalle/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -182,7 +182,6 @@ func TestStrIn_Accepts_Empty_Arguments(t *testing.T) {
 	_, err := StrIn(b, []reflect.Value{})
 	assert.NoError(t, err)
 }
-
 
 func TestStrMatchRegexPattern_Valid_Regex_Pattern(t *testing.T) {
 	regex := "p([a-z]+)ch"

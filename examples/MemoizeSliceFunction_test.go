@@ -1,10 +1,10 @@
 package examples
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/kalyan-arepalle/grule-rule-engine/ast"
+	"github.com/kalyan-arepalle/grule-rule-engine/builder"
+	"github.com/kalyan-arepalle/grule-rule-engine/engine"
+	"github.com/kalyan-arepalle/grule-rule-engine/pkg"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
