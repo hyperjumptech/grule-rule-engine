@@ -39,7 +39,7 @@ The basic structure of a JSON rule is as follows:
 
 ## Condition Object
 
-In order to provide a great deal of flexability, the `when` condition of a rule
+In order to provide a great deal of flexibility, the `when` condition of a rule
 can be broken down into individual components. This is particularly useful for
 structuring larger rules and supporting GUI applications used for rule editing
 and analysis.
@@ -88,7 +88,7 @@ The following operators have slightly different behaviours than the standard ope
 | `"set"`   | GRL = operator. This operator will set the value of the first operand to the output of the second. This can only be used in the `then` section of the rule.                                                                |
 | `"call"`  | GRL function call. The operator will call the funtion name specified in the first operand. If more then one operand is specififed, the subsequent operands are interpreted as arguments to be passed to the funciton call. |
 | `"obj"`   | Explicitly identifies a GRL object. Unlike other operators, this object takes the form of a simple key/value pair. For example: `{"obj": "TestCar.Speed"}`                                                                 |
-| `"const"` | Explicitly identifies a GRL constant. This opertor takes the same form as the `obj` operator                                                                                                                               |
+| `"const"` | Explicitly identifies a GRL constant. This operator takes the same form as the `obj` operator                                                                                                                               |
 
 ### Supported Constants
 
