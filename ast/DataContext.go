@@ -44,7 +44,7 @@ type DataContext struct {
 func (ctx *DataContext) GetKeys() []string {
 	ret := make([]string, len(ctx.ObjectStore))
 	c := 0
-	for k, _ := range ctx.ObjectStore {
+	for k := range ctx.ObjectStore {
 		ret[c] = k
 		c++
 	}

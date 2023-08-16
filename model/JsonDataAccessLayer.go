@@ -29,8 +29,8 @@ var (
 
 // NewJSONValueNode will create a new ValueNode structure backend using data structure as provided by JSON parser.
 func NewJSONValueNode(JSONString, identifiedAs string) (ValueNode, error) {
-	var d interface{}
-	err := json.Unmarshal([]byte(JSONString), &d)
+	var object interface{}
+	err := json.Unmarshal([]byte(JSONString), &object)
 	if err != nil {
 
 		return nil, err
@@ -39,7 +39,7 @@ func NewJSONValueNode(JSONString, identifiedAs string) (ValueNode, error) {
 	return &JSONValueNode{
 		parent:       nil,
 		identifiedAs: identifiedAs,
-		data:         reflect.ValueOf(d),
+		data:         reflect.ValueOf(object),
 	}, nil
 }
 

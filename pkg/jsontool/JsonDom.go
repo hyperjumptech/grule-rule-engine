@@ -24,14 +24,14 @@ import (
 
 // NewJSONData will create a new instance of JSONData
 func NewJSONData(jsonData []byte) (*JSONData, error) {
-	var tm interface{}
+	var instance interface{}
 
-	err := json.Unmarshal(jsonData, &tm)
+	err := json.Unmarshal(jsonData, &instance)
 	if err != nil {
 		return nil, err
 	}
 
-	return &JSONData{jsonRoot: tm}, nil
+	return &JSONData{jsonRoot: instance}, nil
 }
 
 // JSONNode represent a node in JSON Tree
@@ -252,27 +252,27 @@ func (jo *JSONData) validPathCheck(pathArr []string, node *JSONNode) bool {
 
 		return true
 	}
-	p := pathArr[0]
-	if len(p) == 0 {
+	path := pathArr[0]
+	if len(path) == 0 {
 
 		return false
 	}
-	if p[:1] == "[" && p[len(p)-1:] == "]" {
+	if path[:1] == "[" && path[len(path)-1:] == "]" {
 		if node.IsArray() {
-			pn := p[1 : len(p)-1]
+			pn := path[1 : len(path)-1]
 			if len(pn) == 0 {
 
 				return false
 			}
-			n, err := strconv.Atoi(pn)
+			theInt, err := strconv.Atoi(pn)
 			if err != nil {
 				return false
 			}
-			if n < 0 || n >= node.Len() {
+			if theInt < 0 || theInt >= node.Len() {
 
 				return false
 			}
-			nNode := node.GetNodeAt(n)
+			nNode := node.GetNodeAt(theInt)
 			nPathArr := pathArr[1:]
 
 			return jo.validPathCheck(nPathArr, nNode)
@@ -281,20 +281,20 @@ func (jo *JSONData) validPathCheck(pathArr []string, node *JSONNode) bool {
 		return false
 	}
 	if node.IsMap() {
-		if strings.Contains(p, "[") {
-			k := p[:strings.Index(p, "[")]
+		if strings.Contains(path, "[") {
+			k := path[:strings.Index(path, "[")]
 			if !node.HaveKey(k) {
 
 				return false
 			}
 			nNode := node.Get(k)
-			nPathArr := []string{p[strings.Index(p, "["):]}
+			nPathArr := []string{path[strings.Index(path, "["):]}
 			nPathArr = append(nPathArr, pathArr[1:]...)
 
 			return jo.validPathCheck(nPathArr, nNode)
 		}
-		if node.HaveKey(p) {
-			nNode := node.Get(p)
+		if node.HaveKey(path) {
+			nNode := node.Get(path)
 			nPathArr := pathArr[1:]
 
 			return jo.validPathCheck(nPathArr, nNode)
@@ -323,28 +323,28 @@ func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) *JSONNode {
 
 		return node
 	}
-	p := pathArr[0]
-	if len(p) == 0 {
+	path := pathArr[0]
+	if len(path) == 0 {
 
 		panic("Not a valid path")
 	}
-	if p[:1] == "[" && p[len(p)-1:] == "]" {
+	if path[:1] == "[" && path[len(path)-1:] == "]" {
 		if node.IsArray() {
-			pn := p[1 : len(p)-1]
+			pn := path[1 : len(path)-1]
 			if len(pn) == 0 {
 
 				panic("Not a valid path - array do not contain offset number")
 			}
-			n, err := strconv.Atoi(pn)
+			theInt, err := strconv.Atoi(pn)
 			if err != nil {
 
 				panic("Not a valid path - array offset not number")
 			}
-			if n < 0 || n >= node.Len() {
+			if theInt < 0 || theInt >= node.Len() {
 
 				panic("Not a valid path - array offset < 0 or >= length")
 			}
-			nNode := node.GetNodeAt(n)
+			nNode := node.GetNodeAt(theInt)
 			nPathArr := pathArr[1:]
 
 			return jo.getByPath(nPathArr, nNode)
@@ -353,20 +353,20 @@ func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) *JSONNode {
 		panic("Not a valid path - not an array")
 	}
 	if node.IsMap() {
-		if strings.Contains(p, "[") {
-			k := p[:strings.Index(p, "[")]
+		if strings.Contains(path, "[") {
+			k := path[:strings.Index(path, "[")]
 			if !node.HaveKey(k) {
 
 				panic("Not a valid path - key not exist")
 			}
 			nNode := node.Get(k)
-			nPathArr := []string{p[strings.Index(p, "["):]}
+			nPathArr := []string{path[strings.Index(path, "["):]}
 			nPathArr = append(nPathArr, pathArr[1:]...)
 
 			return jo.getByPath(nPathArr, nNode)
 		}
-		if node.HaveKey(p) {
-			nNode := node.Get(p)
+		if node.HaveKey(path) {
+			nNode := node.Get(path)
 			nPathArr := pathArr[1:]
 
 			return jo.getByPath(nPathArr, nNode)

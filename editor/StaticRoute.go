@@ -2,7 +2,6 @@ package editor
 
 import (
 	"embed"
-	"fmt"
 	mux "github.com/hyperjumptech/hyper-mux"
 	"github.com/sirupsen/logrus"
 	"grule-rule-engine/editor/mime"
@@ -12,11 +11,7 @@ import (
 )
 
 //go:embed statics
-var fs embed.FS
-
-var (
-	errFileNotFound = fmt.Errorf("file not found")
-)
+var fileSyst embed.FS
 
 type FileData struct {
 	Bytes       []byte
@@ -38,9 +33,9 @@ func GetPathTree(path string) []string {
 	var entries []os.DirEntry
 	var err error
 	if strings.HasPrefix(path, "./") {
-		entries, err = fs.ReadDir(path[2:])
+		entries, err = fileSyst.ReadDir(path[2:])
 	} else {
-		entries, err = fs.ReadDir(path)
+		entries, err = fileSyst.ReadDir(path)
 	}
 	ret := make([]string, 0)
 	if err != nil {
@@ -60,11 +55,11 @@ func GetPathTree(path string) []string {
 }
 
 func GetFile(path string) (*FileData, error) {
-	bytes, err := fs.ReadFile(path)
+	bytes, err := fileSyst.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	mimeType, err := mime.MimeForFileName(path)
+	mimeType, err := mime.GetMimeForFileName(path)
 	if err != nil {
 
 		return &FileData{

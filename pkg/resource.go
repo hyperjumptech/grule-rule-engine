@@ -15,16 +15,22 @@
 package pkg
 
 import (
+	"context"
 	"fmt"
 	"gopkg.in/src-d/go-billy.v4"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 
 	"github.com/bmatcuk/doublestar"
+)
+
+var (
+	URLResourceTimeoutSecond = 1800 // 30 minutes
 )
 
 // ResourceBundle is a helper struct to help load multiple resource at once.
@@ -256,7 +262,10 @@ func (res *URLResource) Load() ([]byte, error) {
 		return res.Bytes, nil
 	}
 	client := &http.Client{}
-	req, err := http.NewRequest(http.MethodGet, res.URL, nil)
+
+	ctx, _ := context.WithTimeout(context.Background(), time.Duration(URLResourceTimeoutSecond)*time.Second)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, res.URL, nil)
+
 	if len(res.Header) > 0 {
 		req.Header = res.Header
 	}
@@ -316,9 +325,9 @@ type GITResourceBundle struct {
 	PathPattern []string
 }
 
-func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem) ([]Resource, error) {
+func (bundle *GITResourceBundle) loadPath(url, path string, fileSyst billy.Filesystem) ([]Resource, error) {
 	logger.Log.Tracef("Enter directory %s", path)
-	finfos, err := fs.ReadDir(path)
+	finfos, err := fileSyst.ReadDir(path)
 	if err != nil {
 
 		return nil, err
@@ -330,7 +339,7 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 			fulPath = fmt.Sprintf("/%s", finfo.Name())
 		}
 		if finfo.IsDir() {
-			gres, err := bundle.loadPath(url, fulPath, fs)
+			gres, err := bundle.loadPath(url, fulPath, fileSyst)
 			if err != nil {
 
 				return nil, err
@@ -345,7 +354,7 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 				}
 				if matched {
 					logger.Log.Debugf("Loading git file %s", fulPath)
-					f, err := fs.Open(fulPath)
+					f, err := fileSyst.Open(fulPath)
 					if err != nil {
 
 						return nil, err

@@ -14,20 +14,21 @@ linters:
   # Enable specific linter
   # https://golangci-lint.run/usage/linters/#enabled-by-default
   enable:
-#    - asasalint
-#    - asciicheck
-#    - bidichk
-#    - bodyclose
-#    - containedctx
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
 #    - contextcheck
 #    - cyclop
-#    - deadcode
-#    - decorder
+    - deadcode
+    - decorder
 #    - depguard
-#    - dogsled
+    - dogsled
 #    - dupl
 #    - dupword
-#    - durationcheck
+    - durationcheck
 #    - errcheck
 #    - errchkjson
 #    - errname
@@ -52,11 +53,11 @@ linters:
 #    - godot
 #    - godox
 #    - goerr113
-#    - gofmt
+    - gofmt
 #    - gofumpt
 #    - goheader
 #    - goimports
-#    - golint
+    - golint
 #    - gomnd
 #    - gomoddirectives
 #    - gomodguard
@@ -85,7 +86,7 @@ linters:
 #    - nilerr
 #    - nilnil
     - nlreturn
-#    - noctx
+    - noctx
 #    - nolintlint
 #    - nonamedreturns
 #    - nosnakecase
@@ -112,10 +113,10 @@ linters:
 #    - typecheck
 #    - unconvert
 #    - unparam
-#    - unused
+    - unused
 #    - usestdlibvars
-#    - varcheck
-#    - varnamelen
+    - varcheck
+    - varnamelen
 #    - wastedassign
 #    - whitespace
 #    - wrapcheck
@@ -127,20 +128,20 @@ linters:
   # Disable specific linter
   # https://golangci-lint.run/usage/linters/#disabled-by-default
   disable:
-    - asasalint
-    - asciicheck
-    - bidichk
-    - bodyclose
-    - containedctx
-    - contextcheck
+#    - asasalint
+#    - asciicheck
+#    - bidichk
+#    - bodyclose
+#    - containedctx
+#    - contextcheck
     - cyclop
-    - deadcode
-    - decorder
+#    - deadcode
+#    - decorder
     - depguard
-    - dogsled
+#    - dogsled
     - dupl
     - dupword
-    - durationcheck
+#    - durationcheck
     - errcheck
     - errchkjson
     - errname
@@ -165,11 +166,11 @@ linters:
     - godot
     - godox
     - goerr113
-    - gofmt
+#    - gofmt
     - gofumpt
     - goheader
     - goimports
-    - golint
+#    - golint
     - gomnd
     - gomoddirectives
     - gomodguard
@@ -198,7 +199,7 @@ linters:
     - nilerr
     - nilnil
 #    - nlreturn
-    - noctx
+#    - noctx
     - nolintlint
     - nonamedreturns
     - nosnakecase
@@ -225,10 +226,10 @@ linters:
     - typecheck
     - unconvert
     - unparam
-    - unused
+#    - unused
     - usestdlibvars
-    - varcheck
-    - varnamelen
+#    - varcheck
+#    - varnamelen
     - wastedassign
     - whitespace
     - wrapcheck

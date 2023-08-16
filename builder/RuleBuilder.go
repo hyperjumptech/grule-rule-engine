@@ -151,13 +151,13 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	kb := builder.KnowledgeLibrary.GetKnowledgeBase(name, version)
-	if kb == nil {
+	knowledgeBase := builder.KnowledgeLibrary.GetKnowledgeBase(name, version)
+	if knowledgeBase == nil {
 
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV3ParserListener(kb, errReporter)
+	listener := antlr2.NewGruleV3ParserListener(knowledgeBase, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 
@@ -169,13 +169,13 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	grl := listener.Grl
 	for _, ruleEntry := range grl.RuleEntries {
-		err := kb.AddRuleEntry(ruleEntry)
+		err := knowledgeBase.AddRuleEntry(ruleEntry)
 		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
 			BuilderLog.Tracef("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName, err.Error())
 		}
 	}
 
-	kb.WorkingMemory.IndexVariables()
+	knowledgeBase.WorkingMemory.IndexVariables()
 
 	// Get the loading duration.
 	dur := time.Now().Sub(startTime)

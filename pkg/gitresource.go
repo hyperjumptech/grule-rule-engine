@@ -15,7 +15,7 @@ import (
 
 // Load will load the file from your git repository
 func (bundle *GITResourceBundle) Load() ([]Resource, error) {
-	fs := memfs.New()
+	fileSystem := memfs.New()
 	CloneOpts := &git.CloneOptions{}
 	if len(bundle.URL) == 0 {
 
@@ -46,11 +46,11 @@ func (bundle *GITResourceBundle) Load() ([]Resource, error) {
 		}
 	}
 
-	_, err := git.Clone(memory.NewStorage(), fs, CloneOpts)
+	_, err := git.Clone(memory.NewStorage(), fileSystem, CloneOpts)
 	if err != nil {
 
 		return nil, err
 	}
 
-	return bundle.loadPath(bundle.URL, "/", fs)
+	return bundle.loadPath(bundle.URL, "/", fileSystem)
 }
