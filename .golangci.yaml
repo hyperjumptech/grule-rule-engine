@@ -23,12 +23,12 @@ linters:
 #    - contextcheck
 #    - cyclop
     - deadcode
-#    - decorder
+    - decorder
 #    - depguard
-#    - dogsled
+    - dogsled
 #    - dupl
 #    - dupword
-#    - durationcheck
+    - durationcheck
 #    - errcheck
 #    - errchkjson
 #    - errname
@@ -53,11 +53,11 @@ linters:
 #    - godot
 #    - godox
 #    - goerr113
-#    - gofmt
+    - gofmt
 #    - gofumpt
 #    - goheader
 #    - goimports
-#    - golint
+    - golint
 #    - gomnd
 #    - gomoddirectives
 #    - gomodguard
@@ -136,12 +136,12 @@ linters:
 #    - contextcheck
     - cyclop
 #    - deadcode
-    - decorder
+#    - decorder
     - depguard
-    - dogsled
+#    - dogsled
     - dupl
     - dupword
-    - durationcheck
+#    - durationcheck
     - errcheck
     - errchkjson
     - errname
@@ -166,11 +166,11 @@ linters:
     - godot
     - godox
     - goerr113
-    - gofmt
+#    - gofmt
     - gofumpt
     - goheader
     - goimports
-    - golint
+#    - golint
     - gomnd
     - gomoddirectives
     - gomodguard

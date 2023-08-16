@@ -59,7 +59,7 @@ func GetFile(path string) (*FileData, error) {
 	if err != nil {
 		return nil, err
 	}
-	mimeType, err := mime.MimeForFileName(path)
+	mimeType, err := mime.GetMimeForFileName(path)
 	if err != nil {
 
 		return &FileData{
