@@ -27,6 +27,7 @@ import (
 
 // NewExpressionAtom create new instance of ExpressionAtom
 func NewExpressionAtom() *ExpressionAtom {
+
 	return &ExpressionAtom{
 		AstID: unique.NewID(),
 	}
@@ -161,52 +162,63 @@ func (e *ExpressionAtom) AcceptMemberVariable(name string) {
 // AcceptVariable will accept an Variable AST graph into this ast graph
 func (e *ExpressionAtom) AcceptVariable(vari *Variable) error {
 	if e.Variable != nil {
+
 		return errors.New("variable for ExpressionAtom already assigned")
 	}
 	e.Variable = vari
+
 	return nil
 }
 
 // AcceptFunctionCall will accept an FunctionCall AST graph into this ast graph
 func (e *ExpressionAtom) AcceptFunctionCall(fun *FunctionCall) error {
 	if e.FunctionCall != nil {
+
 		return errors.New("function call for ExpressionAtom already assigned")
 	}
 	e.FunctionCall = fun
+
 	return nil
 }
 
 // AcceptExpressionAtom will accept an ExpressionAtom AST graph into this ast graph
 func (e *ExpressionAtom) AcceptExpressionAtom(ea *ExpressionAtom) error {
 	if e.ExpressionAtom != nil {
+
 		return errors.New("expression atom for ExpressionAtom already assigned")
 	}
 	e.ExpressionAtom = ea
+
 	return nil
 }
 
 // AcceptConstant will accept a Constant AST graph into this ast graph
 func (e *ExpressionAtom) AcceptConstant(cons *Constant) error {
 	if e.Constant != nil {
+
 		return errors.New("constant for ExpressionAtom already assigned")
 	}
 	e.Constant = cons
+
 	return nil
 }
 
 // AcceptArrayMapSelector accept an array map selector into this variable graph
 func (e *ExpressionAtom) AcceptArrayMapSelector(sel *ArrayMapSelector) error {
 	e.ArrayMapSelector = sel
+
 	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ExpressionAtom) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *ExpressionAtom) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -241,6 +253,7 @@ func (e *ExpressionAtom) GetSnapshot() string {
 		buff.WriteString(e.ArrayMapSelector.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -253,21 +266,25 @@ func (e *ExpressionAtom) SetGrlText(grlText string) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemory) (val reflect.Value, err error) {
 	if e.Evaluated == true {
+
 		return e.Value, nil
 	}
 	if e.Constant != nil {
 		val, err := e.Constant.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		e.Value = val
 		e.ValueNode = model.NewGoValueNode(val, fmt.Sprintf("%s->%s", val.Type().String(), val.String()))
 		e.Evaluated = true
+
 		return val, err
 	}
 	if e.Variable != nil {
 		val, err := e.Variable.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		//t, _ := e.Variable.ValueNode.GetType()
@@ -281,20 +298,24 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		valueNode := dataContext.Get("DEFUNC")
 		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		ret, err := valueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		e.Value = ret
 		e.ValueNode = model.NewGoValueNode(e.Value, fmt.Sprintf("%s()", e.FunctionCall.FunctionName))
 		// e.Evaluated = true
+
 		return ret, err
 	}
 	if e.ExpressionAtom != nil && e.FunctionCall == nil && len(e.VariableName) == 0 && e.ArrayMapSelector == nil {
 		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		e.Value = val
@@ -309,21 +330,25 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		}
 
 		e.Evaluated = true
+
 		return e.Value, err
 	}
 	if e.ExpressionAtom != nil && e.FunctionCall != nil {
 		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.ValueOf(nil), err
 		}
 
 		args, err := e.FunctionCall.EvaluateArgumentList(dataContext, memory)
 		if err != nil {
+
 			return reflect.ValueOf(nil), err
 		}
 
 		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		if err != nil {
+
 			return reflect.ValueOf(nil), err
 		}
 
@@ -332,15 +357,18 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		}
 		e.ValueNode = e.ExpressionAtom.ValueNode.ContinueWithValue(retVal, e.FunctionCall.FunctionName)
 		e.Evaluated = true
+
 		return e.Value, nil
 	}
 	if e.ExpressionAtom != nil && len(e.VariableName) > 0 {
 		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		valueNode, err := e.ExpressionAtom.ValueNode.GetChildNodeByField(e.VariableName)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		e.ValueNode = valueNode
@@ -353,24 +381,29 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 
 		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		selValue, err := e.ArrayMapSelector.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return reflect.Value{}, err
 		}
 		var valueNode model.ValueNode
 		if e.ExpressionAtom.ValueNode.IsArray() {
 			valueNode, err = e.ExpressionAtom.ValueNode.GetChildNodeByIndex(int(selValue.Int()))
 			if err != nil {
+
 				return reflect.Value{}, err
 			}
 		} else if e.ExpressionAtom.ValueNode.IsMap() {
 			valueNode, err = e.ExpressionAtom.ValueNode.GetChildNodeBySelector(selValue)
 			if err != nil {
+
 				return reflect.Value{}, err
 			}
 		} else {
+
 			return reflect.Value{}, fmt.Errorf("%s is not an array nor map", e.Variable.ValueNode.IdentifiedAs())
 		}
 
@@ -379,5 +412,6 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 
 		return e.Value, nil
 	}
+
 	panic("should not be reached")
 }

@@ -1,3 +1,4 @@
+//go:build go1.11
 // +build go1.11
 
 package pkg
@@ -17,6 +18,7 @@ func (bundle *GITResourceBundle) Load() ([]Resource, error) {
 	fs := memfs.New()
 	CloneOpts := &git.CloneOptions{}
 	if len(bundle.URL) == 0 {
+
 		return nil, fmt.Errorf("GIT URL is not specified")
 	}
 	CloneOpts.URL = bundle.URL
@@ -46,6 +48,7 @@ func (bundle *GITResourceBundle) Load() ([]Resource, error) {
 
 	_, err := git.Clone(memory.NewStorage(), fs, CloneOpts)
 	if err != nil {
+
 		return nil, err
 	}
 

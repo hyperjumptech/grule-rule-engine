@@ -22,6 +22,7 @@ import (
 
 // NewThenScope will create new instance of ThenScope
 func NewThenScope() *ThenScope {
+
 	return &ThenScope{
 		AstID: unique.NewID(),
 	}
@@ -80,16 +81,19 @@ func (e *ThenScope) Clone(cloneTable *pkg.CloneTable) *ThenScope {
 // AcceptThenExpressionList will accept ThenExpressionList graph into this ThenScope
 func (e *ThenScope) AcceptThenExpressionList(list *ThenExpressionList) error {
 	e.ThenExpressionList = list
+
 	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ThenScope) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *ThenScope) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -102,6 +106,7 @@ func (e *ThenScope) GetSnapshot() string {
 		buff.WriteString(e.ThenExpressionList.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -116,5 +121,6 @@ func (e *ThenScope) Execute(dataContext IDataContext, memory *WorkingMemory) err
 	if e.ThenExpressionList == nil {
 		AstLog.Warnf("Can not execute nil expression list")
 	}
+
 	return e.ThenExpressionList.Execute(dataContext, memory)
 }

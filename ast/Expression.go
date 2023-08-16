@@ -59,6 +59,7 @@ const (
 
 // NewExpression creates new Expression instance
 func NewExpression() *Expression {
+
 	return &Expression{
 		AstID:    unique.NewID(),
 		Operator: 0,
@@ -174,8 +175,10 @@ func (e *Expression) AcceptExpression(exp *Expression) error {
 		e.RightExpression = exp
 		e.SingleExpression = nil
 	} else {
+
 		return errors.New("left or right side expression already assigned")
 	}
+
 	return nil
 }
 
@@ -187,16 +190,19 @@ type ExpressionReceiver interface {
 // AcceptExpressionAtom will accept ExpressionAtom into this Expression
 func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	e.ExpressionAtom = atom
+
 	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *Expression) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *Expression) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -261,6 +267,7 @@ func (e *Expression) GetSnapshot() string {
 		buff.WriteString(")")
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -273,6 +280,7 @@ func (e *Expression) SetGrlText(grlText string) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if e.Evaluated == true {
+
 		return e.Value, nil
 	}
 	if e.ExpressionAtom != nil {
@@ -281,6 +289,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			e.Value = val
 			e.Evaluated = true
 		}
+
 		return val, err
 	}
 	if e.SingleExpression != nil {
@@ -296,6 +305,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			}
 			e.Evaluated = true
 		}
+
 		return e.Value, err
 	}
 	if e.LeftExpression != nil && e.RightExpression != nil {
@@ -305,32 +315,38 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		lval, lerr := e.LeftExpression.Evaluate(dataContext, memory)
 		if e.Operator == OpAnd {
 			if lerr != nil {
+
 				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
 			}
 			val, opErr = pkg.EvaluateLogicSingle(lval)
 			if opErr == nil && !val.Bool() {
 				e.Value = val
 				e.Evaluated = true
+
 				return val, opErr
 			}
 		}
 		if e.Operator == OpOr {
 			if lerr != nil {
+
 				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
 			}
 			val, opErr = pkg.EvaluateLogicSingle(lval)
 			if opErr == nil && val.Bool() {
 				e.Value = val
 				e.Evaluated = true
+
 				return val, opErr
 			}
 		}
 
 		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
 		if lerr != nil {
+
 			return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
 		}
 		if rerr != nil {
+
 			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
 		}
 
@@ -370,7 +386,9 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			e.Value = val
 			e.Evaluated = true
 		}
+
 		return val, opErr
 	}
+
 	return reflect.Value{}, nil
 }

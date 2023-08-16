@@ -22,6 +22,7 @@ import (
 
 // NewThenExpression create new instance of ThenExpression
 func NewThenExpression() *ThenExpression {
+
 	return &ThenExpression{
 		AstID: unique.NewID(),
 	}
@@ -95,22 +96,26 @@ func (e *ThenExpression) Clone(cloneTable *pkg.CloneTable) *ThenExpression {
 // AcceptAssignment will accept Assignment AST graph into this Then ast graph
 func (e *ThenExpression) AcceptAssignment(assignment *Assignment) error {
 	e.Assignment = assignment
+
 	return nil
 }
 
 // AcceptExpressionAtom will accept an AcceptExpressionAtom AST graph into this ast graph
 func (e *ThenExpression) AcceptExpressionAtom(exp *ExpressionAtom) error {
 	e.ExpressionAtom = exp
+
 	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ThenExpression) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *ThenExpression) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -126,6 +131,7 @@ func (e *ThenExpression) GetSnapshot() string {
 		buff.WriteString(e.ExpressionAtom.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -144,16 +150,20 @@ func (e *ThenExpression) Execute(dataContext IDataContext, memory *WorkingMemory
 		} else {
 			AstLog.Debugf("success executing assignment %s", e.Assignment.GrlText)
 		}
+
 		return err
 	}
 	if e.ExpressionAtom != nil {
 		_, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err != nil {
 			AstLog.Errorf("error while executing expression %s. got %s", e.ExpressionAtom.GrlText, err.Error())
+
 			return err
 		}
 		AstLog.Debugf("success executing ExpressionAtom %s", e.ExpressionAtom.GrlText)
+
 		return nil
 	}
+
 	return nil
 }

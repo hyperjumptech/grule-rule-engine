@@ -79,9 +79,12 @@ func IsDateFormatValid(layout, date string) bool {
 	if pattern, ok := TimeValidatorMap[layout]; ok {
 		m, err := regexp.MatchString(pattern, date)
 		if err != nil || !m {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }

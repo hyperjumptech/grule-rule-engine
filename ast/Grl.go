@@ -18,6 +18,7 @@ import "fmt"
 
 // NewGrl creates new GRL instance
 func NewGrl() *Grl {
+
 	return &Grl{
 		RuleEntries: make(map[string]*RuleEntry, 0),
 	}
@@ -39,8 +40,10 @@ func (g *Grl) ReceiveRuleEntry(entry *RuleEntry) error {
 		g.RuleEntries = make(map[string]*RuleEntry)
 	}
 	if _, ok := g.RuleEntries[entry.RuleName]; ok {
+
 		return fmt.Errorf("duplicate rule entry %s", entry.RuleName)
 	}
 	g.RuleEntries[entry.RuleName] = entry
+
 	return nil
 }

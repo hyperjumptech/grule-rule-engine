@@ -34,9 +34,11 @@ func NewID() string {
 	MS := time.Now().Unix()
 	if lastMS == MS {
 		offset++
+
 		return fmt.Sprintf("%d-%d", lastMS, offset)
 	}
 	lastMS = MS
 	offset = 0
+
 	return fmt.Sprintf("%d-%d", lastMS, offset)
 }
