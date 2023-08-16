@@ -43,15 +43,15 @@ type JSONResourceBundle struct {
 }
 
 // NewJSONResourceFromResource innstantiates a new JSON resource parser from an underlying Resource.
-func NewJSONResourceFromResource(res Resource) Resource {
+func NewJSONResourceFromResource(res Resource) (Resource, error) {
 	if _, ok := res.(*JSONResource); ok {
 
-		panic("cannot create JSON resource from JSON resource")
+		return nil, fmt.Errorf("not a JSONResource")
 	}
 
 	return &JSONResource{
 		subRes: res,
-	}
+	}, nil
 }
 
 // Load will load the underlying Resource and parse the JSON rules into standard GRule syntax.
@@ -87,14 +87,15 @@ func (jr *JSONResource) String() string {
 }
 
 // NewJSONResourceBundleFromBundle innstantiates a new bundled JSON resource parser from an underlying ResourceBundle.
-func NewJSONResourceBundleFromBundle(bundle ResourceBundle) ResourceBundle {
+func NewJSONResourceBundleFromBundle(bundle ResourceBundle) (ResourceBundle, error) {
 	if _, ok := bundle.(*JSONResourceBundle); ok {
-		panic("cannot create JSON resource bundle from JSON resource bundle")
+
+		return nil, fmt.Errorf("bundle is not JSONResourceBundle")
 	}
 
 	return &JSONResourceBundle{
 		subRes: bundle,
-	}
+	}, nil
 }
 
 // Load will load the underlying ResourceBundle and parse the JSON rules into standard GRule syntax.
@@ -106,21 +107,33 @@ func (jrb *JSONResourceBundle) Load() ([]Resource, error) {
 	}
 	nress := make([]Resource, len(ress))
 	for i := 0; i < len(ress); i++ {
-		nress[i] = NewJSONResourceFromResource(ress[i])
+		nress[i], err = NewJSONResourceFromResource(ress[i])
+		if err != nil {
+
+			return nil, err
+		}
 	}
 
 	return nress, nil
 }
 
 // MustLoad operates the same as load except it will panic in the event of an error.
-func (jrb *JSONResourceBundle) MustLoad() []Resource {
-	ress := jrb.subRes.MustLoad()
+func (jrb *JSONResourceBundle) MustLoad() (res []Resource, err error) {
+	ress, err := jrb.subRes.MustLoad()
+	if err != nil {
+
+		return ress, err
+	}
 	nress := make([]Resource, len(ress))
 	for i := 0; i < len(ress); i++ {
-		nress[i] = NewJSONResourceFromResource(ress[i])
+		nress[i], err = NewJSONResourceFromResource(ress[i])
+		if err != nil {
+
+			return nil, err
+		}
 	}
 
-	return nress
+	return nress, nil
 }
 
 // ParseJSONRuleset accepts a byte array containing an array of rules in JSON format to be parsed into GRule syntax.

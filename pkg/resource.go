@@ -36,7 +36,7 @@ var (
 // ResourceBundle is a helper struct to help load multiple resource at once.
 type ResourceBundle interface {
 	Load() ([]Resource, error)
-	MustLoad() []Resource
+	MustLoad() ([]Resource, error)
 }
 
 // Resource should be implemented by any resource model so it can be loaded and parsed by the grule parser.

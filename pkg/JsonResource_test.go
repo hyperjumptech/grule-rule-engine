@@ -267,7 +267,10 @@ func TestParseJSONRuleset(t *testing.T) {
 
 func TestNewJSONResourceFromResource(t *testing.T) {
 	underlyingResource := NewBytesResource([]byte(jsonDataExpanded))
-	resource := NewJSONResourceFromResource(underlyingResource)
+	resource, err := NewJSONResourceFromResource(underlyingResource)
+	if err != nil {
+		t.Fatal("Failed to load JSON rule: " + err.Error())
+	}
 	loaded, err := resource.Load()
 	if err != nil {
 		t.Fatal("Failed to load JSON rule: " + err.Error())
@@ -277,7 +280,10 @@ func TestNewJSONResourceFromResource(t *testing.T) {
 		t.Fatal("Loaded rule does not match expected result")
 	}
 	underlyingResource = NewBytesResource([]byte(arrayJSONDataExpanded))
-	resource = NewJSONResourceFromResource(underlyingResource)
+	resource, err = NewJSONResourceFromResource(underlyingResource)
+	if err != nil {
+		t.Fatal("Failed to load JSON ruleset: " + err.Error())
+	}
 	loaded, err = resource.Load()
 	if err != nil {
 		t.Fatal("Failed to load JSON ruleset: " + err.Error())
