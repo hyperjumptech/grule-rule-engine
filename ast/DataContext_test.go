@@ -39,5 +39,6 @@ func (tcs *TestCStruct) EchoVariad(ss ...string) int {
 	for _, s := range ss {
 		fmt.Println(s)
 	}
+
 	return len(ss)
 }

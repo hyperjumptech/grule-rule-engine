@@ -95,16 +95,19 @@ func SetLogger(externalLog interface{}) {
 	case *zap.Logger:
 		log, ok := externalLog.(*zap.Logger)
 		if !ok {
+
 			return
 		}
 		Log = NewZap(log)
 	case *logrus.Logger:
 		log, ok := externalLog.(*logrus.Logger)
 		if !ok {
+
 			return
 		}
 		Log = NewLogrus(log)
 	default:
+
 		return
 	}
 }

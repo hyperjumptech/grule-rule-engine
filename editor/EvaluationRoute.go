@@ -29,6 +29,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(fmt.Sprintf("error while reading body stream. got %v", err)))
+
 			return
 		}
 		evReq := &EvaluateRequest{}
@@ -36,6 +37,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(fmt.Sprintf("wrong json format. got %v \n\n Json : %s", err, string(bodyBytes))))
+
 			return
 		}
 
@@ -46,12 +48,14 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte(fmt.Sprintf("json data named %s should be sent using base64. got %v", jd.Name, err)))
+
 				return
 			}
 			err = dataContext.AddJSON(jd.Name, jsonByte)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte(fmt.Sprintf("invalid JSON data named %s when add json to context got %v", jd.Name, err)))
+
 				return
 			}
 		}
@@ -63,6 +67,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(fmt.Sprintf("GRL data should be sent using base64. got %v", err)))
+
 			return
 		}
 
@@ -70,6 +75,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(fmt.Sprintf("invalid GRL : %s", err.Error())))
+
 			return
 		}
 
@@ -79,6 +85,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(fmt.Sprintf("Grule Error : %s", err.Error())))
+
 			return
 		}
 
@@ -91,6 +98,7 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(fmt.Sprintf("Error marshaling result : %s", err.Error())))
+
 			return
 		}
 

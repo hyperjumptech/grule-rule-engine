@@ -9,13 +9,6 @@ build: fix-antlr4-bug
 	export GO111MODULE on; \
 	go build ./...
 
-lint: build
-ifndef GOBIN
-	"${GOPATH}/bin/golint" -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
-else
-	"${GOBIN}/golint" -set_exit_status builder/... engine/... examples/... ast/... pkg/... antlr/. model/...
-endif
-
 test-short: build
 	go test ./... -v -covermode=count -coverprofile=coverage.out -short
 

@@ -726,6 +726,7 @@ func MimeForFileName(filename string) (string, error) {
 	reg := regexp.MustCompile(`[a-zA-Z0-9]+$`)
 	if reg.MatchString(filename) {
 		ext := reg.FindString(filename)
+
 		return MimeForExtension(ext)
 	} else {
 		return "", fmt.Errorf("can not find extension of file : %s", filename)
@@ -751,6 +752,7 @@ func IsAllPrintableChar(bytes []byte) bool {
 			nonprintable++
 		}
 	}
+
 	return float64(nonprintable)/float64(len(bytes)) < 0.03
 }
 

@@ -25,6 +25,7 @@ import (
 
 // NewWorkingMemory create new instance of WorkingMemory
 func NewWorkingMemory(name, version string) *WorkingMemory {
+
 	return &WorkingMemory{
 		Name:                      name,
 		Version:                   version,
@@ -110,26 +111,34 @@ func (e *WorkingMemory) DebugContent() {
 // Equals shallowly equals check this Working Memory against other working memory
 func (e *WorkingMemory) Equals(that *WorkingMemory) bool {
 	if e.Name != that.Name {
+
 		return false
 	}
 	if e.Version != that.Version {
+
 		return false
 	}
 	if len(e.expressionSnapshotMap) != len(that.expressionSnapshotMap) {
+
 		return false
 	}
 	if len(e.expressionAtomSnapshotMap) != len(that.expressionAtomSnapshotMap) {
+
 		return false
 	}
 	if len(e.variableSnapshotMap) != len(that.variableSnapshotMap) {
+
 		return false
 	}
 	if len(e.expressionVariableMap) != len(that.expressionVariableMap) {
+
 		return false
 	}
 	if len(e.expressionAtomVariableMap) != len(that.expressionAtomVariableMap) {
+
 		return false
 	}
+
 	return true
 }
 
@@ -144,6 +153,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			} else {
+
 				panic(fmt.Sprintf("expression  %s is not on the clone table - %s", expr.GrlText, expr.GetSnapshot()))
 			}
 		}
@@ -155,6 +165,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 			if cloneTable.IsCloned(exprAtm.AstID) {
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
 			} else {
+
 				panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
 			}
 		}
@@ -166,6 +177,7 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 			if cloneTable.IsCloned(vari.AstID) {
 				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
 			} else {
+
 				panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
 			}
 		}
@@ -181,10 +193,12 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 					} else {
+
 						panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
 					}
 				}
 			} else {
+
 				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
 		}
@@ -200,10 +214,12 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
 					} else {
+
 						panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
 					}
 				}
 			} else {
+
 				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
 		}
@@ -211,8 +227,10 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 
 	if e.Equals(clone) {
 		clone.DebugContent()
+
 		return clone
 	}
+
 	panic("Clone not equals the origin.")
 }
 
@@ -259,10 +277,12 @@ func (e *WorkingMemory) AddExpression(exp *Expression) *Expression {
 	snapshot := exp.GetSnapshot()
 	if expr, ok := e.expressionSnapshotMap[snapshot]; ok {
 		AstLog.Tracef("%s : Ignored Expression Snapshot : %s", e.ID, snapshot)
+
 		return expr
 	}
 	AstLog.Tracef("%s : Added Expression Snapshot : %s", e.ID, snapshot)
 	e.expressionSnapshotMap[snapshot] = exp
+
 	return exp
 }
 
@@ -272,10 +292,12 @@ func (e *WorkingMemory) AddExpressionAtom(exp *ExpressionAtom) *ExpressionAtom {
 	snapshot := exp.GetSnapshot()
 	if expr, ok := e.expressionAtomSnapshotMap[snapshot]; ok {
 		AstLog.Tracef("%s : Ignored ExpressionAtom Snapshot : %s", e.ID, snapshot)
+
 		return expr
 	}
 	AstLog.Tracef("%s : Added ExpressionAtom Snapshot : %s", e.ID, snapshot)
 	e.expressionAtomSnapshotMap[snapshot] = exp
+
 	return exp
 }
 
@@ -285,10 +307,12 @@ func (e *WorkingMemory) AddVariable(vari *Variable) *Variable {
 	snapshot := vari.GetSnapshot()
 	if v, ok := e.variableSnapshotMap[snapshot]; ok {
 		AstLog.Tracef("%s : Ignored Variable Snapshot : %s", e.ID, snapshot)
+
 		return v
 	}
 	AstLog.Tracef("%s : Added Variable Snapshot : %s", e.ID, snapshot)
 	e.variableSnapshotMap[snapshot] = vari
+
 	return vari
 }
 
@@ -298,6 +322,7 @@ func (e *WorkingMemory) Reset(name string) bool {
 	AstLog.Tracef("------- resetting  %s", name)
 	for _, vari := range e.variableSnapshotMap {
 		if vari.GrlText == name {
+
 			return e.ResetVariable(vari)
 		}
 	}
@@ -311,6 +336,7 @@ func (e *WorkingMemory) Reset(name string) bool {
 			expr.Evaluated = false
 		}
 	}
+
 	return false
 }
 
@@ -340,6 +366,7 @@ func (e *WorkingMemory) ResetVariable(variable *Variable) bool {
 	} else {
 		AstLog.Warnf("No expression atom to reset for variable %s", variable.GrlText)
 	}
+
 	return reseted
 }
 
@@ -355,5 +382,6 @@ func (e *WorkingMemory) ResetAll() bool {
 		expr.Evaluated = false
 		reseted = true
 	}
+
 	return reseted
 }

@@ -24,6 +24,7 @@ type CloneRecord struct {
 
 // NewCloneTable create new instance of CloneTable
 func NewCloneTable() *CloneTable {
+
 	return &CloneTable{Records: make(map[string]*CloneRecord)}
 }
 
@@ -35,6 +36,7 @@ type CloneTable struct {
 // IsCloned will check if an AST object with identified astId has a clone.
 func (tab *CloneTable) IsCloned(astID string) bool {
 	_, ok := tab.Records[astID]
+
 	return ok
 }
 

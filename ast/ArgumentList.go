@@ -77,6 +77,7 @@ func (e *ArgumentList) Clone(cloneTable *pkg.CloneTable) *ArgumentList {
 			}
 		}
 	}
+
 	return clone
 }
 
@@ -86,6 +87,7 @@ func (e *ArgumentList) AcceptExpression(exp *Expression) error {
 		e.Arguments = make([]*Expression, 0)
 	}
 	e.Arguments = append(e.Arguments, exp)
+
 	return nil
 }
 
@@ -111,6 +113,7 @@ func (e *ArgumentList) GetSnapshot() string {
 		buff.WriteString(v.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -135,5 +138,6 @@ func (e *ArgumentList) Evaluate(dataContext IDataContext, memory *WorkingMemory)
 		}
 		values[i] = val
 	}
+
 	return values, nil
 }

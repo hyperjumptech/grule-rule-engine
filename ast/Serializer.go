@@ -458,84 +458,104 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 // The comparison is Deep comparison.
 func (cat *Catalog) Equals(that *Catalog) bool {
 	if cat.KnowledgeBaseName != that.KnowledgeBaseName {
+
 		return false
 	}
 	if cat.KnowledgeBaseVersion != that.KnowledgeBaseVersion {
+
 		return false
 	}
 	if cat.MemoryName != that.MemoryName {
+
 		return false
 	}
 	if cat.MemoryVersion != that.MemoryVersion {
+
 		return false
 	}
 	if len(cat.Data) != len(that.Data) {
+
 		return false
 	}
 	for k, v := range cat.Data {
 		if j, ok := that.Data[k]; ok {
 			if !j.Equals(v) {
+
 				return false
 			}
 		} else {
+
 			return false
 		}
 	}
 	for k, v := range cat.MemoryVariableSnapshotMap {
 		if j, ok := that.MemoryVariableSnapshotMap[k]; ok {
 			if j != v {
+
 				return false
 			}
 		} else {
+
 			return false
 		}
 	}
 	for k, v := range cat.MemoryExpressionSnapshotMap {
 		if j, ok := that.MemoryExpressionSnapshotMap[k]; ok {
 			if j != v {
+
 				return false
 			}
 		} else {
+
 			return false
 		}
 	}
 	for k, v := range cat.MemoryExpressionAtomSnapshotMap {
 		if j, ok := that.MemoryExpressionAtomSnapshotMap[k]; ok {
 			if j != v {
+
 				return false
 			}
 		} else {
+
 			return false
 		}
 	}
 	for k, v := range cat.MemoryExpressionVariableMap {
 		if j, ok := that.MemoryExpressionVariableMap[k]; ok {
 			if len(j) != len(v) {
+
 				return false
 			}
 			for in, st := range v {
 				if j[in] != st {
+
 					return false
 				}
 			}
 		} else {
+
 			return false
 		}
 	}
 	for k, v := range cat.MemoryExpressionAtomVariableMap {
 		if j, ok := that.MemoryExpressionAtomVariableMap[k]; ok {
 			if len(j) != len(v) {
+
 				return false
 			}
 			for in, st := range v {
 				if j[in] != st {
+
 					return false
 				}
 			}
 		} else {
+
 			return false
 		}
 	}
+
 	return true
 
 }
@@ -547,15 +567,18 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// Read the catalog file version.
 	str, err := ReadStringFromReader(r) // V
 	if err != nil {
+
 		return err
 	}
 	if str != Version {
+
 		return fmt.Errorf("invalid version %s", str)
 	}
 
 	// Read the knowledgebase name.
 	str, err = ReadStringFromReader(r) // V
 	if err != nil {
+
 		return err
 	}
 	cat.KnowledgeBaseName = str
@@ -563,6 +586,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// Read the knowledgebase version.
 	str, err = ReadStringFromReader(r) // V
 	if err != nil {
+
 		return err
 	}
 	cat.KnowledgeBaseVersion = str
@@ -570,6 +594,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// Writedown meta counts.
 	count, err := ReadIntFromReader(r) // V
 	if err != nil {
+
 		return err
 	}
 
@@ -578,10 +603,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r) // V
 		if err != nil {
+
 			return err
 		}
 		metaType, err := ReadIntFromReader(r) // V
 		if err != nil {
+
 			return err
 		}
 		var meta Meta
@@ -613,10 +640,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 		case TypeWhenScope:
 			meta = &WhenScopeMeta{}
 		default:
+
 			return fmt.Errorf("unknown meta number %d", metaType)
 		}
 		err = meta.ReadMetaFrom(r) // V
 		if err != nil {
+
 			return err
 		}
 		cat.Data[key] = meta
@@ -624,12 +653,14 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 
 	str, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	cat.MemoryName = str
 
 	str, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	cat.MemoryVersion = str
@@ -637,6 +668,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// Writedown meta counts.
 	count, err = ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -644,10 +676,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		val, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		cat.MemoryVariableSnapshotMap[key] = val
@@ -656,6 +690,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// MemoryExpressionSnapshotMap meta counts.
 	count, err = ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -663,10 +698,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		val, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		cat.MemoryExpressionSnapshotMap[key] = val
@@ -675,6 +712,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// MemoryExpressionAtomSnapshotMap meta counts.
 	count, err = ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -682,10 +720,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		val, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		cat.MemoryExpressionAtomSnapshotMap[key] = val
@@ -694,6 +734,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// MemoryExpressionVariableMap meta counts.
 	count, err = ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -701,16 +742,19 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		incount, err := ReadIntFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		content := make([]string, incount)
 		for j := uint64(0); j < incount; j++ {
 			str, err := ReadStringFromReader(r)
 			if err != nil {
+
 				return err
 			}
 			content[j] = str
@@ -721,6 +765,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	// MemoryExpressionAtomVariableMap meta counts.
 	count, err = ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -728,16 +773,19 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		key, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		incount, err := ReadIntFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		content := make([]string, incount)
 		for j := uint64(0); j < incount; j++ {
 			str, err := ReadStringFromReader(r)
 			if err != nil {
+
 				return err
 			}
 			content[j] = str
@@ -755,24 +803,28 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// Write the catalog file version.
 	err := WriteStringToWriter(w, Version)
 	if err != nil {
+
 		return err
 	}
 
 	// Write the knowledgebase name.
 	err = WriteStringToWriter(w, cat.KnowledgeBaseName)
 	if err != nil {
+
 		return err
 	}
 
 	// Write the knowledgebase version.
 	err = WriteStringToWriter(w, cat.KnowledgeBaseVersion)
 	if err != nil {
+
 		return err
 	}
 
 	// Writedown meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.Data)))
 	if err != nil {
+
 		return err
 	}
 
@@ -782,17 +834,20 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 		// Write the AST ID
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 
 		err := WriteIntToWriter(w, uint64(v.GetASTType()))
 		if err != nil {
+
 			return err
 		}
 
 		// Write the meta
 		err = v.WriteMetaTo(w)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -800,27 +855,32 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// Write the MemoryName version.
 	err = WriteStringToWriter(w, cat.MemoryName)
 	if err != nil {
+
 		return err
 	}
 
 	// Write the MemoryVersion version.
 	err = WriteStringToWriter(w, cat.MemoryVersion)
 	if err != nil {
+
 		return err
 	}
 
 	// MemoryVariableSnapshotMap meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.MemoryVariableSnapshotMap)))
 	if err != nil {
+
 		return err
 	}
 	for k, v := range cat.MemoryVariableSnapshotMap {
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 		err = WriteStringToWriter(w, v)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -828,15 +888,18 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// MemoryExpressionSnapshotMap meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionSnapshotMap)))
 	if err != nil {
+
 		return err
 	}
 	for k, v := range cat.MemoryExpressionSnapshotMap {
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 		err = WriteStringToWriter(w, v)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -844,15 +907,18 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// MemoryExpressionAtomSnapshotMap meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionAtomSnapshotMap)))
 	if err != nil {
+
 		return err
 	}
 	for k, v := range cat.MemoryExpressionAtomSnapshotMap {
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 		err = WriteStringToWriter(w, v)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -860,20 +926,24 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// MemoryExpressionVariableMap meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionVariableMap)))
 	if err != nil {
+
 		return err
 	}
 	for k, v := range cat.MemoryExpressionVariableMap {
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 		err = WriteIntToWriter(w, uint64(len(v)))
 		if err != nil {
+
 			return err
 		}
 		for _, j := range v {
 			err = WriteStringToWriter(w, j)
 			if err != nil {
+
 				return err
 			}
 		}
@@ -882,20 +952,24 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	// MemoryExpressionAtomVariableMap meta counts.
 	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionAtomVariableMap)))
 	if err != nil {
+
 		return err
 	}
 	for k, v := range cat.MemoryExpressionAtomVariableMap {
 		err = WriteStringToWriter(w, k)
 		if err != nil {
+
 			return err
 		}
 		err = WriteIntToWriter(w, uint64(len(v)))
 		if err != nil {
+
 			return err
 		}
 		for _, j := range v {
 			err = WriteStringToWriter(w, j)
 			if err != nil {
+
 				return err
 			}
 		}
@@ -912,8 +986,10 @@ func (cat *Catalog) AddMeta(astID string, meta Meta) bool {
 	}
 	if _, ok := cat.Data[astID]; !ok {
 		cat.Data[astID] = meta
+
 		return true
 	}
+
 	return false
 }
 
@@ -937,18 +1013,21 @@ type NodeMeta struct {
 
 // GetAstID return the node AST ID
 func (meta *NodeMeta) GetAstID() string {
+
 	return meta.AstID
 }
 
 // GetGrlText return the node original GRLText, this might not be needed
 // but useful for debuging future GRL issue
 func (meta *NodeMeta) GetGrlText() string {
+
 	return meta.GrlText
 }
 
 // GetSnapshot return the NodeSnapshot, this might not needed but
 // could be useful for consistency.
 func (meta *NodeMeta) GetSnapshot() string {
+
 	return meta.Snapshot
 }
 
@@ -959,16 +1038,19 @@ func (meta *NodeMeta) WriteMetaTo(w io.Writer) error {
 	// First write the AST ID. this may be redundant.
 	err := WriteStringToWriter(w, meta.AstID)
 	if err != nil {
+
 		return err
 	}
 	// Second write the GRL Text.
 	err = WriteStringToWriter(w, meta.GrlText)
 	if err != nil {
+
 		return err
 	}
 	// Third write the snapshot. This might be un-necessary.
 	err = WriteStringToWriter(w, meta.Snapshot)
 	if err != nil {
+
 		return err
 	}
 
@@ -981,18 +1063,21 @@ func (meta *NodeMeta) WriteMetaTo(w io.Writer) error {
 func (meta *NodeMeta) ReadMetaFrom(reader io.Reader) error {
 	str, err := ReadStringFromReader(reader)
 	if err != nil {
+
 		return err
 	}
 	meta.AstID = str
 
 	str, err = ReadStringFromReader(reader)
 	if err != nil {
+
 		return err
 	}
 	meta.GrlText = str
 
 	str, err = ReadStringFromReader(reader)
 	if err != nil {
+
 		return err
 	}
 	meta.Snapshot = str
@@ -1003,14 +1088,18 @@ func (meta *NodeMeta) ReadMetaFrom(reader io.Reader) error {
 // Equals basic function to test equality of two MetaNode
 func (meta *NodeMeta) Equals(that Meta) bool {
 	if meta.GetAstID() != that.GetAstID() {
+
 		return false
 	}
 	if meta.GetGrlText() != that.GetGrlText() {
+
 		return false
 	}
 	if meta.GetSnapshot() != that.GetSnapshot() {
+
 		return false
 	}
+
 	return true
 }
 
@@ -1031,16 +1120,20 @@ func (meta *ArgumentListMeta) Equals(that Meta) bool {
 		}
 		for k, v := range meta.ArgumentASTIDs {
 			if ins.ArgumentASTIDs[k] != v {
+
 				return false
 			}
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ArgumentListMeta) GetASTType() NodeType {
+
 	return TypeArgumentList
 }
 
@@ -1050,12 +1143,14 @@ func (meta *ArgumentListMeta) GetASTType() NodeType {
 func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 
 	// Write the number of arguments
 	err = WriteIntToWriter(w, uint64(len(meta.ArgumentASTIDs)))
 	if err != nil {
+
 		return err
 	}
 
@@ -1063,6 +1158,7 @@ func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 	for _, v := range meta.ArgumentASTIDs {
 		err = WriteStringToWriter(w, v)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -1076,11 +1172,13 @@ func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ArgumentListMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 
 	in, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -1088,6 +1186,7 @@ func (meta *ArgumentListMeta) ReadMetaFrom(r io.Reader) error {
 	for i := uint64(0); i < in; i++ {
 		s, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		meta.ArgumentASTIDs[i] = s
@@ -1106,18 +1205,23 @@ type ArrayMapSelectorMeta struct {
 func (meta *ArrayMapSelectorMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ArrayMapSelectorMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.ExpressionID != ins.ExpressionID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ArrayMapSelectorMeta) GetASTType() NodeType {
+
 	return TypeArrayMapSelector
 }
 
@@ -1127,12 +1231,15 @@ func (meta *ArrayMapSelectorMeta) GetASTType() NodeType {
 func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionID)
 	if err != nil {
+
 		return err
 	}
+
 	return nil
 }
 
@@ -1142,13 +1249,16 @@ func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ArrayMapSelectorMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionID = s
+
 	return nil
 }
 
@@ -1168,36 +1278,47 @@ type AssigmentMeta struct {
 func (meta *AssigmentMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*AssigmentMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.VariableID != ins.VariableID {
+
 			return false
 		}
 		if meta.ExpressionID != ins.ExpressionID {
+
 			return false
 		}
 		if meta.IsAssign != ins.IsAssign {
+
 			return false
 		}
 		if meta.IsPlusAssign != ins.IsPlusAssign {
+
 			return false
 		}
 		if meta.IsMinusAssign != ins.IsMinusAssign {
+
 			return false
 		}
 		if meta.IsDivAssign != ins.IsDivAssign {
+
 			return false
 		}
 		if meta.IsMulAssign != ins.IsMulAssign {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *AssigmentMeta) GetASTType() NodeType {
+
 	return TypeAssignment
 }
 
@@ -1207,36 +1328,44 @@ func (meta *AssigmentMeta) GetASTType() NodeType {
 func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 
 	err = WriteStringToWriter(w, meta.VariableID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionID)
 	if err != nil {
+
 		return err
 	}
 
 	err = WriteBoolToWriter(w, meta.IsAssign)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.IsPlusAssign)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.IsMinusAssign)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.IsDivAssign)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.IsMulAssign)
 	if err != nil {
+
 		return err
 	}
 
@@ -1249,46 +1378,54 @@ func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
 func (meta *AssigmentMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.VariableID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionID = s
 
 	b, err := ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsAssign = b
 
 	b, err = ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsPlusAssign = b
 
 	b, err = ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsMinusAssign = b
 
 	b, err = ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsDivAssign = b
 
 	b, err = ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsMulAssign = b
@@ -1309,29 +1446,37 @@ type ConstantMeta struct {
 func (meta *ConstantMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ConstantMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.ValueType != ins.ValueType {
+
 			return false
 		}
 		if meta.IsNil != ins.IsNil {
+
 			return false
 		}
 		if len(meta.ValueBytes) != len(ins.ValueBytes) {
+
 			return false
 		}
 		for k, v := range meta.ValueBytes {
 			if ins.ValueBytes[k] != v {
+
 				return false
 			}
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ConstantMeta) GetASTType() NodeType {
+
 	return TypeConstant
 }
 
@@ -1341,22 +1486,27 @@ func (meta *ConstantMeta) GetASTType() NodeType {
 func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteIntToWriter(w, uint64(meta.ValueType))
 	if err != nil {
+
 		return err
 	}
 	err = WriteIntToWriter(w, uint64(len(meta.ValueBytes)))
 	if err != nil {
+
 		return err
 	}
 	_, err = w.Write(meta.ValueBytes)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.IsNil)
 	if err != nil {
+
 		return err
 	}
 
@@ -1369,27 +1519,32 @@ func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ConstantMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	i, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ValueType = ValueType(i)
 
 	length, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	byteArr := make([]byte, length)
 	_, err = r.Read(byteArr)
 	if err != nil {
+
 		return err
 	}
 	meta.ValueBytes = byteArr
 
 	b, err := ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.IsNil = b
@@ -1412,33 +1567,43 @@ type ExpressionMeta struct {
 func (meta *ExpressionMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ExpressionMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.LeftExpressionID != ins.LeftExpressionID {
+
 			return false
 		}
 		if meta.RightExpressionID != ins.RightExpressionID {
+
 			return false
 		}
 		if meta.SingleExpressionID != ins.SingleExpressionID {
+
 			return false
 		}
 		if meta.ExpressionAtomID != ins.ExpressionAtomID {
+
 			return false
 		}
 		if meta.Operator != ins.Operator {
+
 			return false
 		}
 		if meta.Negated != ins.Negated {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ExpressionMeta) GetASTType() NodeType {
+
 	return TypeExpression
 }
 
@@ -1448,30 +1613,37 @@ func (meta *ExpressionMeta) GetASTType() NodeType {
 func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.LeftExpressionID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.RightExpressionID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.SingleExpressionID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionAtomID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteIntToWriter(w, uint64(meta.Operator))
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.Negated)
 	if err != nil {
+
 		return err
 	}
 
@@ -1484,38 +1656,46 @@ func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.LeftExpressionID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.RightExpressionID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.SingleExpressionID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionAtomID = s
 	i, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.Operator = int(i)
 	b, err := ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.Negated = b
+
 	return nil
 }
 
@@ -1535,36 +1715,48 @@ type ExpressionAtomMeta struct {
 func (meta *ExpressionAtomMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ExpressionAtomMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.VariableName != ins.VariableName {
+
 			return false
 		}
 		if meta.ConstantID != ins.ConstantID {
+
 			return false
 		}
 		if meta.FunctionCallID != ins.FunctionCallID {
+
 			return false
 		}
 		if meta.VariableID != ins.VariableID {
+
 			return false
 		}
 		if meta.Negated != ins.Negated {
+
 			return false
 		}
 		if meta.ExpressionAtomID != ins.ExpressionAtomID {
+
 			return false
+
 		}
 		if meta.ArrayMapSelectorID != ins.ArrayMapSelectorID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ExpressionAtomMeta) GetASTType() NodeType {
+
 	return TypeExpressionAtom
 }
 
@@ -1574,34 +1766,42 @@ func (meta *ExpressionAtomMeta) GetASTType() NodeType {
 func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.VariableName)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ConstantID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.FunctionCallID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.VariableID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteBoolToWriter(w, meta.Negated)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionAtomID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ArrayMapSelectorID)
 	if err != nil {
+
 		return err
 	}
 
@@ -1614,43 +1814,52 @@ func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ExpressionAtomMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.VariableName = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ConstantID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.FunctionCallID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.VariableID = s
 	b, err := ReadBoolFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.Negated = b
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionAtomID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ArrayMapSelectorID = s
+
 	return nil
 }
 
@@ -1665,21 +1874,27 @@ type FunctionCallMeta struct {
 func (meta *FunctionCallMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*FunctionCallMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.FunctionName != ins.FunctionName {
+
 			return false
 		}
 		if meta.ArgumentListID != ins.ArgumentListID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *FunctionCallMeta) GetASTType() NodeType {
+
 	return TypeFunctionCall
 }
 
@@ -1689,14 +1904,17 @@ func (meta *FunctionCallMeta) GetASTType() NodeType {
 func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.FunctionName)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ArgumentListID)
 	if err != nil {
+
 		return err
 	}
 
@@ -1709,18 +1927,22 @@ func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
 func (meta *FunctionCallMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.FunctionName = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ArgumentListID = s
+
 	return nil
 }
 
@@ -1739,30 +1961,39 @@ type RuleEntryMeta struct {
 func (meta *RuleEntryMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*RuleEntryMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.RuleName != ins.RuleName {
+
 			return false
 		}
 		if meta.RuleDescription != ins.RuleDescription {
+
 			return false
 		}
 		if meta.Salience != ins.Salience {
+
 			return false
 		}
 		if meta.WhenScopeID != ins.WhenScopeID {
+
 			return false
 		}
 		if meta.ThenScopeID != ins.ThenScopeID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *RuleEntryMeta) GetASTType() NodeType {
+
 	return TypeRuleEntry
 }
 
@@ -1772,26 +2003,32 @@ func (meta *RuleEntryMeta) GetASTType() NodeType {
 func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.RuleName)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.RuleDescription)
 	if err != nil {
+
 		return err
 	}
 	err = WriteIntToWriter(w, uint64(meta.Salience))
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.WhenScopeID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ThenScopeID)
 	if err != nil {
+
 		return err
 	}
 
@@ -1804,33 +2041,40 @@ func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
 func (meta *RuleEntryMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.RuleName = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.RuleDescription = s
 	i, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.Salience = int(i)
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.WhenScopeID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ThenScopeID = s
+
 	return nil
 }
 
@@ -1846,21 +2090,27 @@ type ThenExpressionMeta struct {
 func (meta *ThenExpressionMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenExpressionMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.AssignmentID != ins.AssignmentID {
+
 			return false
 		}
 		if meta.ExpressionAtomID != ins.ExpressionAtomID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ThenExpressionMeta) GetASTType() NodeType {
+
 	return TypeThenExpression
 }
 
@@ -1870,14 +2120,17 @@ func (meta *ThenExpressionMeta) GetASTType() NodeType {
 func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.AssignmentID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionAtomID)
 	if err != nil {
+
 		return err
 	}
 
@@ -1890,18 +2143,22 @@ func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ThenExpressionMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.AssignmentID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionAtomID = s
+
 	return nil
 }
 
@@ -1916,23 +2173,29 @@ type ThenExpressionListMeta struct {
 func (meta *ThenExpressionListMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenExpressionListMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if len(meta.ThenExpressionIDs) != len(ins.ThenExpressionIDs) {
+
 			return false
 		}
 		for k, v := range meta.ThenExpressionIDs {
 			if ins.ThenExpressionIDs[k] != v {
+
 				return false
 			}
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ThenExpressionListMeta) GetASTType() NodeType {
+
 	return TypeThenExpressionList
 }
 
@@ -1942,17 +2205,20 @@ func (meta *ThenExpressionListMeta) GetASTType() NodeType {
 func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 
 	err = WriteIntToWriter(w, uint64(len(meta.ThenExpressionIDs)))
 	if err != nil {
+
 		return err
 	}
 
 	for _, v := range meta.ThenExpressionIDs {
 		err = WriteStringToWriter(w, v)
 		if err != nil {
+
 			return err
 		}
 	}
@@ -1966,11 +2232,13 @@ func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ThenExpressionListMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 
 	count, err := ReadIntFromReader(r)
 	if err != nil {
+
 		return err
 	}
 
@@ -1978,6 +2246,7 @@ func (meta *ThenExpressionListMeta) ReadMetaFrom(r io.Reader) error {
 	for i := uint64(0); i < count; i++ {
 		s, err := ReadStringFromReader(r)
 		if err != nil {
+
 			return err
 		}
 		meta.ThenExpressionIDs[i] = s
@@ -1996,18 +2265,23 @@ type ThenScopeMeta struct {
 func (meta *ThenScopeMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*ThenScopeMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.ThenExpressionListID != ins.ThenExpressionListID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *ThenScopeMeta) GetASTType() NodeType {
+
 	return TypeThenScope
 }
 
@@ -2017,10 +2291,12 @@ func (meta *ThenScopeMeta) GetASTType() NodeType {
 func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ThenExpressionListID)
 	if err != nil {
+
 		return err
 	}
 
@@ -2033,13 +2309,16 @@ func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
 func (meta *ThenScopeMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ThenExpressionListID = s
+
 	return nil
 }
 
@@ -2056,24 +2335,31 @@ type VariableMeta struct {
 func (meta *VariableMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*VariableMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.Name != ins.Name {
+
 			return false
 		}
 		if meta.VariableID != ins.VariableID {
+
 			return false
 		}
 		if meta.ArrayMapSelectorID != ins.ArrayMapSelectorID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *VariableMeta) GetASTType() NodeType {
+
 	return TypeVariable
 }
 
@@ -2083,18 +2369,22 @@ func (meta *VariableMeta) GetASTType() NodeType {
 func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.Name)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.VariableID)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ArrayMapSelectorID)
 	if err != nil {
+
 		return err
 	}
 
@@ -2107,23 +2397,28 @@ func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
 func (meta *VariableMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.Name = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.VariableID = s
 	s, err = ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ArrayMapSelectorID = s
+
 	return nil
 }
 
@@ -2137,18 +2432,23 @@ type WhenScopeMeta struct {
 func (meta *WhenScopeMeta) Equals(that Meta) bool {
 	if ins, ok := that.(*WhenScopeMeta); ok {
 		if !meta.NodeMeta.Equals(that) {
+
 			return false
 		}
 		if meta.ExpressionID != ins.ExpressionID {
+
 			return false
 		}
+
 		return true
 	}
+
 	return false
 }
 
 // GetASTType returns the meta type of this AST Node
 func (meta *WhenScopeMeta) GetASTType() NodeType {
+
 	return TypeWhenScope
 }
 
@@ -2158,10 +2458,12 @@ func (meta *WhenScopeMeta) GetASTType() NodeType {
 func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
 	err := meta.NodeMeta.WriteMetaTo(w)
 	if err != nil {
+
 		return err
 	}
 	err = WriteStringToWriter(w, meta.ExpressionID)
 	if err != nil {
+
 		return err
 	}
 
@@ -2174,13 +2476,16 @@ func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
 func (meta *WhenScopeMeta) ReadMetaFrom(r io.Reader) error {
 	err := meta.NodeMeta.ReadMetaFrom(r)
 	if err != nil {
+
 		return err
 	}
 	s, err := ReadStringFromReader(r)
 	if err != nil {
+
 		return err
 	}
 	meta.ExpressionID = s
+
 	return nil
 }
 
@@ -2202,10 +2507,12 @@ func WriteFull(w io.Writer, bytes []byte) (int, error) {
 	for written < toWrite {
 		outCount, err := w.Write(bytes[written:])
 		if err != nil {
+
 			return written, err
 		}
 		written += outCount
 	}
+
 	return written, nil
 }
 
@@ -2220,11 +2527,13 @@ func WriteStringToWriter(w io.Writer, s string) error {
 
 	TotalWrite += uint64(c)
 	if err != nil {
+
 		return err
 	}
 	c, err = WriteFull(w, data)
 	TotalWrite += uint64(c)
 	WriteCount++
+
 	return err
 }
 
@@ -2235,6 +2544,7 @@ func ReadStringFromReader(r io.Reader) (string, error) {
 	c, err := io.ReadFull(r, length)
 	TotalRead += uint64(c)
 	if err != nil {
+
 		return "", err
 	}
 	strLen := binary.LittleEndian.Uint64(length)
@@ -2242,9 +2552,11 @@ func ReadStringFromReader(r io.Reader) (string, error) {
 	c, err = io.ReadFull(r, strByte)
 	TotalRead += uint64(c)
 	if err != nil {
+
 		return "", err
 	}
 	ReadCount++
+
 	return string(strByte), nil
 }
 
@@ -2255,6 +2567,7 @@ func WriteIntToWriter(w io.Writer, i uint64) error {
 	c, err := WriteFull(w, data)
 	TotalWrite += uint64(c)
 	WriteCount++
+
 	return err
 }
 
@@ -2264,10 +2577,12 @@ func ReadIntFromReader(r io.Reader) (uint64, error) {
 	c, err := io.ReadFull(r, byteArray)
 	TotalRead += uint64(c)
 	if err != nil {
+
 		return 0, err
 	}
 	i := binary.LittleEndian.Uint64(byteArray)
 	ReadCount++
+
 	return i, nil
 }
 
@@ -2281,6 +2596,7 @@ func WriteBoolToWriter(w io.Writer, b bool) error {
 	}
 	c, err := WriteFull(w, data)
 	TotalWrite += uint64(c)
+
 	return err
 }
 
@@ -2290,8 +2606,10 @@ func ReadBoolFromReader(r io.Reader) (bool, error) {
 	c, err := io.ReadFull(r, byteArray)
 	TotalRead += uint64(c)
 	if err != nil {
+
 		return false, err
 	}
+
 	return byteArray[0] == 1, nil
 }
 
@@ -2302,6 +2620,7 @@ func WriteFloatToWriter(w io.Writer, f float64) error {
 	c, err := WriteFull(w, data)
 	TotalWrite += uint64(c)
 	WriteCount++
+
 	return err
 }
 
@@ -2311,9 +2630,11 @@ func ReadFloatFromReader(r io.Reader) (float64, error) {
 	c, err := io.ReadFull(r, byteArray)
 	TotalRead += uint64(c)
 	if err != nil {
+
 		return 0, err
 	}
 	bits := binary.LittleEndian.Uint64(byteArray)
 	float := math.Float64frombits(bits)
+
 	return float, nil
 }

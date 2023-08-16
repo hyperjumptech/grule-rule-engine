@@ -54,6 +54,7 @@ func unquoteString(s string) (string, error) {
 			buf = append(buf, runeTmp[:n]...)
 		}
 	}
+
 	return string(buf), nil
 }
 

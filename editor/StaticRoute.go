@@ -3,9 +3,9 @@ package editor
 import (
 	"embed"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/editor/mime"
 	mux "github.com/hyperjumptech/hyper-mux"
 	"github.com/sirupsen/logrus"
+	"grule-rule-engine/editor/mime"
 	"net/http"
 	"os"
 	"strings"
@@ -29,6 +29,7 @@ func IsDir(path string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -54,6 +55,7 @@ func GetPathTree(path string) []string {
 			ret = append(ret, path+"/"+e.Name())
 		}
 	}
+
 	return ret
 }
 
@@ -64,11 +66,13 @@ func GetFile(path string) (*FileData, error) {
 	}
 	mimeType, err := mime.MimeForFileName(path)
 	if err != nil {
+
 		return &FileData{
 			Bytes:       bytes,
 			ContentType: http.DetectContentType(bytes),
 		}, nil
 	}
+
 	return &FileData{
 		Bytes:       bytes,
 		ContentType: mimeType,
@@ -92,11 +96,13 @@ func InitializeStaticRoute(router *mux.HyperMux) {
 func StaticHandler(path string) func(writer http.ResponseWriter, request *http.Request) {
 	fData, err := GetFile(path)
 	if err != nil {
+
 		return func(writer http.ResponseWriter, request *http.Request) {
 			_, _ = writer.Write([]byte(err.Error()))
 			writer.WriteHeader(http.StatusInternalServerError)
 		}
 	}
+
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Add("Content-Type", fData.ContentType)
 		writer.WriteHeader(http.StatusOK)

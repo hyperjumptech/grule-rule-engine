@@ -102,15 +102,18 @@ func (e *Assignment) Clone(cloneTable *pkg.CloneTable) *Assignment {
 	clone.IsMinusAssign = e.IsMinusAssign
 	clone.IsMulAssign = e.IsMulAssign
 	clone.IsPlusAssign = e.IsPlusAssign
+
 	return clone
 }
 
 // AcceptExpression will accept an Expression AST graph into this ast graph
 func (e *Assignment) AcceptExpression(exp *Expression) error {
 	if e.Expression != nil {
+
 		return errors.New("expression for assignment already assigned")
 	}
 	e.Expression = exp
+
 	return nil
 }
 
@@ -120,16 +123,19 @@ func (e *Assignment) AcceptVariable(vari *Variable) error {
 		return errors.New("variable for assignment already assigned")
 	}
 	e.Variable = vari
+
 	return nil
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *Assignment) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *Assignment) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -156,6 +162,7 @@ func (e *Assignment) GetSnapshot() string {
 	}
 	buff.WriteString(e.Expression.GetSnapshot())
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -181,30 +188,39 @@ func (e *Assignment) Execute(dataContext IDataContext, memory *WorkingMemory) er
 	if e.IsPlusAssign {
 		nval, err := pkg.EvaluateAddition(varval, exprVal)
 		if err != nil {
+
 			return err
 		}
+
 		return e.Variable.Assign(nval, dataContext, memory)
 	}
 	if e.IsMinusAssign {
 		nval, err := pkg.EvaluateSubtraction(varval, exprVal)
 		if err != nil {
+
 			return err
 		}
+
 		return e.Variable.Assign(nval, dataContext, memory)
 	}
 	if e.IsMulAssign {
 		nval, err := pkg.EvaluateMultiplication(varval, exprVal)
 		if err != nil {
+
 			return err
 		}
+
 		return e.Variable.Assign(nval, dataContext, memory)
 	}
 	if e.IsDivAssign {
 		nval, err := pkg.EvaluateDivision(varval, exprVal)
 		if err != nil {
+
 			return err
 		}
+
 		return e.Variable.Assign(nval, dataContext, memory)
 	}
+
 	return nil
 }

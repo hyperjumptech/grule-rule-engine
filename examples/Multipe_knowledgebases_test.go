@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-//Tests for to check whether Grules support multiple KnowledgeBases
+// Tests for to check whether Grules support multiple KnowledgeBases
 const RideRule = `
 rule  RideRule  "Ride Related Rule"  salience 10 {
 when

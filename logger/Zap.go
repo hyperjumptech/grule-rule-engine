@@ -27,6 +27,7 @@ type zapLogger struct {
 func NewZap(logger *zap.Logger) LogEntry {
 	sugaredLogger := logger.WithOptions(zap.AddCallerSkip(1)).Sugar()
 	l := zapLogger{sugaredLogger: sugaredLogger}
+
 	return l.WithFields(Fields{"lib": "grule-rule-engine"})
 }
 
@@ -108,6 +109,7 @@ func (l *zapLogger) WithFields(fields Fields) LogEntry {
 	newLogger := l.sugaredLogger.With(f...)
 
 	level := GetLevel(l.sugaredLogger.Desugar().Core())
+
 	return LogEntry{
 		Logger: &zapLogger{newLogger},
 		Level:  convertZapToInternalLevel(level),
@@ -115,46 +117,62 @@ func (l *zapLogger) WithFields(fields Fields) LogEntry {
 }
 func GetLevel(core zapcore.Core) zapcore.Level {
 	if core.Enabled(zapcore.DebugLevel) {
+
 		return zapcore.DebugLevel
 	}
 	if core.Enabled(zapcore.InfoLevel) {
+
 		return zapcore.InfoLevel
 	}
 	if core.Enabled(zapcore.WarnLevel) {
+
 		return zapcore.WarnLevel
 	}
 	if core.Enabled(zapcore.ErrorLevel) {
+
 		return zapcore.ErrorLevel
 	}
 	if core.Enabled(zapcore.DPanicLevel) {
+
 		return zapcore.DPanicLevel
 	}
 	if core.Enabled(zapcore.PanicLevel) {
+
 		return zapcore.PanicLevel
 	}
 	if core.Enabled(zapcore.FatalLevel) {
+
 		return zapcore.FatalLevel
 	}
+
 	return zapcore.DebugLevel
 }
 
 func convertZapToInternalLevel(level zapcore.Level) Level {
 	switch level {
 	case zapcore.DebugLevel:
+
 		return DebugLevel
 	case zapcore.InfoLevel:
+
 		return InfoLevel
 	case zapcore.WarnLevel:
+
 		return WarnLevel
 	case zapcore.ErrorLevel:
+
 		return ErrorLevel
 	case zapcore.DPanicLevel:
+
 		return PanicLevel
 	case zapcore.PanicLevel:
+
 		return PanicLevel
 	case zapcore.FatalLevel:
+
 		return FatalLevel
 	default:
+
 		return DebugLevel
 	}
 }

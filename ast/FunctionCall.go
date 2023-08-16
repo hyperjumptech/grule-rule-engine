@@ -24,6 +24,7 @@ import (
 
 // NewFunctionCall creates new instance of FunctionCall
 func NewFunctionCall() *FunctionCall {
+
 	return &FunctionCall{
 		AstID:        unique.NewID(),
 		ArgumentList: NewArgumentList(),
@@ -75,6 +76,7 @@ func (e *FunctionCall) Clone(cloneTable *pkg.CloneTable) *FunctionCall {
 			cloneTable.MarkCloned(e.ArgumentList.AstID, cloned.AstID, e.ArgumentList, cloned)
 		}
 	}
+
 	return clone
 }
 
@@ -85,11 +87,13 @@ type FunctionCallReceiver interface {
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *FunctionCall) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *FunctionCall) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -103,6 +107,7 @@ func (e *FunctionCall) GetSnapshot() string {
 		buff.WriteString(e.ArgumentList.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -116,6 +121,7 @@ func (e *FunctionCall) SetGrlText(grlText string) {
 func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 	AstLog.Tracef("Method received argument list")
 	e.ArgumentList = argList
+
 	return nil
 }
 
@@ -123,10 +129,12 @@ func (e *FunctionCall) AcceptArgumentList(argList *ArgumentList) error {
 func (e *FunctionCall) EvaluateArgumentList(dataContext IDataContext, memory *WorkingMemory) ([]reflect.Value, error) {
 	args, err := e.ArgumentList.Evaluate(dataContext, memory)
 	if err != nil {
+
 		return nil, err
 	}
 	if dataContext == nil {
 		AstLog.Errorf("Datacontext for function call %s (%s) is nil", e.FunctionName, e.AstID)
 	}
+
 	return args, nil
 }

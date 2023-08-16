@@ -26,6 +26,7 @@ import (
 
 // NewRuleEntry create new instance of RuleEntry
 func NewRuleEntry() *RuleEntry {
+
 	return &RuleEntry{
 		AstID:           unique.NewID(),
 		RuleName:        "No Name",
@@ -81,18 +82,21 @@ type RuleEntryReceiver interface {
 // AcceptSalience will accept salience value
 func (e *RuleEntry) AcceptSalience(salience *Salience) error {
 	e.Salience = salience.SalienceValue
+
 	return nil
 }
 
 // AcceptWhenScope will accept WhenScope AST Graph into this AST Graph
 func (e *RuleEntry) AcceptWhenScope(when *WhenScope) error {
 	e.WhenScope = when
+
 	return nil
 }
 
 // AcceptThenScope will accept ThenScope AST Graph into this AST Graph
 func (e *RuleEntry) AcceptThenScope(thenScope *ThenScope) error {
 	e.ThenScope = thenScope
+
 	return nil
 }
 
@@ -132,11 +136,13 @@ func (e *RuleEntry) Clone(cloneTable *pkg.CloneTable) *RuleEntry {
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *RuleEntry) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *RuleEntry) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -147,6 +153,7 @@ func (e *RuleEntry) GetSnapshot() string {
 	buff.WriteString("(")
 	buff.WriteString(fmt.Sprintf("N:%s DEC:\"%s\" SAL:%d W:%s T:%s}", e.RuleName, e.RuleDescription, e.Salience, e.WhenScope.GetSnapshot(), e.ThenScope.GetSnapshot()))
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -159,6 +166,7 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (can bool, err error) {
 	if ctx.Err() != nil {
+
 		return false, ctx.Err()
 	}
 	defer func() {
@@ -172,20 +180,25 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 	val, err := e.WhenScope.Evaluate(dataContext, memory)
 	if err != nil {
 		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName, err)
+
 		return false, err
 	}
 	if val.Kind() != reflect.Bool {
+
 		return false, fmt.Errorf("expression in when is not a boolean expression : %s", e.WhenScope.Expression.GetGrlText())
 	}
+
 	return val.Bool(), nil
 }
 
 // Execute will execute this graph in the Then scope
 func (e *RuleEntry) Execute(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (err error) {
 	if ctx.Err() != nil {
+
 		return ctx.Err()
 	}
 	if e.ThenScope == nil {
+
 		return fmt.Errorf("RuleEntry %s have no then scope", e.RuleName)
 	}
 	defer func() {
@@ -193,5 +206,6 @@ func (e *RuleEntry) Execute(ctx context.Context, dataContext IDataContext, memor
 			err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
 		}
 	}()
+
 	return e.ThenScope.Execute(dataContext, memory)
 }
