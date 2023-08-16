@@ -325,9 +325,9 @@ type GITResourceBundle struct {
 	PathPattern []string
 }
 
-func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem) ([]Resource, error) {
+func (bundle *GITResourceBundle) loadPath(url, path string, fileSyst billy.Filesystem) ([]Resource, error) {
 	logger.Log.Tracef("Enter directory %s", path)
-	finfos, err := fs.ReadDir(path)
+	finfos, err := fileSyst.ReadDir(path)
 	if err != nil {
 
 		return nil, err
@@ -339,7 +339,7 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 			fulPath = fmt.Sprintf("/%s", finfo.Name())
 		}
 		if finfo.IsDir() {
-			gres, err := bundle.loadPath(url, fulPath, fs)
+			gres, err := bundle.loadPath(url, fulPath, fileSyst)
 			if err != nil {
 
 				return nil, err
@@ -354,7 +354,7 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 				}
 				if matched {
 					logger.Log.Debugf("Loading git file %s", fulPath)
-					f, err := fs.Open(fulPath)
+					f, err := fileSyst.Open(fulPath)
 					if err != nil {
 
 						return nil, err

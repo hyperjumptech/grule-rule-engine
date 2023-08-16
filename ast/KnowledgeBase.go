@@ -44,20 +44,20 @@ type KnowledgeLibrary struct {
 // Although this KnowledgeBase blueprint works, It SHOULD NOT be used directly in the engine.
 // You should obtain KnowledgeBase instance by calling NewKnowledgeBaseInstance
 func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBase {
-	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
 
-		return kb
+		return knowledgeBase
 	}
-	kb = &KnowledgeBase{
+	knowledgeBase = &KnowledgeBase{
 		Name:          name,
 		Version:       version,
 		RuleEntries:   make(map[string]*RuleEntry),
 		WorkingMemory: NewWorkingMemory(name, version),
 	}
-	lib.Library[fmt.Sprintf("%s:%s", name, version)] = kb
+	lib.Library[fmt.Sprintf("%s:%s", name, version)] = knowledgeBase
 
-	return kb
+	return knowledgeBase
 }
 
 // RemoveRuleEntry mark the rule entry as deleted
@@ -94,19 +94,19 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 
 		return nil, err
 	}
-	kb := catalog.BuildKnowledgeBase()
+	knowledgeBase := catalog.BuildKnowledgeBase()
 	if overwrite {
-		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
 
-		return kb, nil
+		return knowledgeBase, nil
 	}
-	if _, ok := lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)]; !ok {
-		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
+	if _, ok := lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)]; !ok {
+		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
 
-		return kb, nil
+		return knowledgeBase, nil
 	}
 
-	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", kb.Name, kb.Version)
+	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", knowledgeBase.Name, knowledgeBase.Version)
 }
 
 // StoreKnowledgeBaseToWriter will store a KnowledgeBase in binary form
@@ -128,15 +128,15 @@ func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, 
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
-	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		newClone := kb.Clone(pkg.NewCloneTable())
-		if kb.IsIdentical(newClone) {
+		newClone := knowledgeBase.Clone(pkg.NewCloneTable())
+		if knowledgeBase.IsIdentical(newClone) {
 			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
 
 			return newClone
 		}
-		AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		AstLog.Fatalf("ORIGIN   : %s", knowledgeBase.GetSnapshot())
 		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
 		panic("The clone is not identical")
 	}

@@ -161,17 +161,17 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		// Select all rule entry that can be executed.
 		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
-		for _, v := range knowledge.RuleEntries {
+		for _, ruleEntry := range knowledge.RuleEntries {
 			if ctx.Err() != nil {
 				log.Error("Context canceled")
 
 				return ctx.Err()
 			}
-			if !v.Retracted && !v.Deleted {
+			if !ruleEntry.Retracted && !ruleEntry.Deleted {
 				// test if this rule entry v can execute.
-				can, err := v.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
+				can, err := ruleEntry.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
 				if err != nil {
-					log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+					log.Errorf("Failed testing condition for rule : %s. Got error %v", ruleEntry.RuleName, err)
 					if g.ReturnErrOnFailedRuleEvaluation {
 
 						return err
@@ -179,10 +179,10 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				}
 				// if can, add into runnable array
 				if can {
-					runnable = append(runnable, v)
+					runnable = append(runnable, ruleEntry)
 				}
 				// notify all listeners that a rule's when scope is been evaluated.
-				g.notifyEvaluateRuleEntry(cycle+1, v, can)
+				g.notifyEvaluateRuleEntry(cycle+1, ruleEntry, can)
 			}
 		}
 
@@ -261,19 +261,19 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	// Select all rule entry that can be executed.
 	log.Tracef("Select all rule entry that can be executed.")
 	runnable := make([]*ast.RuleEntry, 0)
-	for _, v := range knowledge.RuleEntries {
-		if !v.Deleted {
+	for _, entries := range knowledge.RuleEntries {
+		if !entries.Deleted {
 			// test if this rule entry v can execute.
-			can, err := v.Evaluate(context.Background(), dataCtx, knowledge.WorkingMemory)
+			can, err := entries.Evaluate(context.Background(), dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", entries.RuleName, err)
 				if g.ReturnErrOnFailedRuleEvaluation {
 					return nil, err
 				}
 			}
 			// if can, add into runnable array
 			if can {
-				runnable = append(runnable, v)
+				runnable = append(runnable, entries)
 			}
 		}
 	}

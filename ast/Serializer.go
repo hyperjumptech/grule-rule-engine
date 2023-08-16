@@ -102,7 +102,7 @@ type Catalog struct {
 // the rebuilt KnowledgeBase is identical to the original KnowledgeBase from
 // which this Catalog was built.
 func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
-	wm := &WorkingMemory{
+	workingMem := &WorkingMemory{
 		Name:                      cat.MemoryName,
 		Version:                   cat.MemoryVersion,
 		expressionSnapshotMap:     make(map[string]*Expression),
@@ -112,11 +112,11 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 		expressionAtomVariableMap: make(map[*Variable][]*ExpressionAtom),
 		ID:                        unique.NewID(),
 	}
-	kb := &KnowledgeBase{
+	knowledgeBase := &KnowledgeBase{
 		Name:          cat.KnowledgeBaseName,
 		Version:       cat.KnowledgeBaseVersion,
 		DataContext:   nil,
-		WorkingMemory: wm,
+		WorkingMemory: workingMem,
 		RuleEntries:   make(map[string]*RuleEntry),
 	}
 	importTable := make(map[string]Node)
@@ -133,15 +133,15 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 			}
 			importTable[meta.GetAstID()] = n
 		case TypeArrayMapSelector:
-			n := &ArrayMapSelector{
+			arrayMapSelect := &ArrayMapSelector{
 				AstID:      meta.GetAstID(),
 				GrlText:    meta.GetGrlText(),
 				Expression: nil,
 			}
-			importTable[meta.GetAstID()] = n
+			importTable[meta.GetAstID()] = arrayMapSelect
 		case TypeAssignment:
 			amet := meta.(*AssigmentMeta)
-			n := &Assignment{
+			assignment := &Assignment{
 				AstID:         amet.AstID,
 				GrlText:       amet.GrlText,
 				Variable:      nil,
@@ -152,10 +152,10 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				IsDivAssign:   amet.IsDivAssign,
 				IsMulAssign:   amet.IsMulAssign,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = assignment
 		case TypeExpression:
 			amet := meta.(*ExpressionMeta)
-			n := &Expression{
+			expression := &Expression{
 				AstID:            amet.AstID,
 				GrlText:          amet.GrlText,
 				LeftExpression:   nil,
@@ -165,10 +165,10 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				Operator:         amet.Operator,
 				Negated:          amet.Negated,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = expression
 		case TypeConstant:
 			amet := meta.(*ConstantMeta)
-			n := &Constant{
+			newConst := &Constant{
 				AstID:    amet.AstID,
 				GrlText:  amet.GrlText,
 				Snapshot: amet.Snapshot,
@@ -183,26 +183,26 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				dLen := binary.LittleEndian.Uint64(length)
 				byteArr := make([]byte, dLen)
 				buffer.Read(byteArr)
-				n.Value = reflect.ValueOf(string(byteArr))
+				newConst.Value = reflect.ValueOf(string(byteArr))
 			case TypeBoolean:
 				arr := make([]byte, 1)
 				buffer.Read(arr)
-				n.Value = reflect.ValueOf(arr[0] == 1)
+				newConst.Value = reflect.ValueOf(arr[0] == 1)
 			case TypeInteger:
 				arr := make([]byte, 8)
 				buffer.Read(arr)
-				n.Value = reflect.ValueOf(int64(binary.LittleEndian.Uint64(arr)))
+				newConst.Value = reflect.ValueOf(int64(binary.LittleEndian.Uint64(arr)))
 			case TypeFloat:
 				arr := make([]byte, 8)
 				buffer.Read(arr)
 				bits := binary.LittleEndian.Uint64(arr)
 				float := math.Float64frombits(bits)
-				n.Value = reflect.ValueOf(float)
+				newConst.Value = reflect.ValueOf(float)
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = newConst
 		case TypeExpressionAtom:
 			amet := meta.(*ExpressionAtomMeta)
-			n := &ExpressionAtom{
+			expressionAtm := &ExpressionAtom{
 				AstID:            amet.AstID,
 				GrlText:          amet.GrlText,
 				VariableName:     amet.VariableName,
@@ -213,19 +213,19 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				ExpressionAtom:   nil,
 				ArrayMapSelector: nil,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = expressionAtm
 		case TypeFunctionCall:
 			amet := meta.(*FunctionCallMeta)
-			n := &FunctionCall{
+			funcCall := &FunctionCall{
 				AstID:        amet.AstID,
 				GrlText:      amet.GrlText,
 				FunctionName: amet.FunctionName,
 				ArgumentList: nil,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = funcCall
 		case TypeRuleEntry:
 			amet := meta.(*RuleEntryMeta)
-			n := &RuleEntry{
+			ruleEntry := &RuleEntry{
 				AstID:           amet.AstID,
 				GrlText:         amet.GrlText,
 				RuleName:        amet.RuleName,
@@ -234,25 +234,25 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				WhenScope:       nil,
 				ThenScope:       nil,
 			}
-			importTable[amet.AstID] = n
-			kb.RuleEntries[n.RuleName] = n
+			importTable[amet.AstID] = ruleEntry
+			knowledgeBase.RuleEntries[ruleEntry.RuleName] = ruleEntry
 		case TypeThenExpression:
 			amet := meta.(*ThenExpressionMeta)
-			n := &ThenExpression{
+			thenExp := &ThenExpression{
 				AstID:          amet.AstID,
 				GrlText:        amet.GrlText,
 				Assignment:     nil,
 				ExpressionAtom: nil,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = thenExp
 		case TypeThenExpressionList:
 			amet := meta.(*ThenExpressionListMeta)
-			n := &ThenExpressionList{
+			thenExprList := &ThenExpressionList{
 				AstID:           amet.AstID,
 				GrlText:         amet.GrlText,
 				ThenExpressions: nil,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = thenExprList
 		case TypeThenScope:
 			amet := meta.(*ThenScopeMeta)
 			n := &ThenScope{
@@ -263,14 +263,14 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 			importTable[amet.AstID] = n
 		case TypeVariable:
 			amet := meta.(*VariableMeta)
-			n := &Variable{
+			variable := &Variable{
 				AstID:            amet.AstID,
 				GrlText:          amet.GrlText,
 				Name:             amet.Name,
 				Variable:         nil,
 				ArrayMapSelector: nil,
 			}
-			importTable[amet.AstID] = n
+			importTable[amet.AstID] = variable
 		case TypeWhenScope:
 			amet := meta.(*WhenScopeMeta)
 			n := &WhenScope{
@@ -289,122 +289,122 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 		node := importTable[astID]
 		switch meta.GetASTType() {
 		case TypeArgumentList:
-			n := node.(*ArgumentList)
+			argList := node.(*ArgumentList)
 			amet := meta.(*ArgumentListMeta)
 			if amet.ArgumentASTIDs != nil && len(amet.ArgumentASTIDs) > 0 {
-				n.Arguments = make([]*Expression, len(amet.ArgumentASTIDs))
+				argList.Arguments = make([]*Expression, len(amet.ArgumentASTIDs))
 				for k, v := range amet.ArgumentASTIDs {
-					n.Arguments[k] = importTable[v].(*Expression)
+					argList.Arguments[k] = importTable[v].(*Expression)
 				}
 			}
 		case TypeArrayMapSelector:
-			n := node.(*ArrayMapSelector)
+			arrayMapSel := node.(*ArrayMapSelector)
 			amet := meta.(*ArrayMapSelectorMeta)
 			if len(amet.ExpressionID) > 0 {
-				n.Expression = importTable[amet.ExpressionID].(*Expression)
+				arrayMapSel.Expression = importTable[amet.ExpressionID].(*Expression)
 			}
 		case TypeAssignment:
-			n := node.(*Assignment)
+			assignment := node.(*Assignment)
 			amet := meta.(*AssigmentMeta)
 			if len(amet.ExpressionID) > 0 {
-				n.Expression = importTable[amet.ExpressionID].(*Expression)
+				assignment.Expression = importTable[amet.ExpressionID].(*Expression)
 			}
 			if len(amet.VariableID) > 0 {
-				n.Variable = importTable[amet.VariableID].(*Variable)
+				assignment.Variable = importTable[amet.VariableID].(*Variable)
 			}
 		case TypeExpression:
-			n := node.(*Expression)
+			expr := node.(*Expression)
 			amet := meta.(*ExpressionMeta)
 			if len(amet.LeftExpressionID) > 0 {
-				n.LeftExpression = importTable[amet.LeftExpressionID].(*Expression)
+				expr.LeftExpression = importTable[amet.LeftExpressionID].(*Expression)
 			}
 			if len(amet.RightExpressionID) > 0 {
-				n.RightExpression = importTable[amet.RightExpressionID].(*Expression)
+				expr.RightExpression = importTable[amet.RightExpressionID].(*Expression)
 			}
 			if len(amet.SingleExpressionID) > 0 {
-				n.SingleExpression = importTable[amet.SingleExpressionID].(*Expression)
+				expr.SingleExpression = importTable[amet.SingleExpressionID].(*Expression)
 			}
 			if len(amet.ExpressionAtomID) > 0 {
-				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+				expr.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
 			}
 		case TypeConstant:
 			// nothing todo
 
 		case TypeExpressionAtom:
-			n := node.(*ExpressionAtom)
+			expressAtm := node.(*ExpressionAtom)
 			amet := meta.(*ExpressionAtomMeta)
 			if len(amet.ConstantID) > 0 {
-				n.Constant = importTable[amet.ConstantID].(*Constant)
+				expressAtm.Constant = importTable[amet.ConstantID].(*Constant)
 			}
 			if len(amet.ExpressionAtomID) > 0 {
-				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+				expressAtm.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
 			}
 			if len(amet.VariableID) > 0 {
-				n.Variable = importTable[amet.VariableID].(*Variable)
+				expressAtm.Variable = importTable[amet.VariableID].(*Variable)
 			}
 			if len(amet.FunctionCallID) > 0 {
-				n.FunctionCall = importTable[amet.FunctionCallID].(*FunctionCall)
+				expressAtm.FunctionCall = importTable[amet.FunctionCallID].(*FunctionCall)
 			}
 			if len(amet.ArrayMapSelectorID) > 0 {
-				n.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
+				expressAtm.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
 			}
 		case TypeFunctionCall:
-			n := node.(*FunctionCall)
+			funcCall := node.(*FunctionCall)
 			amet := meta.(*FunctionCallMeta)
 			if len(amet.ArgumentListID) > 0 {
-				n.ArgumentList = importTable[amet.ArgumentListID].(*ArgumentList)
+				funcCall.ArgumentList = importTable[amet.ArgumentListID].(*ArgumentList)
 			}
 		case TypeRuleEntry:
-			n := node.(*RuleEntry)
+			ruleEntry := node.(*RuleEntry)
 			amet := meta.(*RuleEntryMeta)
 			if len(amet.WhenScopeID) > 0 {
-				n.WhenScope = importTable[amet.WhenScopeID].(*WhenScope)
+				ruleEntry.WhenScope = importTable[amet.WhenScopeID].(*WhenScope)
 			}
 			if len(amet.ThenScopeID) > 0 {
-				n.ThenScope = importTable[amet.ThenScopeID].(*ThenScope)
+				ruleEntry.ThenScope = importTable[amet.ThenScopeID].(*ThenScope)
 			}
 		case TypeThenExpression:
-			n := node.(*ThenExpression)
+			thenExpr := node.(*ThenExpression)
 			amet := meta.(*ThenExpressionMeta)
 			if len(amet.AssignmentID) > 0 {
-				n.Assignment = importTable[amet.AssignmentID].(*Assignment)
+				thenExpr.Assignment = importTable[amet.AssignmentID].(*Assignment)
 			}
 			if len(amet.ExpressionAtomID) > 0 {
-				n.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
+				thenExpr.ExpressionAtom = importTable[amet.ExpressionAtomID].(*ExpressionAtom)
 			}
 		case TypeThenExpressionList:
-			n := node.(*ThenExpressionList)
+			ThenExprList := node.(*ThenExpressionList)
 			amet := meta.(*ThenExpressionListMeta)
 			if amet.ThenExpressionIDs != nil && len(amet.ThenExpressionIDs) > 0 {
-				n.ThenExpressions = make([]*ThenExpression, len(amet.ThenExpressionIDs))
+				ThenExprList.ThenExpressions = make([]*ThenExpression, len(amet.ThenExpressionIDs))
 				for k, v := range amet.ThenExpressionIDs {
 					if node, ok := importTable[v]; ok {
-						n.ThenExpressions[k] = node.(*ThenExpression)
+						ThenExprList.ThenExpressions[k] = node.(*ThenExpression)
 					} else {
 						logrus.Errorf("then expression with ast id %s not catalogued", v)
 					}
 				}
 			}
 		case TypeThenScope:
-			n := node.(*ThenScope)
+			thenScope := node.(*ThenScope)
 			amet := meta.(*ThenScopeMeta)
 			if len(amet.ThenExpressionListID) > 0 {
-				n.ThenExpressionList = importTable[amet.ThenExpressionListID].(*ThenExpressionList)
+				thenScope.ThenExpressionList = importTable[amet.ThenExpressionListID].(*ThenExpressionList)
 			}
 		case TypeVariable:
-			n := node.(*Variable)
+			variable := node.(*Variable)
 			amet := meta.(*VariableMeta)
 			if len(amet.VariableID) > 0 {
-				n.Variable = importTable[amet.VariableID].(*Variable)
+				variable.Variable = importTable[amet.VariableID].(*Variable)
 			}
 			if len(amet.ArrayMapSelectorID) > 0 {
-				n.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
+				variable.ArrayMapSelector = importTable[amet.ArrayMapSelectorID].(*ArrayMapSelector)
 			}
 		case TypeWhenScope:
-			n := node.(*WhenScope)
+			whenScope := node.(*WhenScope)
 			amet := meta.(*WhenScopeMeta)
 			if len(amet.ExpressionID) > 0 {
-				n.Expression = importTable[amet.ExpressionID].(*Expression)
+				whenScope.Expression = importTable[amet.ExpressionID].(*Expression)
 			}
 		default:
 			panic("Unrecognized meta type")
@@ -413,44 +413,44 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 
 	// Rebuilding Working Memory
 	if cat.MemoryVariableSnapshotMap != nil && len(cat.MemoryVariableSnapshotMap) > 0 {
-		for k, v := range cat.MemoryVariableSnapshotMap {
-			if n, ok := importTable[v]; ok {
-				wm.variableSnapshotMap[k] = n.(*Variable)
+		for key, value := range cat.MemoryVariableSnapshotMap {
+			if n, ok := importTable[value]; ok {
+				workingMem.variableSnapshotMap[key] = n.(*Variable)
 			} else {
-				logrus.Warnf("snapshot %s in working memory have no referenced variable with ASTID %s", k, v)
+				logrus.Warnf("snapshot %s in working memory have no referenced variable with ASTID %s", key, value)
 			}
 		}
 	}
 	if cat.MemoryExpressionSnapshotMap != nil && len(cat.MemoryExpressionSnapshotMap) > 0 {
-		for k, v := range cat.MemoryExpressionSnapshotMap {
-			wm.expressionSnapshotMap[k] = importTable[v].(*Expression)
+		for key, value := range cat.MemoryExpressionSnapshotMap {
+			workingMem.expressionSnapshotMap[key] = importTable[value].(*Expression)
 		}
 	}
 	if cat.MemoryExpressionAtomSnapshotMap != nil && len(cat.MemoryExpressionAtomSnapshotMap) > 0 {
-		for k, v := range cat.MemoryExpressionAtomSnapshotMap {
-			wm.expressionAtomSnapshotMap[k] = importTable[v].(*ExpressionAtom)
+		for key, value := range cat.MemoryExpressionAtomSnapshotMap {
+			workingMem.expressionAtomSnapshotMap[key] = importTable[value].(*ExpressionAtom)
 		}
 	}
 	if cat.MemoryExpressionVariableMap != nil && len(cat.MemoryExpressionVariableMap) > 0 {
-		for k, v := range cat.MemoryExpressionVariableMap {
-			variable := importTable[k].(*Variable)
-			wm.expressionVariableMap[variable] = make([]*Expression, len(v))
-			for i, j := range v {
-				wm.expressionVariableMap[variable][i] = importTable[j].(*Expression)
+		for key, value := range cat.MemoryExpressionVariableMap {
+			variable := importTable[key].(*Variable)
+			workingMem.expressionVariableMap[variable] = make([]*Expression, len(value))
+			for i, j := range value {
+				workingMem.expressionVariableMap[variable][i] = importTable[j].(*Expression)
 			}
 		}
 	}
 	if cat.MemoryExpressionAtomVariableMap != nil && len(cat.MemoryExpressionAtomVariableMap) > 0 {
-		for k, v := range cat.MemoryExpressionAtomVariableMap {
-			variable := importTable[k].(*Variable)
-			wm.expressionAtomVariableMap[variable] = make([]*ExpressionAtom, len(v))
-			for i, j := range v {
-				wm.expressionAtomVariableMap[variable][i] = importTable[j].(*ExpressionAtom)
+		for key, value := range cat.MemoryExpressionAtomVariableMap {
+			variable := importTable[key].(*Variable)
+			workingMem.expressionAtomVariableMap[variable] = make([]*ExpressionAtom, len(value))
+			for i, j := range value {
+				workingMem.expressionAtomVariableMap[variable][i] = importTable[j].(*ExpressionAtom)
 			}
 		}
 	}
 
-	return kb
+	return knowledgeBase
 }
 
 // Equals used for testing purpose, to ensure that two catalog
@@ -477,9 +477,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 
 		return false
 	}
-	for k, v := range cat.Data {
-		if j, ok := that.Data[k]; ok {
-			if !j.Equals(v) {
+	for key, value := range cat.Data {
+		if j, ok := that.Data[key]; ok {
+			if !j.Equals(value) {
 
 				return false
 			}
@@ -488,9 +488,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 			return false
 		}
 	}
-	for k, v := range cat.MemoryVariableSnapshotMap {
-		if j, ok := that.MemoryVariableSnapshotMap[k]; ok {
-			if j != v {
+	for key, value := range cat.MemoryVariableSnapshotMap {
+		if j, ok := that.MemoryVariableSnapshotMap[key]; ok {
+			if j != value {
 
 				return false
 			}
@@ -499,9 +499,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 			return false
 		}
 	}
-	for k, v := range cat.MemoryExpressionSnapshotMap {
-		if j, ok := that.MemoryExpressionSnapshotMap[k]; ok {
-			if j != v {
+	for key, value := range cat.MemoryExpressionSnapshotMap {
+		if j, ok := that.MemoryExpressionSnapshotMap[key]; ok {
+			if j != value {
 
 				return false
 			}
@@ -510,9 +510,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 			return false
 		}
 	}
-	for k, v := range cat.MemoryExpressionAtomSnapshotMap {
-		if j, ok := that.MemoryExpressionAtomSnapshotMap[k]; ok {
-			if j != v {
+	for key, value := range cat.MemoryExpressionAtomSnapshotMap {
+		if j, ok := that.MemoryExpressionAtomSnapshotMap[key]; ok {
+			if j != value {
 
 				return false
 			}
@@ -521,14 +521,14 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 			return false
 		}
 	}
-	for k, v := range cat.MemoryExpressionVariableMap {
-		if j, ok := that.MemoryExpressionVariableMap[k]; ok {
-			if len(j) != len(v) {
+	for key, value := range cat.MemoryExpressionVariableMap {
+		if mapValue, ok := that.MemoryExpressionVariableMap[key]; ok {
+			if len(mapValue) != len(value) {
 
 				return false
 			}
-			for in, st := range v {
-				if j[in] != st {
+			for in, st := range value {
+				if mapValue[in] != st {
 
 					return false
 				}
@@ -538,14 +538,14 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 			return false
 		}
 	}
-	for k, v := range cat.MemoryExpressionAtomVariableMap {
-		if j, ok := that.MemoryExpressionAtomVariableMap[k]; ok {
-			if len(j) != len(v) {
+	for key, value := range cat.MemoryExpressionAtomVariableMap {
+		if vari, ok := that.MemoryExpressionAtomVariableMap[key]; ok {
+			if len(vari) != len(value) {
 
 				return false
 			}
-			for in, st := range v {
-				if j[in] != st {
+			for in, st := range value {
+				if vari[in] != st {
 
 					return false
 				}
@@ -563,9 +563,9 @@ func (cat *Catalog) Equals(that *Catalog) bool {
 // ReadCatalogFromReader would read a byte stream from reader
 // It will replace all values already sets in a catalog.
 // You are responsible for closing the reader stream once its done.
-func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
+func (cat *Catalog) ReadCatalogFromReader(reader io.Reader) error {
 	// Read the catalog file version.
-	str, err := ReadStringFromReader(r) // V
+	str, err := ReadStringFromReader(reader) // V
 	if err != nil {
 
 		return err
@@ -576,7 +576,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	}
 
 	// Read the knowledgebase name.
-	str, err = ReadStringFromReader(r) // V
+	str, err = ReadStringFromReader(reader) // V
 	if err != nil {
 
 		return err
@@ -584,7 +584,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	cat.KnowledgeBaseName = str
 
 	// Read the knowledgebase version.
-	str, err = ReadStringFromReader(r) // V
+	str, err = ReadStringFromReader(reader) // V
 	if err != nil {
 
 		return err
@@ -592,7 +592,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	cat.KnowledgeBaseVersion = str
 
 	// Writedown meta counts.
-	count, err := ReadIntFromReader(r) // V
+	count, err := ReadIntFromReader(reader) // V
 	if err != nil {
 
 		return err
@@ -601,12 +601,12 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	cat.Data = make(map[string]Meta)
 
 	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r) // V
+		key, err := ReadStringFromReader(reader) // V
 		if err != nil {
 
 			return err
 		}
-		metaType, err := ReadIntFromReader(r) // V
+		metaType, err := ReadIntFromReader(reader) // V
 		if err != nil {
 
 			return err
@@ -643,7 +643,7 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 
 			return fmt.Errorf("unknown meta number %d", metaType)
 		}
-		err = meta.ReadMetaFrom(r) // V
+		err = meta.ReadMetaFrom(reader) // V
 		if err != nil {
 
 			return err
@@ -651,14 +651,14 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 		cat.Data[key] = meta
 	}
 
-	str, err = ReadStringFromReader(r)
+	str, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	cat.MemoryName = str
 
-	str, err = ReadStringFromReader(r)
+	str, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
@@ -666,20 +666,20 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	cat.MemoryVersion = str
 
 	// Writedown meta counts.
-	count, err = ReadIntFromReader(r)
+	count, err = ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	cat.MemoryVariableSnapshotMap = make(map[string]string)
-	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		key, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		val, err := ReadStringFromReader(r)
+		val, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
@@ -688,20 +688,20 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	}
 
 	// MemoryExpressionSnapshotMap meta counts.
-	count, err = ReadIntFromReader(r)
+	count, err = ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	cat.MemoryExpressionSnapshotMap = make(map[string]string)
-	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		key, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		val, err := ReadStringFromReader(r)
+		val, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
@@ -710,20 +710,20 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	}
 
 	// MemoryExpressionAtomSnapshotMap meta counts.
-	count, err = ReadIntFromReader(r)
+	count, err = ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	cat.MemoryExpressionAtomSnapshotMap = make(map[string]string)
-	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		key, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		val, err := ReadStringFromReader(r)
+		val, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
@@ -732,63 +732,63 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 	}
 
 	// MemoryExpressionVariableMap meta counts.
-	count, err = ReadIntFromReader(r)
+	count, err = ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	cat.MemoryExpressionVariableMap = make(map[string][]string)
-	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		key, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		incount, err := ReadIntFromReader(r)
+		incount, err := ReadIntFromReader(reader)
 		if err != nil {
 
 			return err
 		}
 		content := make([]string, incount)
-		for j := uint64(0); j < incount; j++ {
-			str, err := ReadStringFromReader(r)
+		for subIndex := uint64(0); subIndex < incount; subIndex++ {
+			str, err := ReadStringFromReader(reader)
 			if err != nil {
 
 				return err
 			}
-			content[j] = str
+			content[subIndex] = str
 		}
 		cat.MemoryExpressionVariableMap[key] = content
 	}
 
 	// MemoryExpressionAtomVariableMap meta counts.
-	count, err = ReadIntFromReader(r)
+	count, err = ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	cat.MemoryExpressionAtomVariableMap = make(map[string][]string)
-	for i := uint64(0); i < count; i++ {
-		key, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		key, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		incount, err := ReadIntFromReader(r)
+		incount, err := ReadIntFromReader(reader)
 		if err != nil {
 
 			return err
 		}
 		content := make([]string, incount)
-		for j := uint64(0); j < incount; j++ {
-			str, err := ReadStringFromReader(r)
+		for subIndex := uint64(0); subIndex < incount; subIndex++ {
+			str, err := ReadStringFromReader(reader)
 			if err != nil {
 
 				return err
 			}
-			content[j] = str
+			content[subIndex] = str
 		}
 		cat.MemoryExpressionAtomVariableMap[key] = content
 	}
@@ -799,53 +799,53 @@ func (cat *Catalog) ReadCatalogFromReader(r io.Reader) error {
 // WriteCatalogToWriter will store the content of this Catalog
 // into a byte stream using provided writer.
 // You are responsible for closing the writing stream once its done.
-func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
+func (cat *Catalog) WriteCatalogToWriter(writer io.Writer) error {
 	// Write the catalog file version.
-	err := WriteStringToWriter(w, Version)
+	err := WriteStringToWriter(writer, Version)
 	if err != nil {
 
 		return err
 	}
 
 	// Write the knowledgebase name.
-	err = WriteStringToWriter(w, cat.KnowledgeBaseName)
+	err = WriteStringToWriter(writer, cat.KnowledgeBaseName)
 	if err != nil {
 
 		return err
 	}
 
 	// Write the knowledgebase version.
-	err = WriteStringToWriter(w, cat.KnowledgeBaseVersion)
+	err = WriteStringToWriter(writer, cat.KnowledgeBaseVersion)
 	if err != nil {
 
 		return err
 	}
 
 	// Writedown meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.Data)))
+	err = WriteIntToWriter(writer, uint64(len(cat.Data)))
 	if err != nil {
 
 		return err
 	}
 
 	// For each meta.. write them down
-	for k, v := range cat.Data {
+	for key, value := range cat.Data {
 
 		// Write the AST ID
-		err = WriteStringToWriter(w, k)
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
 
-		err := WriteIntToWriter(w, uint64(v.GetASTType()))
+		err := WriteIntToWriter(writer, uint64(value.GetASTType()))
 		if err != nil {
 
 			return err
 		}
 
 		// Write the meta
-		err = v.WriteMetaTo(w)
+		err = value.WriteMetaTo(writer)
 		if err != nil {
 
 			return err
@@ -853,32 +853,32 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	}
 
 	// Write the MemoryName version.
-	err = WriteStringToWriter(w, cat.MemoryName)
+	err = WriteStringToWriter(writer, cat.MemoryName)
 	if err != nil {
 
 		return err
 	}
 
 	// Write the MemoryVersion version.
-	err = WriteStringToWriter(w, cat.MemoryVersion)
+	err = WriteStringToWriter(writer, cat.MemoryVersion)
 	if err != nil {
 
 		return err
 	}
 
 	// MemoryVariableSnapshotMap meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.MemoryVariableSnapshotMap)))
+	err = WriteIntToWriter(writer, uint64(len(cat.MemoryVariableSnapshotMap)))
 	if err != nil {
 
 		return err
 	}
-	for k, v := range cat.MemoryVariableSnapshotMap {
-		err = WriteStringToWriter(w, k)
+	for key, value := range cat.MemoryVariableSnapshotMap {
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
-		err = WriteStringToWriter(w, v)
+		err = WriteStringToWriter(writer, value)
 		if err != nil {
 
 			return err
@@ -886,18 +886,18 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	}
 
 	// MemoryExpressionSnapshotMap meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionSnapshotMap)))
+	err = WriteIntToWriter(writer, uint64(len(cat.MemoryExpressionSnapshotMap)))
 	if err != nil {
 
 		return err
 	}
-	for k, v := range cat.MemoryExpressionSnapshotMap {
-		err = WriteStringToWriter(w, k)
+	for key, value := range cat.MemoryExpressionSnapshotMap {
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
-		err = WriteStringToWriter(w, v)
+		err = WriteStringToWriter(writer, value)
 		if err != nil {
 
 			return err
@@ -905,18 +905,18 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	}
 
 	// MemoryExpressionAtomSnapshotMap meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionAtomSnapshotMap)))
+	err = WriteIntToWriter(writer, uint64(len(cat.MemoryExpressionAtomSnapshotMap)))
 	if err != nil {
 
 		return err
 	}
-	for k, v := range cat.MemoryExpressionAtomSnapshotMap {
-		err = WriteStringToWriter(w, k)
+	for key, value := range cat.MemoryExpressionAtomSnapshotMap {
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
-		err = WriteStringToWriter(w, v)
+		err = WriteStringToWriter(writer, value)
 		if err != nil {
 
 			return err
@@ -924,24 +924,24 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	}
 
 	// MemoryExpressionVariableMap meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionVariableMap)))
+	err = WriteIntToWriter(writer, uint64(len(cat.MemoryExpressionVariableMap)))
 	if err != nil {
 
 		return err
 	}
-	for k, v := range cat.MemoryExpressionVariableMap {
-		err = WriteStringToWriter(w, k)
+	for key, value := range cat.MemoryExpressionVariableMap {
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
-		err = WriteIntToWriter(w, uint64(len(v)))
+		err = WriteIntToWriter(writer, uint64(len(value)))
 		if err != nil {
 
 			return err
 		}
-		for _, j := range v {
-			err = WriteStringToWriter(w, j)
+		for _, j := range value {
+			err = WriteStringToWriter(writer, j)
 			if err != nil {
 
 				return err
@@ -950,24 +950,24 @@ func (cat *Catalog) WriteCatalogToWriter(w io.Writer) error {
 	}
 
 	// MemoryExpressionAtomVariableMap meta counts.
-	err = WriteIntToWriter(w, uint64(len(cat.MemoryExpressionAtomVariableMap)))
+	err = WriteIntToWriter(writer, uint64(len(cat.MemoryExpressionAtomVariableMap)))
 	if err != nil {
 
 		return err
 	}
-	for k, v := range cat.MemoryExpressionAtomVariableMap {
-		err = WriteStringToWriter(w, k)
+	for key, value := range cat.MemoryExpressionAtomVariableMap {
+		err = WriteStringToWriter(writer, key)
 		if err != nil {
 
 			return err
 		}
-		err = WriteIntToWriter(w, uint64(len(v)))
+		err = WriteIntToWriter(writer, uint64(len(value)))
 		if err != nil {
 
 			return err
 		}
-		for _, j := range v {
-			err = WriteStringToWriter(w, j)
+		for _, j := range value {
+			err = WriteStringToWriter(writer, j)
 			if err != nil {
 
 				return err
@@ -1034,21 +1034,21 @@ func (meta *NodeMeta) GetSnapshot() string {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *NodeMeta) WriteMetaTo(w io.Writer) error {
+func (meta *NodeMeta) WriteMetaTo(writer io.Writer) error {
 	// First write the AST ID. this may be redundant.
-	err := WriteStringToWriter(w, meta.AstID)
+	err := WriteStringToWriter(writer, meta.AstID)
 	if err != nil {
 
 		return err
 	}
 	// Second write the GRL Text.
-	err = WriteStringToWriter(w, meta.GrlText)
+	err = WriteStringToWriter(writer, meta.GrlText)
 	if err != nil {
 
 		return err
 	}
 	// Third write the snapshot. This might be un-necessary.
-	err = WriteStringToWriter(w, meta.Snapshot)
+	err = WriteStringToWriter(writer, meta.Snapshot)
 	if err != nil {
 
 		return err
@@ -1140,15 +1140,15 @@ func (meta *ArgumentListMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ArgumentListMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
 
 	// Write the number of arguments
-	err = WriteIntToWriter(w, uint64(len(meta.ArgumentASTIDs)))
+	err = WriteIntToWriter(writer, uint64(len(meta.ArgumentASTIDs)))
 	if err != nil {
 
 		return err
@@ -1156,7 +1156,7 @@ func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 
 	// Write the array content
 	for _, v := range meta.ArgumentASTIDs {
-		err = WriteStringToWriter(w, v)
+		err = WriteStringToWriter(writer, v)
 		if err != nil {
 
 			return err
@@ -1169,27 +1169,27 @@ func (meta *ArgumentListMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ArgumentListMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ArgumentListMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
 
-	in, err := ReadIntFromReader(r)
+	integer, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
-	meta.ArgumentASTIDs = make([]string, in)
-	for i := uint64(0); i < in; i++ {
-		s, err := ReadStringFromReader(r)
+	meta.ArgumentASTIDs = make([]string, integer)
+	for index := uint64(0); index < integer; index++ {
+		s, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		meta.ArgumentASTIDs[i] = s
+		meta.ArgumentASTIDs[index] = s
 	}
 
 	return nil
@@ -1228,13 +1228,13 @@ func (meta *ArrayMapSelectorMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ArrayMapSelectorMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionID)
+	err = WriteStringToWriter(writer, meta.ExpressionID)
 	if err != nil {
 
 		return err
@@ -1246,13 +1246,13 @@ func (meta *ArrayMapSelectorMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ArrayMapSelectorMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ArrayMapSelectorMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	s, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
@@ -1325,45 +1325,45 @@ func (meta *AssigmentMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *AssigmentMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
 
-	err = WriteStringToWriter(w, meta.VariableID)
+	err = WriteStringToWriter(writer, meta.VariableID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionID)
+	err = WriteStringToWriter(writer, meta.ExpressionID)
 	if err != nil {
 
 		return err
 	}
 
-	err = WriteBoolToWriter(w, meta.IsAssign)
+	err = WriteBoolToWriter(writer, meta.IsAssign)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.IsPlusAssign)
+	err = WriteBoolToWriter(writer, meta.IsPlusAssign)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.IsMinusAssign)
+	err = WriteBoolToWriter(writer, meta.IsMinusAssign)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.IsDivAssign)
+	err = WriteBoolToWriter(writer, meta.IsDivAssign)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.IsMulAssign)
+	err = WriteBoolToWriter(writer, meta.IsMulAssign)
 	if err != nil {
 
 		return err
@@ -1375,60 +1375,60 @@ func (meta *AssigmentMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *AssigmentMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *AssigmentMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
 
-	s, err := ReadStringFromReader(r)
+	stringFromReader, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.VariableID = s
-	s, err = ReadStringFromReader(r)
+	meta.VariableID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ExpressionID = s
+	meta.ExpressionID = stringFromReader
 
-	b, err := ReadBoolFromReader(r)
+	boolReaded, err := ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.IsAssign = b
+	meta.IsAssign = boolReaded
 
-	b, err = ReadBoolFromReader(r)
+	boolReaded, err = ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.IsPlusAssign = b
+	meta.IsPlusAssign = boolReaded
 
-	b, err = ReadBoolFromReader(r)
+	boolReaded, err = ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.IsMinusAssign = b
+	meta.IsMinusAssign = boolReaded
 
-	b, err = ReadBoolFromReader(r)
+	boolReaded, err = ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.IsDivAssign = b
+	meta.IsDivAssign = boolReaded
 
-	b, err = ReadBoolFromReader(r)
+	boolReaded, err = ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.IsMulAssign = b
+	meta.IsMulAssign = boolReaded
 
 	return nil
 }
@@ -1483,28 +1483,28 @@ func (meta *ConstantMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ConstantMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteIntToWriter(w, uint64(meta.ValueType))
+	err = WriteIntToWriter(writer, uint64(meta.ValueType))
 	if err != nil {
 
 		return err
 	}
-	err = WriteIntToWriter(w, uint64(len(meta.ValueBytes)))
+	err = WriteIntToWriter(writer, uint64(len(meta.ValueBytes)))
 	if err != nil {
 
 		return err
 	}
-	_, err = w.Write(meta.ValueBytes)
+	_, err = writer.Write(meta.ValueBytes)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.IsNil)
+	err = WriteBoolToWriter(writer, meta.IsNil)
 	if err != nil {
 
 		return err
@@ -1516,33 +1516,33 @@ func (meta *ConstantMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ConstantMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ConstantMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	i, err := ReadIntFromReader(r)
+	i, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	meta.ValueType = ValueType(i)
 
-	length, err := ReadIntFromReader(r)
+	length, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	byteArr := make([]byte, length)
-	_, err = r.Read(byteArr)
+	_, err = reader.Read(byteArr)
 	if err != nil {
 
 		return err
 	}
 	meta.ValueBytes = byteArr
 
-	b, err := ReadBoolFromReader(r)
+	b, err := ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
@@ -1610,38 +1610,38 @@ func (meta *ExpressionMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ExpressionMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.LeftExpressionID)
+	err = WriteStringToWriter(writer, meta.LeftExpressionID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.RightExpressionID)
+	err = WriteStringToWriter(writer, meta.RightExpressionID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.SingleExpressionID)
+	err = WriteStringToWriter(writer, meta.SingleExpressionID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionAtomID)
+	err = WriteStringToWriter(writer, meta.ExpressionAtomID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteIntToWriter(w, uint64(meta.Operator))
+	err = WriteIntToWriter(writer, uint64(meta.Operator))
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.Negated)
+	err = WriteBoolToWriter(writer, meta.Negated)
 	if err != nil {
 
 		return err
@@ -1653,43 +1653,43 @@ func (meta *ExpressionMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ExpressionMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ExpressionMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	theString, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.LeftExpressionID = s
-	s, err = ReadStringFromReader(r)
+	meta.LeftExpressionID = theString
+	theString, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.RightExpressionID = s
-	s, err = ReadStringFromReader(r)
+	meta.RightExpressionID = theString
+	theString, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.SingleExpressionID = s
-	s, err = ReadStringFromReader(r)
+	meta.SingleExpressionID = theString
+	theString, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ExpressionAtomID = s
-	i, err := ReadIntFromReader(r)
+	meta.ExpressionAtomID = theString
+	i, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	meta.Operator = int(i)
-	b, err := ReadBoolFromReader(r)
+	b, err := ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
@@ -1763,43 +1763,43 @@ func (meta *ExpressionAtomMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ExpressionAtomMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.VariableName)
+	err = WriteStringToWriter(writer, meta.VariableName)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ConstantID)
+	err = WriteStringToWriter(writer, meta.ConstantID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.FunctionCallID)
+	err = WriteStringToWriter(writer, meta.FunctionCallID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.VariableID)
+	err = WriteStringToWriter(writer, meta.VariableID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteBoolToWriter(w, meta.Negated)
+	err = WriteBoolToWriter(writer, meta.Negated)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionAtomID)
+	err = WriteStringToWriter(writer, meta.ExpressionAtomID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ArrayMapSelectorID)
+	err = WriteStringToWriter(writer, meta.ArrayMapSelectorID)
 	if err != nil {
 
 		return err
@@ -1811,54 +1811,54 @@ func (meta *ExpressionAtomMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ExpressionAtomMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ExpressionAtomMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	stringFromReader, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.VariableName = s
-	s, err = ReadStringFromReader(r)
+	meta.VariableName = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ConstantID = s
-	s, err = ReadStringFromReader(r)
+	meta.ConstantID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.FunctionCallID = s
-	s, err = ReadStringFromReader(r)
+	meta.FunctionCallID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.VariableID = s
-	b, err := ReadBoolFromReader(r)
+	meta.VariableID = stringFromReader
+	b, err := ReadBoolFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	meta.Negated = b
-	s, err = ReadStringFromReader(r)
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ExpressionAtomID = s
-	s, err = ReadStringFromReader(r)
+	meta.ExpressionAtomID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ArrayMapSelectorID = s
+	meta.ArrayMapSelectorID = stringFromReader
 
 	return nil
 }
@@ -1901,18 +1901,18 @@ func (meta *FunctionCallMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *FunctionCallMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.FunctionName)
+	err = WriteStringToWriter(writer, meta.FunctionName)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ArgumentListID)
+	err = WriteStringToWriter(writer, meta.ArgumentListID)
 	if err != nil {
 
 		return err
@@ -1924,24 +1924,24 @@ func (meta *FunctionCallMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *FunctionCallMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *FunctionCallMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	stringFromReader, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.FunctionName = s
-	s, err = ReadStringFromReader(r)
+	meta.FunctionName = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ArgumentListID = s
+	meta.ArgumentListID = stringFromReader
 
 	return nil
 }
@@ -2000,33 +2000,33 @@ func (meta *RuleEntryMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *RuleEntryMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.RuleName)
+	err = WriteStringToWriter(writer, meta.RuleName)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.RuleDescription)
+	err = WriteStringToWriter(writer, meta.RuleDescription)
 	if err != nil {
 
 		return err
 	}
-	err = WriteIntToWriter(w, uint64(meta.Salience))
+	err = WriteIntToWriter(writer, uint64(meta.Salience))
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.WhenScopeID)
+	err = WriteStringToWriter(writer, meta.WhenScopeID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ThenScopeID)
+	err = WriteStringToWriter(writer, meta.ThenScopeID)
 	if err != nil {
 
 		return err
@@ -2038,42 +2038,42 @@ func (meta *RuleEntryMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *RuleEntryMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *RuleEntryMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	stringFromReader, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.RuleName = s
-	s, err = ReadStringFromReader(r)
+	meta.RuleName = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.RuleDescription = s
-	i, err := ReadIntFromReader(r)
+	meta.RuleDescription = stringFromReader
+	i, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 	meta.Salience = int(i)
-	s, err = ReadStringFromReader(r)
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.WhenScopeID = s
-	s, err = ReadStringFromReader(r)
+	meta.WhenScopeID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ThenScopeID = s
+	meta.ThenScopeID = stringFromReader
 
 	return nil
 }
@@ -2117,18 +2117,18 @@ func (meta *ThenExpressionMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ThenExpressionMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.AssignmentID)
+	err = WriteStringToWriter(writer, meta.AssignmentID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionAtomID)
+	err = WriteStringToWriter(writer, meta.ExpressionAtomID)
 	if err != nil {
 
 		return err
@@ -2140,24 +2140,24 @@ func (meta *ThenExpressionMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenExpressionMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ThenExpressionMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	theString, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.AssignmentID = s
-	s, err = ReadStringFromReader(r)
+	meta.AssignmentID = theString
+	theString, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ExpressionAtomID = s
+	meta.ExpressionAtomID = theString
 
 	return nil
 }
@@ -2202,21 +2202,21 @@ func (meta *ThenExpressionListMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ThenExpressionListMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
 
-	err = WriteIntToWriter(w, uint64(len(meta.ThenExpressionIDs)))
+	err = WriteIntToWriter(writer, uint64(len(meta.ThenExpressionIDs)))
 	if err != nil {
 
 		return err
 	}
 
 	for _, v := range meta.ThenExpressionIDs {
-		err = WriteStringToWriter(w, v)
+		err = WriteStringToWriter(writer, v)
 		if err != nil {
 
 			return err
@@ -2229,27 +2229,27 @@ func (meta *ThenExpressionListMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenExpressionListMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ThenExpressionListMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
 
-	count, err := ReadIntFromReader(r)
+	count, err := ReadIntFromReader(reader)
 	if err != nil {
 
 		return err
 	}
 
 	meta.ThenExpressionIDs = make([]string, count)
-	for i := uint64(0); i < count; i++ {
-		s, err := ReadStringFromReader(r)
+	for index := uint64(0); index < count; index++ {
+		s, err := ReadStringFromReader(reader)
 		if err != nil {
 
 			return err
 		}
-		meta.ThenExpressionIDs[i] = s
+		meta.ThenExpressionIDs[index] = s
 	}
 
 	return nil
@@ -2288,13 +2288,13 @@ func (meta *ThenScopeMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *ThenScopeMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ThenExpressionListID)
+	err = WriteStringToWriter(writer, meta.ThenExpressionListID)
 	if err != nil {
 
 		return err
@@ -2306,13 +2306,13 @@ func (meta *ThenScopeMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *ThenScopeMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *ThenScopeMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	s, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
@@ -2366,23 +2366,23 @@ func (meta *VariableMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *VariableMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.Name)
+	err = WriteStringToWriter(writer, meta.Name)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.VariableID)
+	err = WriteStringToWriter(writer, meta.VariableID)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ArrayMapSelectorID)
+	err = WriteStringToWriter(writer, meta.ArrayMapSelectorID)
 	if err != nil {
 
 		return err
@@ -2394,30 +2394,30 @@ func (meta *VariableMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *VariableMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *VariableMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	stringFromReader, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.Name = s
-	s, err = ReadStringFromReader(r)
+	meta.Name = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.VariableID = s
-	s, err = ReadStringFromReader(r)
+	meta.VariableID = stringFromReader
+	stringFromReader, err = ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
 	}
-	meta.ArrayMapSelectorID = s
+	meta.ArrayMapSelectorID = stringFromReader
 
 	return nil
 }
@@ -2455,13 +2455,13 @@ func (meta *WhenScopeMeta) GetASTType() NodeType {
 // WriteMetaTo write basic AST Node information meta data into writer.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
-	err := meta.NodeMeta.WriteMetaTo(w)
+func (meta *WhenScopeMeta) WriteMetaTo(writer io.Writer) error {
+	err := meta.NodeMeta.WriteMetaTo(writer)
 	if err != nil {
 
 		return err
 	}
-	err = WriteStringToWriter(w, meta.ExpressionID)
+	err = WriteStringToWriter(writer, meta.ExpressionID)
 	if err != nil {
 
 		return err
@@ -2473,13 +2473,13 @@ func (meta *WhenScopeMeta) WriteMetaTo(w io.Writer) error {
 // ReadMetaFrom write basic AST Node information meta data from reader.
 // One should not use this function directly, unless for testing
 // serialization of single ASTNode.
-func (meta *WhenScopeMeta) ReadMetaFrom(r io.Reader) error {
-	err := meta.NodeMeta.ReadMetaFrom(r)
+func (meta *WhenScopeMeta) ReadMetaFrom(reader io.Reader) error {
+	err := meta.NodeMeta.ReadMetaFrom(reader)
 	if err != nil {
 
 		return err
 	}
-	s, err := ReadStringFromReader(r)
+	s, err := ReadStringFromReader(reader)
 	if err != nil {
 
 		return err
@@ -2519,38 +2519,38 @@ func WriteFull(w io.Writer, bytes []byte) (int, error) {
 // WriteStringToWriter write a string into writer.
 // the structure is that there's length value written
 // prior writing the actual string.
-func WriteStringToWriter(w io.Writer, s string) error {
+func WriteStringToWriter(writer io.Writer, s string) error {
 	length := make([]byte, 8)
 	data := []byte(s)
 	binary.LittleEndian.PutUint64(length, uint64(len(data)))
-	c, err := WriteFull(w, length)
+	writeCount, err := WriteFull(writer, length)
 
-	TotalWrite += uint64(c)
+	TotalWrite += uint64(writeCount)
 	if err != nil {
 
 		return err
 	}
-	c, err = WriteFull(w, data)
-	TotalWrite += uint64(c)
+	writeCount, err = WriteFull(writer, data)
+	TotalWrite += uint64(writeCount)
 	WriteCount++
 
 	return err
 }
 
 // ReadStringFromReader read a string from reader.
-func ReadStringFromReader(r io.Reader) (string, error) {
+func ReadStringFromReader(reader io.Reader) (string, error) {
 	length := make([]byte, 8)
 
-	c, err := io.ReadFull(r, length)
-	TotalRead += uint64(c)
+	counter, err := io.ReadFull(reader, length)
+	TotalRead += uint64(counter)
 	if err != nil {
 
 		return "", err
 	}
 	strLen := binary.LittleEndian.Uint64(length)
 	strByte := make([]byte, int(strLen))
-	c, err = io.ReadFull(r, strByte)
-	TotalRead += uint64(c)
+	counter, err = io.ReadFull(reader, strByte)
+	TotalRead += uint64(counter)
 	if err != nil {
 
 		return "", err
@@ -2587,14 +2587,14 @@ func ReadIntFromReader(r io.Reader) (uint64, error) {
 }
 
 // WriteBoolToWriter writes a simple boolean into writer
-func WriteBoolToWriter(w io.Writer, b bool) error {
+func WriteBoolToWriter(writer io.Writer, aBoolean bool) error {
 	data := make([]byte, 1)
-	if b {
+	if aBoolean {
 		data[0] = 1
 	} else {
 		data[0] = 0
 	}
-	c, err := WriteFull(w, data)
+	c, err := WriteFull(writer, data)
 	TotalWrite += uint64(c)
 
 	return err

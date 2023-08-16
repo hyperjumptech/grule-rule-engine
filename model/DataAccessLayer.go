@@ -259,13 +259,13 @@ func StrMatchRegexPattern(str string, arg []reflect.Value) (reflect.Value, error
 
 		return reflect.ValueOf(nil), fmt.Errorf("function StrMatchRegexPattern requires 1 string argument")
 	}
-	m, err := regexp.MatchString(arg[0].String(), str)
+	match, err := regexp.MatchString(arg[0].String(), str)
 	if err != nil {
 
 		return reflect.ValueOf(nil), fmt.Errorf("function StrMatchRegexPattern requires valid regex pattern")
 	}
 
-	return reflect.ValueOf(m), nil
+	return reflect.ValueOf(match), nil
 }
 
 // ArrMapLen will return the size of underlying map, array or slice

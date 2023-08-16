@@ -141,61 +141,62 @@ func IsStruct(val reflect.Value) bool {
 
 // ValueToInterface will try to obtain an interface to a speciffic value.
 // it will detect the value's kind.
-func ValueToInterface(v reflect.Value) interface{} {
-	if v.Type().Kind() == reflect.String {
-		return v.String()
+func ValueToInterface(valueToConvert reflect.Value) interface{} {
+	if valueToConvert.Type().Kind() == reflect.String {
+
+		return valueToConvert.String()
 	}
-	switch v.Type().Kind() {
+	switch valueToConvert.Type().Kind() {
 	case reflect.Int:
 
-		return int(v.Int())
+		return int(valueToConvert.Int())
 	case reflect.Int8:
 
-		return int8(v.Int())
+		return int8(valueToConvert.Int())
 	case reflect.Int16:
 
-		return int16(v.Int())
+		return int16(valueToConvert.Int())
 	case reflect.Int32:
 
-		return int32(v.Int())
+		return int32(valueToConvert.Int())
 	case reflect.Int64:
 
-		return v.Int()
+		return valueToConvert.Int()
 	case reflect.Uint:
 
-		return uint(v.Uint())
+		return uint(valueToConvert.Uint())
 	case reflect.Uint8:
 
-		return uint8(v.Uint())
+		return uint8(valueToConvert.Uint())
 	case reflect.Uint16:
 
-		return uint16(v.Uint())
+		return uint16(valueToConvert.Uint())
 	case reflect.Uint32:
 
-		return uint32(v.Uint())
+		return uint32(valueToConvert.Uint())
 	case reflect.Uint64:
 
-		return v.Uint()
+		return valueToConvert.Uint()
 	case reflect.Float32:
 
-		return float32(v.Float())
+		return float32(valueToConvert.Float())
 	case reflect.Float64:
 
-		return v.Float()
+		return valueToConvert.Float()
 	case reflect.Bool:
 
-		return v.Bool()
+		return valueToConvert.Bool()
 	case reflect.Ptr:
-		newPtr := reflect.New(v.Elem().Type())
-		newPtr.Elem().Set(v.Elem())
+		newPtr := reflect.New(valueToConvert.Elem().Type())
+		newPtr.Elem().Set(valueToConvert.Elem())
 
 		return newPtr.Interface()
 	case reflect.Struct:
-		if v.CanInterface() {
+		if valueToConvert.CanInterface() {
 
-			return v.Interface()
+			return valueToConvert.Interface()
 		}
-		logger.Log.Errorf("Can't interface value of struct %v", v)
+		logger.Log.Errorf("Can't interface value of struct %v", valueToConvert)
 
 		return nil
 	default:
@@ -582,27 +583,27 @@ func IsAttributeNilOrZero(obj reflect.Value, fieldName string) (bool, error) {
 	return false, nil
 }
 
-func reflectIsZero(v reflect.Value) bool {
-	switch v.Kind() {
+func reflectIsZero(value reflect.Value) bool {
+	switch value.Kind() {
 	case reflect.Bool:
 
-		return !v.Bool()
+		return !value.Bool()
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 
-		return v.Int() == 0
+		return value.Int() == 0
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 
-		return v.Uint() == 0
+		return value.Uint() == 0
 	case reflect.Float32, reflect.Float64:
 
-		return math.Float64bits(v.Float()) == 0
+		return math.Float64bits(value.Float()) == 0
 	case reflect.Complex64, reflect.Complex128:
-		c := v.Complex()
+		c := value.Complex()
 
 		return math.Float64bits(real(c)) == 0 && math.Float64bits(imag(c)) == 0
 	case reflect.Array:
-		for i := 0; i < v.Len(); i++ {
-			if !reflectIsZero(v.Index(i)) {
+		for i := 0; i < value.Len(); i++ {
+			if !reflectIsZero(value.Index(i)) {
 
 				return false
 			}
@@ -611,13 +612,13 @@ func reflectIsZero(v reflect.Value) bool {
 		return true
 	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
 
-		return v.IsNil()
+		return value.IsNil()
 	case reflect.String:
 
-		return v.Len() == 0
+		return value.Len() == 0
 	case reflect.Struct:
-		for i := 0; i < v.NumField(); i++ {
-			if !reflectIsZero(v.Field(i)) {
+		for i := 0; i < value.NumField(); i++ {
+			if !reflectIsZero(value.Field(i)) {
 
 				return false
 			}
@@ -626,7 +627,7 @@ func reflectIsZero(v reflect.Value) bool {
 		return true
 	default:
 
-		panic(&reflect.ValueError{Method: "reflect.Value.IsZero", Kind: v.Kind()})
+		panic(&reflect.ValueError{Method: "reflect.Value.IsZero", Kind: value.Kind()})
 	}
 }
 

@@ -14,14 +14,15 @@ linters:
   # Enable specific linter
   # https://golangci-lint.run/usage/linters/#enabled-by-default
   enable:
-#    - asasalint
-#    - asciicheck
-#    - bidichk
-#    - bodyclose
-#    - containedctx
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
 #    - contextcheck
 #    - cyclop
-#    - deadcode
+    - deadcode
 #    - decorder
 #    - depguard
 #    - dogsled
@@ -115,7 +116,7 @@ linters:
     - unused
 #    - usestdlibvars
     - varcheck
-#    - varnamelen
+    - varnamelen
 #    - wastedassign
 #    - whitespace
 #    - wrapcheck
@@ -127,14 +128,14 @@ linters:
   # Disable specific linter
   # https://golangci-lint.run/usage/linters/#disabled-by-default
   disable:
-    - asasalint
-    - asciicheck
-    - bidichk
-    - bodyclose
-    - containedctx
-    - contextcheck
+#    - asasalint
+#    - asciicheck
+#    - bidichk
+#    - bodyclose
+#    - containedctx
+#    - contextcheck
     - cyclop
-    - deadcode
+#    - deadcode
     - decorder
     - depguard
     - dogsled
@@ -228,7 +229,7 @@ linters:
 #    - unused
     - usestdlibvars
 #    - varcheck
-    - varnamelen
+#    - varnamelen
     - wastedassign
     - whitespace
     - wrapcheck
