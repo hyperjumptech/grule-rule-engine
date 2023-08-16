@@ -3,9 +3,9 @@ package editor
 import (
 	"embed"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/editor/mime"
 	mux "github.com/hyperjumptech/hyper-mux"
 	"github.com/sirupsen/logrus"
+	"grule-rule-engine/editor/mime"
 	"net/http"
 	"os"
 	"strings"
