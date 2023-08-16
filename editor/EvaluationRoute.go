@@ -24,61 +24,68 @@ type EvaluateRequest struct {
 }
 
 func InitializeEvaluationRoute(router *mux.HyperMux) {
-	router.AddRoute("/evaluate", http.MethodPost, func(w http.ResponseWriter, r *http.Request) {
-		bodyBytes, err := ioutil.ReadAll(r.Body)
+	router.AddRoute("/evaluate", http.MethodPost, func(writer http.ResponseWriter, reader *http.Request) {
+		bodyBytes, err := ioutil.ReadAll(reader.Body)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(fmt.Sprintf("error while reading body stream. got %v", err)))
+			writer.WriteHeader(http.StatusInternalServerError)
+			_, _ = writer.Write([]byte(fmt.Sprintf("error while reading body stream. got %v", err)))
+
 			return
 		}
 		evReq := &EvaluateRequest{}
 		err = json.Unmarshal(bodyBytes, evReq)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(fmt.Sprintf("wrong json format. got %v \n\n Json : %s", err, string(bodyBytes))))
+			writer.WriteHeader(http.StatusBadRequest)
+			_, _ = writer.Write([]byte(fmt.Sprintf("wrong json format. got %v \n\n Json : %s", err, string(bodyBytes))))
+
 			return
 		}
 
 		dataContext := ast.NewDataContext()
 
-		for _, jd := range evReq.Input {
-			jsonByte, err := base64.StdEncoding.DecodeString(jd.JSONData)
+		for _, JSONDat := range evReq.Input {
+			jsonByte, err := base64.StdEncoding.DecodeString(JSONDat.JSONData)
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte(fmt.Sprintf("json data named %s should be sent using base64. got %v", jd.Name, err)))
+				writer.WriteHeader(http.StatusBadRequest)
+				_, _ = writer.Write([]byte(fmt.Sprintf("json data named %s should be sent using base64. got %v", JSONDat.Name, err)))
+
 				return
 			}
-			err = dataContext.AddJSON(jd.Name, jsonByte)
+			err = dataContext.AddJSON(JSONDat.Name, jsonByte)
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte(fmt.Sprintf("invalid JSON data named %s when add json to context got %v", jd.Name, err)))
+				writer.WriteHeader(http.StatusBadRequest)
+				_, _ = writer.Write([]byte(fmt.Sprintf("invalid JSON data named %s when add json to context got %v", JSONDat.Name, err)))
+
 				return
 			}
 		}
 
-		lib := ast.NewKnowledgeLibrary()
-		rb := builder.NewRuleBuilder(lib)
+		knowledgeLibrary := ast.NewKnowledgeLibrary()
+		ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 
 		grlByte, err := base64.StdEncoding.DecodeString(evReq.GrlText)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(fmt.Sprintf("GRL data should be sent using base64. got %v", err)))
+			writer.WriteHeader(http.StatusBadRequest)
+			_, _ = writer.Write([]byte(fmt.Sprintf("GRL data should be sent using base64. got %v", err)))
+
 			return
 		}
 
-		err = rb.BuildRuleFromResource("Evaluator", "0.0.1", pkg.NewBytesResource(grlByte))
+		err = ruleBuilder.BuildRuleFromResource("Evaluator", "0.0.1", pkg.NewBytesResource(grlByte))
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(fmt.Sprintf("invalid GRL : %s", err.Error())))
+			writer.WriteHeader(http.StatusBadRequest)
+			_, _ = writer.Write([]byte(fmt.Sprintf("invalid GRL : %s", err.Error())))
+
 			return
 		}
 
 		eng1 := &engine.GruleEngine{MaxCycle: 5}
-		kb := lib.NewKnowledgeBaseInstance("Evaluator", "0.0.1")
+		kb := knowledgeLibrary.NewKnowledgeBaseInstance("Evaluator", "0.0.1")
 		err = eng1.Execute(dataContext, kb)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(fmt.Sprintf("Grule Error : %s", err.Error())))
+			writer.WriteHeader(http.StatusBadRequest)
+			_, _ = writer.Write([]byte(fmt.Sprintf("Grule Error : %s", err.Error())))
+
 			return
 		}
 
@@ -89,13 +96,14 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 
 		resultBytes, err := json.Marshal(respData)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(fmt.Sprintf("Error marshaling result : %s", err.Error())))
+			writer.WriteHeader(http.StatusInternalServerError)
+			_, _ = writer.Write([]byte(fmt.Sprintf("Error marshaling result : %s", err.Error())))
+
 			return
 		}
 
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write(resultBytes)
+		writer.Header().Add("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		_, _ = writer.Write(resultBytes)
 	})
 }

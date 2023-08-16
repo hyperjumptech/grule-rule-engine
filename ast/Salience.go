@@ -16,6 +16,7 @@ package ast
 
 // NewSalience create new Salience AST object
 func NewSalience(val int) *Salience {
+
 	return &Salience{
 		SalienceValue: val,
 	}

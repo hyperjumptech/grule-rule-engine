@@ -1,3 +1,4 @@
+//go:build go1.16
 // +build go1.16
 
 //  Copyright hyperjumptech/grule-rule-engine Authors
@@ -37,6 +38,7 @@ type EmbeddedResource struct {
 // source is an embed.FS struct
 // path is the path to the embedded resource.
 func NewEmbeddedResource(source embed.FS, path string) Resource {
+
 	return &EmbeddedResource{
 		Path:   path,
 		Source: source,
@@ -46,15 +48,18 @@ func NewEmbeddedResource(source embed.FS, path string) Resource {
 // Load will load the resource into a byte array from the embedded source.
 func (res *EmbeddedResource) Load() ([]byte, error) {
 	if res.Bytes != nil {
+
 		return res.Bytes, nil
 	}
 
 	var err error
 	res.Bytes, err = res.Source.ReadFile(res.Path)
+
 	return res.Bytes, err
 }
 
 func (res *EmbeddedResource) String() string {
+
 	return "From embedded path: " + res.Path
 }
 
@@ -81,6 +86,7 @@ type EmbeddedResourceBundle struct {
 // The pattern to accept all GRL file is "/some/base/path/**/*.grl".
 // This will accept all *.grl files under /some/base/path and its directories.
 func NewEmbeddedResourceBundle(source embed.FS, basePath string, pathPattern ...string) *EmbeddedResourceBundle {
+
 	return &EmbeddedResourceBundle{
 		Source:      source,
 		BasePath:    strings.TrimLeft(basePath, "/"),
@@ -90,6 +96,7 @@ func NewEmbeddedResourceBundle(source embed.FS, basePath string, pathPattern ...
 
 // Load all embedded file resources that located under BasePath that conform to the PathPattern.
 func (bundle *EmbeddedResourceBundle) Load() ([]Resource, error) {
+
 	return bundle.loadPath(bundle.BasePath)
 }
 
@@ -97,8 +104,10 @@ func (bundle *EmbeddedResourceBundle) Load() ([]Resource, error) {
 func (bundle *EmbeddedResourceBundle) MustLoad() []Resource {
 	resources, err := bundle.Load()
 	if err != nil {
+
 		panic(err)
 	}
+
 	return resources
 }
 
@@ -107,6 +116,7 @@ func (bundle *EmbeddedResourceBundle) loadPath(path string) ([]Resource, error) 
 
 	finfos, err := bundle.Source.ReadDir(path)
 	if err != nil {
+
 		return nil, err
 	}
 	if path == "." || path == "./" {
@@ -118,6 +128,7 @@ func (bundle *EmbeddedResourceBundle) loadPath(path string) ([]Resource, error) 
 		if finfo.IsDir() {
 			gres, err := bundle.loadPath(fulPath)
 			if err != nil {
+
 				return nil, err
 			}
 			ret = append(ret, gres...)
@@ -125,6 +136,7 @@ func (bundle *EmbeddedResourceBundle) loadPath(path string) ([]Resource, error) 
 			for _, pattern := range bundle.PathPattern {
 				matched, err := doublestar.PathMatch(pattern, "/"+fulPath)
 				if err != nil {
+
 					return nil, err
 				}
 				if matched {
@@ -135,10 +147,12 @@ func (bundle *EmbeddedResourceBundle) loadPath(path string) ([]Resource, error) 
 						return nil, err
 					}
 					ret = append(ret, gress)
+
 					break
 				}
 			}
 		}
 	}
+
 	return ret, nil
 }

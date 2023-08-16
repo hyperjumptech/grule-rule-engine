@@ -26,6 +26,10 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 )
 
+const (
+	DefaultCycleCount = 5000
+)
+
 var (
 	// logFields default fields for grule
 	logFields = logger.Fields{
@@ -44,16 +48,19 @@ func SetLogger(externalLog interface{}) {
 	case *zap.Logger:
 		log, ok := externalLog.(*zap.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewZap(log)
 	case *logrus.Logger:
 		log, ok := externalLog.(*logrus.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewLogrus(log)
 	default:
+
 		return
 	}
 
@@ -63,8 +70,9 @@ func SetLogger(externalLog interface{}) {
 // NewGruleEngine will create new instance of GruleEngine struct.
 // It will set the max cycle to 5000
 func NewGruleEngine() *GruleEngine {
+
 	return &GruleEngine{
-		MaxCycle: 5000,
+		MaxCycle: DefaultCycleCount,
 	}
 }
 
@@ -77,6 +85,7 @@ type GruleEngine struct {
 
 // Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
 }
 
@@ -143,6 +152,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	for {
 		if ctx.Err() != nil {
 			log.Error("Context canceled")
+
 			return ctx.Err()
 		}
 
@@ -151,26 +161,28 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		// Select all rule entry that can be executed.
 		log.Tracef("Select all rule entry that can be executed.")
 		runnable := make([]*ast.RuleEntry, 0)
-		for _, v := range knowledge.RuleEntries {
+		for _, ruleEntry := range knowledge.RuleEntries {
 			if ctx.Err() != nil {
 				log.Error("Context canceled")
+
 				return ctx.Err()
 			}
-			if !v.Retracted && !v.Deleted {
+			if !ruleEntry.Retracted && !ruleEntry.Deleted {
 				// test if this rule entry v can execute.
-				can, err := v.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
+				can, err := ruleEntry.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
 				if err != nil {
-					log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+					log.Errorf("Failed testing condition for rule : %s. Got error %v", ruleEntry.RuleName, err)
 					if g.ReturnErrOnFailedRuleEvaluation {
+
 						return err
 					}
 				}
 				// if can, add into runnable array
 				if can {
-					runnable = append(runnable, v)
+					runnable = append(runnable, ruleEntry)
 				}
 				// notify all listeners that a rule's when scope is been evaluated.
-				g.notifyEvaluateRuleEntry(cycle+1, v, can)
+				g.notifyEvaluateRuleEntry(cycle+1, ruleEntry, can)
 			}
 		}
 
@@ -187,6 +199,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// if cycle is above the maximum allowed cycle, returnan error indicated the cycle has ended.
 			if cycle > g.MaxCycle {
 				log.Error("Max cycle reached")
+
 				return fmt.Errorf("the GruleEngine successfully selected rule candidate for execution after %d cycles, this could possibly caused by rule entry(s) that keep added into execution pool but when executed it does not change any data in context. Please evaluate your rule entries \"When\" and \"Then\" scope. You can adjust the maximum cycle using GruleEngine.MaxCycle variable", g.MaxCycle)
 			}
 
@@ -206,6 +219,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
 				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
+
 				return fmt.Errorf("error while executing rule %s. got %w", runner.RuleName, err)
 			}
 
@@ -215,10 +229,12 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		} else {
 			// No more rule can be executed, so we are done here.
 			log.Debugf("No more rule to run")
+
 			break
 		}
 	}
 	log.Debugf("Finished Rules execution. With knowledge base '%s' version %s. Total #%d cycles. Duration %d ms.", knowledge.Name, knowledge.Version, cycle, time.Now().Sub(startTime).Nanoseconds()/1e6)
+
 	return nil
 }
 
@@ -245,27 +261,29 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	// Select all rule entry that can be executed.
 	log.Tracef("Select all rule entry that can be executed.")
 	runnable := make([]*ast.RuleEntry, 0)
-	for _, v := range knowledge.RuleEntries {
-		if !v.Deleted {
+	for _, entries := range knowledge.RuleEntries {
+		if !entries.Deleted {
 			// test if this rule entry v can execute.
-			can, err := v.Evaluate(context.Background(), dataCtx, knowledge.WorkingMemory)
+			can, err := entries.Evaluate(context.Background(), dataCtx, knowledge.WorkingMemory)
 			if err != nil {
-				log.Errorf("Failed testing condition for rule : %s. Got error %v", v.RuleName, err)
+				log.Errorf("Failed testing condition for rule : %s. Got error %v", entries.RuleName, err)
 				if g.ReturnErrOnFailedRuleEvaluation {
 					return nil, err
 				}
 			}
 			// if can, add into runnable array
 			if can {
-				runnable = append(runnable, v)
+				runnable = append(runnable, entries)
 			}
 		}
 	}
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
+
 			return runnable[i].Salience > runnable[j].Salience
 		})
 	}
+
 	return runnable, nil
 }

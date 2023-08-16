@@ -27,6 +27,7 @@ import (
 
 // NewConstant will create new instance of Constant
 func NewConstant() *Constant {
+
 	return &Constant{
 		AstID: unique.NewID(),
 	}
@@ -103,11 +104,13 @@ type ConstantReceiver interface {
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *Constant) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *Constant) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -131,6 +134,7 @@ func (e *Constant) GetSnapshot() string {
 		buff.WriteString(fmt.Sprintf("%v", e.Value.Bool()))
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -163,7 +167,9 @@ func (e *Constant) AcceptBooleanLiteral(fun *BooleanLiteral) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Constant) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
 	if e.IsNil {
+
 		return reflect.ValueOf(nil), nil
 	}
+
 	return e.Value, nil
 }

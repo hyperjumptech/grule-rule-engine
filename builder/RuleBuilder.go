@@ -46,16 +46,19 @@ func SetLogger(log interface{}) {
 	case *zap.Logger:
 		log, ok := log.(*zap.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewZap(log)
 	case *logrus.Logger:
 		log, ok := log.(*logrus.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewLogrus(log)
 	default:
+
 		return
 	}
 
@@ -64,6 +67,7 @@ func SetLogger(log interface{}) {
 
 // NewRuleBuilder creates new RuleBuilder instance. This builder will add all loaded rules into the specified knowledgebase.
 func NewRuleBuilder(KnowledgeLibrary *ast.KnowledgeLibrary) *RuleBuilder {
+
 	return &RuleBuilder{
 		KnowledgeLibrary: KnowledgeLibrary,
 	}
@@ -79,6 +83,7 @@ func (builder *RuleBuilder) MustBuildRuleFromResources(name, version string, res
 	for _, v := range resource {
 		err := builder.BuildRuleFromResource(name, version, v)
 		if err != nil {
+
 			panic(err)
 		}
 	}
@@ -87,6 +92,7 @@ func (builder *RuleBuilder) MustBuildRuleFromResources(name, version string, res
 // MustBuildRuleFromResource is similar to BuildRuleFromResource, with the difference is, it will panic if rule script contains error.
 func (builder *RuleBuilder) MustBuildRuleFromResource(name, version string, resource pkg.Resource) {
 	if err := builder.BuildRuleFromResource(name, version, resource); err != nil {
+
 		panic(err)
 	}
 }
@@ -95,8 +101,10 @@ func (builder *RuleBuilder) MustBuildRuleFromResource(name, version string, reso
 func (builder *RuleBuilder) BuildRulesFromBundle(name, version string, bundle pkg.ResourceBundle) error {
 	bundles, err := bundle.Load()
 	if err != nil {
+
 		return err
 	}
+
 	return builder.BuildRuleFromResources(name, version, bundles)
 }
 
@@ -110,9 +118,11 @@ func (builder *RuleBuilder) BuildRuleFromResources(name, version string, resourc
 	for _, v := range resource {
 		err := builder.BuildRuleFromResource(name, version, v)
 		if err != nil {
+
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -124,6 +134,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	// Load the resource
 	data, err := resource.Load()
 	if err != nil {
+
 		return err
 	}
 
@@ -140,12 +151,13 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	kb := builder.KnowledgeLibrary.GetKnowledgeBase(name, version)
-	if kb == nil {
+	knowledgeBase := builder.KnowledgeLibrary.GetKnowledgeBase(name, version)
+	if knowledgeBase == nil {
+
 		return fmt.Errorf("KnowledgeBase %s:%s is not in this library", name, version)
 	}
 
-	listener := antlr2.NewGruleV3ParserListener(kb, errReporter)
+	listener := antlr2.NewGruleV3ParserListener(knowledgeBase, errReporter)
 
 	psr := parser.Newgrulev3Parser(stream)
 
@@ -157,13 +169,13 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 
 	grl := listener.Grl
 	for _, ruleEntry := range grl.RuleEntries {
-		err := kb.AddRuleEntry(ruleEntry)
+		err := knowledgeBase.AddRuleEntry(ruleEntry)
 		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
 			BuilderLog.Tracef("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName, err.Error())
 		}
 	}
 
-	kb.WorkingMemory.IndexVariables()
+	knowledgeBase.WorkingMemory.IndexVariables()
 
 	// Get the loading duration.
 	dur := time.Now().Sub(startTime)
@@ -173,6 +185,7 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 		for i, errr := range errReporter.Errors {
 			BuilderLog.Errorf("%d : %s", i, errr.Error())
 		}
+
 		return errReporter
 	}
 

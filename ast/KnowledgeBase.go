@@ -29,6 +29,7 @@ import (
 
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
 func NewKnowledgeLibrary() *KnowledgeLibrary {
+
 	return &KnowledgeLibrary{
 		Library: make(map[string]*KnowledgeBase),
 	}
@@ -43,18 +44,20 @@ type KnowledgeLibrary struct {
 // Although this KnowledgeBase blueprint works, It SHOULD NOT be used directly in the engine.
 // You should obtain KnowledgeBase instance by calling NewKnowledgeBaseInstance
 func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBase {
-	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		return kb
+
+		return knowledgeBase
 	}
-	kb = &KnowledgeBase{
+	knowledgeBase = &KnowledgeBase{
 		Name:          name,
 		Version:       version,
 		RuleEntries:   make(map[string]*RuleEntry),
 		WorkingMemory: NewWorkingMemory(name, version),
 	}
-	lib.Library[fmt.Sprintf("%s:%s", name, version)] = kb
-	return kb
+	lib.Library[fmt.Sprintf("%s:%s", name, version)] = knowledgeBase
+
+	return knowledgeBase
 }
 
 // RemoveRuleEntry mark the rule entry as deleted
@@ -88,18 +91,22 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 	catalog := &Catalog{}
 	err := catalog.ReadCatalogFromReader(reader)
 	if err != nil && err != io.EOF {
+
 		return nil, err
 	}
-	kb := catalog.BuildKnowledgeBase()
+	knowledgeBase := catalog.BuildKnowledgeBase()
 	if overwrite {
-		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
-		return kb, nil
+		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
+
+		return knowledgeBase, nil
 	}
-	if _, ok := lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)]; !ok {
-		lib.Library[fmt.Sprintf("%s:%s", kb.Name, kb.Version)] = kb
-		return kb, nil
+	if _, ok := lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)]; !ok {
+		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
+
+		return knowledgeBase, nil
 	}
-	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", kb.Name, kb.Version)
+
+	return nil, fmt.Errorf("KnowledgeBase %s version %s exist", knowledgeBase.Name, knowledgeBase.Version)
 }
 
 // StoreKnowledgeBaseToWriter will store a KnowledgeBase in binary form
@@ -114,23 +121,26 @@ func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, 
 	kb := lib.GetKnowledgeBase(name, version)
 	cat := kb.MakeCatalog()
 	err := cat.WriteCatalogToWriter(writer)
+
 	return err
 }
 
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
-	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		newClone := kb.Clone(pkg.NewCloneTable())
-		if kb.IsIdentical(newClone) {
+		newClone := knowledgeBase.Clone(pkg.NewCloneTable())
+		if knowledgeBase.IsIdentical(newClone) {
 			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
+
 			return newClone
 		}
-		AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		AstLog.Fatalf("ORIGIN   : %s", knowledgeBase.GetSnapshot())
 		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
 		panic("The clone is not identical")
 	}
+
 	return nil
 }
 
@@ -165,12 +175,14 @@ func (e *KnowledgeBase) MakeCatalog() *Catalog {
 		v.MakeCatalog(catalog)
 	}
 	e.WorkingMemory.MakeCatalog(catalog)
+
 	return catalog
 }
 
 // IsIdentical will validate if two KnoledgeBase is identical. Used to validate if the origin and clone is identical.
 func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
 	// fmt.Printf("%s\n%s\n", e.GetSnapshot(), that.GetSnapshot())
+
 	return e.GetSnapshot() == that.GetSnapshot()
 }
 
@@ -183,6 +195,7 @@ func (e *KnowledgeBase) GetSnapshot() string {
 		keys = append(keys, i)
 	}
 	sort.SliceStable(keys, func(i, j int) bool {
+
 		return strings.Compare(keys[i], keys[j]) >= 0
 	})
 	for i, k := range keys {
@@ -192,6 +205,7 @@ func (e *KnowledgeBase) GetSnapshot() string {
 		buffer.WriteString(e.RuleEntries[k].GetSnapshot())
 	}
 	buffer.WriteString("]")
+
 	return buffer.String()
 }
 
@@ -216,6 +230,7 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 	if e.WorkingMemory != nil {
 		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
 	}
+
 	return clone
 }
 
@@ -225,15 +240,18 @@ func (e *KnowledgeBase) AddRuleEntry(entry *RuleEntry) error {
 	e.lock.Lock()
 	defer e.lock.Unlock()
 	if e.ContainsRuleEntry(entry.RuleName) {
+
 		return fmt.Errorf("rule entry %s already exist", entry.RuleName)
 	}
 	e.RuleEntries[entry.RuleName] = entry
+
 	return nil
 }
 
 // ContainsRuleEntry will check if a rule with such name is already exist in this knowledge base.
 func (e *KnowledgeBase) ContainsRuleEntry(name string) bool {
 	_, ok := e.RuleEntries[name]
+
 	return ok
 }
 
@@ -270,9 +288,11 @@ func (e *KnowledgeBase) RetractRule(ruleName string) {
 func (e *KnowledgeBase) IsRuleRetracted(ruleName string) bool {
 	for _, re := range e.RuleEntries {
 		if re.RuleName == ruleName {
+
 			return re.Retracted
 		}
 	}
+
 	return false
 }
 

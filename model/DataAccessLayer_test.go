@@ -183,7 +183,6 @@ func TestStrIn_Accepts_Empty_Arguments(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-
 func TestStrMatchRegexPattern_Valid_Regex_Pattern(t *testing.T) {
 	regex := "p([a-z]+)ch"
 	str := "peach"

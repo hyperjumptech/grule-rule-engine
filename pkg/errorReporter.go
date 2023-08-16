@@ -37,13 +37,16 @@ func (c *GruleErrorReporter) SyntaxError(recognizer antlr.Recognizer, offendingS
 
 // HasError check if this reporter has an error
 func (c *GruleErrorReporter) HasError() bool {
+
 	return c.Errors != nil && len(c.Errors) > 0
 }
 
 // Error return an error text. This function is there for compatibility reason.
 func (c *GruleErrorReporter) Error() string {
 	if c.HasError() {
+
 		return fmt.Sprintf("got %d error(s) in grl the script", len(c.Errors))
 	}
+
 	return fmt.Sprintf("no error in grl script")
 }

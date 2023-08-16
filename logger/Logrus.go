@@ -28,6 +28,7 @@ type logrusLogger struct {
 
 func NewLogrus(logger *logrus.Logger) LogEntry {
 	l := logrusLogger{logger: logger}
+
 	return l.WithFields(Fields{"lib": "grule-rule-engine"})
 }
 
@@ -80,6 +81,7 @@ func (l *logrusLogger) Fatalf(template string, args ...interface{}) {
 }
 
 func (l *logrusLogger) WithFields(fields Fields) LogEntry {
+
 	return LogEntry{
 		Logger: &logrusLogEntry{
 			entry: l.logger.WithFields(convertToLogrusFields(fields)),
@@ -157,6 +159,7 @@ func (l *logrusLogEntry) Fatalf(template string, args ...interface{}) {
 }
 
 func (l *logrusLogEntry) WithFields(fields Fields) LogEntry {
+
 	return LogEntry{
 		Logger: &logrusLogEntry{
 			entry: l.entry.WithFields(convertToLogrusFields(fields)),
@@ -198,20 +201,28 @@ func convertToLogrusFields(fields Fields) logrus.Fields {
 func convertLogrusToInternalLevel(level logrus.Level) Level {
 	switch level {
 	case logrus.TraceLevel:
+
 		return TraceLevel
 	case logrus.DebugLevel:
+
 		return DebugLevel
 	case logrus.InfoLevel:
+
 		return InfoLevel
 	case logrus.WarnLevel:
+
 		return WarnLevel
 	case logrus.ErrorLevel:
+
 		return ErrorLevel
 	case logrus.FatalLevel:
+
 		return FatalLevel
 	case logrus.PanicLevel:
+
 		return PanicLevel
 	default:
+
 		return DebugLevel
 	}
 }

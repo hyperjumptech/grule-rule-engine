@@ -9,18 +9,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v2
+      - uses: actions/setup-go@v4
         with:
-          go-version: 1.18
-      - name: Checkout code
-        uses: actions/checkout@v2
+          go-version: '1.20'
+      - uses: actions/checkout@v3
       - name: Fetching dependencies
         run : go get -v -t -d ./...
-      - name: Install GoLint
-        run : |
-          go get -d golang.org/x/lint/golint
-          go install golang.org/x/lint/golint
-          echo $GOBIN
       - name: Execute test
         run : make test-short

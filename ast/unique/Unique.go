@@ -31,12 +31,14 @@ var (
 func NewID() string {
 	mutex.Lock()
 	defer mutex.Unlock()
-	MS := time.Now().Unix()
-	if lastMS == MS {
+	millisUnix := time.Now().Unix()
+	if lastMS == millisUnix {
 		offset++
+
 		return fmt.Sprintf("%d-%d", lastMS, offset)
 	}
-	lastMS = MS
+	lastMS = millisUnix
 	offset = 0
+
 	return fmt.Sprintf("%d-%d", lastMS, offset)
 }

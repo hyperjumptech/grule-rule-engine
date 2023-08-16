@@ -22,6 +22,7 @@ import (
 
 // NewThenExpressionList creates new instance of ThenExpressionList
 func NewThenExpressionList() *ThenExpressionList {
+
 	return &ThenExpressionList{
 		AstID:           unique.NewID(),
 		ThenExpressions: make([]*ThenExpression, 0),
@@ -67,6 +68,7 @@ func (e *ThenExpressionList) AcceptThenExpression(expr *ThenExpression) error {
 		e.ThenExpressions = make([]*ThenExpression, 0)
 	}
 	e.ThenExpressions = append(e.ThenExpressions, expr)
+
 	return nil
 }
 
@@ -95,11 +97,13 @@ func (e *ThenExpressionList) Clone(cloneTable *pkg.CloneTable) *ThenExpressionLi
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ThenExpressionList) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *ThenExpressionList) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -117,6 +121,7 @@ func (e *ThenExpressionList) GetSnapshot() string {
 		}
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -131,8 +136,10 @@ func (e *ThenExpressionList) Execute(dataContext IDataContext, memory *WorkingMe
 	for _, es := range e.ThenExpressions {
 		err := es.Execute(dataContext, memory)
 		if err != nil {
+
 			return err
 		}
 	}
+
 	return nil
 }

@@ -67,16 +67,19 @@ func SetLogger(log interface{}) {
 	case *zap.Logger:
 		log, ok := log.(*zap.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewZap(log)
 	case *logrus.Logger:
 		log, ok := log.(*logrus.Logger)
 		if !ok {
+
 			return
 		}
 		entry = logger.NewLogrus(log)
 	default:
+
 		return
 	}
 

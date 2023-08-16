@@ -24,6 +24,7 @@ import (
 
 // NewArrayMapSelector create a new array selector graph
 func NewArrayMapSelector() *ArrayMapSelector {
+
 	return &ArrayMapSelector{
 		AstID: unique.NewID(),
 	}
@@ -76,6 +77,7 @@ func (e *ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 			cloneTable.MarkCloned(e.Expression.AstID, clonedExpr.AstID, e.Expression, clonedExpr)
 		}
 	}
+
 	return clone
 }
 
@@ -83,18 +85,22 @@ func (e *ArrayMapSelector) Clone(cloneTable *pkg.CloneTable) *ArrayMapSelector {
 func (e *ArrayMapSelector) AcceptExpression(exp *Expression) error {
 	if e.Expression == nil {
 		e.Expression = exp
+
 		return nil
 	}
+
 	return fmt.Errorf("expression for when scope already assigned")
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *ArrayMapSelector) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *ArrayMapSelector) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -107,6 +113,7 @@ func (e *ArrayMapSelector) GetSnapshot() string {
 		buff.WriteString(e.Expression.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -124,7 +131,9 @@ func (e *ArrayMapSelector) Evaluate(dataContext IDataContext, memory *WorkingMem
 			return val, err
 		}
 		e.Value = val
+
 		return val, err
 	}
+
 	return reflect.ValueOf(nil), fmt.Errorf("array Map Selector contains no selector expression")
 }

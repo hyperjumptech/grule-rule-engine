@@ -23,6 +23,7 @@ import (
 
 // NewDataContext will create a new DataContext instance
 func NewDataContext() IDataContext {
+
 	return &DataContext{
 		ObjectStore: make(map[string]model.ValueNode),
 
@@ -43,10 +44,11 @@ type DataContext struct {
 func (ctx *DataContext) GetKeys() []string {
 	ret := make([]string, len(ctx.ObjectStore))
 	c := 0
-	for k, _ := range ctx.ObjectStore {
+	for k := range ctx.ObjectStore {
 		ret[c] = k
 		c++
 	}
+
 	return ret
 }
 
@@ -57,6 +59,7 @@ func (ctx *DataContext) Complete() {
 
 // IsComplete checks whether the DataContext has been completed
 func (ctx *DataContext) IsComplete() bool {
+
 	return ctx.complete
 }
 
@@ -91,12 +94,14 @@ func (ctx *DataContext) IncrementVariableChangeCount() {
 
 // HasVariableChange returns true if there are variable changes
 func (ctx *DataContext) HasVariableChange() bool {
+
 	return ctx.variableChangeCount > 0
 }
 
 // Add will add struct instance into rule execution context
 func (ctx *DataContext) Add(key string, obj interface{}) error {
 	ctx.ObjectStore[key] = model.NewGoValueNode(reflect.ValueOf(obj), key)
+
 	return nil
 }
 
@@ -104,17 +109,21 @@ func (ctx *DataContext) Add(key string, obj interface{}) error {
 func (ctx *DataContext) AddJSON(key string, JSON []byte) error {
 	vn, err := model.NewJSONValueNode(string(JSON), key)
 	if err != nil {
+
 		return err
 	}
 	ctx.ObjectStore[key] = vn
+
 	return nil
 }
 
 // Get will extract the struct instance
 func (ctx *DataContext) Get(key string) model.ValueNode {
 	if v, ok := ctx.ObjectStore[key]; ok {
+
 		return v
 	}
+
 	return nil
 }
 
@@ -127,9 +136,11 @@ func (ctx *DataContext) Retract(key string) {
 func (ctx *DataContext) IsRetracted(key string) bool {
 	for _, v := range ctx.retracted {
 		if v == key {
+
 			return true
 		}
 	}
+
 	return false
 }
 

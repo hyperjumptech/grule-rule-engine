@@ -15,16 +15,22 @@
 package pkg
 
 import (
+	"context"
 	"fmt"
+	"gopkg.in/src-d/go-billy.v4"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 
 	"github.com/bmatcuk/doublestar"
-	"gopkg.in/src-d/go-billy.v4"
+)
+
+var (
+	URLResourceTimeoutSecond = 1800 // 30 minutes
 )
 
 // ResourceBundle is a helper struct to help load multiple resource at once.
@@ -51,16 +57,19 @@ type ReaderResource struct {
 
 // Load will load the resource into byte array.
 func (res *ReaderResource) Load() ([]byte, error) {
+
 	return ioutil.ReadAll(res.Reader)
 }
 
 // String will state the resource source.
 func (res *ReaderResource) String() string {
+
 	return "Reader resource. Source unknown."
 }
 
 // NewFileResource will create a new Resource using a file located in path.
 func NewFileResource(path string) Resource {
+
 	return &FileResource{
 		Path: path,
 	}
@@ -74,6 +83,7 @@ func NewFileResource(path string) Resource {
 // The pattern to accept all GRL file is "/some/base/path/**/*.grl".
 // This will accept all *.grl files under /some/base/path and its directories.
 func NewFileResourceBundle(basePath string, pathPattern ...string) *FileResourceBundle {
+
 	return &FileResourceBundle{
 		BasePath:    basePath,
 		PathPattern: pathPattern,
@@ -95,6 +105,7 @@ type FileResourceBundle struct {
 
 // Load all file resources that locateed under BasePath that conform to the PathPattern.
 func (bundle *FileResourceBundle) Load() ([]Resource, error) {
+
 	return bundle.loadPath(bundle.BasePath)
 }
 
@@ -102,8 +113,10 @@ func (bundle *FileResourceBundle) Load() ([]Resource, error) {
 func (bundle *FileResourceBundle) MustLoad() []Resource {
 	resources, err := bundle.Load()
 	if err != nil {
+
 		panic(err)
 	}
+
 	return resources
 }
 
@@ -113,6 +126,7 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 	finfos, err := ioutil.ReadDir(path)
 
 	if err != nil {
+
 		return nil, err
 	}
 	ret := make([]Resource, 0)
@@ -142,11 +156,13 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 						Bytes: bytes,
 					}
 					ret = append(ret, gress)
+
 					break
 				}
 			}
 		}
 	}
+
 	return ret, nil
 }
 
@@ -162,18 +178,22 @@ type FileResource struct {
 // If you wish to reload the file, simply create new instance using NewFileResource function.
 func (res *FileResource) Load() ([]byte, error) {
 	if res.Bytes != nil {
+
 		return res.Bytes, nil
 	}
 	data, err := ioutil.ReadFile(res.Path)
 	if err != nil {
+
 		return nil, err
 	}
 	res.Bytes = data
+
 	return res.Bytes, nil
 }
 
 // String will state the resource file path.
 func (res *FileResource) String() string {
+
 	return fmt.Sprintf("File resource at %s", res.Path)
 }
 
@@ -191,16 +211,19 @@ type BytesResource struct {
 
 // Load will load the resource into byte array.
 func (res *BytesResource) Load() ([]byte, error) {
+
 	return res.Bytes, nil
 }
 
 // String will state the resource byte array.
 func (res *BytesResource) String() string {
+
 	return fmt.Sprintf("Byte array resources %d bytes", len(res.Bytes))
 }
 
 // NewURLResource will create a new Resource using a resource as located in the url
 func NewURLResource(url string) Resource {
+
 	return &URLResource{
 		URL:    url,
 		Header: make(http.Header),
@@ -209,6 +232,7 @@ func NewURLResource(url string) Resource {
 
 // NewURLResourceWithHeaders will create a new Resource using a resource as located in the url with headers
 func NewURLResourceWithHeaders(url string, Header http.Header) Resource {
+
 	return &URLResource{
 		URL:    url,
 		Header: Header,
@@ -224,6 +248,7 @@ type URLResource struct {
 
 // String will state the resource url.
 func (res *URLResource) String() string {
+
 	return fmt.Sprintf("URL resource at %s", res.URL)
 }
 
@@ -233,26 +258,34 @@ func (res *URLResource) String() string {
 // NewURLResource
 func (res *URLResource) Load() ([]byte, error) {
 	if res.Bytes != nil {
+
 		return res.Bytes, nil
 	}
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", res.URL, nil)
+
+	ctx, _ := context.WithTimeout(context.Background(), time.Duration(URLResourceTimeoutSecond)*time.Second)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, res.URL, nil)
+
 	if len(res.Header) > 0 {
 		req.Header = res.Header
 	}
 	if err != nil {
+
 		return nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
+
 		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+
 		return nil, err
 	}
 	res.Bytes = data
+
 	return res.Bytes, nil
 }
 
@@ -270,6 +303,7 @@ func NewGITResourceBundleWithAuth(url string, user string, password string, path
 	resource := NewGITResourceBundle(url, pathPattern...)
 	resource.User = user
 	resource.Password = password
+
 	return resource
 }
 
@@ -291,10 +325,11 @@ type GITResourceBundle struct {
 	PathPattern []string
 }
 
-func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem) ([]Resource, error) {
+func (bundle *GITResourceBundle) loadPath(url, path string, fileSyst billy.Filesystem) ([]Resource, error) {
 	logger.Log.Tracef("Enter directory %s", path)
-	finfos, err := fs.ReadDir(path)
+	finfos, err := fileSyst.ReadDir(path)
 	if err != nil {
+
 		return nil, err
 	}
 	ret := make([]Resource, 0)
@@ -304,8 +339,9 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 			fulPath = fmt.Sprintf("/%s", finfo.Name())
 		}
 		if finfo.IsDir() {
-			gres, err := bundle.loadPath(url, fulPath, fs)
+			gres, err := bundle.loadPath(url, fulPath, fileSyst)
 			if err != nil {
+
 				return nil, err
 			}
 			ret = append(ret, gres...)
@@ -313,16 +349,19 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 			for _, pattern := range bundle.PathPattern {
 				matched, err := doublestar.Match(pattern, fulPath)
 				if err != nil {
+
 					return nil, err
 				}
 				if matched {
 					logger.Log.Debugf("Loading git file %s", fulPath)
-					f, err := fs.Open(fulPath)
+					f, err := fileSyst.Open(fulPath)
 					if err != nil {
+
 						return nil, err
 					}
 					bytes, err := ioutil.ReadAll(f)
 					if err != nil {
+
 						return nil, err
 					}
 					gress := &GITResource{
@@ -331,11 +370,13 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 						Bytes: bytes,
 					}
 					ret = append(ret, gress)
+
 					break
 				}
 			}
 		}
 	}
+
 	return ret, nil
 }
 
@@ -343,8 +384,10 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fs billy.Filesystem)
 func (bundle *GITResourceBundle) MustLoad() []Resource {
 	resources, err := bundle.Load()
 	if err != nil {
+
 		panic(err)
 	}
+
 	return resources
 }
 
@@ -357,11 +400,13 @@ type GITResource struct {
 
 // String will state the resource url.
 func (res *GITResource) String() string {
+
 	return fmt.Sprintf("From GIT URL [%s] %s", res.URL, res.Path)
 }
 
 // Load will load the resource into byte array. This implementation will no re-load resources from git when this method
 // is called, it simply return the loaded data.
 func (res *GITResource) Load() ([]byte, error) {
+
 	return res.Bytes, nil
 }

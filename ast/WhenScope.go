@@ -25,6 +25,7 @@ import (
 
 // NewWhenScope creates new instance of WhenScope
 func NewWhenScope() *WhenScope {
+
 	return &WhenScope{
 		AstID: unique.NewID(),
 	}
@@ -84,18 +85,22 @@ func (e *WhenScope) Clone(cloneTable *pkg.CloneTable) *WhenScope {
 func (e *WhenScope) AcceptExpression(exp *Expression) error {
 	if e.Expression == nil {
 		e.Expression = exp
+
 		return nil
 	}
+
 	return errors.New("expression for when scope already assigned")
 }
 
 // GetAstID get the UUID asigned for this AST graph node
 func (e *WhenScope) GetAstID() string {
+
 	return e.AstID
 }
 
 // GetGrlText get the expression syntax related to this graph when it wast constructed
 func (e *WhenScope) GetGrlText() string {
+
 	return e.GrlText
 }
 
@@ -108,6 +113,7 @@ func (e *WhenScope) GetSnapshot() string {
 		buff.WriteString(e.Expression.GetSnapshot())
 	}
 	buff.WriteString(")")
+
 	return buff.String()
 }
 
@@ -119,5 +125,6 @@ func (e *WhenScope) SetGrlText(grlText string) {
 
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *WhenScope) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+
 	return e.Expression.Evaluate(dataContext, memory)
 }
