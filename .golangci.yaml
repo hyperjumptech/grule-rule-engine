@@ -85,7 +85,7 @@ linters:
 #    - nilerr
 #    - nilnil
     - nlreturn
-#    - noctx
+    - noctx
 #    - nolintlint
 #    - nonamedreturns
 #    - nosnakecase
@@ -112,9 +112,9 @@ linters:
 #    - typecheck
 #    - unconvert
 #    - unparam
-#    - unused
+    - unused
 #    - usestdlibvars
-#    - varcheck
+    - varcheck
 #    - varnamelen
 #    - wastedassign
 #    - whitespace
@@ -198,7 +198,7 @@ linters:
     - nilerr
     - nilnil
 #    - nlreturn
-    - noctx
+#    - noctx
     - nolintlint
     - nonamedreturns
     - nosnakecase
@@ -225,9 +225,9 @@ linters:
     - typecheck
     - unconvert
     - unparam
-    - unused
+#    - unused
     - usestdlibvars
-    - varcheck
+#    - varcheck
     - varnamelen
     - wastedassign
     - whitespace

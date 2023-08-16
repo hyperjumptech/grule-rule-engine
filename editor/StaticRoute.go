@@ -2,7 +2,6 @@ package editor
 
 import (
 	"embed"
-	"fmt"
 	mux "github.com/hyperjumptech/hyper-mux"
 	"github.com/sirupsen/logrus"
 	"grule-rule-engine/editor/mime"
@@ -13,10 +12,6 @@ import (
 
 //go:embed statics
 var fs embed.FS
-
-var (
-	errFileNotFound = fmt.Errorf("file not found")
-)
 
 type FileData struct {
 	Bytes       []byte
