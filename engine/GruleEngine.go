@@ -17,10 +17,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"sort"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -85,7 +86,6 @@ type GruleEngine struct {
 
 // Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
-
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
 }
 
@@ -120,6 +120,12 @@ func (g *GruleEngine) notifyBeginCycle(cycle uint64) {
 // The engine will evaluate context cancelation status in each cycle.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+	// check for nil values of knowledgebase before trying to execute rule
+	if knowledge == nil {
+		log.Warn("cannot execute rules from a nil knowledgebase")
+		return fmt.Errorf("cannot execute rules from a nil knowledgebase")
+	}
+
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	// Prepare the timer, we need to measure the processing time in debug mode.
@@ -241,7 +247,14 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 // FetchMatchingRules function is responsible to fetch all the rules that matches to a fact against all rule entries
 // Returns []*ast.RuleEntry order by salience
 func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
+	// check for nil values of knowledgebase before trying to access its members
+	if knowledge == nil {
+		log.Warn("cannot fetch rules from a nil knowledgebase")
+		return nil, fmt.Errorf("cannot fetch rules from a nil knowledgebase")
+	}
+
 	log.Debugf("Starting rule matching using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
+
 	// Prepare the build-in function and add to datacontext.
 	defunc := &ast.BuiltInFunctions{
 		Knowledge:     knowledge,
