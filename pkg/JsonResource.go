@@ -118,22 +118,19 @@ func (jrb *JSONResourceBundle) Load() ([]Resource, error) {
 }
 
 // MustLoad operates the same as load except it will panic in the event of an error.
-func (jrb *JSONResourceBundle) MustLoad() (res []Resource, err error) {
-	ress, err := jrb.subRes.MustLoad()
-	if err != nil {
-
-		return ress, err
-	}
+func (jrb *JSONResourceBundle) MustLoad() []Resource {
+	ress := jrb.subRes.MustLoad()
 	nress := make([]Resource, len(ress))
 	for i := 0; i < len(ress); i++ {
-		nress[i], err = NewJSONResourceFromResource(ress[i])
+		resour, err := NewJSONResourceFromResource(ress[i])
 		if err != nil {
 
-			return nil, err
+			panic(err)
 		}
+		nress[i] = resour
 	}
 
-	return nress, nil
+	return nress
 }
 
 // ParseJSONRuleset accepts a byte array containing an array of rules in JSON format to be parsed into GRule syntax.
@@ -151,7 +148,12 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 	}
 	var sb strings.Builder
 	for i := 0; i < len(rules); i++ {
-		sb.WriteString(parseRule(&rules[i]))
+		rName, err := parseRule(&rules[i])
+		if err != nil {
+
+			return rName, err
+		}
+		sb.WriteString(rName)
 	}
 	rs = sb.String()
 
@@ -172,9 +174,7 @@ func ParseJSONRule(data []byte) (rs string, err error) {
 		return
 	}
 
-	rs = parseRule(&rule)
-
-	return
+	return parseRule(&rule)
 }
 
 // ParseRule Accepts a struct of GruleJSON rule and returns the parsed string of GRule.
@@ -184,15 +184,13 @@ func ParseRule(rule *GruleJSON) (r string, err error) {
 			err = fmt.Errorf("%v", x)
 		}
 	}()
-	r = parseRule(rule)
 
-	return
+	return parseRule(rule)
 }
 
-func parseRule(rule *GruleJSON) string {
+func parseRule(rule *GruleJSON) (string, error) {
 	if len(rule.Name) == 0 {
-
-		panic("rule name cannot be blank")
+		return "", fmt.Errorf("encountered a rule without name")
 	}
 	if rule.When == nil {
 
@@ -220,7 +218,7 @@ func parseRule(rule *GruleJSON) string {
 	}
 	stringBuilder.WriteString("}\n")
 
-	return stringBuilder.String()
+	return stringBuilder.String(), nil
 }
 
 func parseThen(ts []interface{}) []string {
