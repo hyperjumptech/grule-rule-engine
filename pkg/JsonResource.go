@@ -194,11 +194,11 @@ func parseRule(rule *GruleJSON) (string, error) {
 	}
 	if rule.When == nil {
 
-		panic("rule when condition cannot be nil")
+		return "", fmt.Errorf("rule when condition cannot be nil")
 	}
 	if rule.Then == nil {
 
-		panic("rule thenn condition cannot be nil")
+		return "", fmt.Errorf("rule then condition cannot be nil")
 	}
 	var stringBuilder strings.Builder
 	stringBuilder.WriteString("rule ")
@@ -208,9 +208,16 @@ func parseRule(rule *GruleJSON) (string, error) {
 	stringBuilder.WriteString(" salience ")
 	stringBuilder.WriteString(strconv.Itoa(rule.Salience))
 	stringBuilder.WriteString(" {\n    when\n        ")
-	stringBuilder.WriteString(parseWhen(rule.When))
+	str, err := parseWhen(rule.When)
+	if err != nil {
+		return "", err
+	}
+	stringBuilder.WriteString(str)
 	stringBuilder.WriteString("\n    then\n")
-	thens := parseThen(rule.Then)
+	thens, err := parseThen(rule.Then)
+	if err != nil {
+		return "", err
+	}
 	for i := 0; i < len(thens); i++ {
 		stringBuilder.WriteString("        ")
 		stringBuilder.WriteString(thens[i])
@@ -221,7 +228,7 @@ func parseRule(rule *GruleJSON) (string, error) {
 	return stringBuilder.String(), nil
 }
 
-func parseThen(ts []interface{}) []string {
+func parseThen(ts []interface{}) ([]string, error) {
 	thens := make([]string, len(ts))
 	for thenItem := 0; thenItem < len(ts); thenItem++ {
 		switch thenType := ts[thenItem].(type) {
@@ -234,24 +241,24 @@ func parseThen(ts []interface{}) []string {
 			thens[thenItem] = buildExpression(thenType, 0) + ";"
 		default:
 
-			panic("invalid then type, must be a string or an array of action objects")
+			return nil, fmt.Errorf("invalid then type, must be a string or an array of action objects")
 		}
 	}
 
-	return thens
+	return thens, nil
 }
 
-func parseWhen(w interface{}) string {
+func parseWhen(w interface{}) (string, error) {
 	switch whenType := w.(type) {
 	case string:
 
-		return whenType
+		return whenType, nil
 	case map[string]interface{}:
 
-		return buildExpression(whenType, 0)
+		return buildExpression(whenType, 0), nil
 	default:
 
-		panic("invalid when type, must be a string or an array of condition objects")
+		return "", fmt.Errorf("invalid when type, must be a string or an array of condition objects")
 	}
 }
 

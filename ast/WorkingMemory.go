@@ -143,7 +143,7 @@ func (workingMem *WorkingMemory) Equals(that *WorkingMemory) bool {
 }
 
 // Clone will clone this WorkingMemory. The new clone will have an identical structure
-func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
+func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) (*WorkingMemory, error) {
 	AstLog.Debugf("Cloning working memory %s:%s", workingMem.Name, workingMem.Version)
 	clone := NewWorkingMemory(workingMem.Name, workingMem.Version)
 
@@ -154,7 +154,7 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemor
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			} else {
 
-				panic(fmt.Sprintf("expression  %s is not on the clone table - %s", expr.GrlText, expr.GetSnapshot()))
+				return nil, fmt.Errorf("expression  %s is not on the clone table - %s", expr.GrlText, expr.GetSnapshot())
 			}
 		}
 	}
@@ -166,7 +166,7 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemor
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
 			} else {
 
-				panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
+				return nil, fmt.Errorf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID)
 			}
 		}
 	}
@@ -220,7 +220,7 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemor
 				}
 			} else {
 
-				panic(fmt.Sprintf("variable %s is not on the clone table", key.GrlText))
+				return nil, fmt.Errorf("variable %s is not on the clone table", key.GrlText)
 			}
 		}
 	}
@@ -228,10 +228,10 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemor
 	if workingMem.Equals(clone) {
 		clone.DebugContent()
 
-		return clone
+		return clone, nil
 	}
 
-	panic("Clone not equals the origin.")
+	return nil, fmt.Errorf("clone not equals the origin")
 }
 
 // IndexVariables will index all expression and expression atoms that contains a speciffic variable name

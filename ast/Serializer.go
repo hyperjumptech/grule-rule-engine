@@ -407,7 +407,7 @@ func (cat *Catalog) BuildKnowledgeBase() (*KnowledgeBase, error) {
 				whenScope.Expression = importTable[amet.ExpressionID].(*Expression)
 			}
 		default:
-			panic("Unrecognized meta type")
+			return nil, fmt.Errorf("unknown AST type")
 		}
 	}
 

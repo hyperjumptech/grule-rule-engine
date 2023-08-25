@@ -87,7 +87,7 @@ func (n *JSONNode) IsInt() bool {
 func (n *JSONNode) Len() int {
 	if !n.IsArray() {
 
-		panic("Not array")
+		return -1
 	}
 	arr := n.interf.([]interface{})
 
@@ -95,128 +95,137 @@ func (n *JSONNode) Len() int {
 }
 
 // GetNodeAt will get the child not on specific index. Will panic if this not is not an array
-func (n *JSONNode) GetNodeAt(index int) *JSONNode {
+func (n *JSONNode) GetNodeAt(index int) (*JSONNode, error) {
 	if !n.IsArray() {
 
-		panic("Not array")
+		return nil, fmt.Errorf("not array")
 	}
 	arr := n.interf.([]interface{})
 
-	return &JSONNode{interf: arr[index]}
+	return &JSONNode{interf: arr[index]}, nil
 }
 
 // HaveKey will check if the map contains specified key. Will panic if this node is not a map
-func (n *JSONNode) HaveKey(key string) bool {
+func (n *JSONNode) HaveKey(key string) (bool, error) {
 	if !n.IsMap() {
 
-		panic("Not map")
+		return false, fmt.Errorf("not map")
 	}
 	amap := n.interf.(map[string]interface{})
 	if _, ok := amap[key]; ok {
 
-		return ok
+		return ok, nil
 	}
 
-	return false
+	return false, nil
 }
 
 // Get will fetch the child not designated with specified key. Will panic if this node is not a map
-func (n *JSONNode) Get(key string) *JSONNode {
+func (n *JSONNode) Get(key string) (*JSONNode, error) {
 	if !n.IsMap() {
 
-		panic("Not map")
+		return nil, fmt.Errorf("not map")
 	}
 	amap := n.interf.(map[string]interface{})
 
-	return &JSONNode{interf: amap[key]}
+	return &JSONNode{interf: amap[key]}, nil
 }
 
 // Set will set the value of a map designated with specified key. Will panic if this node is not a map
-func (n *JSONNode) Set(key string, node *JSONNode) {
+func (n *JSONNode) Set(key string, node *JSONNode) error {
 	if !n.IsMap() {
 
-		panic("Not map")
+		return fmt.Errorf("not map")
 	}
 	amap := n.interf.(map[string]interface{})
 	amap[key] = node.interf
+
+	return nil
 }
 
 // GetString will get the string value of this node. Will panic if this node is not a string
-func (n *JSONNode) GetString() string {
+func (n *JSONNode) GetString() (string, error) {
 	if !n.IsString() {
 
-		panic("Not string")
+		return "", fmt.Errorf("not string")
 	}
 
-	return n.interf.(string)
+	return n.interf.(string), nil
 }
 
 // SetString will set this node value with a string value. Will panic if this node is not a string
-func (n *JSONNode) SetString(val string) {
+func (n *JSONNode) SetString(val string) error {
 	if !n.IsString() {
 
-		panic("Not string")
+		return fmt.Errorf("not string")
 	}
 
 	n.interf = val
+	return nil
 }
 
 // GetBool will get the bool value of this node. Will panic if this node is not a boolean
-func (n *JSONNode) GetBool() bool {
+func (n *JSONNode) GetBool() (bool, error) {
 	if !n.IsBool() {
 
-		panic("Not boolean")
+		return false, fmt.Errorf("not boolean")
 	}
 
-	return n.interf.(bool)
+	return n.interf.(bool), nil
 }
 
 // SetBool will set this node value with boolean value, will panic if this node is not a bool
-func (n *JSONNode) SetBool(val bool) {
+func (n *JSONNode) SetBool(val bool) error {
 	if !n.IsBool() {
 
-		panic("Not boolean")
+		return fmt.Errorf("not boolean")
 	}
 	n.interf = val
+
+	return nil
 }
 
 // GetFloat will get the float value of this node. Will panic if this node is not a float.
-func (n *JSONNode) GetFloat() float64 {
+func (n *JSONNode) GetFloat() (float64, error) {
 	if !n.IsFloat() {
 
-		panic("Not float")
+		return 0, fmt.Errorf("not float")
 	}
 
-	return n.interf.(float64)
+	return n.interf.(float64), nil
 }
 
 // SetFloat will set this node value with float value. Will panic if this node is not a float
-func (n *JSONNode) SetFloat(val float64) {
+func (n *JSONNode) SetFloat(val float64) error {
 	if !n.IsFloat() {
 
-		panic("Not float")
+		return fmt.Errorf("not float")
 	}
 	n.interf = val
+
+	return nil
 }
 
 // GetInt will get the int value of this node. Will panic if this node is not an int
-func (n *JSONNode) GetInt() int {
+func (n *JSONNode) GetInt() (int, error) {
 	if !n.IsInt() {
 
-		panic("Not int")
+		return 0, fmt.Errorf("not int")
 	}
 	fl := n.interf.(float64)
 
-	return int(fl)
+	return int(fl), nil
 }
 
 // SetInt will set this node value with int value. Will panic if this node is not an int
-func (n *JSONNode) SetInt(val int) {
+func (n *JSONNode) SetInt(val int) error {
 	if !n.IsInt() {
 
-		panic("Not int")
+		return fmt.Errorf("not int")
 	}
 	n.interf = float64(val)
+
+	return nil
 }
 
 // JSONData represent a whole Json construct.
@@ -225,103 +234,145 @@ type JSONData struct {
 }
 
 // GetRootNode will return the root node of this JSONData
-func (jo *JSONData) GetRootNode() *JSONNode {
+func (jo *JSONData) GetRootNode() (*JSONNode, error) {
 	if jo.jsonRoot == nil {
 
-		panic(fmt.Sprintf("root node is nil"))
+		return nil, fmt.Errorf("root node is nil")
 	}
 
-	return &JSONNode{interf: jo.jsonRoot}
+	return &JSONNode{interf: jo.jsonRoot}, nil
 }
 
 // IsValidPath will check if the provided path is valid
-func (jo *JSONData) IsValidPath(path string) bool {
+func (jo *JSONData) IsValidPath(path string) (bool, error) {
 	if len(path) == 0 {
 
-		return true
+		return true, nil
 	}
 	pathArr := strings.Split(path, ".")
-	node := jo.GetRootNode()
+	node, err := jo.GetRootNode()
+	if err != nil {
 
-	return jo.validPathCheck(pathArr, node)
+		return false, err
+	}
+
+	boolres, err := jo.validPathCheck(pathArr, node)
+	if err != nil {
+
+		return false, err
+	}
+
+	return boolres, nil
 }
 
 // validPathCheck is recursion function to traverse the json tree for checking valid path
-func (jo *JSONData) validPathCheck(pathArr []string, node *JSONNode) bool {
+func (jo *JSONData) validPathCheck(pathArr []string, node *JSONNode) (bool, error) {
 	if len(pathArr) == 0 && (node.IsString() || node.IsInt() || node.IsFloat() || node.IsBool()) {
 
-		return true
+		return true, nil
 	}
 	path := pathArr[0]
 	if len(path) == 0 {
 
-		return false
+		return false, nil
 	}
 	if path[:1] == "[" && path[len(path)-1:] == "]" {
 		if node.IsArray() {
 			pn := path[1 : len(path)-1]
 			if len(pn) == 0 {
 
-				return false
+				return false, nil
 			}
 			theInt, err := strconv.Atoi(pn)
 			if err != nil {
-				return false
+
+				return false, nil
 			}
 			if theInt < 0 || theInt >= node.Len() {
 
-				return false
+				return false, nil
 			}
-			nNode := node.GetNodeAt(theInt)
+			nNode, err := node.GetNodeAt(theInt)
+			if err != nil {
+				return false, err
+			}
 			nPathArr := pathArr[1:]
 
 			return jo.validPathCheck(nPathArr, nNode)
 		}
 
-		return false
+		return false, nil
 	}
 	if node.IsMap() {
 		if strings.Contains(path, "[") {
 			k := path[:strings.Index(path, "[")]
-			if !node.HaveKey(k) {
+			haveKey, err := node.HaveKey(k)
+			if err != nil {
 
-				return false
+				return false, err
 			}
-			nNode := node.Get(k)
+			if !haveKey {
+
+				return false, nil
+			}
+			nNode, err := node.Get(k)
+			if err != nil {
+
+				return false, err
+			}
 			nPathArr := []string{path[strings.Index(path, "["):]}
 			nPathArr = append(nPathArr, pathArr[1:]...)
 
-			return jo.validPathCheck(nPathArr, nNode)
+			boolret, err := jo.validPathCheck(nPathArr, nNode)
+			if err != nil {
+
+				return false, err
+			}
+
+			return boolret, nil
 		}
-		if node.HaveKey(path) {
-			nNode := node.Get(path)
+		hKey, err := node.HaveKey(path)
+		if err != nil {
+
+			return false, err
+		}
+		if hKey {
+			nNode, err := node.Get(path)
+			if err != nil {
+				return false, err
+			}
 			nPathArr := pathArr[1:]
 
 			return jo.validPathCheck(nPathArr, nNode)
 		}
 
-		return false
+		return false, nil
 	}
 
-	return false
+	return false, nil
 }
 
 // Get will retrieve the json node indicated by a path
-func (jo *JSONData) Get(path string) *JSONNode {
+func (jo *JSONData) Get(path string) (*JSONNode, error) {
 	if len(path) == 0 {
 
 		return jo.GetRootNode()
 	}
 	pathArr := strings.Split(path, ".")
 
-	return jo.getByPath(pathArr, jo.GetRootNode())
+	rNode, err := jo.GetRootNode()
+	if err != nil {
+		return nil, err
+	}
+
+	return jo.getByPath(pathArr, rNode)
 }
 
 // getByPath is recursion function to traverse the json tree for retrieving node at specified path
-func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) *JSONNode {
+func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) (*JSONNode, error) {
 	if len(pathArr) == 0 && (node.IsString() || node.IsInt() || node.IsFloat() || node.IsBool()) {
 
-		return node
+		return node, nil
 	}
 	path := pathArr[0]
 	if len(path) == 0 {
@@ -344,38 +395,58 @@ func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) *JSONNode {
 
 				panic("Not a valid path - array offset < 0 or >= length")
 			}
-			nNode := node.GetNodeAt(theInt)
+			nNode, err := node.GetNodeAt(theInt)
+			if err != nil {
+				return nil, err
+			}
 			nPathArr := pathArr[1:]
 
 			return jo.getByPath(nPathArr, nNode)
 		}
 
-		panic("Not a valid path - not an array")
+		return nil, fmt.Errorf("not a valid path - not an array")
 	}
 	if node.IsMap() {
 		if strings.Contains(path, "[") {
 			k := path[:strings.Index(path, "[")]
-			if !node.HaveKey(k) {
+			haveKe, err := node.HaveKey(k)
+			if err != nil {
 
-				panic("Not a valid path - key not exist")
+				return nil, err
 			}
-			nNode := node.Get(k)
+			if !haveKe {
+
+				return nil, fmt.Errorf("not a valid path - key not exist")
+			}
+			nNode, err := node.Get(k)
+			if err != nil {
+
+				return nil, err
+			}
 			nPathArr := []string{path[strings.Index(path, "["):]}
 			nPathArr = append(nPathArr, pathArr[1:]...)
 
 			return jo.getByPath(nPathArr, nNode)
 		}
-		if node.HaveKey(path) {
-			nNode := node.Get(path)
+		haveKy, err := node.HaveKey(path)
+		if err != nil {
+			return nil, err
+		}
+		if haveKy {
+			nNode, err := node.Get(path)
+			if err != nil {
+
+				return nil, err
+			}
 			nPathArr := pathArr[1:]
 
 			return jo.getByPath(nPathArr, nNode)
 		}
 
-		panic("Not a valid path - key not exist")
+		return nil, fmt.Errorf("not a valid path - key not exist")
 	}
 
-	panic("Not a valid path")
+	return nil, fmt.Errorf("not a valid path")
 }
 
 // GetString will get the string value from a json indicated by specified path. Error returned if path is not valid.
@@ -389,9 +460,11 @@ func (jo *JSONData) GetString(path string) (string, error) {
 
 		return "", fmt.Errorf("%s is not a string", path)
 	}
-	node := jo.Get(path)
-
-	return node.GetString(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+		return "", err
+	}
+	return node.GetString()
 }
 
 // SetString will set the node at specified path with provided string value
@@ -412,9 +485,11 @@ func (jo *JSONData) GetBool(path string) (bool, error) {
 
 		return false, fmt.Errorf("%s is not a boolean", path)
 	}
-	node := jo.Get(path)
-
-	return node.GetBool(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+		return false, err
+	}
+	return node.GetBool()
 }
 
 // SetBool will set the node at specified path with provided bool value
@@ -435,9 +510,11 @@ func (jo *JSONData) GetFloat(path string) (float64, error) {
 
 		return 0, fmt.Errorf("%s is not a float", path)
 	}
-	node := jo.Get(path)
-
-	return node.GetFloat(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+		return 0, err
+	}
+	return node.GetFloat()
 }
 
 // SetFloat will set the node at specified path with provided float value
@@ -458,9 +535,13 @@ func (jo *JSONData) GetInt(path string) (int, error) {
 
 		return 0, fmt.Errorf("%s is not an int", path)
 	}
-	node := jo.Get(path)
+	node, err := jo.Get(path)
+	if err != nil {
 
-	return node.GetInt(), nil
+		return 0, err
+	}
+
+	return node.GetInt()
 }
 
 // SetInt will set the node at specified path with provided int value
@@ -472,60 +553,126 @@ func (jo *JSONData) SetInt(path string, value int) error {
 
 // IsArray will check if the node indicated by specified path is an Array node
 func (jo *JSONData) IsArray(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	vp, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !vp {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
 
-	return jo.Get(path).IsArray(), nil
+	jsonN, err := jo.Get(path)
+	if err != nil {
+
+		return false, err
+	}
+	boolRet := jsonN.IsArray()
+
+	return boolRet, nil
 }
 
 // IsMap will check if the node indicated by specified path is a map node
 func (jo *JSONData) IsMap(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	isValPath, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !isValPath {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
+	node, err := jo.Get(path)
+	if err != nil {
 
-	return jo.Get(path).IsMap(), nil
+		return false, err
+	}
+
+	return node.IsMap(), nil
 }
 
 // IsString will check if the node indicated by specified path is a string node
 func (jo *JSONData) IsString(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	isValPath, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !isValPath {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
 
-	return jo.Get(path).IsString(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+
+		return false, err
+	}
+
+	return node.IsString(), nil
 }
 
 // IsBool will check if the node indicated by specified path is a bool node
 func (jo *JSONData) IsBool(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	isValPath, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !isValPath {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
 
-	return jo.Get(path).IsBool(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+
+		return false, err
+	}
+
+	return node.IsBool(), nil
 }
 
 // IsFloat will check if the node indicated by specified path is a float node
 func (jo *JSONData) IsFloat(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	isValPath, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !isValPath {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
 
-	return jo.Get(path).IsFloat(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+
+		return false, err
+	}
+
+	return node.IsFloat(), nil
 }
 
 // IsInt will check if the node indicated by specified path is an int node
 func (jo *JSONData) IsInt(path string) (bool, error) {
-	if !jo.IsValidPath(path) {
+	isValPath, err := jo.IsValidPath(path)
+	if err != nil {
+
+		return false, err
+	}
+	if !isValPath {
 
 		return false, fmt.Errorf("%s is not a valid path", path)
 	}
 
-	return jo.Get(path).IsInt(), nil
+	node, err := jo.Get(path)
+	if err != nil {
+
+		return false, err
+	}
+
+	return node.IsInt(), nil
 }

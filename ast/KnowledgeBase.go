@@ -133,7 +133,10 @@ func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, 
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) (*KnowledgeBase, error) {
 	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		newClone := knowledgeBase.Clone(pkg.NewCloneTable())
+		newClone, err := knowledgeBase.Clone(pkg.NewCloneTable())
+		if err != nil {
+			return nil, err
+		}
 		if knowledgeBase.IsIdentical(newClone) {
 			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
 
@@ -214,7 +217,7 @@ func (e *KnowledgeBase) GetSnapshot() string {
 }
 
 // Clone will clone this instance of KnowledgeBase and produce another (structure wise) identical instance.
-func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
+func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) (*KnowledgeBase, error) {
 	clone := &KnowledgeBase{
 		Name:        e.Name,
 		Version:     e.Version,
@@ -232,10 +235,14 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 		}
 	}
 	if e.WorkingMemory != nil {
-		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
+		wm, err := e.WorkingMemory.Clone(cloneTable)
+		if err != nil {
+			return nil, err
+		}
+		clone.WorkingMemory = wm
 	}
 
-	return clone
+	return clone, nil
 }
 
 // AddRuleEntry add ruleentry into this knowledge base.
