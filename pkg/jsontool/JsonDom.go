@@ -377,7 +377,7 @@ func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) (*JSONNode, erro
 	path := pathArr[0]
 	if len(path) == 0 {
 
-		panic("Not a valid path")
+		return nil, fmt.Errorf("%s not a valid path", strings.Join(pathArr, "."))
 	}
 	if path[:1] == "[" && path[len(path)-1:] == "]" {
 		if node.IsArray() {

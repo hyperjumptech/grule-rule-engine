@@ -178,7 +178,7 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) (*WorkingMemo
 				clone.variableSnapshotMap[key] = cloneTable.Records[variable.AstID].CloneInstance.(*Variable)
 			} else {
 
-				panic(fmt.Sprintf("variable %s is not on the clone table", variable.GrlText))
+				return nil, fmt.Errorf("variable %s is not on the clone table", variable.GrlText)
 			}
 		}
 	}
@@ -194,12 +194,12 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) (*WorkingMemo
 						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 					} else {
 
-						panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
+						return nil, fmt.Errorf("expression %s is not on the clone table", expr.GrlText)
 					}
 				}
 			} else {
 
-				panic(fmt.Sprintf("variable %s is not on the clone table", key.GrlText))
+				return nil, fmt.Errorf("variable %s is not on the clone table", key.GrlText)
 			}
 		}
 	}
