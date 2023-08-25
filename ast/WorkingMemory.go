@@ -215,7 +215,7 @@ func (workingMem *WorkingMemory) Clone(cloneTable *pkg.CloneTable) (*WorkingMemo
 						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
 					} else {
 
-						panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
+						return nil, fmt.Errorf("expression atom %s is not on the clone table", expr.GrlText)
 					}
 				}
 			} else {
