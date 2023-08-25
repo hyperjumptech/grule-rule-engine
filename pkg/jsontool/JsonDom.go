@@ -384,19 +384,20 @@ func (jo *JSONData) getByPath(pathArr []string, node *JSONNode) (*JSONNode, erro
 			pn := path[1 : len(path)-1]
 			if len(pn) == 0 {
 
-				panic("Not a valid path - array do not contain offset number")
+				return nil, fmt.Errorf("not a valid path - array do not contain offset number")
 			}
 			theInt, err := strconv.Atoi(pn)
 			if err != nil {
 
-				panic("Not a valid path - array offset not number")
+				return nil, fmt.Errorf("not a valid path - array offset not number")
 			}
 			if theInt < 0 || theInt >= node.Len() {
 
-				panic("Not a valid path - array offset < 0 or >= length")
+				return nil, fmt.Errorf("not a valid path - array offset < 0 or >= length")
 			}
 			nNode, err := node.GetNodeAt(theInt)
 			if err != nil {
+
 				return nil, err
 			}
 			nPathArr := pathArr[1:]
