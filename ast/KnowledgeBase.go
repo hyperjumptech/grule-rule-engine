@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"io"
 	"sort"
 	"strings"
@@ -84,7 +83,6 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 		if r := recover(); r != nil {
 			retKb = nil
 			retErr = fmt.Errorf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
-			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
 		}
 	}()
 

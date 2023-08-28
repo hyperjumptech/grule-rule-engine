@@ -172,6 +172,7 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("error while evaluating rule %s, panic recovered", e.RuleName)
+			can = false
 		}
 	}()
 	if e.Retracted {

@@ -83,7 +83,7 @@ func (n *JSONNode) IsInt() bool {
 	return true
 }
 
-// Len return length of element in this array. Will panic if this node is not an array
+// Len return length of element in this array.
 func (n *JSONNode) Len() int {
 	if !n.IsArray() {
 
@@ -94,7 +94,7 @@ func (n *JSONNode) Len() int {
 	return len(arr)
 }
 
-// GetNodeAt will get the child not on specific index. Will panic if this not is not an array
+// GetNodeAt will get the child not on specific index.
 func (n *JSONNode) GetNodeAt(index int) (*JSONNode, error) {
 	if !n.IsArray() {
 
@@ -105,7 +105,7 @@ func (n *JSONNode) GetNodeAt(index int) (*JSONNode, error) {
 	return &JSONNode{interf: arr[index]}, nil
 }
 
-// HaveKey will check if the map contains specified key. Will panic if this node is not a map
+// HaveKey will check if the map contains specified key.
 func (n *JSONNode) HaveKey(key string) (bool, error) {
 	if !n.IsMap() {
 
@@ -120,7 +120,7 @@ func (n *JSONNode) HaveKey(key string) (bool, error) {
 	return false, nil
 }
 
-// Get will fetch the child not designated with specified key. Will panic if this node is not a map
+// Get will fetch the child not designated with specified key.
 func (n *JSONNode) Get(key string) (*JSONNode, error) {
 	if !n.IsMap() {
 
@@ -131,7 +131,7 @@ func (n *JSONNode) Get(key string) (*JSONNode, error) {
 	return &JSONNode{interf: amap[key]}, nil
 }
 
-// Set will set the value of a map designated with specified key. Will panic if this node is not a map
+// Set will set the value of a map designated with specified key.
 func (n *JSONNode) Set(key string, node *JSONNode) error {
 	if !n.IsMap() {
 
@@ -143,7 +143,7 @@ func (n *JSONNode) Set(key string, node *JSONNode) error {
 	return nil
 }
 
-// GetString will get the string value of this node. Will panic if this node is not a string
+// GetString will get the string value of this node.
 func (n *JSONNode) GetString() (string, error) {
 	if !n.IsString() {
 
@@ -153,7 +153,7 @@ func (n *JSONNode) GetString() (string, error) {
 	return n.interf.(string), nil
 }
 
-// SetString will set this node value with a string value. Will panic if this node is not a string
+// SetString will set this node value with a string value.
 func (n *JSONNode) SetString(val string) error {
 	if !n.IsString() {
 
@@ -164,7 +164,7 @@ func (n *JSONNode) SetString(val string) error {
 	return nil
 }
 
-// GetBool will get the bool value of this node. Will panic if this node is not a boolean
+// GetBool will get the bool value of this node.
 func (n *JSONNode) GetBool() (bool, error) {
 	if !n.IsBool() {
 
@@ -174,7 +174,7 @@ func (n *JSONNode) GetBool() (bool, error) {
 	return n.interf.(bool), nil
 }
 
-// SetBool will set this node value with boolean value, will panic if this node is not a bool
+// SetBool will set this node value with boolean value,
 func (n *JSONNode) SetBool(val bool) error {
 	if !n.IsBool() {
 
@@ -185,7 +185,7 @@ func (n *JSONNode) SetBool(val bool) error {
 	return nil
 }
 
-// GetFloat will get the float value of this node. Will panic if this node is not a float.
+// GetFloat will get the float value of this node.
 func (n *JSONNode) GetFloat() (float64, error) {
 	if !n.IsFloat() {
 
@@ -195,7 +195,7 @@ func (n *JSONNode) GetFloat() (float64, error) {
 	return n.interf.(float64), nil
 }
 
-// SetFloat will set this node value with float value. Will panic if this node is not a float
+// SetFloat will set this node value with float value.
 func (n *JSONNode) SetFloat(val float64) error {
 	if !n.IsFloat() {
 
@@ -206,7 +206,7 @@ func (n *JSONNode) SetFloat(val float64) error {
 	return nil
 }
 
-// GetInt will get the int value of this node. Will panic if this node is not an int
+// GetInt will get the int value of this node.
 func (n *JSONNode) GetInt() (int, error) {
 	if !n.IsInt() {
 
@@ -217,7 +217,7 @@ func (n *JSONNode) GetInt() (int, error) {
 	return int(fl), nil
 }
 
-// SetInt will set this node value with int value. Will panic if this node is not an int
+// SetInt will set this node value with int value.
 func (n *JSONNode) SetInt(val int) error {
 	if !n.IsInt() {
 

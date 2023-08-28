@@ -46,7 +46,7 @@ type JSONResourceBundle struct {
 func NewJSONResourceFromResource(res Resource) (Resource, error) {
 	if _, ok := res.(*JSONResource); ok {
 
-		return nil, fmt.Errorf("not a JSONResource")
+		return nil, fmt.Errorf("cannot create JSON resource from JSON resource")
 	}
 
 	return &JSONResource{
@@ -89,8 +89,7 @@ func (jr *JSONResource) String() string {
 // NewJSONResourceBundleFromBundle innstantiates a new bundled JSON resource parser from an underlying ResourceBundle.
 func NewJSONResourceBundleFromBundle(bundle ResourceBundle) (ResourceBundle, error) {
 	if _, ok := bundle.(*JSONResourceBundle); ok {
-
-		return nil, fmt.Errorf("bundle is not JSONResourceBundle")
+		return nil, fmt.Errorf("cannot create JSON resource bundle from JSON resource bundle")
 	}
 
 	return &JSONResourceBundle{
@@ -109,7 +108,6 @@ func (jrb *JSONResourceBundle) Load() ([]Resource, error) {
 	for i := 0; i < len(ress); i++ {
 		nress[i], err = NewJSONResourceFromResource(ress[i])
 		if err != nil {
-
 			return nil, err
 		}
 	}
@@ -121,13 +119,12 @@ func (jrb *JSONResourceBundle) Load() ([]Resource, error) {
 func (jrb *JSONResourceBundle) MustLoad() []Resource {
 	ress := jrb.subRes.MustLoad()
 	nress := make([]Resource, len(ress))
+	var err error
 	for i := 0; i < len(ress); i++ {
-		resour, err := NewJSONResourceFromResource(ress[i])
+		nress[i], err = NewJSONResourceFromResource(ress[i])
 		if err != nil {
-
-			panic(err)
+			panic(err.Error())
 		}
-		nress[i] = resour
 	}
 
 	return nress
@@ -135,11 +132,6 @@ func (jrb *JSONResourceBundle) MustLoad() []Resource {
 
 // ParseJSONRuleset accepts a byte array containing an array of rules in JSON format to be parsed into GRule syntax.
 func ParseJSONRuleset(data []byte) (rs string, err error) {
-	defer func() {
-		if x := recover(); x != nil {
-			err = fmt.Errorf("%v", x)
-		}
-	}()
 	var rules []GruleJSON
 	err = json.Unmarshal(data, &rules)
 	if err != nil {
@@ -148,12 +140,11 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 	}
 	var sb strings.Builder
 	for i := 0; i < len(rules); i++ {
-		rName, err := parseRule(&rules[i])
+		rulestr, err := parseRule(&rules[i])
 		if err != nil {
-
-			return rName, err
+			return "", err
 		}
-		sb.WriteString(rName)
+		sb.WriteString(rulestr)
 	}
 	rs = sb.String()
 
@@ -162,11 +153,6 @@ func ParseJSONRuleset(data []byte) (rs string, err error) {
 
 // ParseJSONRule accepts a byte array containing an rule in JSON format to be parsed into GRule syntax.
 func ParseJSONRule(data []byte) (rs string, err error) {
-	defer func() {
-		if x := recover(); x != nil {
-			err = fmt.Errorf("%v", x)
-		}
-	}()
 	var rule GruleJSON
 	err = json.Unmarshal(data, &rule)
 	if err != nil {
@@ -174,23 +160,22 @@ func ParseJSONRule(data []byte) (rs string, err error) {
 		return
 	}
 
-	return parseRule(&rule)
+	rs, err = parseRule(&rule)
+
+	return
 }
 
 // ParseRule Accepts a struct of GruleJSON rule and returns the parsed string of GRule.
 func ParseRule(rule *GruleJSON) (r string, err error) {
-	defer func() {
-		if x := recover(); x != nil {
-			err = fmt.Errorf("%v", x)
-		}
-	}()
+	r, err = parseRule(rule)
 
-	return parseRule(rule)
+	return
 }
 
 func parseRule(rule *GruleJSON) (string, error) {
 	if len(rule.Name) == 0 {
-		return "", fmt.Errorf("encountered a rule without name")
+
+		return "", fmt.Errorf("rule name cannot be blank")
 	}
 	if rule.When == nil {
 
@@ -198,7 +183,7 @@ func parseRule(rule *GruleJSON) (string, error) {
 	}
 	if rule.Then == nil {
 
-		return "", fmt.Errorf("rule then condition cannot be nil")
+		return "", fmt.Errorf("rule thenn condition cannot be nil")
 	}
 	var stringBuilder strings.Builder
 	stringBuilder.WriteString("rule ")
@@ -208,11 +193,12 @@ func parseRule(rule *GruleJSON) (string, error) {
 	stringBuilder.WriteString(" salience ")
 	stringBuilder.WriteString(strconv.Itoa(rule.Salience))
 	stringBuilder.WriteString(" {\n    when\n        ")
-	str, err := parseWhen(rule.When)
+	when, err := parseWhen(rule.When)
 	if err != nil {
+
 		return "", err
 	}
-	stringBuilder.WriteString(str)
+	stringBuilder.WriteString(when)
 	stringBuilder.WriteString("\n    then\n")
 	thens, err := parseThen(rule.Then)
 	if err != nil {
@@ -238,7 +224,11 @@ func parseThen(ts []interface{}) ([]string, error) {
 				thens[thenItem] += ";"
 			}
 		case map[string]interface{}:
-			thens[thenItem] = buildExpression(thenType, 0) + ";"
+			bldExpr, err := buildExpression(thenType, 0)
+			if err != nil {
+				return nil, err
+			}
+			thens[thenItem] = bldExpr + ";"
 		default:
 
 			return nil, fmt.Errorf("invalid then type, must be a string or an array of action objects")
@@ -255,27 +245,27 @@ func parseWhen(w interface{}) (string, error) {
 		return whenType, nil
 	case map[string]interface{}:
 
-		return buildExpression(whenType, 0), nil
+		return buildExpression(whenType, 0)
 	default:
 
 		return "", fmt.Errorf("invalid when type, must be a string or an array of condition objects")
 	}
 }
 
-func buildExpression(input map[string]interface{}, depth int) string {
-	exp, _ := buildExpressionEx(input, depth)
+func buildExpression(input map[string]interface{}, depth int) (string, error) {
+	exp, _, err := buildExpressionEx(input, depth)
 
-	return exp
+	return exp, err
 }
 
-func buildExpressionEx(input map[string]interface{}, depth int) (string, bool) {
+func buildExpressionEx(input map[string]interface{}, depth int) (string, bool, error) {
 	if depth > 1024 {
 
-		panic("JSON nesting exceeded 1024 levels, aborting")
+		return "", false, fmt.Errorf("JSON nesting exceeded 1024 levels, aborting")
 	}
 	if len(input) > 1 {
 
-		panic("expression objects can only contain a single operation type")
+		return "", false, fmt.Errorf("expression objects can only contain a single operation type")
 	}
 	for key, value := range input {
 		switch key {
@@ -286,220 +276,265 @@ func buildExpressionEx(input map[string]interface{}, depth int) (string, bool) {
 
 			return buildCompoundOperator(value, depth, " || ")
 		case "eq":
+			opers, err := joinOperator(value, " == ")
 
-			return joinOperator(value, " == "), false
+			return opers, false, err
 		case "not":
+			opers, err := joinOperator(value, " != ")
 
-			return joinOperator(value, " != "), false
+			return opers, false, err
 		case "gt":
+			opers, err := joinOperator(value, " > ")
 
-			return joinOperator(value, " > "), false
+			return opers, false, err
 		case "gte":
+			opers, err := joinOperator(value, " >= ")
 
-			return joinOperator(value, " >= "), false
+			return opers, false, err
 		case "lt":
+			opers, err := joinOperator(value, " < ")
 
-			return joinOperator(value, " < "), false
+			return opers, false, err
 		case "lte":
+			opers, err := joinOperator(value, " <= ")
 
-			return joinOperator(value, " <= "), false
+			return opers, false, err
 		case "bor":
+			opers, err := joinOperator(value, " | ")
 
-			return joinOperator(value, " | "), false
+			return opers, false, err
 		case "band":
+			opers, err := joinOperator(value, " & ")
 
-			return joinOperator(value, " & "), false
+			return opers, false, err
 		case "plus":
+			opers, err := joinOperator(value, " + ")
 
-			return joinOperator(value, " + "), false
+			return opers, false, err
 		case "minus":
+			opers, err := joinOperator(value, " - ")
 
-			return joinOperator(value, " - "), false
+			return opers, false, err
 		case "div":
+			opers, err := joinOperator(value, " / ")
 
-			return joinOperator(value, " / "), false
+			return opers, false, err
 		case "mul":
+			opers, err := joinOperator(value, " * ")
 
-			return joinOperator(value, " * "), false
+			return opers, false, err
 		case "mod":
+			opers, err := joinOperator(value, " % ")
 
-			return joinOperator(value, " % "), false
+			return opers, false, err
 		case "set":
+			opers, err := joinSet(value, " = ")
 
-			return joinSet(value, " = "), true
+			return opers, true, err
 		case "call":
+			joinStr, err := joinCall(value)
 
-			return joinCall(value), true
+			return joinStr, true, err
 		case "obj":
 			if s, ok := value.(string); ok {
 
-				return s, true
+				return s, true, nil
 			}
 
-			panic("object must be a string")
+			return "", false, fmt.Errorf("object must be a string")
 		case "const":
 			switch valueType := value.(type) {
 			case string:
 
-				return strconv.Quote(valueType), true
+				return strconv.Quote(valueType), true, nil
 			case float64:
 
-				return strconv.FormatFloat(valueType, 'f', -1, 64), true
+				return strconv.FormatFloat(valueType, 'f', -1, 64), true, nil
 			case bool:
 				if valueType {
 
-					return "true", true
+					return "true", true, nil
 				}
 
-				return "false", true
+				return "false", true, nil
 			}
 
-			panic("constant must be a string or a numeric value")
+			return "", false, fmt.Errorf("constant must be a string or a numeric value")
 		default:
 
-			panic("unknown operator type: " + key)
+			return "", false, fmt.Errorf("unknown operator type: " + key)
 		}
 	}
 
-	panic("boolean expression cannot be empty")
+	return "", false, fmt.Errorf("boolean expression cannot be empty")
 }
 
-func buildCompoundOperator(o interface{}, depth int, operator string) (string, bool) {
+func buildCompoundOperator(o interface{}, depth int, operator string) (string, bool, error) {
 	if andarr, ok := o.([]interface{}); ok {
 		var ands []string
 		if len(andarr) < 2 {
 
-			panic("and operator must have at least 2 operands")
+			return "", false, fmt.Errorf("and operator must have at least 2 operands")
 		}
 		for i := 0; i < len(andarr); i++ {
 			if subVal, ok := andarr[i].(map[string]interface{}); ok {
-				ands = append(ands, buildExpression(subVal, depth+1))
+				bldexpr, err := buildExpression(subVal, depth+1)
+				if err != nil {
+
+					return "", false, err
+				}
+
+				ands = append(ands, bldexpr)
 			} else {
 
-				panic("and operands must be an array of objects")
+				return "", false, fmt.Errorf("and operands must be an array of objects")
 			}
 		}
 		if depth > 0 {
 
-			return "(" + strings.Join(ands, operator) + ")", false
+			return "(" + strings.Join(ands, operator) + ")", false, nil
 		}
 
-		return strings.Join(ands, operator), false
+		return strings.Join(ands, operator), false, nil
 	}
 
-	panic("compound operator must be an array")
+	return "", false, fmt.Errorf("compound operator must be an array")
 }
 
-func joinCall(v interface{}) string {
+func joinCall(v interface{}) (string, error) {
 	if arr, ok := v.([]interface{}); ok {
 		if len(arr) == 0 {
 
-			panic("call operator must have at least one operand")
+			return "", fmt.Errorf("call operator must have at least one operand")
 		}
 		var firstCallOperand string
 		var ok bool
 		if firstCallOperand, ok = arr[0].(string); !ok {
 
-			panic("first call operand must be a string")
+			return "", fmt.Errorf("first call operand must be a string")
 		}
 		if len(arr) > 1 {
 			sars := make([]string, len(arr)-1)
 			for i := 1; i < len(arr); i++ {
-				sars[i-1] = parseCallOperand(arr[i])
+				operandStr, err := parseCallOperand(arr[i])
+				if err != nil {
+					return "", err
+				}
+				sars[i-1] = operandStr
 			}
 
-			return firstCallOperand + "(" + strings.Join(sars, ", ") + ")"
+			return firstCallOperand + "(" + strings.Join(sars, ", ") + ")", nil
 		}
 
-		return firstCallOperand + "()"
+		return firstCallOperand + "()", nil
 	}
 
-	panic("operator has an unexpected type")
+	return "", fmt.Errorf("operator has an unexpected type")
 }
 
-func parseCallOperand(o interface{}) string {
+func parseCallOperand(o interface{}) (string, error) {
 	switch operandType := o.(type) {
 	case string:
 		if len(operandType) == 0 {
-			panic("operand cannnot be empty")
+			return "", fmt.Errorf("operand cannnot be empty")
 		}
 
-		return operandType
+		return operandType, nil
 	case float64:
 
-		return fmt.Sprint(operandType)
+		return fmt.Sprint(operandType), nil
 	case bool:
 		if operandType {
 
-			return "true"
+			return "true", nil
 		}
 
-		return "false"
+		return "false", nil
 	case map[string]interface{}:
 
 		return buildExpression(operandType, 0)
 	default:
 
-		panic("operand has an invalid type")
+		return "", fmt.Errorf("operand has an invalid type")
 	}
 }
 
-func joinOperator(v interface{}, operator string) string {
+func joinOperator(v interface{}, operator string) (string, error) {
 	if arr, ok := v.([]interface{}); ok {
 		if len(arr) == 0 {
 
-			panic("operator cannot have 0 operands")
+			return "", fmt.Errorf("operator cannot have 0 operands")
 		}
 		ops := make([]string, len(arr))
 		for i := 0; i < len(arr); i++ {
-			ops[i] = parseOperand(arr[i], false)
+			ope, err := parseOperand(arr[i], false)
+			if err != nil {
+
+				return "", err
+			}
+			ops[i] = ope
 		}
 
-		return strings.Join(ops, operator)
+		return strings.Join(ops, operator), nil
 	}
 
-	panic("operator has an unexpected type")
+	return "", fmt.Errorf("operator has an unexpected type")
 }
 
-func joinSet(v interface{}, operator string) string {
+func joinSet(v interface{}, operator string) (string, error) {
 	if arr, ok := v.([]interface{}); ok {
 		if len(arr) != 2 {
 
-			panic("set operand count must be 2")
+			return "", fmt.Errorf("set operand count must be 2")
+		}
+		leftOpe, err := parseOperand(arr[0], true)
+		if err != nil {
+
+			return "", err
+		}
+		rightOpe, err := parseOperand(arr[1], true)
+		if err != nil {
+
+			return "", err
 		}
 
-		return parseOperand(arr[0], true) + operator + parseOperand(arr[1], true)
+		return leftOpe + operator + rightOpe, nil
 	}
 
-	panic("operator has an unexpected type")
+	return "", fmt.Errorf("operator has an unexpected type")
 }
 
-func parseOperand(o interface{}, noWrap bool) string {
+func parseOperand(o interface{}, noWrap bool) (string, error) {
 	switch operandType := o.(type) {
 	case string:
 
-		return operandType
+		return operandType, nil
 	case float64:
 
-		return fmt.Sprint(operandType)
+		return fmt.Sprint(operandType), nil
 	case bool:
 
 		if operandType {
 
-			return "true"
+			return "true", nil
 		}
 
-		return "false"
+		return "false", nil
 	case map[string]interface{}:
-		expr, expNoWrap := buildExpressionEx(operandType, 0)
+		expr, expNoWrap, err := buildExpressionEx(operandType, 0)
+
+		if err != nil {
+
+			return expr, err
+		}
 		if expNoWrap || noWrap {
 
-			return expr
+			return expr, nil
 		}
 
-		return "(" + expr + ")"
+		return "(" + expr + ")", nil
 	default:
 
-		panic("operand has an invalid type")
+		return "", fmt.Errorf("operand has an invalid type")
 	}
 }
