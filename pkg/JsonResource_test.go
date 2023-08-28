@@ -15,6 +15,7 @@
 package pkg
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -210,118 +211,54 @@ const expectedBigIntConversion = `rule SpeedUp "When testcar is speeding up we k
 
 func TestParseJSONRuleset(t *testing.T) {
 	rs, err := ParseJSONRule([]byte(jsonData))
-	if err != nil {
-		t.Fatal("Failed to parse flat rule: " + err.Error())
-	}
-	t.Log("Flat rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 	rs, err = ParseJSONRuleset([]byte(arrayJSONData))
-	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
-	}
-	t.Log("Flat rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 	rs, err = ParseJSONRule([]byte(jsonDataExpanded))
-	if err != nil {
-		t.Fatal("Failed to parse expanded rule: " + err.Error())
-	}
-	t.Log("Expanded rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 	rs, err = ParseJSONRuleset([]byte(arrayJSONDataExpanded))
-	if err != nil {
-		t.Fatal("Failed to parse expanded ruleset: " + err.Error())
-	}
-	t.Log("Expanded rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 	rs, err = ParseJSONRule([]byte(jsonDataVerbose))
-	if err != nil {
-		t.Fatal("Failed to parse verbose rule: " + err.Error())
-	}
-	t.Log("Verbose rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 	rs, err = ParseJSONRuleset([]byte(arrayJSONDataVerbose))
-	if err != nil {
-		t.Fatal("Failed to parse verbose ruleset: " + err.Error())
-	}
-	t.Log("Verbose rule output:")
-	t.Log(rs)
-	if rs != expectedRule {
-		t.Fatal("Parsed rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, rs)
 }
 
 func TestNewJSONResourceFromResource(t *testing.T) {
 	underlyingResource := NewBytesResource([]byte(jsonDataExpanded))
-	resource := NewJSONResourceFromResource(underlyingResource)
+	resource, err := NewJSONResourceFromResource(underlyingResource)
+	assert.NoError(t, err)
 	loaded, err := resource.Load()
-	if err != nil {
-		t.Fatal("Failed to load JSON rule: " + err.Error())
-	}
-	t.Log(string(loaded))
-	if string(loaded) != expectedRule {
-		t.Fatal("Loaded rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, string(loaded))
 	underlyingResource = NewBytesResource([]byte(arrayJSONDataExpanded))
-	resource = NewJSONResourceFromResource(underlyingResource)
+	resource, err = NewJSONResourceFromResource(underlyingResource)
+	assert.NoError(t, err)
 	loaded, err = resource.Load()
-	if err != nil {
-		t.Fatal("Failed to load JSON ruleset: " + err.Error())
-	}
-	t.Log(string(loaded))
-	if string(loaded) != expectedRule {
-		t.Fatal("Loaded rule does not match expected result")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRule, string(loaded))
 }
 
 func TestJSONStringEscaping(t *testing.T) {
 	rs, err := ParseJSONRule([]byte(jsonDataEscaped))
-	if err != nil {
-		t.Fatal("Failed to parse flat rule: " + err.Error())
-	}
-	t.Log(rs)
-	if rs != expectedEscaped {
-		t.Fatal("Rule output doe not match expected value")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedEscaped, rs)
 	rs, err = ParseJSONRuleset([]byte(arrayJSONDataEscaped))
-	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
-	}
-	t.Log(rs)
-	if rs != expectedEscaped {
-		t.Fatal("Rule output doe not match expected value")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedEscaped, rs)
 }
 
 func TestJSONBigIntConversion(t *testing.T) {
 	rs, err := ParseJSONRule([]byte(jsonDataBigIntConversion))
-	if err != nil {
-		t.Fatal("Failed to parse flat rule: " + err.Error())
-	}
-	t.Log(rs)
-	if rs != expectedBigIntConversion {
-		t.Fatal("Rule output doe not match expected value")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedBigIntConversion, rs)
 	rs, err = ParseJSONRuleset([]byte(arrayJSONDataBigIntConversion))
-	if err != nil {
-		t.Fatal("Failed to parse flat ruleset: " + err.Error())
-	}
-	t.Log(rs)
-	if rs != expectedBigIntConversion {
-		t.Fatal("Rule output doe not match expected value")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedBigIntConversion, rs)
 }

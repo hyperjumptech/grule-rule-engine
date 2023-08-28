@@ -52,10 +52,7 @@ func (res *EmbeddedResource) Load() ([]byte, error) {
 		return res.Bytes, nil
 	}
 
-	var err error
-	res.Bytes, err = res.Source.ReadFile(res.Path)
-
-	return res.Bytes, err
+	return res.Source.ReadFile(res.Path)
 }
 
 func (res *EmbeddedResource) String() string {
