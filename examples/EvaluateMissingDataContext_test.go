@@ -2,6 +2,7 @@ package examples
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
@@ -36,7 +37,8 @@ func TestDataContextMissingFact(t *testing.T) {
 
 	// 	add JSON fact
 	json := []byte(`{"blabla":"bla","name":{"first":"john","last":"doe"}}`)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.0.1")
+	assert.NoError(t, err)
 	dcx := ast.NewDataContext()
 
 	err = dcx.Add("R", oresult)

@@ -19,6 +19,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -98,8 +99,10 @@ func TestGruleEngine_Support_Multiple_KnowledgeBases(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	userKnowledgeBase := lib.NewKnowledgeBaseInstance("UserRules", "0.1.1")
-	rideKnowledgeBase := lib.NewKnowledgeBaseInstance("RideRules", "0.1.1")
+	userKnowledgeBase, err := lib.NewKnowledgeBaseInstance("UserRules", "0.1.1")
+	assert.NoError(t, err)
+	rideKnowledgeBase, err := lib.NewKnowledgeBaseInstance("RideRules", "0.1.1")
+	assert.NoError(t, err)
 	eng1 := engine.NewGruleEngine()
 	err = eng1.Execute(rideDataContext, rideKnowledgeBase)
 	if err != nil {

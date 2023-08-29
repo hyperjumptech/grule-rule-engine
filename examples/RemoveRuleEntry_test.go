@@ -64,7 +64,8 @@ func TestRemoveRuleEntry(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(RuleA)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	eng := &engine.GruleEngine{MaxCycle: 1}
 	err = eng.Execute(dataContext, kb)
 	assert.NoError(t, err)
@@ -77,7 +78,8 @@ func TestRemoveRuleEntry(t *testing.T) {
 	//Add RuleB again, which is similar to RuleA except its output
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(RuleB)))
 	assert.NoError(t, err)
-	kb = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	eng = &engine.GruleEngine{MaxCycle: 1}
 	err = eng.Execute(dataContext, kb)
 	assert.NoError(t, err)

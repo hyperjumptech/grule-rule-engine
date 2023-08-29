@@ -117,7 +117,7 @@ func beginThread(threadName string, lib *ast.KnowledgeLibrary, t *testing.T) {
 	engine := &engine.GruleEngine{MaxCycle: 100}
 
 	// Get an instance of our KnowledgeBase from KnowledgeLibrary
-	kb := lib.NewKnowledgeBaseInstance("VibonaciTest", "0.0.1")
+	kb, _ := lib.NewKnowledgeBaseInstance("VibonaciTest", "0.0.1")
 
 	// Execute the KnowledgeBase against DataContext
 	err = engine.Execute(dataContext, kb)

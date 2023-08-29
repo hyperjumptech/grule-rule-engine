@@ -70,7 +70,7 @@ func load100RulesIntoKnowledgeBase() {
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
-	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
+	_, _ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
 }
 
 func load1000RulesIntoKnowledgeBase() {
@@ -86,5 +86,5 @@ func load1000RulesIntoKnowledgeBase() {
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
-	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
+	_, _ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
 }

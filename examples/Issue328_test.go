@@ -40,15 +40,15 @@ func TestMethodCall_SliceOOR(t *testing.T) {
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(SliceOORRule)))
 	assert.NoError(t, err)
 
-	// expect no panic and no error (ReturnErrOnFailedRuleEvaluation = false)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 
-	// expect no panic and execute to return an error here
 	eng1 = &engine.GruleEngine{MaxCycle: 5, ReturnErrOnFailedRuleEvaluation: true}
-	kb = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.Error(t, err)
 }

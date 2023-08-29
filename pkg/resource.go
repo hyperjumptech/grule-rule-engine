@@ -382,13 +382,13 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fileSyst billy.Files
 
 // MustLoad is the same as Load, the difference is it will panic if an error is raised during fetching resources.
 func (bundle *GITResourceBundle) MustLoad() []Resource {
-	resources, err := bundle.Load()
+	res, err := bundle.Load()
 	if err != nil {
 
 		panic(err)
 	}
 
-	return resources
+	return res
 }
 
 // GITResource resource implementation that loaded from GIT

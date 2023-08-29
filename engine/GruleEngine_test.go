@@ -122,7 +122,8 @@ func TestGrule_Execute(t *testing.T) {
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	assert.NoError(t, err)
 	engine := NewGruleEngine()
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	start := time.Now()
 	err = engine.Execute(dctx, kb)
 	assert.NoError(t, err)
@@ -158,7 +159,8 @@ func TestEngine_ExecuteErr(t *testing.T) {
 
 	engine := NewGruleEngine()
 	engine.ReturnErrOnFailedRuleEvaluation = true
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	err = engine.Execute(dctx, kb)
 	assert.Error(t, err)
 }
@@ -215,7 +217,8 @@ func TestEngine_ComplexRule1(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule1)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
@@ -250,7 +253,8 @@ func TestEngine_ComplexRule2(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule2)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
@@ -286,7 +290,8 @@ func TestEngine_ComplexRule3(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule3)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
@@ -323,7 +328,8 @@ func TestEngine_ComplexRule4(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(complexRule4)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
@@ -352,7 +358,8 @@ func TestEngine_OperatorPrecedence(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(OpPresedenceRule)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
@@ -398,7 +405,8 @@ And another`
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(escapedRules)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 
 	assert.False(t, es.Result1)
 	assert.False(t, es.Result2)
@@ -439,7 +447,8 @@ rule KeepSleep "test string escaping" salience 10 {
 }
 `)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("TestTimer", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestTimer", "0.1.1")
+	assert.NoError(t, err)
 	engine := NewGruleEngine()
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -514,7 +523,8 @@ func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRules)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+	assert.NoError(t, err)
 
 	//When
 	engine := NewGruleEngine()
@@ -537,7 +547,8 @@ func TestEngine_FetchMatchingRulesErr(t *testing.T) {
 
 	engine := NewGruleEngine()
 	engine.ReturnErrOnFailedRuleEvaluation = true
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	mr, err := engine.FetchMatchingRules(dctx, kb)
 	assert.Error(t, err)
 	assert.Nil(t, mr)
@@ -598,7 +609,8 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
+	assert.NoError(t, err)
 
 	//When
 	engine := NewGruleEngine()
@@ -661,7 +673,8 @@ func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
 	rb := builder.NewRuleBuilder(lib)
 	err = rb.BuildRuleFromResource("logical_operator_rules_test", "0.1.1", pkg.NewBytesResource([]byte(logicalOperatorPrecedenceRules)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("logical_operator_rules_test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("logical_operator_rules_test", "0.1.1")
+	assert.NoError(t, err)
 
 	//When
 	engine := NewGruleEngine()

@@ -1,4 +1,4 @@
-module grule-rule-engine
+module github.com/hyperjumptech/grule-rule-engine
 
 go 1.20
 
@@ -6,7 +6,6 @@ require (
 	github.com/antlr/antlr4/runtime/Go/antlr v1.4.10
 	github.com/bmatcuk/doublestar v1.3.4
 	github.com/google/uuid v1.3.0
-	github.com/hyperjumptech/grule-rule-engine v1.13.0
 	github.com/hyperjumptech/hyper-mux v1.1.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4

@@ -59,7 +59,8 @@ then
 	rb := builder.NewRuleBuilder(lib)
 	err := rb.BuildRuleFromResource("CarPriceTest", "0.1.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("CarPriceTest", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("CarPriceTest", "0.1.1")
+	assert.NoError(t, err)
 	eng := &engine.GruleEngine{MaxCycle: 3}
 
 	dataContext := ast.NewDataContext()

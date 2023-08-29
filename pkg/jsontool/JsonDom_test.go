@@ -110,7 +110,10 @@ func TestNewJsonObject(t *testing.T) {
 		} else {
 			typ := reflect.TypeOf(jobj.jsonRoot)
 			t.Logf("Data : %d - %s. Type is : %s ", i, v, typ.String())
-			node := jobj.GetRootNode()
+			node, err := jobj.GetRootNode()
+			if err != nil {
+				t.Fail()
+			}
 			switch JSONType[i] {
 			case "obj":
 				if !node.IsMap() {
@@ -161,7 +164,25 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.FailNow()
 	}
 
-	if jdata.GetRootNode().Get("fullname").GetString() != "Bruce Wayne" {
+	rNode, err := jdata.GetRootNode()
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	jnode, err := rNode.Get("fullname")
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	sn, err := jnode.GetString()
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	if sn != "Bruce Wayne" {
 		t.Logf("fail validate full name")
 		t.Fail()
 	}
@@ -174,7 +195,20 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if jdata.GetRootNode().Get("age").GetInt() != 35 {
+	rnode, err := jdata.GetRootNode()
+	if err != nil {
+		t.Fail()
+	}
+	ageNode, err := rnode.Get("age")
+	if err != nil {
+		t.Fail()
+	}
+	theInt, err := ageNode.GetInt()
+	if err != nil {
+		t.Fail()
+	}
+
+	if theInt != 35 {
 		t.Logf("fail validate age")
 		t.Fail()
 	}
@@ -187,7 +221,31 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if jdata.GetRootNode().Get("address").Get("street1").GetString() != "Super Mansion" {
+	rnode, err = jdata.GetRootNode()
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	addrNode, err := rnode.Get("address")
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	strtNode, err := addrNode.Get("street1")
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	strValue, err := strtNode.GetString()
+	if err != nil {
+		t.Logf("Got error %s", err.Error())
+		t.FailNow()
+	}
+
+	if strValue != "Super Mansion" {
 		t.Logf("fail validate address.street1")
 		t.Fail()
 	}
@@ -210,7 +268,16 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if !jdata.GetRootNode().Get("friends").IsArray() {
+	rNode, err = jdata.GetRootNode()
+	if err != nil {
+		t.FailNow()
+	}
+	nNode, err := rNode.Get("friends")
+	if err != nil {
+		t.FailNow()
+	}
+
+	if !nNode.IsArray() {
 		t.Logf("fail validate friends as array")
 		t.Fail()
 	}
@@ -223,7 +290,23 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if !jdata.GetRootNode().Get("friends").GetNodeAt(1).Get("fullname").IsString() {
+	rNode, err = jdata.GetRootNode()
+	if err != nil {
+		t.FailNow()
+	}
+	nNode, err = rNode.Get("friends")
+	if err != nil {
+		t.FailNow()
+	}
+	nNodeAt, err := nNode.GetNodeAt(1)
+	if err != nil {
+		t.FailNow()
+	}
+	nNode2, err := nNodeAt.Get("fullname")
+	if err != nil {
+		t.FailNow()
+	}
+	if !nNode2.IsString() {
 		t.Logf("fail validate friends[1].fullname type")
 		t.Fail()
 	}
@@ -236,11 +319,31 @@ func TestJsonNodeOperations(t *testing.T) {
 		t.Fail()
 	}
 
-	if jdata.GetRootNode().Get("friends").GetNodeAt(1).Get("fullname").GetString() != "Lara Croft" {
+	rNode, err = jdata.GetRootNode()
+	if err != nil {
+		t.FailNow()
+	}
+	nNode, err = rNode.Get("friends")
+	if err != nil {
+		t.FailNow()
+	}
+	nNodeAt, err = nNode.GetNodeAt(1)
+	if err != nil {
+		t.FailNow()
+	}
+	nNode2, err = nNodeAt.Get("fullname")
+	if err != nil {
+		t.FailNow()
+	}
+	str, err := nNode2.GetString()
+	if err != nil {
+		t.FailNow()
+	}
+	if str != "Lara Croft" {
 		t.Logf("fail validate friends[1].fullname value")
 		t.Fail()
 	}
-	str, err := jdata.GetString("friends[1].fullname")
+	str, err = jdata.GetString("friends[1].fullname")
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -250,66 +353,43 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 }
 
+type PathTest struct {
+	Path  string
+	Valid bool
+}
+
 func TestJsonData_IsValidPath(t *testing.T) {
+
+	pTests := make([]PathTest, 0)
+
+	pTests = append(pTests, PathTest{Path: "fullname", Valid: true})
+	pTests = append(pTests, PathTest{Path: "fullname.", Valid: false})
+	pTests = append(pTests, PathTest{Path: "fullname.abc", Valid: false})
+	pTests = append(pTests, PathTest{Path: "abc", Valid: false})
+	pTests = append(pTests, PathTest{Path: "", Valid: true})
+	pTests = append(pTests, PathTest{Path: "address.street1", Valid: true})
+	pTests = append(pTests, PathTest{Path: "address.street5", Valid: false})
+	pTests = append(pTests, PathTest{Path: "friends", Valid: true})
+	pTests = append(pTests, PathTest{Path: "friends[1]", Valid: true})
+	pTests = append(pTests, PathTest{Path: "friends[]", Valid: false})
+	pTests = append(pTests, PathTest{Path: "friends[10]", Valid: false})
+	pTests = append(pTests, PathTest{Path: "friends[1].address.street1", Valid: true})
+	pTests = append(pTests, PathTest{Path: "friends[1].abc.street1", Valid: false})
+
 	jdata, err := NewJSONData([]byte(bigJSON))
 	if err != nil {
 		t.Logf("Got error %s", err.Error())
 		t.FailNow()
 	}
-	if !jdata.IsValidPath("fullname") {
-		t.Logf("fullname is a valid path")
-		t.Fail()
+
+	for _, ptest := range pTests {
+		if val, err := jdata.IsValidPath(ptest.Path); err != nil {
+			t.Logf("got error %s", err.Error())
+			t.FailNow()
+		} else if val != ptest.Valid {
+			t.Logf("'%s' valid path expect '%v' but '%v'", ptest.Path, ptest.Valid, val)
+			t.FailNow()
+		}
 	}
-	if jdata.IsValidPath("fullname.") {
-		t.Logf("fullname. is not a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("fullname.abc") {
-		t.Logf("fullname.abc is not a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("fullname[]") {
-		t.Logf("fullname[] is not a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("abc") {
-		t.Logf("abs is not a valid path")
-		t.Fail()
-	}
-	if !jdata.IsValidPath("") {
-		t.Logf("empty string is a valid path")
-		t.Fail()
-	}
-	if !jdata.IsValidPath("address.street1") {
-		t.Logf("\"address.street1\" is a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("address.street5") {
-		t.Logf("\"address.street5\" is NOT a valid path")
-		t.Fail()
-	}
-	if !jdata.IsValidPath("friends") {
-		t.Logf("\"friends\" is a valid path")
-		t.Fail()
-	}
-	if !jdata.IsValidPath("friends[1]") {
-		t.Logf("\"friends[1]\" is a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("friends[]") {
-		t.Logf("\"friends[]\" is NOT a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("friends[10]") {
-		t.Logf("\"friends[10]\" is NOT a valid path")
-		t.Fail()
-	}
-	if !jdata.IsValidPath("friends[1].address.street1") {
-		t.Logf("\"friends[1].address.street1\" is a valid path")
-		t.Fail()
-	}
-	if jdata.IsValidPath("friends[1].abc.street1") {
-		t.Logf("\"friends[1].abc.street1\" is a valid path")
-		t.Fail()
-	}
+
 }

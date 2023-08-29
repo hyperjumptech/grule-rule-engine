@@ -30,8 +30,6 @@ github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/hyperjumptech/grule-rule-engine v1.13.0 h1:YwPlzazuDSD+gQsOvWINTSJ+EP/rIqCrfSMHhqPwPqI=
-github.com/hyperjumptech/grule-rule-engine v1.13.0/go.mod h1:kLuSOPGiB3U1FPvsThGaQhniDlWpWIvdIvCNI9hvCxU=
 github.com/hyperjumptech/hyper-mux v1.1.0 h1:HIM37If0OBOiiToOw5zZJLzOhZuhMObHwVCnTKiRyGw=
 github.com/hyperjumptech/hyper-mux v1.1.0/go.mod h1:qdok3j+/VEtFvJ+YOotTNskGg2BXg3UJTbycU2xFDvE=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=

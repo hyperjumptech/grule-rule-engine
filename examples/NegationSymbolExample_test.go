@@ -65,7 +65,8 @@ func TestNegationSymbolExpressionAtom(t *testing.T) {
 	err = rb.BuildRuleFromResource("TestNegation", "1.0.0", pkg.NewBytesResource([]byte(NegationRule2)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestNegation", "1.0.0")
+	kb, err := lib.NewKnowledgeBaseInstance("TestNegation", "1.0.0")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "YES ITS NOT", structTest.StringValue)
@@ -86,7 +87,8 @@ func TestNegationSymbolExpression(t *testing.T) {
 	err = rb.BuildRuleFromResource("TestNegation", "1.0.0", pkg.NewBytesResource([]byte(NegationRule1)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestNegation", "1.0.0")
+	kb, err := lib.NewKnowledgeBaseInstance("TestNegation", "1.0.0")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "ITS ABC", structTest.StringValue)

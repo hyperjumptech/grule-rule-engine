@@ -101,7 +101,7 @@ type Catalog struct {
 // BuildKnowledgeBase will rebuild a knowledgebase from this Catalog.
 // the rebuilt KnowledgeBase is identical to the original KnowledgeBase from
 // which this Catalog was built.
-func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
+func (cat *Catalog) BuildKnowledgeBase() (*KnowledgeBase, error) {
 	workingMem := &WorkingMemory{
 		Name:                      cat.MemoryName,
 		Version:                   cat.MemoryVersion,
@@ -280,7 +280,7 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 			}
 			importTable[amet.AstID] = n
 		default:
-			panic("Unrecognized meta type")
+			return nil, fmt.Errorf("unrecognized meta type")
 		}
 	}
 
@@ -407,7 +407,7 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 				whenScope.Expression = importTable[amet.ExpressionID].(*Expression)
 			}
 		default:
-			panic("Unrecognized meta type")
+			return nil, fmt.Errorf("unknown AST type")
 		}
 	}
 
@@ -450,7 +450,7 @@ func (cat *Catalog) BuildKnowledgeBase() *KnowledgeBase {
 		}
 	}
 
-	return knowledgeBase
+	return knowledgeBase, nil
 }
 
 // Equals used for testing purpose, to ensure that two catalog

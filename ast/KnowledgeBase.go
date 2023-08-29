@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"io"
 	"sort"
 	"strings"
@@ -84,7 +83,6 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 		if r := recover(); r != nil {
 			retKb = nil
 			retErr = fmt.Errorf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
-			logrus.Panicf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
 		}
 	}()
 
@@ -94,7 +92,10 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 
 		return nil, err
 	}
-	knowledgeBase := catalog.BuildKnowledgeBase()
+	knowledgeBase, err := catalog.BuildKnowledgeBase()
+	if err != nil {
+		return nil, err
+	}
 	if overwrite {
 		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
 
@@ -127,21 +128,25 @@ func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, 
 
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
-func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
+func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) (*KnowledgeBase, error) {
 	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
 	if ok {
-		newClone := knowledgeBase.Clone(pkg.NewCloneTable())
+		newClone, err := knowledgeBase.Clone(pkg.NewCloneTable())
+		if err != nil {
+			return nil, err
+		}
 		if knowledgeBase.IsIdentical(newClone) {
 			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
 
-			return newClone
+			return newClone, nil
 		}
 		AstLog.Fatalf("ORIGIN   : %s", knowledgeBase.GetSnapshot())
 		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
-		panic("The clone is not identical")
+
+		return nil, fmt.Errorf("the clone is not identical")
 	}
 
-	return nil
+	return nil, fmt.Errorf("specified knowledge base name and version not exist")
 }
 
 // KnowledgeBase is a collection of RuleEntries. It has a name and version.
@@ -210,7 +215,7 @@ func (e *KnowledgeBase) GetSnapshot() string {
 }
 
 // Clone will clone this instance of KnowledgeBase and produce another (structure wise) identical instance.
-func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
+func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) (*KnowledgeBase, error) {
 	clone := &KnowledgeBase{
 		Name:        e.Name,
 		Version:     e.Version,
@@ -228,10 +233,14 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 		}
 	}
 	if e.WorkingMemory != nil {
-		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
+		wm, err := e.WorkingMemory.Clone(cloneTable)
+		if err != nil {
+			return nil, err
+		}
+		clone.WorkingMemory = wm
 	}
 
-	return clone
+	return clone, nil
 }
 
 // AddRuleEntry add ruleentry into this knowledge base.

@@ -65,7 +65,8 @@ rule CheckIfJSONIntWorks {
 	err := rb.BuildRuleFromResource("TestJSONSimple", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "PERFECT", oresult.Result)
@@ -84,7 +85,8 @@ rule CheckIfJSONStringWorks {
 	err := rb.BuildRuleFromResource("TestJSONSimple", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "PERFECT", oresult.Result)
@@ -103,7 +105,8 @@ rule CheckIfJSONArrayWorks {
 	err := rb.BuildRuleFromResource("TestJSONSimple", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "PERFECT", oresult.Result)
@@ -122,7 +125,8 @@ rule CheckIfJSONMapWorks {
 	err := rb.BuildRuleFromResource("TestJSONSimple", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestJSONSimple", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "PERFECT", oresult.Result)
@@ -165,7 +169,8 @@ rule CheckIfJSONIntWorks {
 	err = rb.BuildRuleFromResource("TestJSONBitComplex", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestJSONBitComplex", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestJSONBitComplex", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, "PERFECT", oresult.Result)

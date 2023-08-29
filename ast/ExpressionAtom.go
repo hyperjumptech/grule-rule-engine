@@ -413,5 +413,5 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		return e.Value, nil
 	}
 
-	panic("should not be reached")
+	return reflect.Value{}, fmt.Errorf("this portion of code should not be reached")
 }
