@@ -43,7 +43,8 @@ func TestCallingLog(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(GRL)))
 	assert.NoError(t, err)
 
-	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
+	knowledgeBase, err := lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
+	assert.NoError(t, err)
 
 	eng1 := &engine.GruleEngine{MaxCycle: 1}
 	err = eng1.Execute(dataContext, knowledgeBase)

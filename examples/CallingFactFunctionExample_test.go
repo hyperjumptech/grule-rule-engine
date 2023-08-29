@@ -87,7 +87,9 @@ func TestCallingFactFunction(t *testing.T) {
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("CallingFactFunction", "0.1.1", pkg.NewBytesResource([]byte(CallFactFuncGRL)))
-	knowledgeBase := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")
+	assert.NoError(t, err)
+
+	knowledgeBase, err := lib.NewKnowledgeBaseInstance("CallingFactFunction", "0.1.1")
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 500}
 	err = eng1.Execute(dataContext, knowledgeBase)

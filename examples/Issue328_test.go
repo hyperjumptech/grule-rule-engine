@@ -41,12 +41,14 @@ func TestMethodCall_SliceOOR(t *testing.T) {
 	assert.NoError(t, err)
 
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 
 	eng1 = &engine.GruleEngine{MaxCycle: 5, ReturnErrOnFailedRuleEvaluation: true}
-	kb = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err = lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.Error(t, err)
 }

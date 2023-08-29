@@ -36,7 +36,8 @@ func TestSliceFunctionPanicTest(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(knowledgeLibrary)
 	err = ruleBuilder.BuildRuleFromResource("test", "0.0.1", pkg.NewBytesResource([]byte(panickingRule)))
 	assert.NoError(t, err)
-	knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("test", "0.0.1")
+	knowledgeBase, err := knowledgeLibrary.NewKnowledgeBaseInstance("test", "0.0.1")
+	assert.NoError(t, err)
 	engine := engine.NewGruleEngine()
 
 	err = engine.Execute(dataContext, knowledgeBase)

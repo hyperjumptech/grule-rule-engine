@@ -74,7 +74,8 @@ rule SetTreeName "Set the top most tree name" {
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
+	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 1}
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
@@ -119,7 +120,8 @@ rule SetTreeName "Set the top most tree name" {
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("TestFuncChaining", "0.0.1", pkg.NewBytesResource([]byte(rule)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("TestFuncChaining", "0.0.1")
+	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 1}
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)

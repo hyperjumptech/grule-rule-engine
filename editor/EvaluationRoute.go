@@ -80,7 +80,13 @@ func InitializeEvaluationRoute(router *mux.HyperMux) {
 		}
 
 		eng1 := &engine.GruleEngine{MaxCycle: 5}
-		kb := knowledgeLibrary.NewKnowledgeBaseInstance("Evaluator", "0.0.1")
+		kb, err := knowledgeLibrary.NewKnowledgeBaseInstance("Evaluator", "0.0.1")
+		if err != nil {
+			writer.WriteHeader(http.StatusBadRequest)
+			_, _ = writer.Write([]byte(fmt.Sprintf("Grule Error : %s", err.Error())))
+
+			return
+		}
 		err = eng1.Execute(dataContext, kb)
 		if err != nil {
 			writer.WriteHeader(http.StatusBadRequest)

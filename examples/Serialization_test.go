@@ -45,7 +45,8 @@ func TestSerialization(t *testing.T) {
 		assert.Nil(t, err)
 	}
 
-	kb2 := cat2.BuildKnowledgeBase()
+	kb2, err := cat2.BuildKnowledgeBase()
+	assert.NoError(t, err)
 	assert.True(t, kb.IsIdentical(kb2))
 }
 

@@ -123,7 +123,8 @@ func TestSalience(t *testing.T) {
 
 	engine := engine.NewGruleEngine()
 
-	knowledgeBase := lib.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+	knowledgeBase, err := lib.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+	assert.NoError(t, err)
 
 	for _, td := range testData {
 		dataCtx := ast.NewDataContext()
