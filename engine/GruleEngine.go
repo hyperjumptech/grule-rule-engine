@@ -120,6 +120,11 @@ func (g *GruleEngine) notifyBeginCycle(cycle uint64) {
 // The engine will evaluate context cancelation status in each cycle.
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
+	if knowledge == nil || dataCtx == nil {
+
+		return fmt.Errorf("nil KnowledgeBase or DataContext is not allowed")
+	}
+
 	log.Debugf("Starting rule execution using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 
 	// Prepare the timer, we need to measure the processing time in debug mode.
@@ -241,6 +246,11 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 // FetchMatchingRules function is responsible to fetch all the rules that matches to a fact against all rule entries
 // Returns []*ast.RuleEntry order by salience
 func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
+	if knowledge == nil || dataCtx == nil {
+
+		return nil, fmt.Errorf("nil KnowledgeBase or DataContext is not allowed")
+	}
+
 	log.Debugf("Starting rule matching using knowledge '%s' version %s. Contains %d rule entries", knowledge.Name, knowledge.Version, len(knowledge.RuleEntries))
 	// Prepare the build-in function and add to datacontext.
 	defunc := &ast.BuiltInFunctions{
