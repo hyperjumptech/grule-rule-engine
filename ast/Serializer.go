@@ -1535,10 +1535,14 @@ func (meta *ConstantMeta) ReadMetaFrom(reader io.Reader) error {
 		return err
 	}
 	byteArr := make([]byte, length)
-	_, err = reader.Read(byteArr)
+	readCount, err := reader.Read(byteArr)
 	if err != nil {
 
 		return err
+	}
+	if uint64(readCount) != length {
+
+		return io.ErrShortBuffer
 	}
 	meta.ValueBytes = byteArr
 
