@@ -28,5 +28,6 @@ func TestNoPanicForNoDescription(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err := ruleBuilder.BuildRuleFromResource("CallingLog", "0.1.1", pkg.NewBytesResource([]byte(GRL)))
 	assert.NoError(t, err)
-	_ = lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
+	_, err = lib.NewKnowledgeBaseInstance("CallingLog", "0.1.1")
+	assert.NoError(t, err)
 }

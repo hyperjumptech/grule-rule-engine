@@ -133,7 +133,8 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 
 	engine := engine2.NewGruleEngine()
 
-	kb := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Purchase Calculator", "0.0.1")
+	assert.NoError(t, err)
 
 	buff := &bytes.Buffer{}
 	cat := kb.MakeCatalog()
@@ -143,7 +144,8 @@ func (cf *CashFlowCalculator) CalculatePurchases(t *testing.T) {
 	buff2 := bytes.NewBuffer(buff.Bytes())
 	cat2 := &ast.Catalog{}
 	cat2.ReadCatalogFromReader(buff2)
-	nkb := cat2.BuildKnowledgeBase()
+	nkb, err := cat2.BuildKnowledgeBase()
+	assert.NoError(t, err)
 
 	for _, purchase := range Purchases {
 		dctx := ast.NewDataContext()

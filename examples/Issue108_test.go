@@ -74,7 +74,8 @@ func TestIssue108(t *testing.T) {
 	err = rb.BuildRuleFromResource("Test108", "0.0.1", pkg.NewBytesResource([]byte(Rule108)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("Test108", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test108", "0.0.1")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, 3, len(Obj.Sequence))

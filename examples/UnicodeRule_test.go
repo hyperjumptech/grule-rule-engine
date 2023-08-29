@@ -67,7 +67,8 @@ rule ChĕckValuĕs "Check the default values" salience 10 {
 	err = ruleBuilder.BuildRuleFromResource("Tutorial", "0.0.1", byteArr)
 	assert.NoError(t, err)
 
-	knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+	knowledgeBase, err := knowledgeLibrary.NewKnowledgeBaseInstance("Tutorial", "0.0.1")
+	assert.NoError(t, err)
 
 	engine := engine.NewGruleEngine()
 	err = engine.Execute(dataCtx, knowledgeBase)

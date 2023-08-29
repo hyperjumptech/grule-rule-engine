@@ -54,7 +54,8 @@ func TestEvaluateAndAssignExponentNumber(t *testing.T) {
 	err = rb.BuildRuleFromResource("TestExponent", "1.0.0", pkg.NewBytesResource([]byte(ExponentRule)))
 	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb := lib.NewKnowledgeBaseInstance("TestExponent", "1.0.0")
+	kb, err := lib.NewKnowledgeBaseInstance("TestExponent", "1.0.0")
+	assert.NoError(t, err)
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
 	assert.Equal(t, .12345e+5, exponent.Set)

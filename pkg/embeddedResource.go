@@ -20,6 +20,7 @@ package pkg
 import (
 	"embed"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/bmatcuk/doublestar"
@@ -84,6 +85,15 @@ type EmbeddedResourceBundle struct {
 // This will accept all *.grl files under /some/base/path and its directories.
 func NewEmbeddedResourceBundle(source embed.FS, basePath string, pathPattern ...string) *EmbeddedResourceBundle {
 
+	if runtime.GOOS == "windows" {
+
+		return &EmbeddedResourceBundle{
+			Source:      source,
+			BasePath:    strings.TrimLeft(basePath, "\\"),
+			PathPattern: pathPattern,
+		}
+	}
+
 	return &EmbeddedResourceBundle{
 		Source:      source,
 		BasePath:    strings.TrimLeft(basePath, "/"),
@@ -116,8 +126,14 @@ func (bundle *EmbeddedResourceBundle) loadPath(path string) ([]Resource, error) 
 
 		return nil, err
 	}
-	if path == "." || path == "./" {
-		path = ""
+	if runtime.GOOS == "windows" {
+		if path == "." || path == "./" {
+			path = ""
+		}
+	} else {
+		if path == "." || path == ".\\" {
+			path = ""
+		}
 	}
 	ret := make([]Resource, 0)
 	for _, finfo := range finfos {

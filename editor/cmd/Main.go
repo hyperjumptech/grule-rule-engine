@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/hyperjumptech/grule-rule-engine/editor"
 	"github.com/sirupsen/logrus"
-	"grule-rule-engine/editor"
 )
 
 func main() {

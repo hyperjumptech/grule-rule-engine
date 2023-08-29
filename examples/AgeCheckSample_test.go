@@ -82,7 +82,8 @@ func TestMyPoGo_GetStringLength(t *testing.T) {
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule2)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 1}
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)
@@ -111,7 +112,8 @@ func TestMyPoGo_Compare(t *testing.T) {
 
 	err = ruleBuilder.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rule3)))
 	assert.NoError(t, err)
-	kb := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
 	eng1 := &engine.GruleEngine{MaxCycle: 100}
 	err = eng1.Execute(dataContext, kb)
 	assert.NoError(t, err)

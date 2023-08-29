@@ -87,7 +87,8 @@ func (cf *ItemPriceChecker) CheckPrices(t *testing.T) {
 	err := rb.BuildRuleFromResource("PriceCheck", "0.0.1", pkg.NewBytesResource([]byte(PriceCheckRule1)))
 	assert.NoError(t, err)
 
-	kb := lib.NewKnowledgeBaseInstance("PriceCheck", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("PriceCheck", "0.0.1")
+	assert.NoError(t, err)
 
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
@@ -168,7 +169,8 @@ func (cf *ItemPriceChecker) CheckCart(t *testing.T) {
 	err := rb.BuildRuleFromResource("Cart Check Rules", "0.0.1", pkg.NewBytesResource([]byte(PriceCheckRule2)))
 	assert.NoError(t, err)
 
-	kb := lib.NewKnowledgeBaseInstance("Cart Check Rules", "0.0.1")
+	kb, err := lib.NewKnowledgeBaseInstance("Cart Check Rules", "0.0.1")
+	assert.NoError(t, err)
 
 	// Prepare the engine
 	eng := engine.NewGruleEngine()
