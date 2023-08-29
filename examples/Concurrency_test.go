@@ -66,9 +66,9 @@ var (
 type Vibonaci struct {
 	fmt.Stringer
 	Count int
-	A     uint
-	B     uint
-	C     uint
+	A     uint64
+	B     uint64
+	C     uint64
 }
 
 func startThread(threadName string) {
