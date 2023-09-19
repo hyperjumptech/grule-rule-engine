@@ -218,6 +218,8 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 					}
 				}
 			}
+			// set the current rule entry to run. This is for trace ability purpose
+			dataCtx.SetRuleEntry(runner)
 			// notify listeners that we are about to execute a rule entry then scope
 			g.notifyExecuteRuleEntry(cycle, runner)
 			// execute the top most prioritized rule

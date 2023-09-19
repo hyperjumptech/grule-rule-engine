@@ -128,6 +128,7 @@ func (e *ArrayMapSelector) Evaluate(dataContext IDataContext, memory *WorkingMem
 	if e.Expression != nil {
 		val, err := e.Expression.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return val, err
 		}
 		e.Value = val
