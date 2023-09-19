@@ -39,6 +39,7 @@ type DataContext struct {
 	retracted           []string
 	variableChangeCount uint64
 	complete            bool
+	ruleEntry           *RuleEntry
 }
 
 func (ctx *DataContext) GetKeys() []string {
@@ -63,6 +64,15 @@ func (ctx *DataContext) IsComplete() bool {
 	return ctx.complete
 }
 
+func (ctx *DataContext) GetRuleEntry() *RuleEntry {
+
+	return ctx.ruleEntry
+}
+
+func (ctx *DataContext) SetRuleEntry(re *RuleEntry) {
+	ctx.ruleEntry = re
+}
+
 // IDataContext is the interface for the DataContext struct.
 type IDataContext interface {
 	ResetVariableChangeCount()
@@ -74,6 +84,8 @@ type IDataContext interface {
 	Get(key string) model.ValueNode
 	GetKeys() []string
 
+	SetRuleEntry(re *RuleEntry)
+	GetRuleEntry() *RuleEntry
 	Retract(key string)
 	IsRetracted(key string) bool
 	Complete()

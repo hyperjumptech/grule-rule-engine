@@ -134,6 +134,7 @@ func (e *ArgumentList) Evaluate(dataContext IDataContext, memory *WorkingMemory)
 	for i, exp := range e.Arguments {
 		val, err := exp.Evaluate(dataContext, memory)
 		if err != nil {
+
 			return values, err
 		}
 		values[i] = val

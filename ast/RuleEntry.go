@@ -167,7 +167,7 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (can bool, err error) {
 	if ctx.Err() != nil {
 
-		return false, ctx.Err()
+		return false, fmt.Errorf("context error on evaluating rule %s. got %w", e.RuleName, ctx.Err())
 	}
 	defer func() {
 		if r := recover(); r != nil {
@@ -176,17 +176,18 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 		}
 	}()
 	if e.Retracted {
+
 		return false, nil
 	}
 	val, err := e.WhenScope.Evaluate(dataContext, memory)
 	if err != nil {
-		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName, err)
+		AstLog.Errorf("Error while evaluating rule '%s', got %v", e.RuleName, err)
 
-		return false, err
+		return false, fmt.Errorf("evaluating expression in rule '%s' the when raised an error. got %v", dataContext.GetRuleEntry().RuleName, err)
 	}
 	if val.Kind() != reflect.Bool {
 
-		return false, fmt.Errorf("expression in when is not a boolean expression : %s", e.WhenScope.Expression.GetGrlText())
+		return false, fmt.Errorf("evaluating expression in rule '%s', the when is not a boolean expression : %s", dataContext.GetRuleEntry().RuleName, e.WhenScope.Expression.GetGrlText())
 	}
 
 	return val.Bool(), nil
@@ -196,7 +197,7 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 func (e *RuleEntry) Execute(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (err error) {
 	if ctx.Err() != nil {
 
-		return ctx.Err()
+		return fmt.Errorf("context error on executing rule %s. got %w", e.RuleName, ctx.Err())
 	}
 	if e.ThenScope == nil {
 
@@ -204,7 +205,7 @@ func (e *RuleEntry) Execute(ctx context.Context, dataContext IDataContext, memor
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("rule engine execute panic ! recovered : %v", r)
+			err = fmt.Errorf("rule engine execute panic on rule %s ! recovered : %v", e.RuleName, r)
 		}
 	}()
 
