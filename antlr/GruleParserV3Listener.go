@@ -16,8 +16,6 @@ package antlr
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"strconv"
 	"strings"
 
@@ -41,25 +39,7 @@ var (
 
 // SetLogger changes default logger on external
 func SetLogger(log interface{}) {
-	var entry logger.LogEntry
-
-	switch log.(type) {
-	case *zap.Logger:
-		log, ok := log.(*zap.Logger)
-		if !ok {
-			return
-		}
-		entry = logger.NewZap(log)
-	case *logrus.Logger:
-		log, ok := log.(*logrus.Logger)
-		if !ok {
-			return
-		}
-		entry = logger.NewLogrus(log)
-	default:
-		return
-	}
-
+	entry := logger.NewLogEntry(log)
 	LoggerV3 = entry.WithFields(loggerV3Fields)
 }
 

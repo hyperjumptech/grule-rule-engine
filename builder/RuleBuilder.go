@@ -16,11 +16,10 @@ package builder
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
-	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
@@ -40,27 +39,7 @@ var (
 
 // SetLogger changes default logger on external
 func SetLogger(log interface{}) {
-	var entry logger.LogEntry
-
-	switch log.(type) {
-	case *zap.Logger:
-		log, ok := log.(*zap.Logger)
-		if !ok {
-
-			return
-		}
-		entry = logger.NewZap(log)
-	case *logrus.Logger:
-		log, ok := log.(*logrus.Logger)
-		if !ok {
-
-			return
-		}
-		entry = logger.NewLogrus(log)
-	default:
-
-		return
-	}
+	entry := logger.NewLogEntry(log)
 
 	BuilderLog = entry.WithFields(builderLogFields)
 }

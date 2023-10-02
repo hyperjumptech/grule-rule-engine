@@ -17,8 +17,6 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"sort"
 	"time"
 
@@ -42,27 +40,7 @@ var (
 
 // SetLogger changes default logger on external
 func SetLogger(externalLog interface{}) {
-	var entry logger.LogEntry
-
-	switch externalLog.(type) {
-	case *zap.Logger:
-		log, ok := externalLog.(*zap.Logger)
-		if !ok {
-
-			return
-		}
-		entry = logger.NewZap(log)
-	case *logrus.Logger:
-		log, ok := externalLog.(*logrus.Logger)
-		if !ok {
-
-			return
-		}
-		entry = logger.NewLogrus(log)
-	default:
-
-		return
-	}
+	entry := logger.NewLogEntry(externalLog)
 
 	log = entry.WithFields(logFields)
 }

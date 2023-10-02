@@ -91,28 +91,24 @@ func init() {
 
 // SetLogger changes default logger on external
 func SetLogger(externalLog interface{}) {
-	switch externalLog.(type) {
-	case *zap.Logger:
-		log, ok := externalLog.(*zap.Logger)
-		if !ok {
-
-			return
-		}
-		Log = NewZap(log)
-	case *logrus.Logger:
-		log, ok := externalLog.(*logrus.Logger)
-		if !ok {
-
-			return
-		}
-		Log = NewLogrus(log)
-	default:
-
-		return
-	}
+	Log = NewLogEntry(externalLog)
 }
 
 // SetLogLevel will set the logger log level
 func SetLogLevel(lvl Level) {
 	Log.Level = lvl
+}
+
+// NewLogEntry creates a LogEntry instance with log, log should be *zap.Logger or *logrus.Logger
+func NewLogEntry(log any) (logger LogEntry) {
+	switch _log := log.(type) {
+	case *zap.Logger:
+		logger = NewZap(_log)
+
+	case *logrus.Logger:
+		logger = NewLogrus(_log)
+
+	}
+
+	return
 }
