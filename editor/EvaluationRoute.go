@@ -9,7 +9,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	mux "github.com/hyperjumptech/hyper-mux"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -25,7 +25,7 @@ type EvaluateRequest struct {
 
 func InitializeEvaluationRoute(router *mux.HyperMux) {
 	router.AddRoute("/evaluate", http.MethodPost, func(writer http.ResponseWriter, reader *http.Request) {
-		bodyBytes, err := ioutil.ReadAll(reader.Body)
+		bodyBytes, err := io.ReadAll(reader.Body)
 		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			_, _ = writer.Write([]byte(fmt.Sprintf("error while reading body stream. got %v", err)))
