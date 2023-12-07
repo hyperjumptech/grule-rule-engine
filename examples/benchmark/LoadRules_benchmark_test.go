@@ -19,7 +19,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -58,7 +58,7 @@ func Benchmark_Grule_Load_Rules(b *testing.B) {
 }
 
 func load100RulesIntoKnowledgeBase() {
-	input, _ := ioutil.ReadFile("100_rules.grl")
+	input, _ := os.ReadFile("100_rules.grl")
 	rules := string(input)
 	fact := &RideFact{
 		Distance: 6000,
@@ -74,7 +74,7 @@ func load100RulesIntoKnowledgeBase() {
 }
 
 func load1000RulesIntoKnowledgeBase() {
-	input, _ := ioutil.ReadFile("1000_rules.grl")
+	input, _ := os.ReadFile("1000_rules.grl")
 	rules := string(input)
 	fact := &RideFact{
 		Distance: 6000,
