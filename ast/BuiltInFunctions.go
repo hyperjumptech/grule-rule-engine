@@ -15,12 +15,13 @@
 package ast
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"math"
 	"reflect"
+	"slices"
 	"strings"
 	"time"
 
+	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -536,4 +537,9 @@ func (gf *BuiltInFunctions) Tanh(x float64) float64 {
 func (gf *BuiltInFunctions) Trunc(x float64) float64 {
 
 	return math.Trunc(x)
+}
+
+// ContainsStr is a wrapper function for slices.Contains function for string
+func (gf *BuiltInFunctions) ContainsStr(s []string, v string) bool {
+	return slices.Contains(s, v)
 }
