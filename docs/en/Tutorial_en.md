@@ -162,7 +162,10 @@ To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase`
 from `KnowledgeLibrary` 
 
 ```go
-knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
+knowledgeBase, err := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
+if err != nil {
+    panic(err)
+}
 ```
 
 Each instance you obtain from the `knowledgeLibrary` is a unique *clone* from
