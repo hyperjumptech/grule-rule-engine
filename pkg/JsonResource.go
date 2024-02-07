@@ -32,7 +32,7 @@ type GruleJSON struct {
 	Then        []interface{} `json:"then"`
 }
 
-// JSONResource will parse rules in JSON fromat from underlying resource provider.
+// JSONResource will parse rules in JSON format from underlying resource provider.
 type JSONResource struct {
 	subRes Resource
 }
