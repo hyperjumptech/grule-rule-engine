@@ -18,8 +18,8 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -59,7 +59,7 @@ type ReaderResource struct {
 // Load will load the resource into byte array.
 func (res *ReaderResource) Load() ([]byte, error) {
 
-	return ioutil.ReadAll(res.Reader)
+	return io.ReadAll(res.Reader)
 }
 
 // String will state the resource source.
@@ -124,7 +124,7 @@ func (bundle *FileResourceBundle) MustLoad() []Resource {
 func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 	logger.Log.Tracef("Enter directory %s", path)
 
-	finfos, err := ioutil.ReadDir(path)
+	finfos, err := os.ReadDir(path)
 
 	if err != nil {
 
@@ -148,7 +148,7 @@ func (bundle *FileResourceBundle) loadPath(path string) ([]Resource, error) {
 				}
 				if matched {
 					logger.Log.Debugf("Loading file %s", fulPath)
-					bytes, err := ioutil.ReadFile(fulPath)
+					bytes, err := os.ReadFile(fulPath)
 					if err != nil {
 						return nil, err
 					}
@@ -182,7 +182,7 @@ func (res *FileResource) Load() ([]byte, error) {
 
 		return res.Bytes, nil
 	}
-	data, err := ioutil.ReadFile(res.Path)
+	data, err := os.ReadFile(res.Path)
 	if err != nil {
 
 		return nil, err
@@ -280,7 +280,7 @@ func (res *URLResource) Load() ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 
 		return nil, err
@@ -360,7 +360,7 @@ func (bundle *GITResourceBundle) loadPath(url, path string, fileSyst billy.Files
 
 						return nil, err
 					}
-					bytes, err := ioutil.ReadAll(f)
+					bytes, err := io.ReadAll(f)
 					if err != nil {
 
 						return nil, err
