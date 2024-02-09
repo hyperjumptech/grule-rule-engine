@@ -183,7 +183,7 @@ func parseRule(rule *GruleJSON) (string, error) {
 	}
 	if rule.Then == nil {
 
-		return "", fmt.Errorf("rule thenn condition cannot be nil")
+		return "", fmt.Errorf("rule then condition cannot be nil")
 	}
 	var stringBuilder strings.Builder
 	stringBuilder.WriteString("rule ")
