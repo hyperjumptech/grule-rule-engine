@@ -18,8 +18,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
+	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -287,7 +289,12 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		val, err := e.ExpressionAtom.Evaluate(dataContext, memory)
 		if err == nil {
 			e.Value = val
-			e.Evaluated = true
+			if strings.Contains(e.GrlText, "NoCache(") { // IVOSH
+				e.ExpressionAtom.Evaluated = false
+				e.Evaluated = false
+			} else {
+				e.Evaluated = true
+			}
 		}
 
 		return val, err
