@@ -13,7 +13,7 @@
 Using JSON data to represent facts in Grule is available as of version 1.8.0.
 It enables the user to express their facts in JSON format and then to have
 those facts added into the `DataContext` just as it would normally be done in
-code. The loaded JSON facts are now "visible" the the Grule scripts (the GRLs).
+code. The loaded JSON facts are now "visible" to the Grule scripts (the GRLs).
 
 ## Adding JSON as fact
 
