@@ -736,6 +736,11 @@ func (c *LevelListener) EvaluateRuleEntry(cycle uint64, entry *ast.RuleEntry, ca
 func (c *LevelListener) ExecuteRuleEntry(cycle uint64, entry *ast.RuleEntry) {
 }
 
+// TestGruleListener is a test function that verifies the behavior of the GruleEngineListener.
+// It creates a DataPoint with some thresholds, sets up a GruleEngine with a custom Listener,
+// and executes the engine. The test then verifies that the execution has aborted when a global
+// condition is met and that rule cycle gets stopped, by validating DataPoint's TurnedOn and Index
+// values are set to the expected MaxTurnOns value.
 func TestGruleListener(t *testing.T) {
 	// Given
 	datapoint := &DataPoint{
@@ -765,11 +770,12 @@ func TestGruleListener(t *testing.T) {
 
 	engine := NewGruleEngine()
 
+	// When
 	engine.Listeners = append(engine.Listeners, &LevelListener{kb: kb, dc: dctx, dp: datapoint})
-
 	err = engine.Execute(dctx, kb)
 	assert.NoError(t, err)
 
+	// Then
 	assert.Equal(t, MaxTurnOns, datapoint.TurnedOn) // Limit at MaxTurnOns.
 	assert.Equal(t, MaxTurnOns, datapoint.Index)
 }
