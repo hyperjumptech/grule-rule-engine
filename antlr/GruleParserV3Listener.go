@@ -35,7 +35,7 @@ var (
 		"struct": "GruleParserV3Listener",
 	}
 
-	// LoggerV3 is a logger instance twith default fields for grule
+	// LoggerV3 is a logger instance with default fields for grule
 	LoggerV3 = logger.Log.WithFields(loggerV3Fields)
 )
 
