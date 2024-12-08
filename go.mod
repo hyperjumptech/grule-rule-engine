@@ -3,7 +3,7 @@ module github.com/hyperjumptech/grule-rule-engine
 go 1.20
 
 require (
-	github.com/antlr/antlr4/runtime/Go/antlr v1.4.10
+	github.com/antlr4-go/antlr/v4 v4.13.0
 	github.com/bmatcuk/doublestar v1.3.4
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.11.0
@@ -35,6 +35,7 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
+	golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect

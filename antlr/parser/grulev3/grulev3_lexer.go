@@ -1,13 +1,12 @@
-// Code generated from C:/Users/Ferdinand/WSL/workspace/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev3.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from grulev3.g4 by ANTLR 4.13.2. DO NOT EDIT.
 
 package grulev3
 
 import (
 	"fmt"
+	"github.com/antlr4-go/antlr/v4"
 	"sync"
 	"unicode"
-
-	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // Suppress unused import error
@@ -22,34 +21,34 @@ type grulev3Lexer struct {
 	// TODO: EOF string
 }
 
-var grulev3lexerLexerStaticData struct {
+var Grulev3LexerLexerStaticData struct {
 	once                   sync.Once
 	serializedATN          []int32
-	channelNames           []string
-	modeNames              []string
-	literalNames           []string
-	symbolicNames          []string
-	ruleNames              []string
-	predictionContextCache *antlr.PredictionContextCache
+	ChannelNames           []string
+	ModeNames              []string
+	LiteralNames           []string
+	SymbolicNames          []string
+	RuleNames              []string
+	PredictionContextCache *antlr.PredictionContextCache
 	atn                    *antlr.ATN
 	decisionToDFA          []*antlr.DFA
 }
 
 func grulev3lexerLexerInit() {
-	staticData := &grulev3lexerLexerStaticData
-	staticData.channelNames = []string{
+	staticData := &Grulev3LexerLexerStaticData
+	staticData.ChannelNames = []string{
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
 	}
-	staticData.modeNames = []string{
+	staticData.ModeNames = []string{
 		"DEFAULT_MODE",
 	}
-	staticData.literalNames = []string{
+	staticData.LiteralNames = []string{
 		"", "','", "'+'", "'-'", "'/'", "'*'", "'%'", "'.'", "';'", "'{'", "'}'",
 		"'('", "')'", "'['", "']'", "", "", "", "'&&'", "'||'", "", "", "",
 		"'!'", "", "'=='", "'='", "'+='", "'-='", "'/='", "'*='", "'>'", "'<'",
 		"'>='", "'<='", "'!='", "'&'", "'|'",
 	}
-	staticData.symbolicNames = []string{
+	staticData.SymbolicNames = []string{
 		"", "", "PLUS", "MINUS", "DIV", "MUL", "MOD", "DOT", "SEMICOLON", "LR_BRACE",
 		"RR_BRACE", "LR_BRACKET", "RR_BRACKET", "LS_BRACKET", "RS_BRACKET",
 		"RULE", "WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NIL_LITERAL",
@@ -59,7 +58,7 @@ func grulev3lexerLexerInit() {
 		"DECIMAL_EXPONENT", "HEX_FLOAT_LIT", "HEX_EXPONENT", "DEC_LIT", "HEX_LIT",
 		"OCT_LIT", "SPACE", "COMMENT", "LINE_COMMENT",
 	}
-	staticData.ruleNames = []string{
+	staticData.RuleNames = []string{
 		"T__0", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 		"M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 		"ISC", "IC", "PLUS", "MINUS", "DIV", "MUL", "MOD", "DOT", "SEMICOLON",
@@ -72,7 +71,7 @@ func grulev3lexerLexerInit() {
 		"DEC_LIT", "HEX_LIT", "OCT_LIT", "HEX_DIGITS", "DEC_DIGITS", "OCT_DIGITS",
 		"DEC_DIGIT", "OCT_DIGIT", "HEX_DIGIT", "SPACE", "COMMENT", "LINE_COMMENT",
 	}
-	staticData.predictionContextCache = antlr.NewPredictionContextCache()
+	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
 		4, 0, 50, 484, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2,
 		4, 7, 4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2,
@@ -308,7 +307,7 @@ func grulev3lexerLexerInit() {
 // Newgrulev3Lexer(). You can call this function if you wish to initialize the static state ahead
 // of time.
 func Grulev3LexerInit() {
-	staticData := &grulev3lexerLexerStaticData
+	staticData := &Grulev3LexerLexerStaticData
 	staticData.once.Do(grulev3lexerLexerInit)
 }
 
@@ -317,13 +316,13 @@ func Newgrulev3Lexer(input antlr.CharStream) *grulev3Lexer {
 	Grulev3LexerInit()
 	l := new(grulev3Lexer)
 	l.BaseLexer = antlr.NewBaseLexer(input)
-	staticData := &grulev3lexerLexerStaticData
-	l.Interpreter = antlr.NewLexerATNSimulator(l, staticData.atn, staticData.decisionToDFA, staticData.predictionContextCache)
-	l.channelNames = staticData.channelNames
-	l.modeNames = staticData.modeNames
-	l.RuleNames = staticData.ruleNames
-	l.LiteralNames = staticData.literalNames
-	l.SymbolicNames = staticData.symbolicNames
+	staticData := &Grulev3LexerLexerStaticData
+	l.Interpreter = antlr.NewLexerATNSimulator(l, staticData.atn, staticData.decisionToDFA, staticData.PredictionContextCache)
+	l.channelNames = staticData.ChannelNames
+	l.modeNames = staticData.ModeNames
+	l.RuleNames = staticData.RuleNames
+	l.LiteralNames = staticData.LiteralNames
+	l.SymbolicNames = staticData.SymbolicNames
 	l.GrammarFileName = "grulev3.g4"
 	// TODO: l.EOF = antlr.TokenEOF
 
