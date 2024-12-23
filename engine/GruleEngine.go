@@ -17,10 +17,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"sort"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -48,14 +49,12 @@ func SetLogger(externalLog interface{}) {
 	case *zap.Logger:
 		log, ok := externalLog.(*zap.Logger)
 		if !ok {
-
 			return
 		}
 		entry = logger.NewZap(log)
 	case *logrus.Logger:
 		log, ok := externalLog.(*logrus.Logger)
 		if !ok {
-
 			return
 		}
 		entry = logger.NewLogrus(log)
@@ -70,7 +69,6 @@ func SetLogger(externalLog interface{}) {
 // NewGruleEngine will create new instance of GruleEngine struct.
 // It will set the max cycle to 5000
 func NewGruleEngine() *GruleEngine {
-
 	return &GruleEngine{
 		MaxCycle: DefaultCycleCount,
 	}
@@ -85,7 +83,6 @@ type GruleEngine struct {
 
 // Execute function is the same as ExecuteWithContext(context.Background())
 func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
-
 	return g.ExecuteWithContext(context.Background(), dataCtx, knowledge)
 }
 
@@ -94,6 +91,24 @@ func (g *GruleEngine) notifyEvaluateRuleEntry(cycle uint64, entry *ast.RuleEntry
 	if g.Listeners != nil && len(g.Listeners) > 0 {
 		for _, gl := range g.Listeners {
 			gl.EvaluateRuleEntry(cycle, entry, candidate)
+		}
+	}
+}
+
+// notifyOnEvaluateRuleEntryErr() will notify all registered listener that a rule is being evaluated.
+func (g *GruleEngine) notifyOnEvaluateRuleEntryErr(cycle uint64, entry *ast.RuleEntry, err error) {
+	if g.Listeners != nil && len(g.Listeners) > 0 {
+		for _, gl := range g.Listeners {
+			gl.OnEvaluateRuleEntryErr(cycle, entry, err)
+		}
+	}
+}
+
+// notifyOnEvaluateRuleEntryErr() will notify all registered listener that a rule is being evaluated.
+func (g *GruleEngine) notifyOnExecuteRuleEntryErr(cycle uint64, entry *ast.RuleEntry, err error) {
+	if g.Listeners != nil && len(g.Listeners) > 0 {
+		for _, gl := range g.Listeners {
+			gl.OnExecuteRuleEntryErr(cycle, entry, err)
 		}
 	}
 }
@@ -121,7 +136,6 @@ func (g *GruleEngine) notifyBeginCycle(cycle uint64) {
 // The engine also do conflict resolution of which rule to execute.
 func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) error {
 	if knowledge == nil || dataCtx == nil {
-
 		return fmt.Errorf("nil KnowledgeBase or DataContext is not allowed")
 	}
 
@@ -176,9 +190,9 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 				// test if this rule entry v can execute.
 				can, err := ruleEntry.Evaluate(ctx, dataCtx, knowledge.WorkingMemory)
 				if err != nil {
+					g.notifyOnEvaluateRuleEntryErr(cycle+1, ruleEntry, err)
 					log.Errorf("Failed testing condition for rule : %s. Got error %v", ruleEntry.RuleName, err)
 					if g.ReturnErrOnFailedRuleEvaluation {
-
 						return err
 					}
 				}
@@ -225,6 +239,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// execute the top most prioritized rule
 			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
+				g.notifyOnExecuteRuleEntryErr(cycle+1, runner, err)
 				log.Errorf("Failed execution rule : %s. Got error %v", runner.RuleName, err)
 
 				return fmt.Errorf("error while executing rule %s. got %w", runner.RuleName, err)
@@ -249,7 +264,6 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 // Returns []*ast.RuleEntry order by salience
 func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *ast.KnowledgeBase) ([]*ast.RuleEntry, error) {
 	if knowledge == nil || dataCtx == nil {
-
 		return nil, fmt.Errorf("nil KnowledgeBase or DataContext is not allowed")
 	}
 
@@ -269,7 +283,7 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Debugf("Initializing Context")
 	knowledge.InitializeContext(dataCtx)
 
-	//Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
+	// Loop through all the rule entries available in the knowledge base and add to the response list if it is able to evaluate
 	// Select all rule entry that can be executed.
 	log.Tracef("Select all rule entry that can be executed.")
 	runnable := make([]*ast.RuleEntry, 0)
@@ -292,7 +306,6 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 	log.Debugf("Matching rules length %d.", len(runnable))
 	if len(runnable) > 1 {
 		sort.SliceStable(runnable, func(i, j int) bool {
-
 			return runnable[i].Salience > runnable[j].Salience
 		})
 	}

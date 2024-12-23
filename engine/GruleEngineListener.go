@@ -10,4 +10,8 @@ type GruleEngineListener interface {
 	ExecuteRuleEntry(cycle uint64, entry *ast.RuleEntry)
 	// BeginCycle will be called by the engine every time it start a new evaluation cycle
 	BeginCycle(cycle uint64)
+	// OnEvaluateRuleEntryErr will be called by the engine if it encounter an error while evaluating a rule entry
+	OnEvaluateRuleEntryErr(cycle uint64, entry *ast.RuleEntry, err error)
+	// OnExecuteRuleEntryErr will be called by the engine if it encounter an error while executing a rule entry
+	OnExecuteRuleEntryErr(cycle uint64, entry *ast.RuleEntry, err error)
 }
