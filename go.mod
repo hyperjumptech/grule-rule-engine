@@ -12,7 +12,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.25.0
-	gopkg.in/src-d/go-billy.v4 v4.3.2
 )
 
 require (
