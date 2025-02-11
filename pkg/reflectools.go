@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright DataWiseHQ/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/DataWiseHQ/grule-rule-engine/logger"
 )
 
 // GetFunctionList get list of functions in a struct instance

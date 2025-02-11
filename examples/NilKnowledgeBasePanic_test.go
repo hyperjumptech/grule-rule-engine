@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright DataWiseHQ/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package examples
 import (
 	"testing"
 
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
+	"github.com/DataWiseHQ/grule-rule-engine/ast"
+	"github.com/DataWiseHQ/grule-rule-engine/engine"
 
 	"github.com/stretchr/testify/assert"
 )

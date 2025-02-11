@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright DataWiseHQ/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/DataWiseHQ/grule-rule-engine/pkg"
 )
 
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
@@ -82,7 +82,7 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 	defer func() {
 		if r := recover(); r != nil {
 			retKb = nil
-			retErr = fmt.Errorf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/hyperjumptech/grule-rule-engine/issues", r)
+			retErr = fmt.Errorf("panic recovered during LoadKnowledgeBaseFromReader, recover \"%v\". send us your report to https://github.com/DataWiseHQ/grule-rule-engine/issues", r)
 		}
 	}()
 

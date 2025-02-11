@@ -30,17 +30,17 @@ Mohon dicatat bahwa Grule menggunakan Go 1.13
 Untuk menggunakan Grule didalam proyek anda, cukup dengan mudah masukannya.
 
 ```text
-$go get github.com/hyperjumptech/grule-rule-engine
+$go get github.com/DataWiseHQ/grule-rule-engine
 ```
 
 Dalam file `.go` anda,
 
 ```go
 import (
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/engine"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/DataWiseHQ/grule-rule-engine/ast"
+	"github.com/DataWiseHQ/grule-rule-engine/builder"
+	"github.com/DataWiseHQ/grule-rule-engine/engine"
+	"github.com/DataWiseHQ/grule-rule-engine/pkg"
 ) 
 ``` 
 
@@ -195,7 +195,7 @@ if err != nil {
 #### Dari GIT
 
 ```go
-bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle := pkg.NewGITResourceBundle("https://github.com/DataWiseHQ/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
@@ -314,7 +314,7 @@ if err != nil {
 ### From GIT
 
 ```go
-bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle := pkg.NewGITResourceBundle("https://github.com/DataWiseHQ/grule-rule-engine.git", "/**/*.grl")
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)

@@ -1,6 +1,6 @@
 package engine
 
-import "github.com/hyperjumptech/grule-rule-engine/ast"
+import "github.com/DataWiseHQ/grule-rule-engine/ast"
 
 // GruleEngineListener is an interface to be implemented by those who want to listen the Engine execution.
 type GruleEngineListener interface {

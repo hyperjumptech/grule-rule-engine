@@ -1,4 +1,4 @@
-module github.com/hyperjumptech/grule-rule-engine
+module github.com/DataWiseHQ/grule-rule-engine
 
 go 1.20
 

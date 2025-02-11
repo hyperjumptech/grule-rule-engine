@@ -159,7 +159,7 @@ Jest jeszcze jedna rzecz, na którą warto zwrócić uwagę: niektóre implement
 
 ```go
 import (
-    "github.com/hyperjumptech/grule-rule-engine/logger"
+    "github.com/DataWiseHQ/grule-rule-engine/logger"
     "github.com/sirupsen/logrus"
 )
 ...

@@ -234,7 +234,7 @@ business complexity seems to be quite clear.
 
 ```go
 import (
-    "github.com/hyperjumptech/grule-rule-engine/logger"
+    "github.com/DataWiseHQ/grule-rule-engine/logger"
     "github.com/sirupsen/logrus"
 )
 ...

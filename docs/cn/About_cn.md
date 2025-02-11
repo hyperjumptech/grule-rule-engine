@@ -1,4 +1,4 @@
-[![Gopher Holds The Rules](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/hyperjumptech/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
+[![Gopher Holds The Rules](https://github.com/DataWiseHQ/grule-rule-engine/blob/master/gopher-grule.png?raw=true)](https://github.com/DataWiseHQ/grule-rule-engine/blob/master/gopher-grule.png?raw=true)
 
 
 __"Gopher 遵守规则"__
@@ -16,7 +16,7 @@ __"Gopher 遵守规则"__
 # Grule
 
 ```go
-import "github.com/hyperjumptech/grule-rule-engine"
+import "github.com/DataWiseHQ/grule-rule-engine"
 ```
 
 ## Go 规则引擎

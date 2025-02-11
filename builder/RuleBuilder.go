@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright DataWiseHQ/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ package builder
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/DataWiseHQ/grule-rule-engine/ast"
+	"github.com/DataWiseHQ/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
-	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	antlr2 "github.com/DataWiseHQ/grule-rule-engine/antlr"
+	parser "github.com/DataWiseHQ/grule-rule-engine/antlr/parser/grulev3"
+	"github.com/DataWiseHQ/grule-rule-engine/pkg"
 )
 
 var (

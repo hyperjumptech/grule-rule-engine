@@ -1,7 +1,7 @@
 //go:build go1.16
 // +build go1.16
 
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright DataWiseHQ/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import (
 	"strings"
 
 	"github.com/bmatcuk/doublestar"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/DataWiseHQ/grule-rule-engine/logger"
 )
 
 // EmbeddedResource is a struct that will load an embedded file from an embed.FS struct.
