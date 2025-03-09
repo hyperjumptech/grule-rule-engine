@@ -1,6 +1,6 @@
 # GNU Make >= 4.3
 
-## Configuration
+## Configuration (See ../ANTLR.md)
 
 OUTPUT_DIR = parser/grulev3
 
