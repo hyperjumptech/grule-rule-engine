@@ -5,7 +5,7 @@
 
 ## Download ANTLR4 tools
 
-The version currently used can be downloaded [here (antlr-4.13.0-complete.jar)](https://github.com/antlr/website-antlr4/blob/gh-pages/download/antlr-4.13.0-complete.jar).
+The version currently used can be downloaded [here (antlr-4.13.1-complete.jar)](https://github.com/antlr/website-antlr4/blob/gh-pages/download/antlr-4.13.1-complete.jar).
 Or you can always go to [ANTLR4 download page](https://www.antlr.org/download.html).
 
 Download the `.jar` file and place it somewhere a directory.
@@ -16,7 +16,7 @@ Install java and you're ready to work with ANTLR4.
 ## Making ANTLR alias.
 
 ```bash
-alias antlr='java -jar /path/to/downloaded/antlr-4.13.0-complete.jar'
+alias antlr='java -jar /path/to/downloaded/antlr-4.13.1-complete.jar'
 ```
 
 ## Executing ANTLR
@@ -35,6 +35,6 @@ The command `make clean` can be used to remove the generated content of the
 `antlr/parser/grulev3` directory.
 Then, it is possible to generate the parser code with:
 ```bash
-make ANTLR="java -jar /path/to/downloaded/antlr-4.13.0-complete.jar"
+make ANTLR="java -jar /path/to/downloaded/antlr-4.13.1-complete.jar"
 ```
 
