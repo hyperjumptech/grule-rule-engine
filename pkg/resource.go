@@ -17,12 +17,13 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"gopkg.in/src-d/go-billy.v4"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"github.com/go-git/go-billy/v5"
 
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 
