@@ -283,6 +283,7 @@ if err != nil {
 
 ```go
 bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle.RefName = "refs/heads/main" // Specify your branch, defaults to master branch
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
