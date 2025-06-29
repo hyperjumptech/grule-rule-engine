@@ -202,7 +202,7 @@ func TestGoValueNode_Map(t *testing.T) {
 	childrenChristenNode, err := childrenNode.GetChildNodeBySelector(reflect.ValueOf("Christen"))
 	assert.NoError(t, err)
 	assert.True(t, childrenChristenNode.IsObject())
-	t.Logf(childrenChristenNode.IdentifiedAs())
+	t.Logf("%s", childrenChristenNode.IdentifiedAs())
 }
 
 func TestGoValueNode_Array_Set(t *testing.T) {
