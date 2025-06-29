@@ -1,6 +1,6 @@
 module github.com/hyperjumptech/grule-rule-engine
 
-go 1.24.4
+go 1.24
 
 require (
 	github.com/antlr/antlr4/runtime/Go/antlr v1.4.10
