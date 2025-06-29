@@ -196,7 +196,7 @@ func TestItemPriceChecker_TestLexer(t *testing.T) {
 		if nt.GetTokenType() == antlr.TokenEOF {
 			break
 		}
-		t.Logf(nt.GetText())
+		t.Logf("%s", nt.GetText())
 	}
 }
 

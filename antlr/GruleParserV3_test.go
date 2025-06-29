@@ -16,7 +16,7 @@ package antlr
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -105,7 +105,7 @@ type GrandChild struct {
 }
 
 func TestV3Lexer(t *testing.T) {
-	data, err := ioutil.ReadFile("./sample4.grl")
+	data, err := os.ReadFile("./sample4.grl")
 	if err != nil {
 		t.Fatal(err)
 	} else {
@@ -129,7 +129,7 @@ func TestV3Lexer(t *testing.T) {
 
 func TestV3Parser(t *testing.T) {
 	// logrus.SetLevel(logrus.TraceLevel)
-	data, err := ioutil.ReadFile("./sample4.grl")
+	data, err := os.ReadFile("./sample4.grl")
 	if err != nil {
 		t.Fatal(err)
 	} else {
