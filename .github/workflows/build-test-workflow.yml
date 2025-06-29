@@ -9,10 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
-      - uses: actions/checkout@v3
+          go-version: '1.24'
+      - uses: actions/checkout@v4
       - name: Fetching dependencies
         run : go get -v -t -d ./...
       - name: Execute test
