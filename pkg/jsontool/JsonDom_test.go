@@ -188,7 +188,7 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 	s, err := jdata.GetString("fullname")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if s != "Bruce Wayne" {
 		t.Logf("fail validate full name")
@@ -214,7 +214,7 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 	i, err := jdata.GetInt("age")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if i != 35 {
 		t.Logf("fail validate age")
@@ -252,7 +252,7 @@ func TestJsonNodeOperations(t *testing.T) {
 
 	m, err := jdata.IsMap("address")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if !m {
 		t.Logf("address is a map")
@@ -261,7 +261,7 @@ func TestJsonNodeOperations(t *testing.T) {
 
 	s, err = jdata.GetString("address.street1")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if s != "Super Mansion" {
 		t.Logf("fail validate address.street1")
@@ -283,7 +283,7 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 	b, err := jdata.IsArray("friends")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if !b {
 		t.Logf("fail validate friends as array")
@@ -312,7 +312,7 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 	b, err = jdata.IsString("friends[1].fullname")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if !b {
 		t.Logf("fail validate friends[1].fullname type")
@@ -345,7 +345,7 @@ func TestJsonNodeOperations(t *testing.T) {
 	}
 	str, err = jdata.GetString("friends[1].fullname")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%v", err.Error())
 	}
 	if str != "Lara Croft" {
 		t.Logf("fail validate friends[1].fullname value")
