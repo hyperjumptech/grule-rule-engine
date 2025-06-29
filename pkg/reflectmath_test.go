@@ -130,7 +130,7 @@ func TestStringComparison(t *testing.T) {
 	for i, v := range StrCompareTest {
 		val, err := EvaluateEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Eq {
 			t.Errorf("%d Expect \"%s\" and \"%s\" EQ expect %v but %v", i, v.A, v.B, v.Eq, !v.Eq)
@@ -138,7 +138,7 @@ func TestStringComparison(t *testing.T) {
 
 		val, err = EvaluateNotEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Neq {
 			t.Errorf("%d Expect \"%s\" and \"%s\" NEQ expect %v but %v", i, v.A, v.B, v.Neq, !v.Neq)
@@ -146,7 +146,7 @@ func TestStringComparison(t *testing.T) {
 
 		val, err = EvaluateGreaterThan(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Gt {
 			t.Errorf("%d Expect \"%s\" and \"%s\" GT expect %v but %v", i, v.A, v.B, v.Gt, !v.Gt)
@@ -154,7 +154,7 @@ func TestStringComparison(t *testing.T) {
 
 		val, err = EvaluateGreaterThanEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Gte {
 			t.Errorf("%d Expect \"%s\" and \"%s\" GTE expect %v but %v", i, v.A, v.B, v.Gte, !v.Gte)
@@ -162,7 +162,7 @@ func TestStringComparison(t *testing.T) {
 
 		val, err = EvaluateLesserThan(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Lt {
 			t.Errorf("%d Expect \"%s\" and \"%s\" LT expect %v but %v", i, v.A, v.B, v.Lt, !v.Lt)
@@ -170,7 +170,7 @@ func TestStringComparison(t *testing.T) {
 
 		val, err = EvaluateLesserThanEqual(reflect.ValueOf(v.A), reflect.ValueOf(v.B))
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Errorf("%s", err.Error())
 			t.Fail()
 		} else if val.Bool() != v.Lte {
 			t.Errorf("%d Expect \"%s\" and \"%s\" LTE expect %v but %v", i, v.A, v.B, v.Lte, !v.Lte)

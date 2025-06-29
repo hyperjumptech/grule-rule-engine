@@ -32,7 +32,7 @@ type GruleJSON struct {
 	Then        []interface{} `json:"then"`
 }
 
-// JSONResource will parse rules in JSON fromat from underlying resource provider.
+// JSONResource will parse rules in JSON format from underlying resource provider.
 type JSONResource struct {
 	subRes Resource
 }
@@ -183,7 +183,7 @@ func parseRule(rule *GruleJSON) (string, error) {
 	}
 	if rule.Then == nil {
 
-		return "", fmt.Errorf("rule thenn condition cannot be nil")
+		return "", fmt.Errorf("rule then condition cannot be nil")
 	}
 	var stringBuilder strings.Builder
 	stringBuilder.WriteString("rule ")
@@ -362,7 +362,7 @@ func buildExpressionEx(input map[string]interface{}, depth int) (string, bool, e
 			return "", false, fmt.Errorf("constant must be a string or a numeric value")
 		default:
 
-			return "", false, fmt.Errorf("unknown operator type: " + key)
+			return "", false, fmt.Errorf("unknown operator type: %s", key)
 		}
 	}
 
