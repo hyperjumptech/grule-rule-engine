@@ -17,11 +17,12 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
 	"io"
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/google/uuid"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -43,7 +44,7 @@ type KnowledgeLibrary struct {
 // Although this KnowledgeBase blueprint works, It SHOULD NOT be used directly in the engine.
 // You should obtain KnowledgeBase instance by calling NewKnowledgeBaseInstance
 func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBase {
-	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[GetKnowledgeBaseKey(name, version)]
 	if ok {
 
 		return knowledgeBase
@@ -54,14 +55,14 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 		RuleEntries:   make(map[string]*RuleEntry),
 		WorkingMemory: NewWorkingMemory(name, version),
 	}
-	lib.Library[fmt.Sprintf("%s:%s", name, version)] = knowledgeBase
+	lib.Library[GetKnowledgeBaseKey(name, version)] = knowledgeBase
 
 	return knowledgeBase
 }
 
 // RemoveRuleEntry mark the rule entry as deleted
 func (lib *KnowledgeLibrary) RemoveRuleEntry(ruleName, name string, version string) {
-	nameVersion := fmt.Sprintf("%s:%s", name, version)
+	nameVersion := GetKnowledgeBaseKey(name, version)
 	_, ok := lib.Library[nameVersion]
 	if ok {
 		ruleEntry, ok := lib.Library[nameVersion].RuleEntries[ruleName]
@@ -97,12 +98,12 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 		return nil, err
 	}
 	if overwrite {
-		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
+		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)] = knowledgeBase
 
 		return knowledgeBase, nil
 	}
-	if _, ok := lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)]; !ok {
-		lib.Library[fmt.Sprintf("%s:%s", knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
+	if _, ok := lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)]; !ok {
+		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)] = knowledgeBase
 
 		return knowledgeBase, nil
 	}
@@ -129,7 +130,7 @@ func (lib *KnowledgeLibrary) StoreKnowledgeBaseToWriter(writer io.Writer, name, 
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) (*KnowledgeBase, error) {
-	knowledgeBase, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	knowledgeBase, ok := lib.Library[GetKnowledgeBaseKey(name, version)]
 	if ok {
 		newClone, err := knowledgeBase.Clone(pkg.NewCloneTable())
 		if err != nil {
@@ -312,4 +313,9 @@ func (e *KnowledgeBase) Reset() {
 			re.Retracted = false
 		}
 	}
+}
+
+// GetKnowledgeBaseKey returns the key corresponding to the knowledgeBase in the KnowledgeLibrary
+func GetKnowledgeBaseKey(name, version string) string {
+	return fmt.Sprintf("%s:%s", name, version)
 }
