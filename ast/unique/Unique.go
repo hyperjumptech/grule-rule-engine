@@ -15,30 +15,11 @@
 package unique
 
 import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-var (
-	offset int64 = 0
-	lastMS int64 = 0
-	mutex  sync.Mutex
+	"github.com/google/uuid"
 )
 
 // NewID will create a new unique ID string for this runtime.
 // Uniqueness between system or apps is not necessary.
 func NewID() string {
-	mutex.Lock()
-	defer mutex.Unlock()
-	millisUnix := time.Now().Unix()
-	if lastMS == millisUnix {
-		offset++
-
-		return fmt.Sprintf("%d-%d", lastMS, offset)
-	}
-	lastMS = millisUnix
-	offset = 0
-
-	return fmt.Sprintf("%d-%d", lastMS, offset)
+	return uuid.NewString()
 }
