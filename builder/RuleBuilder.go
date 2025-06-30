@@ -22,7 +22,7 @@ import (
 	"go.uber.org/zap"
 	"time"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/antlr4-go/antlr/v4"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
 	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"

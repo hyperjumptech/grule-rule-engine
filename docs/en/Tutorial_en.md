@@ -162,7 +162,10 @@ To execute a KnowledgeBase, we need to get an instance of this `KnowledgeBase`
 from `KnowledgeLibrary` 
 
 ```go
-knowledgeBase := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
+knowledgeBase, err := knowledgeLibrary.NewKnowledgeBaseInstance("TutorialRules", "0.0.1")
+if err != nil {
+    panic(err)
+}
 ```
 
 Each instance you obtain from the `knowledgeLibrary` is a unique *clone* from
@@ -280,6 +283,7 @@ if err != nil {
 
 ```go
 bundle := pkg.NewGITResourceBundle("https://github.com/hyperjumptech/grule-rule-engine.git", "/**/*.grl")
+bundle.RefName = "refs/heads/main" // Specify your branch, defaults to master branch
 resources := bundle.MustLoad()
 for _, res := range resources {
     err := ruleBuilder.BuildRuleFromResource("TutorialRules", "0.0.1", res)
