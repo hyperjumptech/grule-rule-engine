@@ -90,28 +90,28 @@ func (g *GruleEngine) Execute(dataCtx ast.IDataContext, knowledge *ast.Knowledge
 }
 
 // notifyEvaluateRuleEntry will notify all registered listener that a rule is being evaluated.
-func (g *GruleEngine) notifyEvaluateRuleEntry(cycle uint64, entry *ast.RuleEntry, candidate bool) {
+func (g *GruleEngine) notifyEvaluateRuleEntry(ctx context.Context, cycle uint64, entry *ast.RuleEntry, candidate bool) {
 	if g.Listeners != nil && len(g.Listeners) > 0 {
 		for _, gl := range g.Listeners {
-			gl.EvaluateRuleEntry(cycle, entry, candidate)
+			gl.EvaluateRuleEntry(ctx, cycle, entry, candidate)
 		}
 	}
 }
 
 // notifyEvaluateRuleEntry will notify all registered listener that a rule is being executed.
-func (g *GruleEngine) notifyExecuteRuleEntry(cycle uint64, entry *ast.RuleEntry) {
+func (g *GruleEngine) notifyExecuteRuleEntry(ctx context.Context, cycle uint64, entry *ast.RuleEntry) {
 	if g.Listeners != nil && len(g.Listeners) > 0 {
 		for _, gl := range g.Listeners {
-			gl.ExecuteRuleEntry(cycle, entry)
+			gl.ExecuteRuleEntry(ctx, cycle, entry)
 		}
 	}
 }
 
 // notifyEvaluateRuleEntry will notify all registered listener that a rule is being executed.
-func (g *GruleEngine) notifyBeginCycle(cycle uint64) {
+func (g *GruleEngine) notifyBeginCycle(ctx context.Context, cycle uint64) {
 	if g.Listeners != nil && len(g.Listeners) > 0 {
 		for _, gl := range g.Listeners {
-			gl.BeginCycle(cycle)
+			gl.BeginCycle(ctx, cycle)
 		}
 	}
 }
@@ -161,7 +161,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			return ctx.Err()
 		}
 
-		g.notifyBeginCycle(cycle + 1)
+		g.notifyBeginCycle(ctx, cycle+1)
 
 		// Select all rule entry that can be executed.
 		log.Tracef("Select all rule entry that can be executed.")
@@ -187,7 +187,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 					runnable = append(runnable, ruleEntry)
 				}
 				// notify all listeners that a rule's when scope is been evaluated.
-				g.notifyEvaluateRuleEntry(cycle+1, ruleEntry, can)
+				g.notifyEvaluateRuleEntry(ctx, cycle+1, ruleEntry, can)
 			}
 		}
 
@@ -221,7 +221,7 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 			// set the current rule entry to run. This is for trace ability purpose
 			dataCtx.SetRuleEntry(runner)
 			// notify listeners that we are about to execute a rule entry then scope
-			g.notifyExecuteRuleEntry(cycle, runner)
+			g.notifyExecuteRuleEntry(ctx, cycle, runner)
 			// execute the top most prioritized rule
 			err := runner.Execute(ctx, dataCtx, knowledge.WorkingMemory)
 			if err != nil {
