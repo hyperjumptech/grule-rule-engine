@@ -1,4 +1,4 @@
-// Code generated from C:/Users/Ferdinand/WSL/workspace/golang/src/github.com/newm4n/grule-rule-engine/antlr\grulev3.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from grulev3.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
 package grulev3 // grulev3
 import (
@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/antlr4-go/antlr/v4"
 )
 
 // Suppress unused import errors
@@ -18,26 +18,26 @@ type grulev3Parser struct {
 	*antlr.BaseParser
 }
 
-var grulev3ParserStaticData struct {
+var Grulev3ParserStaticData struct {
 	once                   sync.Once
 	serializedATN          []int32
-	literalNames           []string
-	symbolicNames          []string
-	ruleNames              []string
-	predictionContextCache *antlr.PredictionContextCache
+	LiteralNames           []string
+	SymbolicNames          []string
+	RuleNames              []string
+	PredictionContextCache *antlr.PredictionContextCache
 	atn                    *antlr.ATN
 	decisionToDFA          []*antlr.DFA
 }
 
 func grulev3ParserInit() {
-	staticData := &grulev3ParserStaticData
-	staticData.literalNames = []string{
+	staticData := &Grulev3ParserStaticData
+	staticData.LiteralNames = []string{
 		"", "','", "'+'", "'-'", "'/'", "'*'", "'%'", "'.'", "';'", "'{'", "'}'",
 		"'('", "')'", "'['", "']'", "", "", "", "'&&'", "'||'", "", "", "",
 		"'!'", "", "'=='", "'='", "'+='", "'-='", "'/='", "'*='", "'>'", "'<'",
 		"'>='", "'<='", "'!='", "'&'", "'|'",
 	}
-	staticData.symbolicNames = []string{
+	staticData.SymbolicNames = []string{
 		"", "", "PLUS", "MINUS", "DIV", "MUL", "MOD", "DOT", "SEMICOLON", "LR_BRACE",
 		"RR_BRACE", "LR_BRACKET", "RR_BRACKET", "LS_BRACKET", "RS_BRACKET",
 		"RULE", "WHEN", "THEN", "AND", "OR", "TRUE", "FALSE", "NIL_LITERAL",
@@ -47,7 +47,7 @@ func grulev3ParserInit() {
 		"DECIMAL_EXPONENT", "HEX_FLOAT_LIT", "HEX_EXPONENT", "DEC_LIT", "HEX_LIT",
 		"OCT_LIT", "SPACE", "COMMENT", "LINE_COMMENT",
 	}
-	staticData.ruleNames = []string{
+	staticData.RuleNames = []string{
 		"grl", "ruleEntry", "salience", "ruleName", "ruleDescription", "whenScope",
 		"thenScope", "thenExpressionList", "thenExpression", "assignment", "expression",
 		"mulDivOperators", "addMinusOperators", "comparisonOperator", "andLogicOperator",
@@ -57,7 +57,7 @@ func grulev3ParserInit() {
 		"decimalLiteral", "hexadecimalLiteral", "octalLiteral", "stringLiteral",
 		"booleanLiteral",
 	}
-	staticData.predictionContextCache = antlr.NewPredictionContextCache()
+	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
 		4, 1, 50, 263, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
@@ -187,7 +187,7 @@ func grulev3ParserInit() {
 // Newgrulev3Parser(). You can call this function if you wish to initialize the static state ahead
 // of time.
 func Grulev3ParserInit() {
-	staticData := &grulev3ParserStaticData
+	staticData := &Grulev3ParserStaticData
 	staticData.once.Do(grulev3ParserInit)
 }
 
@@ -196,11 +196,11 @@ func Newgrulev3Parser(input antlr.TokenStream) *grulev3Parser {
 	Grulev3ParserInit()
 	this := new(grulev3Parser)
 	this.BaseParser = antlr.NewBaseParser(input)
-	staticData := &grulev3ParserStaticData
-	this.Interpreter = antlr.NewParserATNSimulator(this, staticData.atn, staticData.decisionToDFA, staticData.predictionContextCache)
-	this.RuleNames = staticData.ruleNames
-	this.LiteralNames = staticData.literalNames
-	this.SymbolicNames = staticData.symbolicNames
+	staticData := &Grulev3ParserStaticData
+	this.Interpreter = antlr.NewParserATNSimulator(this, staticData.atn, staticData.decisionToDFA, staticData.PredictionContextCache)
+	this.RuleNames = staticData.RuleNames
+	this.LiteralNames = staticData.LiteralNames
+	this.SymbolicNames = staticData.SymbolicNames
 	this.GrammarFileName = "grulev3.g4"
 
 	return this
@@ -305,20 +305,30 @@ type IGrlContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	EOF() antlr.TerminalNode
+	AllRuleEntry() []IRuleEntryContext
+	RuleEntry(i int) IRuleEntryContext
+
 	// IsGrlContext differentiates from other interfaces.
 	IsGrlContext()
 }
 
 type GrlContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyGrlContext() *GrlContext {
 	var p = new(GrlContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_grl
 	return p
+}
+
+func InitEmptyGrlContext(p *GrlContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_grl
 }
 
 func (*GrlContext) IsGrlContext() {}
@@ -326,7 +336,7 @@ func (*GrlContext) IsGrlContext() {}
 func NewGrlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *GrlContext {
 	var p = new(GrlContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_grl
@@ -412,32 +422,16 @@ func (s *GrlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) Grl() (localctx IGrlContext) {
-	this := p
-	_ = this
-
 	localctx = NewGrlContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 0, grulev3ParserRULE_grl)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(69)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	for _la == grulev3ParserRULE {
@@ -448,14 +442,31 @@ func (p *grulev3Parser) Grl() (localctx IGrlContext) {
 
 		p.SetState(71)
 		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
 		p.SetState(72)
 		p.Match(grulev3ParserEOF)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IRuleEntryContext is an interface to support dynamic dispatch.
@@ -465,20 +476,35 @@ type IRuleEntryContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	RULE() antlr.TerminalNode
+	RuleName() IRuleNameContext
+	LR_BRACE() antlr.TerminalNode
+	WhenScope() IWhenScopeContext
+	ThenScope() IThenScopeContext
+	RR_BRACE() antlr.TerminalNode
+	RuleDescription() IRuleDescriptionContext
+	Salience() ISalienceContext
+
 	// IsRuleEntryContext differentiates from other interfaces.
 	IsRuleEntryContext()
 }
 
 type RuleEntryContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyRuleEntryContext() *RuleEntryContext {
 	var p = new(RuleEntryContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_ruleEntry
 	return p
+}
+
+func InitEmptyRuleEntryContext(p *RuleEntryContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_ruleEntry
 }
 
 func (*RuleEntryContext) IsRuleEntryContext() {}
@@ -486,7 +512,7 @@ func (*RuleEntryContext) IsRuleEntryContext() {}
 func NewRuleEntryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RuleEntryContext {
 	var p = new(RuleEntryContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_ruleEntry
@@ -619,33 +645,18 @@ func (s *RuleEntryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
-	this := p
-	_ = this
-
 	localctx = NewRuleEntryContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 2, grulev3ParserRULE_ruleEntry)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(74)
 		p.Match(grulev3ParserRULE)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(75)
@@ -653,6 +664,9 @@ func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
 	}
 	p.SetState(77)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserDQUOTA_STRING || _la == grulev3ParserSQUOTA_STRING {
@@ -664,6 +678,9 @@ func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
 	}
 	p.SetState(80)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserSALIENCE {
@@ -676,6 +693,10 @@ func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
 	{
 		p.SetState(82)
 		p.Match(grulev3ParserLR_BRACE)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(83)
@@ -688,9 +709,23 @@ func (p *grulev3Parser) RuleEntry() (localctx IRuleEntryContext) {
 	{
 		p.SetState(85)
 		p.Match(grulev3ParserRR_BRACE)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // ISalienceContext is an interface to support dynamic dispatch.
@@ -700,20 +735,29 @@ type ISalienceContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	SALIENCE() antlr.TerminalNode
+	IntegerLiteral() IIntegerLiteralContext
+
 	// IsSalienceContext differentiates from other interfaces.
 	IsSalienceContext()
 }
 
 type SalienceContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySalienceContext() *SalienceContext {
 	var p = new(SalienceContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_salience
 	return p
+}
+
+func InitEmptySalienceContext(p *SalienceContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_salience
 }
 
 func (*SalienceContext) IsSalienceContext() {}
@@ -721,7 +765,7 @@ func (*SalienceContext) IsSalienceContext() {}
 func NewSalienceContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SalienceContext {
 	var p = new(SalienceContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_salience
@@ -782,39 +826,33 @@ func (s *SalienceContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) Salience() (localctx ISalienceContext) {
-	this := p
-	_ = this
-
 	localctx = NewSalienceContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 4, grulev3ParserRULE_salience)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(87)
 		p.Match(grulev3ParserSALIENCE)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(88)
 		p.IntegerLiteral()
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IRuleNameContext is an interface to support dynamic dispatch.
@@ -824,20 +862,28 @@ type IRuleNameContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	SIMPLENAME() antlr.TerminalNode
+
 	// IsRuleNameContext differentiates from other interfaces.
 	IsRuleNameContext()
 }
 
 type RuleNameContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyRuleNameContext() *RuleNameContext {
 	var p = new(RuleNameContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_ruleName
 	return p
+}
+
+func InitEmptyRuleNameContext(p *RuleNameContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_ruleName
 }
 
 func (*RuleNameContext) IsRuleNameContext() {}
@@ -845,7 +891,7 @@ func (*RuleNameContext) IsRuleNameContext() {}
 func NewRuleNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RuleNameContext {
 	var p = new(RuleNameContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_ruleName
@@ -890,35 +936,29 @@ func (s *RuleNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) RuleName() (localctx IRuleNameContext) {
-	this := p
-	_ = this
-
 	localctx = NewRuleNameContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 6, grulev3ParserRULE_ruleName)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(90)
 		p.Match(grulev3ParserSIMPLENAME)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IRuleDescriptionContext is an interface to support dynamic dispatch.
@@ -928,20 +968,29 @@ type IRuleDescriptionContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DQUOTA_STRING() antlr.TerminalNode
+	SQUOTA_STRING() antlr.TerminalNode
+
 	// IsRuleDescriptionContext differentiates from other interfaces.
 	IsRuleDescriptionContext()
 }
 
 type RuleDescriptionContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyRuleDescriptionContext() *RuleDescriptionContext {
 	var p = new(RuleDescriptionContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_ruleDescription
 	return p
+}
+
+func InitEmptyRuleDescriptionContext(p *RuleDescriptionContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_ruleDescription
 }
 
 func (*RuleDescriptionContext) IsRuleDescriptionContext() {}
@@ -949,7 +998,7 @@ func (*RuleDescriptionContext) IsRuleDescriptionContext() {}
 func NewRuleDescriptionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RuleDescriptionContext {
 	var p = new(RuleDescriptionContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_ruleDescription
@@ -998,28 +1047,9 @@ func (s *RuleDescriptionContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 }
 
 func (p *grulev3Parser) RuleDescription() (localctx IRuleDescriptionContext) {
-	this := p
-	_ = this
-
 	localctx = NewRuleDescriptionContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 8, grulev3ParserRULE_ruleDescription)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
@@ -1034,7 +1064,17 @@ func (p *grulev3Parser) RuleDescription() (localctx IRuleDescriptionContext) {
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IWhenScopeContext is an interface to support dynamic dispatch.
@@ -1044,20 +1084,29 @@ type IWhenScopeContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	WHEN() antlr.TerminalNode
+	Expression() IExpressionContext
+
 	// IsWhenScopeContext differentiates from other interfaces.
 	IsWhenScopeContext()
 }
 
 type WhenScopeContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyWhenScopeContext() *WhenScopeContext {
 	var p = new(WhenScopeContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_whenScope
 	return p
+}
+
+func InitEmptyWhenScopeContext(p *WhenScopeContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_whenScope
 }
 
 func (*WhenScopeContext) IsWhenScopeContext() {}
@@ -1065,7 +1114,7 @@ func (*WhenScopeContext) IsWhenScopeContext() {}
 func NewWhenScopeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *WhenScopeContext {
 	var p = new(WhenScopeContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_whenScope
@@ -1126,39 +1175,33 @@ func (s *WhenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) WhenScope() (localctx IWhenScopeContext) {
-	this := p
-	_ = this
-
 	localctx = NewWhenScopeContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 10, grulev3ParserRULE_whenScope)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(94)
 		p.Match(grulev3ParserWHEN)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(95)
 		p.expression(0)
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IThenScopeContext is an interface to support dynamic dispatch.
@@ -1168,20 +1211,29 @@ type IThenScopeContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	THEN() antlr.TerminalNode
+	ThenExpressionList() IThenExpressionListContext
+
 	// IsThenScopeContext differentiates from other interfaces.
 	IsThenScopeContext()
 }
 
 type ThenScopeContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyThenScopeContext() *ThenScopeContext {
 	var p = new(ThenScopeContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_thenScope
 	return p
+}
+
+func InitEmptyThenScopeContext(p *ThenScopeContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_thenScope
 }
 
 func (*ThenScopeContext) IsThenScopeContext() {}
@@ -1189,7 +1241,7 @@ func (*ThenScopeContext) IsThenScopeContext() {}
 func NewThenScopeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ThenScopeContext {
 	var p = new(ThenScopeContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_thenScope
@@ -1250,39 +1302,33 @@ func (s *ThenScopeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) ThenScope() (localctx IThenScopeContext) {
-	this := p
-	_ = this
-
 	localctx = NewThenScopeContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 12, grulev3ParserRULE_thenScope)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(97)
 		p.Match(grulev3ParserTHEN)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(98)
 		p.ThenExpressionList()
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IThenExpressionListContext is an interface to support dynamic dispatch.
@@ -1292,20 +1338,31 @@ type IThenExpressionListContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	AllThenExpression() []IThenExpressionContext
+	ThenExpression(i int) IThenExpressionContext
+	AllSEMICOLON() []antlr.TerminalNode
+	SEMICOLON(i int) antlr.TerminalNode
+
 	// IsThenExpressionListContext differentiates from other interfaces.
 	IsThenExpressionListContext()
 }
 
 type ThenExpressionListContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyThenExpressionListContext() *ThenExpressionListContext {
 	var p = new(ThenExpressionListContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_thenExpressionList
 	return p
+}
+
+func InitEmptyThenExpressionListContext(p *ThenExpressionListContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_thenExpressionList
 }
 
 func (*ThenExpressionListContext) IsThenExpressionListContext() {}
@@ -1313,7 +1370,7 @@ func (*ThenExpressionListContext) IsThenExpressionListContext() {}
 func NewThenExpressionListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ThenExpressionListContext {
 	var p = new(ThenExpressionListContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_thenExpressionList
@@ -1403,35 +1460,19 @@ func (s *ThenExpressionListContext) Accept(visitor antlr.ParseTreeVisitor) inter
 }
 
 func (p *grulev3Parser) ThenExpressionList() (localctx IThenExpressionListContext) {
-	this := p
-	_ = this
-
 	localctx = NewThenExpressionListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 14, grulev3ParserRULE_thenExpressionList)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(103)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserMINUS)|(int64(1)<<grulev3ParserTRUE)|(int64(1)<<grulev3ParserFALSE)|(int64(1)<<grulev3ParserNIL_LITERAL)|(int64(1)<<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-38)))&((int64(1)<<(grulev3ParserSIMPLENAME-38))|(int64(1)<<(grulev3ParserDQUOTA_STRING-38))|(int64(1)<<(grulev3ParserSQUOTA_STRING-38))|(int64(1)<<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserDEC_LIT-38))|(int64(1)<<(grulev3ParserHEX_LIT-38))|(int64(1)<<(grulev3ParserOCT_LIT-38)))) != 0) {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&259209881976840) != 0) {
 		{
 			p.SetState(100)
 			p.ThenExpression()
@@ -1439,14 +1480,31 @@ func (p *grulev3Parser) ThenExpressionList() (localctx IThenExpressionListContex
 		{
 			p.SetState(101)
 			p.Match(grulev3ParserSEMICOLON)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 		p.SetState(105)
 		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
 		_la = p.GetTokenStream().LA(1)
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IThenExpressionContext is an interface to support dynamic dispatch.
@@ -1456,20 +1514,29 @@ type IThenExpressionContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	Assignment() IAssignmentContext
+	ExpressionAtom() IExpressionAtomContext
+
 	// IsThenExpressionContext differentiates from other interfaces.
 	IsThenExpressionContext()
 }
 
 type ThenExpressionContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyThenExpressionContext() *ThenExpressionContext {
 	var p = new(ThenExpressionContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_thenExpression
 	return p
+}
+
+func InitEmptyThenExpressionContext(p *ThenExpressionContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_thenExpression
 }
 
 func (*ThenExpressionContext) IsThenExpressionContext() {}
@@ -1477,7 +1544,7 @@ func (*ThenExpressionContext) IsThenExpressionContext() {}
 func NewThenExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ThenExpressionContext {
 	var p = new(ThenExpressionContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_thenExpression
@@ -1550,31 +1617,15 @@ func (s *ThenExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface
 }
 
 func (p *grulev3Parser) ThenExpression() (localctx IThenExpressionContext) {
-	this := p
-	_ = this
-
 	localctx = NewThenExpressionContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 16, grulev3ParserRULE_thenExpression)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.SetState(109)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 4, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 4, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
@@ -1589,9 +1640,21 @@ func (p *grulev3Parser) ThenExpression() (localctx IThenExpressionContext) {
 			p.expressionAtom(0)
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IAssignmentContext is an interface to support dynamic dispatch.
@@ -1601,20 +1664,34 @@ type IAssignmentContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	Variable() IVariableContext
+	Expression() IExpressionContext
+	ASSIGN() antlr.TerminalNode
+	PLUS_ASIGN() antlr.TerminalNode
+	MINUS_ASIGN() antlr.TerminalNode
+	DIV_ASIGN() antlr.TerminalNode
+	MUL_ASIGN() antlr.TerminalNode
+
 	// IsAssignmentContext differentiates from other interfaces.
 	IsAssignmentContext()
 }
 
 type AssignmentContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAssignmentContext() *AssignmentContext {
 	var p = new(AssignmentContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_assignment
 	return p
+}
+
+func InitEmptyAssignmentContext(p *AssignmentContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_assignment
 }
 
 func (*AssignmentContext) IsAssignmentContext() {}
@@ -1622,7 +1699,7 @@ func (*AssignmentContext) IsAssignmentContext() {}
 func NewAssignmentContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AssignmentContext {
 	var p = new(AssignmentContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_assignment
@@ -1715,28 +1792,9 @@ func (s *AssignmentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) Assignment() (localctx IAssignmentContext) {
-	this := p
-	_ = this
-
 	localctx = NewAssignmentContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 18, grulev3ParserRULE_assignment)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
@@ -1747,7 +1805,7 @@ func (p *grulev3Parser) Assignment() (localctx IAssignmentContext) {
 		p.SetState(112)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserASSIGN)|(int64(1)<<grulev3ParserPLUS_ASIGN)|(int64(1)<<grulev3ParserMINUS_ASIGN)|(int64(1)<<grulev3ParserDIV_ASIGN)|(int64(1)<<grulev3ParserMUL_ASIGN))) != 0) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&2080374784) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -1759,7 +1817,17 @@ func (p *grulev3Parser) Assignment() (localctx IAssignmentContext) {
 		p.expression(0)
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IExpressionContext is an interface to support dynamic dispatch.
@@ -1769,20 +1837,38 @@ type IExpressionContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	LR_BRACKET() antlr.TerminalNode
+	AllExpression() []IExpressionContext
+	Expression(i int) IExpressionContext
+	RR_BRACKET() antlr.TerminalNode
+	NEGATION() antlr.TerminalNode
+	ExpressionAtom() IExpressionAtomContext
+	MulDivOperators() IMulDivOperatorsContext
+	AddMinusOperators() IAddMinusOperatorsContext
+	ComparisonOperator() IComparisonOperatorContext
+	AndLogicOperator() IAndLogicOperatorContext
+	OrLogicOperator() IOrLogicOperatorContext
+
 	// IsExpressionContext differentiates from other interfaces.
 	IsExpressionContext()
 }
 
 type ExpressionContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyExpressionContext() *ExpressionContext {
 	var p = new(ExpressionContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_expression
 	return p
+}
+
+func InitEmptyExpressionContext(p *ExpressionContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_expression
 }
 
 func (*ExpressionContext) IsExpressionContext() {}
@@ -1790,7 +1876,7 @@ func (*ExpressionContext) IsExpressionContext() {}
 func NewExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ExpressionContext {
 	var p = new(ExpressionContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_expression
@@ -1984,10 +2070,8 @@ func (p *grulev3Parser) Expression() (localctx IExpressionContext) {
 }
 
 func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
-	this := p
-	_ = this
-
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
+
 	_parentState := p.GetState()
 	localctx = NewExpressionContext(p, p.GetParserRuleContext(), _parentState)
 	var _prevctx IExpressionContext = localctx
@@ -1996,43 +2080,42 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 	p.EnterRecursionRule(localctx, 20, grulev3ParserRULE_expression, _p)
 	var _la int
 
-	defer func() {
-		p.UnrollRecursionContexts(_parentctx)
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(124)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 6, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 6, p.GetParserRuleContext()) {
 	case 1:
 		p.SetState(117)
 		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == grulev3ParserNEGATION {
 			{
 				p.SetState(116)
 				p.Match(grulev3ParserNEGATION)
+				if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+				}
 			}
 
 		}
 		{
 			p.SetState(119)
 			p.Match(grulev3ParserLR_BRACKET)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 		{
 			p.SetState(120)
@@ -2041,6 +2124,10 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 		{
 			p.SetState(121)
 			p.Match(grulev3ParserRR_BRACKET)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	case 2:
@@ -2049,12 +2136,19 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 			p.expressionAtom(0)
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
 	p.SetState(148)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 8, p.GetParserRuleContext())
-
+	if p.HasError() {
+		goto errorExit
+	}
+	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 8, p.GetParserRuleContext())
+	if p.HasError() {
+		goto errorExit
+	}
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			if p.GetParseListeners() != nil {
@@ -2063,14 +2157,19 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 			_prevctx = localctx
 			p.SetState(146)
 			p.GetErrorHandler().Sync(p)
-			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext()) {
+			if p.HasError() {
+				goto errorExit
+			}
+
+			switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 7, p.GetParserRuleContext()) {
 			case 1:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, grulev3ParserRULE_expression)
 				p.SetState(126)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 7)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 7)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 7)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(127)
@@ -2087,7 +2186,8 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 				p.SetState(130)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 6)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 6)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 6)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(131)
@@ -2104,7 +2204,8 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 				p.SetState(134)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 5)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 5)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 5)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(135)
@@ -2121,7 +2222,8 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 				p.SetState(138)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(139)
@@ -2138,7 +2240,8 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 				p.SetState(142)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(143)
@@ -2149,15 +2252,33 @@ func (p *grulev3Parser) expression(_p int) (localctx IExpressionContext) {
 					p.expression(4)
 				}
 
+			case antlr.ATNInvalidAltNumber:
+				goto errorExit
 			}
 
 		}
 		p.SetState(150)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 8, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
+		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 8, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.UnrollRecursionContexts(_parentctx)
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IMulDivOperatorsContext is an interface to support dynamic dispatch.
@@ -2167,20 +2288,30 @@ type IMulDivOperatorsContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	MUL() antlr.TerminalNode
+	DIV() antlr.TerminalNode
+	MOD() antlr.TerminalNode
+
 	// IsMulDivOperatorsContext differentiates from other interfaces.
 	IsMulDivOperatorsContext()
 }
 
 type MulDivOperatorsContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMulDivOperatorsContext() *MulDivOperatorsContext {
 	var p = new(MulDivOperatorsContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_mulDivOperators
 	return p
+}
+
+func InitEmptyMulDivOperatorsContext(p *MulDivOperatorsContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_mulDivOperators
 }
 
 func (*MulDivOperatorsContext) IsMulDivOperatorsContext() {}
@@ -2188,7 +2319,7 @@ func (*MulDivOperatorsContext) IsMulDivOperatorsContext() {}
 func NewMulDivOperatorsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MulDivOperatorsContext {
 	var p = new(MulDivOperatorsContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_mulDivOperators
@@ -2241,35 +2372,16 @@ func (s *MulDivOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 }
 
 func (p *grulev3Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
-	this := p
-	_ = this
-
 	localctx = NewMulDivOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 22, grulev3ParserRULE_mulDivOperators)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(151)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserDIV)|(int64(1)<<grulev3ParserMUL)|(int64(1)<<grulev3ParserMOD))) != 0) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&112) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2277,7 +2389,17 @@ func (p *grulev3Parser) MulDivOperators() (localctx IMulDivOperatorsContext) {
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IAddMinusOperatorsContext is an interface to support dynamic dispatch.
@@ -2287,20 +2409,31 @@ type IAddMinusOperatorsContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	PLUS() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+	BITAND() antlr.TerminalNode
+	BITOR() antlr.TerminalNode
+
 	// IsAddMinusOperatorsContext differentiates from other interfaces.
 	IsAddMinusOperatorsContext()
 }
 
 type AddMinusOperatorsContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAddMinusOperatorsContext() *AddMinusOperatorsContext {
 	var p = new(AddMinusOperatorsContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_addMinusOperators
 	return p
+}
+
+func InitEmptyAddMinusOperatorsContext(p *AddMinusOperatorsContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_addMinusOperators
 }
 
 func (*AddMinusOperatorsContext) IsAddMinusOperatorsContext() {}
@@ -2308,7 +2441,7 @@ func (*AddMinusOperatorsContext) IsAddMinusOperatorsContext() {}
 func NewAddMinusOperatorsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AddMinusOperatorsContext {
 	var p = new(AddMinusOperatorsContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_addMinusOperators
@@ -2365,35 +2498,16 @@ func (s *AddMinusOperatorsContext) Accept(visitor antlr.ParseTreeVisitor) interf
 }
 
 func (p *grulev3Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext) {
-	this := p
-	_ = this
-
 	localctx = NewAddMinusOperatorsContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 24, grulev3ParserRULE_addMinusOperators)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(153)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(_la == grulev3ParserPLUS || _la == grulev3ParserMINUS || _la == grulev3ParserBITAND || _la == grulev3ParserBITOR) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&206158430220) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2401,7 +2515,17 @@ func (p *grulev3Parser) AddMinusOperators() (localctx IAddMinusOperatorsContext)
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IComparisonOperatorContext is an interface to support dynamic dispatch.
@@ -2411,20 +2535,33 @@ type IComparisonOperatorContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	GT() antlr.TerminalNode
+	LT() antlr.TerminalNode
+	GTE() antlr.TerminalNode
+	LTE() antlr.TerminalNode
+	EQUALS() antlr.TerminalNode
+	NOTEQUALS() antlr.TerminalNode
+
 	// IsComparisonOperatorContext differentiates from other interfaces.
 	IsComparisonOperatorContext()
 }
 
 type ComparisonOperatorContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyComparisonOperatorContext() *ComparisonOperatorContext {
 	var p = new(ComparisonOperatorContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_comparisonOperator
 	return p
+}
+
+func InitEmptyComparisonOperatorContext(p *ComparisonOperatorContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_comparisonOperator
 }
 
 func (*ComparisonOperatorContext) IsComparisonOperatorContext() {}
@@ -2432,7 +2569,7 @@ func (*ComparisonOperatorContext) IsComparisonOperatorContext() {}
 func NewComparisonOperatorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ComparisonOperatorContext {
 	var p = new(ComparisonOperatorContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_comparisonOperator
@@ -2497,35 +2634,16 @@ func (s *ComparisonOperatorContext) Accept(visitor antlr.ParseTreeVisitor) inter
 }
 
 func (p *grulev3Parser) ComparisonOperator() (localctx IComparisonOperatorContext) {
-	this := p
-	_ = this
-
 	localctx = NewComparisonOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 26, grulev3ParserRULE_comparisonOperator)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(155)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((_la-25)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-25)))&((int64(1)<<(grulev3ParserEQUALS-25))|(int64(1)<<(grulev3ParserGT-25))|(int64(1)<<(grulev3ParserLT-25))|(int64(1)<<(grulev3ParserGTE-25))|(int64(1)<<(grulev3ParserLTE-25))|(int64(1)<<(grulev3ParserNOTEQUALS-25)))) != 0) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&66605547520) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2533,7 +2651,17 @@ func (p *grulev3Parser) ComparisonOperator() (localctx IComparisonOperatorContex
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IAndLogicOperatorContext is an interface to support dynamic dispatch.
@@ -2543,20 +2671,28 @@ type IAndLogicOperatorContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	AND() antlr.TerminalNode
+
 	// IsAndLogicOperatorContext differentiates from other interfaces.
 	IsAndLogicOperatorContext()
 }
 
 type AndLogicOperatorContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAndLogicOperatorContext() *AndLogicOperatorContext {
 	var p = new(AndLogicOperatorContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_andLogicOperator
 	return p
+}
+
+func InitEmptyAndLogicOperatorContext(p *AndLogicOperatorContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_andLogicOperator
 }
 
 func (*AndLogicOperatorContext) IsAndLogicOperatorContext() {}
@@ -2564,7 +2700,7 @@ func (*AndLogicOperatorContext) IsAndLogicOperatorContext() {}
 func NewAndLogicOperatorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AndLogicOperatorContext {
 	var p = new(AndLogicOperatorContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_andLogicOperator
@@ -2609,35 +2745,29 @@ func (s *AndLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interfa
 }
 
 func (p *grulev3Parser) AndLogicOperator() (localctx IAndLogicOperatorContext) {
-	this := p
-	_ = this
-
 	localctx = NewAndLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 28, grulev3ParserRULE_andLogicOperator)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(157)
 		p.Match(grulev3ParserAND)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IOrLogicOperatorContext is an interface to support dynamic dispatch.
@@ -2647,20 +2777,28 @@ type IOrLogicOperatorContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	OR() antlr.TerminalNode
+
 	// IsOrLogicOperatorContext differentiates from other interfaces.
 	IsOrLogicOperatorContext()
 }
 
 type OrLogicOperatorContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyOrLogicOperatorContext() *OrLogicOperatorContext {
 	var p = new(OrLogicOperatorContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_orLogicOperator
 	return p
+}
+
+func InitEmptyOrLogicOperatorContext(p *OrLogicOperatorContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_orLogicOperator
 }
 
 func (*OrLogicOperatorContext) IsOrLogicOperatorContext() {}
@@ -2668,7 +2806,7 @@ func (*OrLogicOperatorContext) IsOrLogicOperatorContext() {}
 func NewOrLogicOperatorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *OrLogicOperatorContext {
 	var p = new(OrLogicOperatorContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_orLogicOperator
@@ -2713,35 +2851,29 @@ func (s *OrLogicOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 }
 
 func (p *grulev3Parser) OrLogicOperator() (localctx IOrLogicOperatorContext) {
-	this := p
-	_ = this
-
 	localctx = NewOrLogicOperatorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 30, grulev3ParserRULE_orLogicOperator)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(159)
 		p.Match(grulev3ParserOR)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IExpressionAtomContext is an interface to support dynamic dispatch.
@@ -2751,20 +2883,35 @@ type IExpressionAtomContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	Constant() IConstantContext
+	Variable() IVariableContext
+	FunctionCall() IFunctionCallContext
+	NEGATION() antlr.TerminalNode
+	ExpressionAtom() IExpressionAtomContext
+	MethodCall() IMethodCallContext
+	MemberVariable() IMemberVariableContext
+	ArrayMapSelector() IArrayMapSelectorContext
+
 	// IsExpressionAtomContext differentiates from other interfaces.
 	IsExpressionAtomContext()
 }
 
 type ExpressionAtomContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyExpressionAtomContext() *ExpressionAtomContext {
 	var p = new(ExpressionAtomContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_expressionAtom
 	return p
+}
+
+func InitEmptyExpressionAtomContext(p *ExpressionAtomContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_expressionAtom
 }
 
 func (*ExpressionAtomContext) IsExpressionAtomContext() {}
@@ -2772,7 +2919,7 @@ func (*ExpressionAtomContext) IsExpressionAtomContext() {}
 func NewExpressionAtomContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ExpressionAtomContext {
 	var p = new(ExpressionAtomContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_expressionAtom
@@ -2933,39 +3080,24 @@ func (p *grulev3Parser) ExpressionAtom() (localctx IExpressionAtomContext) {
 }
 
 func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext) {
-	this := p
-	_ = this
-
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
+
 	_parentState := p.GetState()
 	localctx = NewExpressionAtomContext(p, p.GetParserRuleContext(), _parentState)
 	var _prevctx IExpressionAtomContext = localctx
 	var _ antlr.ParserRuleContext = _prevctx // TODO: To prevent unused variable warning.
 	_startState := 32
 	p.EnterRecursionRule(localctx, 32, grulev3ParserRULE_expressionAtom, _p)
-
-	defer func() {
-		p.UnrollRecursionContexts(_parentctx)
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(167)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 9, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 9, p.GetParserRuleContext()) {
 	case 1:
 		{
 			p.SetState(162)
@@ -2988,18 +3120,29 @@ func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext)
 		{
 			p.SetState(165)
 			p.Match(grulev3ParserNEGATION)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 		{
 			p.SetState(166)
 			p.expressionAtom(1)
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
 	p.SetState(177)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext())
-
+	if p.HasError() {
+		goto errorExit
+	}
+	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 11, p.GetParserRuleContext())
+	if p.HasError() {
+		goto errorExit
+	}
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			if p.GetParseListeners() != nil {
@@ -3008,14 +3151,19 @@ func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext)
 			_prevctx = localctx
 			p.SetState(175)
 			p.GetErrorHandler().Sync(p)
-			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext()) {
+			if p.HasError() {
+				goto errorExit
+			}
+
+			switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 10, p.GetParserRuleContext()) {
 			case 1:
 				localctx = NewExpressionAtomContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, grulev3ParserRULE_expressionAtom)
 				p.SetState(169)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(170)
@@ -3028,7 +3176,8 @@ func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext)
 				p.SetState(171)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(172)
@@ -3041,22 +3190,41 @@ func (p *grulev3Parser) expressionAtom(_p int) (localctx IExpressionAtomContext)
 				p.SetState(173)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 2)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(174)
 					p.ArrayMapSelector()
 				}
 
+			case antlr.ATNInvalidAltNumber:
+				goto errorExit
 			}
 
 		}
 		p.SetState(179)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
+		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 11, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.UnrollRecursionContexts(_parentctx)
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IConstantContext is an interface to support dynamic dispatch.
@@ -3066,20 +3234,32 @@ type IConstantContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	StringLiteral() IStringLiteralContext
+	IntegerLiteral() IIntegerLiteralContext
+	FloatLiteral() IFloatLiteralContext
+	BooleanLiteral() IBooleanLiteralContext
+	NIL_LITERAL() antlr.TerminalNode
+
 	// IsConstantContext differentiates from other interfaces.
 	IsConstantContext()
 }
 
 type ConstantContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyConstantContext() *ConstantContext {
 	var p = new(ConstantContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_constant
 	return p
+}
+
+func InitEmptyConstantContext(p *ConstantContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_constant
 }
 
 func (*ConstantContext) IsConstantContext() {}
@@ -3087,7 +3267,7 @@ func (*ConstantContext) IsConstantContext() {}
 func NewConstantContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ConstantContext {
 	var p = new(ConstantContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_constant
@@ -3196,31 +3376,15 @@ func (s *ConstantContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) Constant() (localctx IConstantContext) {
-	this := p
-	_ = this
-
 	localctx = NewConstantContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 34, grulev3ParserRULE_constant)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.SetState(185)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 12, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 12, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
@@ -3254,11 +3418,27 @@ func (p *grulev3Parser) Constant() (localctx IConstantContext) {
 		{
 			p.SetState(184)
 			p.Match(grulev3ParserNIL_LITERAL)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IVariableContext is an interface to support dynamic dispatch.
@@ -3268,20 +3448,31 @@ type IVariableContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	SIMPLENAME() antlr.TerminalNode
+	Variable() IVariableContext
+	MemberVariable() IMemberVariableContext
+	ArrayMapSelector() IArrayMapSelectorContext
+
 	// IsVariableContext differentiates from other interfaces.
 	IsVariableContext()
 }
 
 type VariableContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableContext() *VariableContext {
 	var p = new(VariableContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_variable
 	return p
+}
+
+func InitEmptyVariableContext(p *VariableContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_variable
 }
 
 func (*VariableContext) IsVariableContext() {}
@@ -3289,7 +3480,7 @@ func (*VariableContext) IsVariableContext() {}
 func NewVariableContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableContext {
 	var p = new(VariableContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_variable
@@ -3386,46 +3577,36 @@ func (p *grulev3Parser) Variable() (localctx IVariableContext) {
 }
 
 func (p *grulev3Parser) variable(_p int) (localctx IVariableContext) {
-	this := p
-	_ = this
-
 	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
+
 	_parentState := p.GetState()
 	localctx = NewVariableContext(p, p.GetParserRuleContext(), _parentState)
 	var _prevctx IVariableContext = localctx
 	var _ antlr.ParserRuleContext = _prevctx // TODO: To prevent unused variable warning.
 	_startState := 36
 	p.EnterRecursionRule(localctx, 36, grulev3ParserRULE_variable, _p)
-
-	defer func() {
-		p.UnrollRecursionContexts(_parentctx)
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(188)
 		p.Match(grulev3ParserSIMPLENAME)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
 	p.SetState(196)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 14, p.GetParserRuleContext())
-
+	if p.HasError() {
+		goto errorExit
+	}
+	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 14, p.GetParserRuleContext())
+	if p.HasError() {
+		goto errorExit
+	}
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			if p.GetParseListeners() != nil {
@@ -3434,14 +3615,19 @@ func (p *grulev3Parser) variable(_p int) (localctx IVariableContext) {
 			_prevctx = localctx
 			p.SetState(194)
 			p.GetErrorHandler().Sync(p)
-			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 13, p.GetParserRuleContext()) {
+			if p.HasError() {
+				goto errorExit
+			}
+
+			switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 13, p.GetParserRuleContext()) {
 			case 1:
 				localctx = NewVariableContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, grulev3ParserRULE_variable)
 				p.SetState(190)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(191)
@@ -3454,22 +3640,41 @@ func (p *grulev3Parser) variable(_p int) (localctx IVariableContext) {
 				p.SetState(192)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 2)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+					goto errorExit
 				}
 				{
 					p.SetState(193)
 					p.ArrayMapSelector()
 				}
 
+			case antlr.ATNInvalidAltNumber:
+				goto errorExit
 			}
 
 		}
 		p.SetState(198)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 14, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
+		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 14, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.UnrollRecursionContexts(_parentctx)
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IArrayMapSelectorContext is an interface to support dynamic dispatch.
@@ -3479,20 +3684,30 @@ type IArrayMapSelectorContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	LS_BRACKET() antlr.TerminalNode
+	Expression() IExpressionContext
+	RS_BRACKET() antlr.TerminalNode
+
 	// IsArrayMapSelectorContext differentiates from other interfaces.
 	IsArrayMapSelectorContext()
 }
 
 type ArrayMapSelectorContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArrayMapSelectorContext() *ArrayMapSelectorContext {
 	var p = new(ArrayMapSelectorContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_arrayMapSelector
 	return p
+}
+
+func InitEmptyArrayMapSelectorContext(p *ArrayMapSelectorContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_arrayMapSelector
 }
 
 func (*ArrayMapSelectorContext) IsArrayMapSelectorContext() {}
@@ -3500,7 +3715,7 @@ func (*ArrayMapSelectorContext) IsArrayMapSelectorContext() {}
 func NewArrayMapSelectorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArrayMapSelectorContext {
 	var p = new(ArrayMapSelectorContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_arrayMapSelector
@@ -3565,32 +3780,16 @@ func (s *ArrayMapSelectorContext) Accept(visitor antlr.ParseTreeVisitor) interfa
 }
 
 func (p *grulev3Parser) ArrayMapSelector() (localctx IArrayMapSelectorContext) {
-	this := p
-	_ = this
-
 	localctx = NewArrayMapSelectorContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 38, grulev3ParserRULE_arrayMapSelector)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(199)
 		p.Match(grulev3ParserLS_BRACKET)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(200)
@@ -3599,9 +3798,23 @@ func (p *grulev3Parser) ArrayMapSelector() (localctx IArrayMapSelectorContext) {
 	{
 		p.SetState(201)
 		p.Match(grulev3ParserRS_BRACKET)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IMemberVariableContext is an interface to support dynamic dispatch.
@@ -3611,20 +3824,29 @@ type IMemberVariableContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DOT() antlr.TerminalNode
+	SIMPLENAME() antlr.TerminalNode
+
 	// IsMemberVariableContext differentiates from other interfaces.
 	IsMemberVariableContext()
 }
 
 type MemberVariableContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMemberVariableContext() *MemberVariableContext {
 	var p = new(MemberVariableContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_memberVariable
 	return p
+}
+
+func InitEmptyMemberVariableContext(p *MemberVariableContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_memberVariable
 }
 
 func (*MemberVariableContext) IsMemberVariableContext() {}
@@ -3632,7 +3854,7 @@ func (*MemberVariableContext) IsMemberVariableContext() {}
 func NewMemberVariableContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MemberVariableContext {
 	var p = new(MemberVariableContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_memberVariable
@@ -3681,39 +3903,37 @@ func (s *MemberVariableContext) Accept(visitor antlr.ParseTreeVisitor) interface
 }
 
 func (p *grulev3Parser) MemberVariable() (localctx IMemberVariableContext) {
-	this := p
-	_ = this
-
 	localctx = NewMemberVariableContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 40, grulev3ParserRULE_memberVariable)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(203)
 		p.Match(grulev3ParserDOT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(204)
 		p.Match(grulev3ParserSIMPLENAME)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IFunctionCallContext is an interface to support dynamic dispatch.
@@ -3723,20 +3943,31 @@ type IFunctionCallContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	SIMPLENAME() antlr.TerminalNode
+	LR_BRACKET() antlr.TerminalNode
+	RR_BRACKET() antlr.TerminalNode
+	ArgumentList() IArgumentListContext
+
 	// IsFunctionCallContext differentiates from other interfaces.
 	IsFunctionCallContext()
 }
 
 type FunctionCallContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFunctionCallContext() *FunctionCallContext {
 	var p = new(FunctionCallContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_functionCall
 	return p
+}
+
+func InitEmptyFunctionCallContext(p *FunctionCallContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_functionCall
 }
 
 func (*FunctionCallContext) IsFunctionCallContext() {}
@@ -3744,7 +3975,7 @@ func (*FunctionCallContext) IsFunctionCallContext() {}
 func NewFunctionCallContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FunctionCallContext {
 	var p = new(FunctionCallContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_functionCall
@@ -3813,43 +4044,35 @@ func (s *FunctionCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 }
 
 func (p *grulev3Parser) FunctionCall() (localctx IFunctionCallContext) {
-	this := p
-	_ = this
-
 	localctx = NewFunctionCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 42, grulev3ParserRULE_functionCall)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(206)
 		p.Match(grulev3ParserSIMPLENAME)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(207)
 		p.Match(grulev3ParserLR_BRACKET)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	p.SetState(209)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
-	if (((_la)&-(0x1f+1)) == 0 && ((int64(1)<<uint(_la))&((int64(1)<<grulev3ParserMINUS)|(int64(1)<<grulev3ParserLR_BRACKET)|(int64(1)<<grulev3ParserTRUE)|(int64(1)<<grulev3ParserFALSE)|(int64(1)<<grulev3ParserNIL_LITERAL)|(int64(1)<<grulev3ParserNEGATION))) != 0) || (((_la-38)&-(0x1f+1)) == 0 && ((int64(1)<<uint((_la-38)))&((int64(1)<<(grulev3ParserSIMPLENAME-38))|(int64(1)<<(grulev3ParserDQUOTA_STRING-38))|(int64(1)<<(grulev3ParserSQUOTA_STRING-38))|(int64(1)<<(grulev3ParserDECIMAL_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserHEX_FLOAT_LIT-38))|(int64(1)<<(grulev3ParserDEC_LIT-38))|(int64(1)<<(grulev3ParserHEX_LIT-38))|(int64(1)<<(grulev3ParserOCT_LIT-38)))) != 0) {
+	if (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&259209881978888) != 0 {
 		{
 			p.SetState(208)
 			p.ArgumentList()
@@ -3859,9 +4082,23 @@ func (p *grulev3Parser) FunctionCall() (localctx IFunctionCallContext) {
 	{
 		p.SetState(211)
 		p.Match(grulev3ParserRR_BRACKET)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IMethodCallContext is an interface to support dynamic dispatch.
@@ -3871,20 +4108,29 @@ type IMethodCallContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DOT() antlr.TerminalNode
+	FunctionCall() IFunctionCallContext
+
 	// IsMethodCallContext differentiates from other interfaces.
 	IsMethodCallContext()
 }
 
 type MethodCallContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMethodCallContext() *MethodCallContext {
 	var p = new(MethodCallContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_methodCall
 	return p
+}
+
+func InitEmptyMethodCallContext(p *MethodCallContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_methodCall
 }
 
 func (*MethodCallContext) IsMethodCallContext() {}
@@ -3892,7 +4138,7 @@ func (*MethodCallContext) IsMethodCallContext() {}
 func NewMethodCallContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MethodCallContext {
 	var p = new(MethodCallContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_methodCall
@@ -3953,39 +4199,33 @@ func (s *MethodCallContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 }
 
 func (p *grulev3Parser) MethodCall() (localctx IMethodCallContext) {
-	this := p
-	_ = this
-
 	localctx = NewMethodCallContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 44, grulev3ParserRULE_methodCall)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(213)
 		p.Match(grulev3ParserDOT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 	{
 		p.SetState(214)
 		p.FunctionCall()
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IArgumentListContext is an interface to support dynamic dispatch.
@@ -3995,20 +4235,29 @@ type IArgumentListContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	AllExpression() []IExpressionContext
+	Expression(i int) IExpressionContext
+
 	// IsArgumentListContext differentiates from other interfaces.
 	IsArgumentListContext()
 }
 
 type ArgumentListContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArgumentListContext() *ArgumentListContext {
 	var p = new(ArgumentListContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_argumentList
 	return p
+}
+
+func InitEmptyArgumentListContext(p *ArgumentListContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_argumentList
 }
 
 func (*ArgumentListContext) IsArgumentListContext() {}
@@ -4016,7 +4265,7 @@ func (*ArgumentListContext) IsArgumentListContext() {}
 func NewArgumentListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArgumentListContext {
 	var p = new(ArgumentListContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_argumentList
@@ -4098,28 +4347,9 @@ func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 }
 
 func (p *grulev3Parser) ArgumentList() (localctx IArgumentListContext) {
-	this := p
-	_ = this
-
 	localctx = NewArgumentListContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 46, grulev3ParserRULE_argumentList)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
@@ -4128,12 +4358,19 @@ func (p *grulev3Parser) ArgumentList() (localctx IArgumentListContext) {
 	}
 	p.SetState(221)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	for _la == grulev3ParserT__0 {
 		{
 			p.SetState(217)
 			p.Match(grulev3ParserT__0)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 		{
 			p.SetState(218)
@@ -4142,10 +4379,23 @@ func (p *grulev3Parser) ArgumentList() (localctx IArgumentListContext) {
 
 		p.SetState(223)
 		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
 		_la = p.GetTokenStream().LA(1)
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IFloatLiteralContext is an interface to support dynamic dispatch.
@@ -4155,20 +4405,29 @@ type IFloatLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DecimalFloatLiteral() IDecimalFloatLiteralContext
+	HexadecimalFloatLiteral() IHexadecimalFloatLiteralContext
+
 	// IsFloatLiteralContext differentiates from other interfaces.
 	IsFloatLiteralContext()
 }
 
 type FloatLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFloatLiteralContext() *FloatLiteralContext {
 	var p = new(FloatLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_floatLiteral
 	return p
+}
+
+func InitEmptyFloatLiteralContext(p *FloatLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_floatLiteral
 }
 
 func (*FloatLiteralContext) IsFloatLiteralContext() {}
@@ -4176,7 +4435,7 @@ func (*FloatLiteralContext) IsFloatLiteralContext() {}
 func NewFloatLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FloatLiteralContext {
 	var p = new(FloatLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_floatLiteral
@@ -4249,31 +4508,15 @@ func (s *FloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 }
 
 func (p *grulev3Parser) FloatLiteral() (localctx IFloatLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 48, grulev3ParserRULE_floatLiteral)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.SetState(226)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 17, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 17, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
@@ -4288,9 +4531,21 @@ func (p *grulev3Parser) FloatLiteral() (localctx IFloatLiteralContext) {
 			p.HexadecimalFloatLiteral()
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IDecimalFloatLiteralContext is an interface to support dynamic dispatch.
@@ -4300,20 +4555,29 @@ type IDecimalFloatLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DECIMAL_FLOAT_LIT() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+
 	// IsDecimalFloatLiteralContext differentiates from other interfaces.
 	IsDecimalFloatLiteralContext()
 }
 
 type DecimalFloatLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyDecimalFloatLiteralContext() *DecimalFloatLiteralContext {
 	var p = new(DecimalFloatLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_decimalFloatLiteral
 	return p
+}
+
+func InitEmptyDecimalFloatLiteralContext(p *DecimalFloatLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_decimalFloatLiteral
 }
 
 func (*DecimalFloatLiteralContext) IsDecimalFloatLiteralContext() {}
@@ -4321,7 +4585,7 @@ func (*DecimalFloatLiteralContext) IsDecimalFloatLiteralContext() {}
 func NewDecimalFloatLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DecimalFloatLiteralContext {
 	var p = new(DecimalFloatLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_decimalFloatLiteral
@@ -4370,47 +4634,49 @@ func (s *DecimalFloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) inte
 }
 
 func (p *grulev3Parser) DecimalFloatLiteral() (localctx IDecimalFloatLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewDecimalFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 50, grulev3ParserRULE_decimalFloatLiteral)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(229)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserMINUS {
 		{
 			p.SetState(228)
 			p.Match(grulev3ParserMINUS)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	}
 	{
 		p.SetState(231)
 		p.Match(grulev3ParserDECIMAL_FLOAT_LIT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IHexadecimalFloatLiteralContext is an interface to support dynamic dispatch.
@@ -4420,20 +4686,29 @@ type IHexadecimalFloatLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	HEX_FLOAT_LIT() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+
 	// IsHexadecimalFloatLiteralContext differentiates from other interfaces.
 	IsHexadecimalFloatLiteralContext()
 }
 
 type HexadecimalFloatLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyHexadecimalFloatLiteralContext() *HexadecimalFloatLiteralContext {
 	var p = new(HexadecimalFloatLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_hexadecimalFloatLiteral
 	return p
+}
+
+func InitEmptyHexadecimalFloatLiteralContext(p *HexadecimalFloatLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_hexadecimalFloatLiteral
 }
 
 func (*HexadecimalFloatLiteralContext) IsHexadecimalFloatLiteralContext() {}
@@ -4441,7 +4716,7 @@ func (*HexadecimalFloatLiteralContext) IsHexadecimalFloatLiteralContext() {}
 func NewHexadecimalFloatLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *HexadecimalFloatLiteralContext {
 	var p = new(HexadecimalFloatLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_hexadecimalFloatLiteral
@@ -4490,47 +4765,49 @@ func (s *HexadecimalFloatLiteralContext) Accept(visitor antlr.ParseTreeVisitor) 
 }
 
 func (p *grulev3Parser) HexadecimalFloatLiteral() (localctx IHexadecimalFloatLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewHexadecimalFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 52, grulev3ParserRULE_hexadecimalFloatLiteral)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(234)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserMINUS {
 		{
 			p.SetState(233)
 			p.Match(grulev3ParserMINUS)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	}
 	{
 		p.SetState(236)
 		p.Match(grulev3ParserHEX_FLOAT_LIT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IIntegerLiteralContext is an interface to support dynamic dispatch.
@@ -4540,20 +4817,30 @@ type IIntegerLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DecimalLiteral() IDecimalLiteralContext
+	HexadecimalLiteral() IHexadecimalLiteralContext
+	OctalLiteral() IOctalLiteralContext
+
 	// IsIntegerLiteralContext differentiates from other interfaces.
 	IsIntegerLiteralContext()
 }
 
 type IntegerLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyIntegerLiteralContext() *IntegerLiteralContext {
 	var p = new(IntegerLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_integerLiteral
 	return p
+}
+
+func InitEmptyIntegerLiteralContext(p *IntegerLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_integerLiteral
 }
 
 func (*IntegerLiteralContext) IsIntegerLiteralContext() {}
@@ -4561,7 +4848,7 @@ func (*IntegerLiteralContext) IsIntegerLiteralContext() {}
 func NewIntegerLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *IntegerLiteralContext {
 	var p = new(IntegerLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_integerLiteral
@@ -4650,31 +4937,15 @@ func (s *IntegerLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface
 }
 
 func (p *grulev3Parser) IntegerLiteral() (localctx IIntegerLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewIntegerLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 54, grulev3ParserRULE_integerLiteral)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.SetState(241)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 20, p.GetParserRuleContext()) {
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 20, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
@@ -4696,9 +4967,21 @@ func (p *grulev3Parser) IntegerLiteral() (localctx IIntegerLiteralContext) {
 			p.OctalLiteral()
 		}
 
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IDecimalLiteralContext is an interface to support dynamic dispatch.
@@ -4708,20 +4991,29 @@ type IDecimalLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DEC_LIT() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+
 	// IsDecimalLiteralContext differentiates from other interfaces.
 	IsDecimalLiteralContext()
 }
 
 type DecimalLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyDecimalLiteralContext() *DecimalLiteralContext {
 	var p = new(DecimalLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_decimalLiteral
 	return p
+}
+
+func InitEmptyDecimalLiteralContext(p *DecimalLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_decimalLiteral
 }
 
 func (*DecimalLiteralContext) IsDecimalLiteralContext() {}
@@ -4729,7 +5021,7 @@ func (*DecimalLiteralContext) IsDecimalLiteralContext() {}
 func NewDecimalLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DecimalLiteralContext {
 	var p = new(DecimalLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_decimalLiteral
@@ -4778,47 +5070,49 @@ func (s *DecimalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface
 }
 
 func (p *grulev3Parser) DecimalLiteral() (localctx IDecimalLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewDecimalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 56, grulev3ParserRULE_decimalLiteral)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(244)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserMINUS {
 		{
 			p.SetState(243)
 			p.Match(grulev3ParserMINUS)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	}
 	{
 		p.SetState(246)
 		p.Match(grulev3ParserDEC_LIT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IHexadecimalLiteralContext is an interface to support dynamic dispatch.
@@ -4828,20 +5122,29 @@ type IHexadecimalLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	HEX_LIT() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+
 	// IsHexadecimalLiteralContext differentiates from other interfaces.
 	IsHexadecimalLiteralContext()
 }
 
 type HexadecimalLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyHexadecimalLiteralContext() *HexadecimalLiteralContext {
 	var p = new(HexadecimalLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_hexadecimalLiteral
 	return p
+}
+
+func InitEmptyHexadecimalLiteralContext(p *HexadecimalLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_hexadecimalLiteral
 }
 
 func (*HexadecimalLiteralContext) IsHexadecimalLiteralContext() {}
@@ -4849,7 +5152,7 @@ func (*HexadecimalLiteralContext) IsHexadecimalLiteralContext() {}
 func NewHexadecimalLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *HexadecimalLiteralContext {
 	var p = new(HexadecimalLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_hexadecimalLiteral
@@ -4898,47 +5201,49 @@ func (s *HexadecimalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) inter
 }
 
 func (p *grulev3Parser) HexadecimalLiteral() (localctx IHexadecimalLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewHexadecimalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 58, grulev3ParserRULE_hexadecimalLiteral)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(249)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserMINUS {
 		{
 			p.SetState(248)
 			p.Match(grulev3ParserMINUS)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	}
 	{
 		p.SetState(251)
 		p.Match(grulev3ParserHEX_LIT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IOctalLiteralContext is an interface to support dynamic dispatch.
@@ -4948,20 +5253,29 @@ type IOctalLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	OCT_LIT() antlr.TerminalNode
+	MINUS() antlr.TerminalNode
+
 	// IsOctalLiteralContext differentiates from other interfaces.
 	IsOctalLiteralContext()
 }
 
 type OctalLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyOctalLiteralContext() *OctalLiteralContext {
 	var p = new(OctalLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_octalLiteral
 	return p
+}
+
+func InitEmptyOctalLiteralContext(p *OctalLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_octalLiteral
 }
 
 func (*OctalLiteralContext) IsOctalLiteralContext() {}
@@ -4969,7 +5283,7 @@ func (*OctalLiteralContext) IsOctalLiteralContext() {}
 func NewOctalLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *OctalLiteralContext {
 	var p = new(OctalLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_octalLiteral
@@ -5018,47 +5332,49 @@ func (s *OctalLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 }
 
 func (p *grulev3Parser) OctalLiteral() (localctx IOctalLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewOctalLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 60, grulev3ParserRULE_octalLiteral)
 	var _la int
 
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
 	p.EnterOuterAlt(localctx, 1)
 	p.SetState(254)
 	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == grulev3ParserMINUS {
 		{
 			p.SetState(253)
 			p.Match(grulev3ParserMINUS)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
 		}
 
 	}
 	{
 		p.SetState(256)
 		p.Match(grulev3ParserOCT_LIT)
+		if p.HasError() {
+			// Recognition error - abort rule
+			goto errorExit
+		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IStringLiteralContext is an interface to support dynamic dispatch.
@@ -5068,20 +5384,29 @@ type IStringLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	DQUOTA_STRING() antlr.TerminalNode
+	SQUOTA_STRING() antlr.TerminalNode
+
 	// IsStringLiteralContext differentiates from other interfaces.
 	IsStringLiteralContext()
 }
 
 type StringLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStringLiteralContext() *StringLiteralContext {
 	var p = new(StringLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_stringLiteral
 	return p
+}
+
+func InitEmptyStringLiteralContext(p *StringLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_stringLiteral
 }
 
 func (*StringLiteralContext) IsStringLiteralContext() {}
@@ -5089,7 +5414,7 @@ func (*StringLiteralContext) IsStringLiteralContext() {}
 func NewStringLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StringLiteralContext {
 	var p = new(StringLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_stringLiteral
@@ -5138,28 +5463,9 @@ func (s *StringLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{
 }
 
 func (p *grulev3Parser) StringLiteral() (localctx IStringLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewStringLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 62, grulev3ParserRULE_stringLiteral)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
@@ -5174,7 +5480,17 @@ func (p *grulev3Parser) StringLiteral() (localctx IStringLiteralContext) {
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 // IBooleanLiteralContext is an interface to support dynamic dispatch.
@@ -5184,20 +5500,29 @@ type IBooleanLiteralContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Getter signatures
+	TRUE() antlr.TerminalNode
+	FALSE() antlr.TerminalNode
+
 	// IsBooleanLiteralContext differentiates from other interfaces.
 	IsBooleanLiteralContext()
 }
 
 type BooleanLiteralContext struct {
-	*antlr.BaseParserRuleContext
+	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBooleanLiteralContext() *BooleanLiteralContext {
 	var p = new(BooleanLiteralContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
 	p.RuleIndex = grulev3ParserRULE_booleanLiteral
 	return p
+}
+
+func InitEmptyBooleanLiteralContext(p *BooleanLiteralContext) {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = grulev3ParserRULE_booleanLiteral
 }
 
 func (*BooleanLiteralContext) IsBooleanLiteralContext() {}
@@ -5205,7 +5530,7 @@ func (*BooleanLiteralContext) IsBooleanLiteralContext() {}
 func NewBooleanLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BooleanLiteralContext {
 	var p = new(BooleanLiteralContext)
 
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
 	p.RuleIndex = grulev3ParserRULE_booleanLiteral
@@ -5254,28 +5579,9 @@ func (s *BooleanLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface
 }
 
 func (p *grulev3Parser) BooleanLiteral() (localctx IBooleanLiteralContext) {
-	this := p
-	_ = this
-
 	localctx = NewBooleanLiteralContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 64, grulev3ParserRULE_booleanLiteral)
 	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
 
 	p.EnterOuterAlt(localctx, 1)
 	{
@@ -5290,7 +5596,17 @@ func (p *grulev3Parser) BooleanLiteral() (localctx IBooleanLiteralContext) {
 		}
 	}
 
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
 	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
 func (p *grulev3Parser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex int) bool {
@@ -5322,9 +5638,6 @@ func (p *grulev3Parser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex
 }
 
 func (p *grulev3Parser) Expression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
-	this := p
-	_ = this
-
 	switch predIndex {
 	case 0:
 		return p.Precpred(p.GetParserRuleContext(), 7)
@@ -5347,9 +5660,6 @@ func (p *grulev3Parser) Expression_Sempred(localctx antlr.RuleContext, predIndex
 }
 
 func (p *grulev3Parser) ExpressionAtom_Sempred(localctx antlr.RuleContext, predIndex int) bool {
-	this := p
-	_ = this
-
 	switch predIndex {
 	case 5:
 		return p.Precpred(p.GetParserRuleContext(), 4)
@@ -5366,9 +5676,6 @@ func (p *grulev3Parser) ExpressionAtom_Sempred(localctx antlr.RuleContext, predI
 }
 
 func (p *grulev3Parser) Variable_Sempred(localctx antlr.RuleContext, predIndex int) bool {
-	this := p
-	_ = this
-
 	switch predIndex {
 	case 8:
 		return p.Precpred(p.GetParserRuleContext(), 3)
