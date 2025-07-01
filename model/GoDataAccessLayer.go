@@ -256,6 +256,19 @@ func (node *GoValueNode) IsObject() bool {
 
 			return typ.Elem().Kind() == reflect.Struct
 		}
+		if typ.Kind() == reflect.Interface {
+			// Check if the interface contains a struct
+			if !node.thisValue.IsNil() {
+				elem := node.thisValue.Elem()
+				if elem.IsValid() {
+					elemType := elem.Type()
+					if elemType.Kind() == reflect.Ptr {
+						return elemType.Elem().Kind() == reflect.Struct
+					}
+					return elemType.Kind() == reflect.Struct
+				}
+			}
+		}
 
 		return typ.Kind() == reflect.Struct
 	}
@@ -267,14 +280,24 @@ func (node *GoValueNode) IsObject() bool {
 func (node *GoValueNode) GetObjectValueByField(field string) (reflect.Value, error) {
 	if node.IsObject() {
 		var val reflect.Value
-		if node.thisValue.Kind() == reflect.Ptr {
+
+		// Handle interface types by extracting the concrete value
+		if node.thisValue.Kind() == reflect.Interface {
+			if !node.thisValue.IsNil() {
+				elem := node.thisValue.Elem()
+				if elem.Kind() == reflect.Ptr {
+					val = elem.Elem().FieldByName(field)
+				} else if elem.Kind() == reflect.Struct {
+					val = elem.FieldByName(field)
+				}
+			}
+		} else if node.thisValue.Kind() == reflect.Ptr {
 			val = node.thisValue.Elem().FieldByName(field)
-		}
-		if node.thisValue.Kind() == reflect.Struct {
+		} else if node.thisValue.Kind() == reflect.Struct {
 			val = node.thisValue.FieldByName(field)
 		}
-		if val.IsValid() {
 
+		if val.IsValid() {
 			return val, nil
 		}
 
@@ -293,12 +316,20 @@ func (node *GoValueNode) GetObjectTypeByField(field string) (typ reflect.Type, e
 				typ = nil
 			}
 		}()
-		if node.thisValue.Kind() == reflect.Ptr {
 
+		// Handle interface types by extracting the concrete type
+		if node.thisValue.Kind() == reflect.Interface {
+			if !node.thisValue.IsNil() {
+				elem := node.thisValue.Elem()
+				if elem.Kind() == reflect.Ptr {
+					return elem.Elem().FieldByName(field).Type(), nil
+				} else if elem.Kind() == reflect.Struct {
+					return elem.FieldByName(field).Type(), nil
+				}
+			}
+		} else if node.thisValue.Kind() == reflect.Ptr {
 			return node.thisValue.Elem().FieldByName(field).Type(), nil
-		}
-		if node.thisValue.Kind() == reflect.Struct {
-
+		} else if node.thisValue.Kind() == reflect.Struct {
 			return node.thisValue.FieldByName(field).Type(), nil
 		}
 	}
@@ -353,7 +384,19 @@ func SetNumberValue(target, newvalue reflect.Value) error {
 
 // SetObjectValueByField will set the underlying value's field with new value.
 func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Value) (err error) {
-	fieldVal := node.thisValue.Elem().FieldByName(field)
+	var objValue reflect.Value = node.thisValue
+
+	// If it's an interface, extract the concrete value
+	if node.thisValue.Kind() == reflect.Interface && !node.thisValue.IsNil() {
+		objValue = node.thisValue.Elem()
+	}
+
+	// Handle pointer to struct
+	if objValue.Kind() == reflect.Ptr {
+		objValue = objValue.Elem()
+	}
+
+	fieldVal := objValue.FieldByName(field)
 	if fieldVal.IsValid() && fieldVal.CanAddr() && fieldVal.CanSet() {
 		defer func() {
 			if r := recover(); r != nil {

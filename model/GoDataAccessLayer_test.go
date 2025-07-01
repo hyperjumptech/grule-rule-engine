@@ -15,10 +15,11 @@
 package model
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Person struct {
@@ -357,4 +358,83 @@ func TestConstantFunctionCalls(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "string", retVal.Type().String())
 	assert.Equal(t, "SomeWithSpace", retVal.String())
+}
+
+// TestStructWithInterface represents a struct with an interface{} field for testing
+type TestStructWithInterface struct {
+	Name    string
+	Payload interface{}
+}
+
+// TestPayload represents the concrete type stored in the interface
+type TestPayload struct {
+	Status string
+	Count  int
+}
+
+func TestGoValueNode_Interface(t *testing.T) {
+	// Test with interface containing struct value
+	testData := &TestStructWithInterface{
+		Name: "test",
+		Payload: TestPayload{
+			Status: "active",
+			Count:  42,
+		},
+	}
+
+	rootNode := NewGoValueNode(reflect.ValueOf(testData), "testData")
+	payloadNode, err := rootNode.GetChildNodeByField("Payload")
+	assert.NoError(t, err)
+	assert.True(t, payloadNode.IsInterface())
+	assert.True(t, payloadNode.IsObject()) // Should return true for interface containing struct
+
+	// Test accessing fields within interface
+	statusNode, err := payloadNode.GetChildNodeByField("Status")
+	assert.NoError(t, err)
+	assert.True(t, statusNode.IsString())
+	assert.Equal(t, "testData.Payload.Status", statusNode.IdentifiedAs())
+
+	statusValue, err := statusNode.GetValue()
+	assert.NoError(t, err)
+	assert.Equal(t, "active", statusValue.String())
+
+	countNode, err := payloadNode.GetChildNodeByField("Count")
+	assert.NoError(t, err)
+	assert.True(t, countNode.IsInteger())
+
+	countValue, err := countNode.GetValue()
+	assert.NoError(t, err)
+	assert.Equal(t, 42, int(countValue.Int()))
+}
+
+func TestGoValueNode_InterfaceWithPointer(t *testing.T) {
+	// Test with interface containing pointer to struct (addressable)
+	testData := &TestStructWithInterface{
+		Name: "test",
+		Payload: &TestPayload{
+			Status: "active",
+			Count:  42,
+		},
+	}
+
+	rootNode := NewGoValueNode(reflect.ValueOf(testData), "testData")
+	payloadNode, err := rootNode.GetChildNodeByField("Payload")
+	assert.NoError(t, err)
+	assert.True(t, payloadNode.IsInterface())
+	assert.True(t, payloadNode.IsObject()) // Should return true for interface containing pointer to struct
+
+	// Test setting fields within interface (should work with pointer)
+	err = payloadNode.SetObjectValueByField("Status", reflect.ValueOf("modified"))
+	assert.NoError(t, err)
+
+	// Verify the change
+	statusNode, err := payloadNode.GetChildNodeByField("Status")
+	assert.NoError(t, err)
+	statusValue, err := statusNode.GetValue()
+	assert.NoError(t, err)
+	assert.Equal(t, "modified", statusValue.String())
+
+	// Also verify through direct access to the struct
+	payload := testData.Payload.(*TestPayload)
+	assert.Equal(t, "modified", payload.Status)
 }
