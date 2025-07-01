@@ -17,9 +17,13 @@ package ast
 //go:generate mockgen -destination=../mocks/ast/DataContext.go -package=mocksAst . IDataContext
 
 import (
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
+
+	"github.com/hyperjumptech/grule-rule-engine/model"
 )
+
+// DefaultFuncKey defines the key used for default functions.
+const DefaultFuncKey = "DEFUNC"
 
 // NewDataContext will create a new DataContext instance
 func NewDataContext() IDataContext {

@@ -17,10 +17,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"go.uber.org/zap"
 	"sort"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -130,13 +131,15 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	// Prepare the timer, we need to measure the processing time in debug mode.
 	startTime := time.Now()
 
-	// Prepare the build-in function and add to datacontext.
-	defunc := &ast.BuiltInFunctions{
-		Knowledge:     knowledge,
-		WorkingMemory: knowledge.WorkingMemory,
-		DataContext:   dataCtx,
+	if dataCtx.Get(ast.DefaultFuncKey) == nil {
+		// Prepare the build-in function and add to datacontext.
+		defunc := &ast.BuiltInFunctions{
+			Knowledge:     knowledge,
+			WorkingMemory: knowledge.WorkingMemory,
+			DataContext:   dataCtx,
+		}
+		dataCtx.Add(ast.DefaultFuncKey, defunc)
 	}
-	dataCtx.Add("DEFUNC", defunc)
 
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
