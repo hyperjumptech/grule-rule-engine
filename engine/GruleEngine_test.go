@@ -237,7 +237,6 @@ const complexRule2 = `rule ComplexRule "test complex rule" salience 10 {
 }`
 
 func TestEngine_ComplexRule2(t *testing.T) {
-
 	ts := &TestStruct{
 		Param1: false,
 		Param2: false,
@@ -274,7 +273,6 @@ const complexRule3 = `rule ComplexRule "test complex rule" salience 10 {
 }`
 
 func TestEngine_ComplexRule3(t *testing.T) {
-
 	ts := &TestStruct{
 		Param1: false,
 		Param2: false,
@@ -312,7 +310,6 @@ const complexRule4 = `rule ComplexRule "test complex rule" salience 10 {
 }`
 
 func TestEngine_ComplexRule4(t *testing.T) {
-
 	ts := &TestStruct{
 		Param1: true,
 		Param2: false,
@@ -347,7 +344,6 @@ const OpPresedenceRule = `rule OpPresedenceRule "test operator presedence" salie
 }`
 
 func TestEngine_OperatorPrecedence(t *testing.T) {
-
 	ts := &TestStruct{}
 
 	dctx := ast.NewDataContext()
@@ -511,7 +507,7 @@ Then
 }`
 
 func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
-	//Given
+	// Given
 	fact := &Fact{
 		Distance: 6000,
 		Duration: 123,
@@ -526,11 +522,11 @@ func TestGruleEngine_FetchMatchingRules_Having_Same_Salience(t *testing.T) {
 	kb, err := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
 	assert.NoError(t, err)
 
-	//When
+	// When
 	engine := NewGruleEngine()
 	ruleEntries, err := engine.FetchMatchingRules(dctx, kb)
 
-	//Then
+	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, 5, len(ruleEntries))
 }
@@ -597,7 +593,7 @@ Then
 }`
 
 func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
-	//Given
+	// Given
 	fact := &Fact{
 		Distance: 6000,
 		Duration: 121,
@@ -612,11 +608,11 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	kb, err := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
 	assert.NoError(t, err)
 
-	//When
+	// When
 	engine := NewGruleEngine()
 	ruleEntries, err := engine.FetchMatchingRules(dctx, kb)
 
-	//Then
+	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, 4, len(ruleEntries))
 	assert.Equal(t, 8, ruleEntries[0].Salience)
@@ -659,7 +655,7 @@ type LogicalOperatorRuleFact struct {
 }
 
 func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
-	//Given
+	// Given
 	fact := &LogicalOperatorRuleFact{
 		Distance:           2000,
 		Duration:           121,
@@ -676,12 +672,110 @@ func TestGruleEngine_Follows_logical_operator_precedence(t *testing.T) {
 	kb, err := lib.NewKnowledgeBaseInstance("logical_operator_rules_test", "0.1.1")
 	assert.NoError(t, err)
 
-	//When
+	// When
 	engine := NewGruleEngine()
 	err = engine.Execute(dctx, kb)
 
-	//Then
+	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, fact.Result, true)
 	assert.Equal(t, fact.NetAmount, float32(143.32))
+}
+
+const LevelRuleWithListener = `
+rule ProcessThresholds "ProcessThresholds" Salience 1 {
+	when
+		DP.Index < DP.Thresholds.Len()
+	then
+		DP.ProcessThresholds(DP.Level.Value, DP.Thresholds[DP.Index]);
+		DP.Index = DP.Index + 1;
+		Log("Index: " + DP.Index);
+}`
+
+type Level struct {
+	Value int64
+}
+
+type Threshold struct {
+	MinLevel int64
+}
+
+type DataPoint struct {
+	Level      *Level       // Level that needs to be monitored.
+	Thresholds []*Threshold // Threshold configuration levels.
+	TurnedOn   int64        // Turn something on for every threshold that breached.
+	Index      int64        // Running index of the threshold that is being processed.
+}
+
+func (d *DataPoint) ProcessThresholds(level int64, t *Threshold) {
+	if d == nil {
+		return
+	}
+	if level > t.MinLevel {
+		d.TurnedOn++
+	}
+}
+
+type LevelListener struct {
+	kb *ast.KnowledgeBase
+	dc ast.IDataContext
+	dp *DataPoint
+}
+
+const MaxTurnOns = int64(2)
+
+func (l *LevelListener) BeginCycle(cycle uint64) {
+	if l.dp.TurnedOn == MaxTurnOns { // Stop at MaxTurnOns.
+		l.dc.Complete() // Stop Cycle.
+	}
+}
+
+func (c *LevelListener) EvaluateRuleEntry(cycle uint64, entry *ast.RuleEntry, candidate bool) {
+}
+
+func (c *LevelListener) ExecuteRuleEntry(cycle uint64, entry *ast.RuleEntry) {
+}
+
+// TestGruleListener is a test function that verifies the behavior of the GruleEngineListener.
+// It creates a DataPoint with some thresholds, sets up a GruleEngine with a custom Listener,
+// and executes the engine. The test then verifies that the execution has aborted when a global
+// condition is met and that rule cycle gets stopped, by validating DataPoint's TurnedOn and Index
+// values are set to the expected MaxTurnOns value.
+func TestGruleListener(t *testing.T) {
+	// Given
+	datapoint := &DataPoint{
+		Level: &Level{
+			Value: 1000,
+		},
+		Thresholds: []*Threshold{
+			{MinLevel: 200},
+			{MinLevel: 400},
+			{MinLevel: 600},
+			{MinLevel: 800},
+		},
+		Index:    0,        // Initialize index to 0.
+		TurnedOn: int64(0), // Nothing turned on yet.
+	}
+
+	dctx := ast.NewDataContext()
+	err := dctx.Add("DP", datapoint)
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("TestListener", "0.0.1", pkg.NewBytesResource([]byte(LevelRuleWithListener)))
+	assert.NoError(t, err)
+	kb, err := lib.NewKnowledgeBaseInstance("TestListener", "0.0.1")
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+
+	// When
+	engine.Listeners = append(engine.Listeners, &LevelListener{kb: kb, dc: dctx, dp: datapoint})
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
+
+	// Then
+	assert.Equal(t, MaxTurnOns, datapoint.TurnedOn) // Limit at MaxTurnOns.
+	assert.Equal(t, MaxTurnOns, datapoint.Index)
 }
