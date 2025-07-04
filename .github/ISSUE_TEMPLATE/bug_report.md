@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 Steps to reproduce the behavior:
 1. I create code for this and that
 2. With a test for this and that
-3. Instead of seeng this
+3. Instead of seeing this
 4. I see that
 
 **Expected behavior**
