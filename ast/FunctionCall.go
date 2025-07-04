@@ -15,11 +15,11 @@
 package ast
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
+	"strings"
 )
 
 // NewFunctionCall creates new instance of FunctionCall
@@ -99,7 +99,7 @@ func (e *FunctionCall) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *FunctionCall) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(FUNCTIONCALL)
 	buff.WriteString(fmt.Sprintf("(n:%s", e.FunctionName))
 	if e.ArgumentList != nil {

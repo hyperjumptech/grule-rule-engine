@@ -15,9 +15,9 @@
 package ast
 
 import (
-	"bytes"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"strings"
 )
 
 // NewThenScope will create new instance of ThenScope
@@ -99,7 +99,7 @@ func (e *ThenScope) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenScope) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(THENSCOPE)
 	buff.WriteString("(")
 	if e.ThenExpressionList != nil {

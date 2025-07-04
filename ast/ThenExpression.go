@@ -15,9 +15,9 @@
 package ast
 
 import (
-	"bytes"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"strings"
 )
 
 // NewThenExpression create new instance of ThenExpression
@@ -121,7 +121,7 @@ func (e *ThenExpression) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *ThenExpression) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(THENEXPRESSION)
 	buff.WriteString("(")
 	if e.Assignment != nil {

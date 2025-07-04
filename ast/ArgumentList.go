@@ -15,9 +15,9 @@
 package ast
 
 import (
-	"bytes"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
+	"strings"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -103,7 +103,7 @@ func (e *ArgumentList) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *ArgumentList) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(ARGUMENTLIST)
 	buff.WriteString("(")
 	for i, v := range e.Arguments {
