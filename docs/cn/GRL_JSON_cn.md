@@ -217,7 +217,7 @@ resource := pkg.NewJSONResourceFromResource(underlying)
 通过`ParseJSONRuleset`函数调用，可以解析包含JSON规则的字节数组并转换成GRL语法的规则集合。
 
 ```go
-jsonData, err := ioutil.ReadFile("rules.json")
+jsonData, err := io.ReadFile("rules.json")
 if err != nil {
     panic(err)
 }

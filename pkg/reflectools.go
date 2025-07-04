@@ -368,15 +368,15 @@ func SetAttributeValue(objVal reflect.Value, fieldName string, value reflect.Val
 		case reflect.Struct:
 			if value.IsValid() {
 				if ValueToInterface(value) == nil {
-					return fmt.Errorf("Time set failed 1")
+					return fmt.Errorf("time set failed 1")
 				}
 				fieldVal.Set(value)
 				//t := ValueToInterface(fieldVal).(time.Time)
 				if ValueToInterface(fieldVal) == nil {
-					return fmt.Errorf("Time set failed 2")
+					return fmt.Errorf("time set failed 2")
 				}
 			} else {
-				return fmt.Errorf("Setting with nil is not allowed")
+				return fmt.Errorf("setting with nil is not allowed")
 			}
 			//// todo Add setter for slice type field
 			//return fmt.Errorf("unsupported operation to set struct")
@@ -653,11 +653,10 @@ func GetBaseKind(val reflect.Value) reflect.Kind {
 func IsNumber(val reflect.Value) bool {
 	switch GetBaseKind(val) {
 	case reflect.Int64, reflect.Uint64, reflect.Float64:
-
 		return true
+	default:
+		return false
 	}
-
-	return false
 }
 
 // GetValueElem will return the value val contains if val is of Kind Interface or Pointer

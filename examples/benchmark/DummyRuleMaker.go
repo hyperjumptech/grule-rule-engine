@@ -3,11 +3,12 @@ package benchmark
 import (
 	"bufio"
 	"bytes"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var (
@@ -20,17 +21,21 @@ func init() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+	}(f)
 	buf := bufio.NewReader(f)
 	words = make([]string, 0)
-	for true {
+	for {
 		str, err := buf.ReadString('\n')
 		if err != nil {
 			break
 		}
 		words = append(words, strings.TrimSpace(str))
 	}
-	rand.Seed(time.Now().Unix())
 	dupCheck = make(map[string]bool)
 }
 
@@ -38,7 +43,7 @@ func init() {
 func GetWord(t bool) string {
 	w := words[rand.Intn(len(words))]
 	if t {
-		return strings.Title(w)
+		return cases.Title(language.English).String(w)
 	}
 	return w
 }
@@ -46,7 +51,7 @@ func GetWord(t bool) string {
 // MakeRule make a single dummy rule
 func MakeRule(seq int) string {
 	var rname string
-	for true {
+	for {
 		rname = GetWord(true) + GetWord(true) + GetWord(true)
 		if _, ok := dupCheck[rname]; !ok {
 			break
@@ -105,7 +110,12 @@ func GenRandomRule(fileName string, count int) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+	}(f)
 	for i := 1; i <= count; i++ {
 		_, err := f.WriteString(MakeRule(i))
 		if err != nil {

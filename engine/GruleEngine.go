@@ -143,7 +143,12 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 		WorkingMemory: knowledge.WorkingMemory,
 		DataContext:   dataCtx,
 	}
-	dataCtx.Add("DEFUNC", defunc)
+	err := dataCtx.Add("DEFUNC", defunc)
+	if err != nil {
+		log.Error("DEFUNC add err")
+
+		return err
+	}
 
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
@@ -267,7 +272,12 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 		WorkingMemory: knowledge.WorkingMemory,
 		DataContext:   dataCtx,
 	}
-	dataCtx.Add("DEFUNC", defunc)
+	err := dataCtx.Add("DEFUNC", defunc)
+	if err != nil {
+		log.Error("DEFUNC add err")
+
+		return nil, err
+	}
 
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")

@@ -179,22 +179,37 @@ func (cat *Catalog) BuildKnowledgeBase() (*KnowledgeBase, error) {
 			switch amet.ValueType {
 			case TypeString:
 				length := make([]byte, 8)
-				buffer.Read(length)
+				_, err := buffer.Read(length)
+				if err != nil {
+					return nil, err
+				}
 				dLen := binary.LittleEndian.Uint64(length)
 				byteArr := make([]byte, dLen)
-				buffer.Read(byteArr)
+				_, err = buffer.Read(byteArr)
+				if err != nil {
+					return nil, err
+				}
 				newConst.Value = reflect.ValueOf(string(byteArr))
 			case TypeBoolean:
 				arr := make([]byte, 1)
-				buffer.Read(arr)
+				_, err := buffer.Read(arr)
+				if err != nil {
+					return nil, err
+				}
 				newConst.Value = reflect.ValueOf(arr[0] == 1)
 			case TypeInteger:
 				arr := make([]byte, 8)
-				buffer.Read(arr)
+				_, err := buffer.Read(arr)
+				if err != nil {
+					return nil, err
+				}
 				newConst.Value = reflect.ValueOf(int64(binary.LittleEndian.Uint64(arr)))
 			case TypeFloat:
 				arr := make([]byte, 8)
-				buffer.Read(arr)
+				_, err := buffer.Read(arr)
+				if err != nil {
+					return nil, err
+				}
 				bits := binary.LittleEndian.Uint64(arr)
 				float := math.Float64frombits(bits)
 				newConst.Value = reflect.ValueOf(float)
@@ -280,7 +295,7 @@ func (cat *Catalog) BuildKnowledgeBase() (*KnowledgeBase, error) {
 			}
 			importTable[amet.AstID] = n
 		default:
-			return nil, fmt.Errorf("unrecognized meta type")
+			return nil, fmt.Errorf("unrecognized meta type %d", meta.GetASTType())
 		}
 	}
 
