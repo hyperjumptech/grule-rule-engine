@@ -245,7 +245,7 @@ resource := pkg.NewJSONResourceFromResource(underlying)
 It is also possible to parse a byte array containing JSON rules directly into a GRL syntax ruleset by calling the `ParseJSONRuleset` function.
 
 ```go
-jsonData, err := ioutil.ReadFile("rules.json")
+jsonData, err := io.ReadFile("rules.json")
 if err != nil {
     panic(err)
 }

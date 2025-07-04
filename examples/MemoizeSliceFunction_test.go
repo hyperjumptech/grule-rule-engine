@@ -42,9 +42,9 @@ func TestSliceFunctionTest(t *testing.T) {
 	assert.NoError(t, err)
 	knowledgeBase, err := knowledgeLibrary.NewKnowledgeBaseInstance("test", "0.0.1")
 	assert.NoError(t, err)
-	engine := engine.NewGruleEngine()
+	gruleEngine := engine.NewGruleEngine()
 
-	err = engine.Execute(dataContext, knowledgeBase)
+	err = gruleEngine.Execute(dataContext, knowledgeBase)
 	assert.NoError(t, err)
 	assert.Equal(t, "123", fact.Concatenation)
 }

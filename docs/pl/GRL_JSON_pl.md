@@ -216,7 +216,7 @@ resource := pkg.NewJSONResourceFromResource(underlying)
 Możliwe jest również parsowanie tablicy bajtów zawierającej reguły JSON bezpośrednio do zbioru reguł składni GRL przez wywołanie funkcji `ParseJSONRuleset`.
 
 ```go
-jsonData, err := ioutil.ReadFile("rules.json")
+jsonData, err := io.ReadFile("rules.json")
 if err != nil {
     panic(err)
 }

@@ -264,7 +264,8 @@ func (res *URLResource) Load() ([]byte, error) {
 	}
 	client := &http.Client{}
 
-	ctx, _ := context.WithTimeout(context.Background(), time.Duration(URLResourceTimeoutSecond)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(URLResourceTimeoutSecond)*time.Second)
+	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, res.URL, nil)
 
 	if len(res.Header) > 0 {
@@ -279,7 +280,12 @@ func (res *URLResource) Load() ([]byte, error) {
 
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+	}(resp.Body)
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 

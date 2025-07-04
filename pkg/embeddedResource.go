@@ -28,7 +28,6 @@ import (
 )
 
 // EmbeddedResource is a struct that will load an embedded file from an embed.FS struct.
-// Note: EmbeddedResource is only available when using Go 1.16 or above
 type EmbeddedResource struct {
 	Path   string
 	Source embed.FS
