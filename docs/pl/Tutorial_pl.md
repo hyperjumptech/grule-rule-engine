@@ -12,7 +12,7 @@
 
 ## Przygotowanie
 
-Należy pamiętać, że Grule używa Go 1.16.
+Należy pamiętać, że Grule używa Go 1.24.4.
 
 Aby zaimportować Grule do swojego projektu:
 

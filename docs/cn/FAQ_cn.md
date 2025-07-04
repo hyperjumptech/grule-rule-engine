@@ -171,3 +171,44 @@ logger.SetLogLevel(logrus.PanicLevel)
 上面代码将会将Grule的日志级别设置成 `Panic` 级别, 只有当panic发生的时候才会记录日志.
 
 当然，修改日志级别可以减少你debug系统的能力，所以我们建议在生产环境才使用更高级别的日志级别。
+
+---
+
+**Question**: I've just upgraded Grule to the newest version, suddenly no log comes out of Grule?
+
+**Answer**: Yes, as of Grule v1.20.1 a new NoopLogger were introduced. This provide a plain and neutral logging framework Grule.
+This allows grule to use logging framework of your choice, what ever it is. Here is how:
+
+1. Create your own version of Logger by implementing "logger.Logger" interface, in this example lets call it `MyLogger`.
+
+```go
+type MyLogger struct {}
+func (myLog *MyLogger) Debug(args ...interface{}) {
+	.. code to add debug log here ..
+}
+Info(args ...interface{}){
+.. code to add info log here ..
+}
+Warn(args ...interface{}){
+.. code to add warn log here ..
+}
+... and so on
+```
+
+2. Instantiate `MyLogger` and add this to `logger.LogEntry` with its default LogLevel (`logger.Level`),
+
+```go
+myLogEntry := &LogEntry {
+	Logger : &MyLogger{},
+	Level : DebugLevel,
+}
+```
+
+3. Set `logger.Log` to use your new `LogEntry`
+
+```go
+logger.Log := myLogEntry
+```
+
+If you're already uses `Logrus` or `ZapLog` or `ZeroLog`, you could straightly uses
+`logger.SetLogger()` function and Grule will use your logger straight away. 
