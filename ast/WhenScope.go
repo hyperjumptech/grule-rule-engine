@@ -15,10 +15,10 @@
 package ast
 
 import (
-	"bytes"
 	"errors"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
+	"strings"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -106,7 +106,7 @@ func (e *WhenScope) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *WhenScope) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(WHENSCOPE)
 	buff.WriteString("(")
 	if e.Expression != nil {

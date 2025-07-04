@@ -21,6 +21,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"math"
 	"reflect"
+	"strings"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -116,7 +117,7 @@ func (e *Constant) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *Constant) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(CONSTANT)
 	buff.WriteString("(")
 	buff.WriteString(e.Value.Kind().String())

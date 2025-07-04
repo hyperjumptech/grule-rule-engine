@@ -15,7 +15,6 @@
 package ast
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"sort"
@@ -98,12 +97,12 @@ func (lib *KnowledgeLibrary) LoadKnowledgeBaseFromReader(reader io.Reader, overw
 		return nil, err
 	}
 	if overwrite {
-		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)] = knowledgeBase
+		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
 
 		return knowledgeBase, nil
 	}
-	if _, ok := lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)]; !ok {
-		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name,knowledgeBase.Version)] = knowledgeBase
+	if _, ok := lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name, knowledgeBase.Version)]; !ok {
+		lib.Library[GetKnowledgeBaseKey(knowledgeBase.Name, knowledgeBase.Version)] = knowledgeBase
 
 		return knowledgeBase, nil
 	}
@@ -194,7 +193,7 @@ func (e *KnowledgeBase) IsIdentical(that *KnowledgeBase) bool {
 
 // GetSnapshot will create this knowledge base signature
 func (e *KnowledgeBase) GetSnapshot() string {
-	var buffer bytes.Buffer
+	var buffer strings.Builder
 	buffer.WriteString(fmt.Sprintf("%s:%s[", e.Name, e.Version))
 	keys := make([]string, 0)
 	for i := range e.RuleEntries {

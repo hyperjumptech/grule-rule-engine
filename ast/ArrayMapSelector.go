@@ -15,11 +15,11 @@
 package ast
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
+	"strings"
 )
 
 // NewArrayMapSelector create a new array selector graph
@@ -106,7 +106,7 @@ func (e *ArrayMapSelector) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *ArrayMapSelector) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(MAPARRAYSELECTOR)
 	buff.WriteString("(")
 	if e.Expression != nil {

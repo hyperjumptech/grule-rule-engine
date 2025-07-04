@@ -15,10 +15,10 @@
 package ast
 
 import (
-	"bytes"
 	"errors"
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"strings"
 )
 
 // NewAssignment will create new instance of Assignment AST Node
@@ -141,7 +141,7 @@ func (e *Assignment) GetGrlText() string {
 
 // GetSnapshot will create a structure signature or AST graph
 func (e *Assignment) GetSnapshot() string {
-	var buff bytes.Buffer
+	var buff strings.Builder
 	buff.WriteString(ASSIGMENT)
 	buff.WriteString("(")
 	buff.WriteString(e.Variable.GetSnapshot())
