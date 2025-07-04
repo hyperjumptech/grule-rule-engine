@@ -80,16 +80,13 @@ var (
 )
 
 func init() {
-	logger := logrus.New()
-	logger.Level = logrus.InfoLevel
-
-	Log = LogEntry{
-		Logger: NewLogrus(logger).WithFields(Fields{"lib": "grule-rule-engine"}),
-		Level:  DebugLevel,
-	}
+	Log = NewNoopLogger()
 }
 
 // SetLogger changes default logger on external
+//
+// logrusLogger := logrus.New()
+// SetLogger(logrusLogger)
 func SetLogger(externalLog interface{}) {
 	switch externalLog.(type) {
 	case *zap.Logger:
