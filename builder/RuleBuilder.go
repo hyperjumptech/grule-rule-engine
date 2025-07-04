@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
+	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"time"
@@ -57,6 +58,12 @@ func SetLogger(log interface{}) {
 			return
 		}
 		entry = logger.NewLogrus(log)
+	case *zerolog.Logger:
+		log, ok := log.(*zerolog.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZero(log)
 	default:
 
 		return

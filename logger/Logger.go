@@ -15,6 +15,7 @@
 package logger
 
 import (
+	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 )
@@ -103,6 +104,13 @@ func SetLogger(externalLog interface{}) {
 			return
 		}
 		Log = NewLogrus(log)
+	case *zerolog.Logger:
+		log, ok := externalLog.(*zerolog.Logger)
+		if !ok {
+
+			return
+		}
+		Log = NewZero(log)
 	default:
 
 		return

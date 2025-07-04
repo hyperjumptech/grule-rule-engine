@@ -3,14 +3,15 @@ package logger
 import (
 	"fmt"
 	"github.com/rs/zerolog"
-	"go.uber.org/zap"
 )
+
+var _ Logger = (*zeroLogger)(nil)
 
 type zeroLogger struct {
 	zLogger *zerolog.Logger
 }
 
-func NewZaro(logger *zerolog.Logger) LogEntry {
+func NewZero(logger *zerolog.Logger) LogEntry {
 	l := zeroLogger{zLogger: logger}
 
 	return l.WithFields(Fields{"lib": "grule-rule-engine"})
@@ -85,17 +86,46 @@ func (l *zeroLogger) Fatalf(template string, args ...interface{}) {
 }
 
 func (l *zeroLogger) WithFields(fields Fields) LogEntry {
-	var f = make([]interface{}, 0)
-	for k, v := range fields {
-		f = append(f, k)
-		f = append(f, v)
-	}
-	newLogger := l.zLogger.With(f...)
+	context := l.zLogger.With()
 
-	level := GetLevel(l.sugaredLogger.Desugar().Core())
+	for k, v := range fields {
+		context = context.Interface(k, v)
+	}
+
+	newLogger := context.Logger()
 
 	return LogEntry{
-		Logger: &zapLogger{newLogger},
-		Level:  convertZapToInternalLevel(level),
+		Logger: &zeroLogger{
+			zLogger: &newLogger,
+		},
+		Level: convertZeroLogToInternalLevel(newLogger.GetLevel()),
+	}
+}
+
+func convertZeroLogToInternalLevel(level zerolog.Level) Level {
+	switch level {
+	case zerolog.TraceLevel:
+
+		return TraceLevel
+	case zerolog.DebugLevel:
+
+		return DebugLevel
+	case zerolog.InfoLevel:
+
+		return InfoLevel
+	case zerolog.WarnLevel:
+
+		return WarnLevel
+	case zerolog.ErrorLevel:
+
+		return ErrorLevel
+	case zerolog.FatalLevel:
+
+		return FatalLevel
+	case zerolog.PanicLevel:
+		return PanicLevel
+	default:
+
+		return DebugLevel
 	}
 }

@@ -16,6 +16,7 @@ package antlr
 
 import (
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"strconv"
@@ -56,6 +57,12 @@ func SetLogger(log interface{}) {
 			return
 		}
 		entry = logger.NewLogrus(log)
+	case *zerolog.Logger:
+		log, ok := log.(*zerolog.Logger)
+		if !ok {
+			return
+		}
+		entry = logger.NewZero(log)
 	default:
 		return
 	}
