@@ -15,6 +15,7 @@
 package logger
 
 import (
+	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 )
@@ -80,16 +81,13 @@ var (
 )
 
 func init() {
-	logger := logrus.New()
-	logger.Level = logrus.InfoLevel
-
-	Log = LogEntry{
-		Logger: NewLogrus(logger).WithFields(Fields{"lib": "grule-rule-engine"}),
-		Level:  DebugLevel,
-	}
+	Log = NewNoopLogger()
 }
 
 // SetLogger changes default logger on external
+//
+// logrusLogger := logrus.New()
+// SetLogger(logrusLogger)
 func SetLogger(externalLog interface{}) {
 	switch externalLog.(type) {
 	case *zap.Logger:
@@ -106,6 +104,13 @@ func SetLogger(externalLog interface{}) {
 			return
 		}
 		Log = NewLogrus(log)
+	case *zerolog.Logger:
+		log, ok := externalLog.(*zerolog.Logger)
+		if !ok {
+
+			return
+		}
+		Log = NewZero(log)
 	default:
 
 		return
