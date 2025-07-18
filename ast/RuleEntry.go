@@ -17,9 +17,10 @@ package ast
 import (
 	"context"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -183,11 +184,11 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 	if err != nil {
 		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName, err)
 
-		return false, fmt.Errorf("evaluating expression in rule '%s' the when raised an error. got %v", dataContext.GetRuleEntry().RuleName, err)
+		return false, fmt.Errorf("evaluating expression in rule '%s' the when raised an error. got %v", e.RuleName, err)
 	}
 	if val.Kind() != reflect.Bool {
 
-		return false, fmt.Errorf("evaluating expression in rule '%s', the when is not a boolean expression : %s", dataContext.GetRuleEntry().RuleName, e.WhenScope.Expression.GetGrlText())
+		return false, fmt.Errorf("evaluating expression in rule '%s', the when is not a boolean expression : %s", e.RuleName, e.WhenScope.Expression.GetGrlText())
 	}
 
 	return val.Bool(), nil
