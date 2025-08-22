@@ -406,7 +406,10 @@ func (node *GoValueNode) SetObjectValueByField(field string, newValue reflect.Va
 		if pkg.IsNumber(fieldVal) && pkg.IsNumber(newValue) {
 
 			return SetNumberValue(fieldVal, newValue)
+		} else if pkg.IsPointerToNumber(fieldVal) && pkg.IsNumber(newValue) {
+			return SetNumberValue(fieldVal.Elem(), newValue)
 		}
+
 		fieldVal.Set(newValue)
 
 		return nil

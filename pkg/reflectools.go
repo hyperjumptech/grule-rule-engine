@@ -659,6 +659,11 @@ func IsNumber(val reflect.Value) bool {
 	}
 }
 
+// IsPointerToNumber will check a value if it is a pointer to a number eg, int, uint, or float
+func IsPointerToNumber(val reflect.Value) bool {
+	return IsNumber(GetValueElem(val))
+}
+
 // GetValueElem will return the value val contains if val is of Kind Interface or Pointer
 func GetValueElem(val reflect.Value) reflect.Value {
 	if val.Kind() == reflect.Pointer || val.Kind() == reflect.Interface {
