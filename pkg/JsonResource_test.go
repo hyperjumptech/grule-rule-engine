@@ -15,8 +15,9 @@
 package pkg
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const jsonData = `{
@@ -209,6 +210,33 @@ const expectedBigIntConversion = `rule SpeedUp "When testcar is speeding up we k
 }
 `
 
+const jsonNegation = `[{
+    "name": "SpeedConstant",
+    "desc": "When testcar is not speeding up we keep constant \"speed\".",
+    "salience": 10,
+    "when": {
+        "not": [
+            {
+                "and": [
+                    {"eq": ["TestCar.SpeedUp", true]},
+                    {"not": ["TestCar.Speed", 10]}
+                ]
+            }
+        ]
+    },
+    "then": [
+        {"call": ["Log", {"const": "\"Speed\" constant\n"}]}
+    ]
+}]`
+
+const expecteJsonNegation = `rule SpeedConstant "When testcar is not speeding up we keep constant \"speed\"." salience 10 {
+    when
+        !(TestCar.SpeedUp == true && TestCar.Speed != 10)
+    then
+        Log("\"Speed\" constant\n");
+}
+`
+
 func TestParseJSONRuleset(t *testing.T) {
 	rs, err := ParseJSONRule([]byte(jsonData))
 	assert.NoError(t, err)
@@ -261,4 +289,10 @@ func TestJSONBigIntConversion(t *testing.T) {
 	rs, err = ParseJSONRuleset([]byte(arrayJSONDataBigIntConversion))
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBigIntConversion, rs)
+}
+
+func TestJsonNegation(t *testing.T) {
+	rs, err := ParseJSONRuleset([]byte(jsonNegation))
+	assert.NoError(t, err)
+	assert.Equal(t, expecteJsonNegation, rs)
 }

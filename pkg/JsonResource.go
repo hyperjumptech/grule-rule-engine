@@ -391,7 +391,6 @@ func buildCompoundOperator(o interface{}, depth int, operator string) (string, b
 			}
 		}
 		if depth > 0 {
-
 			return "(" + strings.Join(ands, operator) + ")", false, nil
 		}
 
@@ -467,7 +466,7 @@ func joinOperator(v interface{}, operator string) (string, error) {
 		}
 		ops := make([]string, len(arr))
 		for i := 0; i < len(arr); i++ {
-			ope, err := parseOperand(arr[i], false)
+			ope, err := parseOperand(arr[i], false, operator == " != ")
 			if err != nil {
 
 				return "", err
@@ -487,12 +486,12 @@ func joinSet(v interface{}, operator string) (string, error) {
 
 			return "", fmt.Errorf("set operand count must be 2")
 		}
-		leftOpe, err := parseOperand(arr[0], true)
+		leftOpe, err := parseOperand(arr[0], true, false)
 		if err != nil {
 
 			return "", err
 		}
-		rightOpe, err := parseOperand(arr[1], true)
+		rightOpe, err := parseOperand(arr[1], true, false)
 		if err != nil {
 
 			return "", err
@@ -504,7 +503,7 @@ func joinSet(v interface{}, operator string) (string, error) {
 	return "", fmt.Errorf("operator has an unexpected type")
 }
 
-func parseOperand(o interface{}, noWrap bool) (string, error) {
+func parseOperand(o interface{}, noWrap bool, negation bool) (string, error) {
 	switch operandType := o.(type) {
 	case string:
 
@@ -530,6 +529,10 @@ func parseOperand(o interface{}, noWrap bool) (string, error) {
 		if expNoWrap || noWrap {
 
 			return expr, nil
+		}
+
+		if negation {
+			return "!(" + expr + ")", nil
 		}
 
 		return "(" + expr + ")", nil
