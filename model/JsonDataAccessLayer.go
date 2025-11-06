@@ -17,9 +17,10 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
 	"time"
+
+	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
 var (
@@ -225,9 +226,11 @@ func (vn *JSONValueNode) GetObjectValueByField(field string) (reflect.Value, err
 		return reflect.ValueOf(nil), fmt.Errorf("not an object or map")
 	}
 	tmap := vn.data.MapIndex(reflect.ValueOf(field))
+
+	// Return nil if the field does not exist in JSON
 	if tmap == reflect.ValueOf(nil) {
 
-		return reflect.ValueOf(nil), fmt.Errorf("json field '%s' is undefined", field)
+		return reflect.ValueOf(nil), nil
 	}
 
 	return tmap.Elem(), nil

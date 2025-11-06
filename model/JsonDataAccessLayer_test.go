@@ -15,9 +15,10 @@
 package model
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -296,4 +297,18 @@ func TestIsObject(t *testing.T) {
 		t.Fail()
 	}
 	assert.Equal(t, 3, ln)
+}
+
+func TestMissingValues(t *testing.T) {
+	vn, err := NewJSONValueNode("{\"one\": \"1\", \"two\": 2}", "json")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+	eval, err := vn.GetObjectValueByField("non-existent")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+	assert.Equal(t, reflect.ValueOf(nil), eval)
 }
