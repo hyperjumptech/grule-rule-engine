@@ -280,7 +280,7 @@ Your application, you can test if a GRL script or snippet contains a GRL syntax 
 		// Cast the error into pkg.GruleErrorReporter with typecast checking.
 		// Typecast checking is necessary because the err might not only parsing error.
 		if reporter, ok := err.(*pkg.GruleErrorReporter); ok {
-			// Lets iterate all the error we get during parsing.
+			// Let's iterate all the error we get during parsing.
 			for i, er := range reporter.Errors {
 				fmt.Printf("detected error #%d : %s\n", i, er.Error())
 			}
