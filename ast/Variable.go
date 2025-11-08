@@ -16,10 +16,11 @@ package ast
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -43,6 +44,8 @@ type Variable struct {
 
 	ValueNode model.ValueNode
 	Value     reflect.Value
+
+	CompareNilValues bool
 }
 
 // MakeCatalog create a catalog entry for this AST Node
@@ -219,6 +222,17 @@ func (e *Variable) Assign(newVal reflect.Value, dataContext IDataContext, memory
 
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
+	compareNode := dataContext.Get("COMPARE_NILS")
+	if compareNode != nil {
+		if rv := compareNode.Value(); rv.IsValid() && rv.Kind() == reflect.Bool {
+			e.CompareNilValues = rv.Bool()
+		} else {
+			e.CompareNilValues = false
+		}
+	} else {
+		e.CompareNilValues = false
+	}
+
 	if len(e.Name) > 0 && e.Variable == nil {
 		valueNode := dataContext.Get(e.Name)
 		if valueNode == nil {
@@ -238,7 +252,9 @@ func (e *Variable) Evaluate(dataContext IDataContext, memory *WorkingMemory) (re
 		}
 		valueNode, err := e.Variable.ValueNode.GetChildNodeByField(e.Name)
 		if err != nil {
-
+			if e.CompareNilValues {
+				return reflect.ValueOf(nil), nil
+			}
 			return reflect.Value{}, err
 		}
 		e.ValueNode = valueNode

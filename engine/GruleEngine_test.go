@@ -140,9 +140,10 @@ func getTypeOf(i interface{}) string {
 	return t.Name()
 }
 
+// TODO: Add also tests when function argument(s) are nil pointers
 const ruleWithAccessErr = `rule AccessErrRule "test access error rule" salience 10 {
     when
-        TestStruct.NotExist == 1
+        TestStruct.NotExist == 1 || TestStruct.OtherNonExists || TestStruct.ThirdNonExist.Contains("included value") == true || TestStruct.exist.Contains(TestStruct.NonExisting) == true
     then
 		Retract("AccessErrRule");
 }`
@@ -154,7 +155,7 @@ func TestEngine_ExecuteErr(t *testing.T) {
 
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(ruleWithAccessErr)))
 	assert.NoError(t, err)
 
 	engine := NewGruleEngine()
@@ -163,6 +164,45 @@ func TestEngine_ExecuteErr(t *testing.T) {
 	assert.NoError(t, err)
 	err = engine.Execute(dctx, kb)
 	assert.Error(t, err)
+}
+
+func TestEngine_ExecuteHandleNilsJSON(t *testing.T) {
+	dctx := ast.NewDataContext()
+	testJson := `{ "exist": "\"This field exist\"" }`
+	err := dctx.AddJSON("TestStruct", []byte(testJson))
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(ruleWithAccessErr)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	engine.ReturnErrOnFailedRuleEvaluation = true
+	engine.CompareNilValues = true
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
+}
+
+func TestEngine_ExecuteHandleNils(t *testing.T) {
+	dctx := ast.NewDataContext()
+	err := dctx.Add("TestStruct", &TestStruct{})
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(ruleWithAccessErr)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	engine.ReturnErrOnFailedRuleEvaluation = true
+	engine.CompareNilValues = true
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
 }
 
 func TestEmptyValueEquality(t *testing.T) {

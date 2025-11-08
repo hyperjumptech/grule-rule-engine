@@ -17,11 +17,12 @@ package engine
 import (
 	"context"
 	"fmt"
+	"sort"
+	"time"
+
 	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
-	"sort"
-	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
@@ -87,6 +88,7 @@ func NewGruleEngine() *GruleEngine {
 type GruleEngine struct {
 	MaxCycle                        uint64
 	ReturnErrOnFailedRuleEvaluation bool
+	CompareNilValues                bool
 	Listeners                       []GruleEngineListener
 }
 
@@ -146,6 +148,13 @@ func (g *GruleEngine) ExecuteWithContext(ctx context.Context, dataCtx ast.IDataC
 	err := dataCtx.Add("DEFUNC", defunc)
 	if err != nil {
 		log.Error("DEFUNC add err")
+
+		return err
+	}
+
+	err = dataCtx.Add("COMPARE_NILS", g.CompareNilValues)
+	if err != nil {
+		log.Error("COMPARE_NILS add err")
 
 		return err
 	}
@@ -279,6 +288,12 @@ func (g *GruleEngine) FetchMatchingRules(dataCtx ast.IDataContext, knowledge *as
 		return nil, err
 	}
 
+	err = dataCtx.Add("COMPARE_NILS", g.CompareNilValues)
+	if err != nil {
+		log.Error("COMPARE_NILS add err")
+
+		return nil, err
+	}
 	// Working memory need to be resetted. all Expression will be set as not evaluated.
 	log.Debugf("Resetting Working memory")
 	knowledge.WorkingMemory.ResetAll()

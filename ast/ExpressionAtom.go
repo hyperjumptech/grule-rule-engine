@@ -17,10 +17,11 @@ package ast
 import (
 	"errors"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
-	"github.com/hyperjumptech/grule-rule-engine/model"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
+	"github.com/hyperjumptech/grule-rule-engine/model"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -49,7 +50,8 @@ type ExpressionAtom struct {
 	Value     reflect.Value
 	ValueNode model.ValueNode
 
-	Evaluated bool
+	Evaluated        bool
+	CompareNilValues bool
 }
 
 // MakeCatalog will create a catalog entry from ExpressionAtom node.
@@ -265,10 +267,22 @@ func (e *ExpressionAtom) SetGrlText(grlText string) {
 
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemory) (val reflect.Value, err error) {
-	if e.Evaluated == true {
+	// Extract COMPARE_NILS from dataContext as a bool, defaulting to false when unavailable or not boolean.
+	compareNode := dataContext.Get("COMPARE_NILS")
+	if compareNode != nil {
+		if rv := compareNode.Value(); rv.IsValid() && rv.Kind() == reflect.Bool {
+			e.CompareNilValues = rv.Bool()
+		} else {
+			e.CompareNilValues = false
+		}
+	} else {
+		e.CompareNilValues = false
+	}
 
+	if e.Evaluated {
 		return e.Value, nil
 	}
+
 	if e.Constant != nil {
 		val, err := e.Constant.Evaluate(dataContext, memory)
 		if err != nil {
@@ -346,8 +360,15 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			return reflect.ValueOf(nil), err
 		}
 
+		if e.ExpressionAtom.ValueNode == nil && e.CompareNilValues {
+			return reflect.ValueOf(nil), nil
+		}
+
 		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		if err != nil {
+			if e.CompareNilValues {
+				return reflect.ValueOf(nil), nil
+			}
 
 			return reflect.ValueOf(nil), err
 		}
@@ -368,6 +389,13 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 		}
 		valueNode, err := e.ExpressionAtom.ValueNode.GetChildNodeByField(e.VariableName)
 		if err != nil {
+			if e.CompareNilValues {
+				e.ValueNode = model.NewGoValueNode(reflect.ValueOf(nil), fmt.Sprintf("%s.%s->nil", e.ExpressionAtom.ValueNode.IdentifiedAs(), e.VariableName))
+				e.Value = e.ValueNode.Value()
+				e.Evaluated = true
+
+				return e.Value, nil
+			}
 
 			return reflect.Value{}, err
 		}
