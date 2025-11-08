@@ -17,9 +17,10 @@ package ast
 import (
 	"errors"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 	"strings"
+
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
@@ -79,7 +80,8 @@ type Expression struct {
 	Negated          bool
 	Value            reflect.Value
 
-	Evaluated bool
+	Evaluated        bool
+	CompareNilValues bool
 }
 
 // MakeCatalog will create a catalog entry from Expression node.
@@ -279,7 +281,18 @@ func (e *Expression) SetGrlText(grlText string) {
 
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (reflect.Value, error) {
-	if e.Evaluated == true {
+	compareNode := dataContext.Get("COMPARE_NILS")
+	if compareNode != nil {
+		if rv := compareNode.Value(); rv.IsValid() && rv.Kind() == reflect.Bool {
+			e.CompareNilValues = rv.Bool()
+		} else {
+			e.CompareNilValues = false
+		}
+	} else {
+		e.CompareNilValues = false
+	}
+
+	if e.Evaluated {
 
 		return e.Value, nil
 	}
@@ -350,41 +363,84 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
 		}
 
-		switch e.Operator {
-		case OpMul:
-			val, opErr = pkg.EvaluateMultiplication(lval, rval)
-		case OpDiv:
-			val, opErr = pkg.EvaluateDivision(lval, rval)
-		case OpMod:
-			val, opErr = pkg.EvaluateModulo(lval, rval)
-		case OpAdd:
-			val, opErr = pkg.EvaluateAddition(lval, rval)
-		case OpSub:
-			val, opErr = pkg.EvaluateSubtraction(lval, rval)
-		case OpBitAnd:
-			val, opErr = pkg.EvaluateBitAnd(lval, rval)
-		case OpBitOr:
-			val, opErr = pkg.EvaluateBitOr(lval, rval)
-		case OpGT:
-			val, opErr = pkg.EvaluateGreaterThan(lval, rval)
-		case OpLT:
-			val, opErr = pkg.EvaluateLesserThan(lval, rval)
-		case OpGTE:
-			val, opErr = pkg.EvaluateGreaterThanEqual(lval, rval)
-		case OpLTE:
-			val, opErr = pkg.EvaluateLesserThanEqual(lval, rval)
-		case OpEq:
-			val, opErr = pkg.EvaluateEqual(lval, rval)
-		case OpNEq:
-			val, opErr = pkg.EvaluateNotEqual(lval, rval)
-		case OpAnd:
-			val, opErr = pkg.EvaluateLogicAnd(lval, rval)
-		case OpOr:
-			val, opErr = pkg.EvaluateLogicOr(lval, rval)
-		}
-		if opErr == nil {
-			e.Value = val
-			e.Evaluated = true
+		if e.CompareNilValues && (!lval.IsValid() || !rval.IsValid()) {
+			if e.CompareNilValues {
+				AstLog.Debugf("Values have invalid value (%v and %v) but continuing with null handling", lval, rval)
+				switch e.Operator {
+				case OpMul, OpDiv, OpBitAnd, OpBitOr, OpMod:
+					// Can be left as nil, as these operators with Nil are not defined
+					e.Evaluated = true
+				case OpAdd:
+					if lval.IsValid() {
+						val = lval
+					} else if rval.IsValid() {
+						val = rval
+					}
+					e.Evaluated = true
+				case OpSub:
+					if lval.IsValid() {
+						val = lval
+					} else if rval.IsValid() {
+						val, _ = pkg.EvaluateSubtraction(reflect.ValueOf(0), rval)
+					}
+					e.Evaluated = true
+				case OpOr:
+					lvale := pkg.GetValueElem(lval)
+					rvale := pkg.GetValueElem(rval)
+					if (lvale.IsValid() && lvale.Kind() == reflect.Bool && lvale.Bool()) || (rvale.IsValid() && rvale.Kind() == reflect.Bool && rvale.Bool()) {
+						val = reflect.ValueOf(true)
+					} else {
+						val = reflect.ValueOf(false)
+					}
+					e.Value = val
+					e.Evaluated = true
+				case OpEq, OpGTE, OpLTE, OpGT, OpLT, OpAnd:
+					val = reflect.ValueOf(false)
+					e.Value = val
+					e.Evaluated = true
+				case OpNEq:
+					val = reflect.ValueOf(true)
+					e.Value = val
+					e.Evaluated = true
+				}
+			}
+		} else {
+			switch e.Operator {
+			case OpMul:
+				val, opErr = pkg.EvaluateMultiplication(lval, rval)
+			case OpDiv:
+				val, opErr = pkg.EvaluateDivision(lval, rval)
+			case OpMod:
+				val, opErr = pkg.EvaluateModulo(lval, rval)
+			case OpAdd:
+				val, opErr = pkg.EvaluateAddition(lval, rval)
+			case OpSub:
+				val, opErr = pkg.EvaluateSubtraction(lval, rval)
+			case OpBitAnd:
+				val, opErr = pkg.EvaluateBitAnd(lval, rval)
+			case OpBitOr:
+				val, opErr = pkg.EvaluateBitOr(lval, rval)
+			case OpGT:
+				val, opErr = pkg.EvaluateGreaterThan(lval, rval)
+			case OpLT:
+				val, opErr = pkg.EvaluateLesserThan(lval, rval)
+			case OpGTE:
+				val, opErr = pkg.EvaluateGreaterThanEqual(lval, rval)
+			case OpLTE:
+				val, opErr = pkg.EvaluateLesserThanEqual(lval, rval)
+			case OpEq:
+				val, opErr = pkg.EvaluateEqual(lval, rval)
+			case OpNEq:
+				val, opErr = pkg.EvaluateNotEqual(lval, rval)
+			case OpAnd:
+				val, opErr = pkg.EvaluateLogicAnd(lval, rval)
+			case OpOr:
+				val, opErr = pkg.EvaluateLogicOr(lval, rval)
+			}
+			if opErr == nil {
+				e.Value = val
+				e.Evaluated = true
+			}
 		}
 
 		return val, opErr
