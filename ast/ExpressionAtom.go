@@ -366,6 +366,9 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 
 		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		if err != nil {
+			if e.CompareNilValues {
+				return reflect.ValueOf(nil), nil
+			}
 
 			return reflect.ValueOf(nil), err
 		}

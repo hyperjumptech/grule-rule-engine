@@ -140,9 +140,10 @@ func getTypeOf(i interface{}) string {
 	return t.Name()
 }
 
+// TODO: Add also tests when function argument(s) are nil pointers
 const ruleWithAccessErr = `rule AccessErrRule "test access error rule" salience 10 {
     when
-        TestStruct.NotExist == 1 || TestStruct.OtherNonExists || TestStruct.ThirdNonExist.StrContains("included value") == true
+        TestStruct.NotExist == 1 || TestStruct.OtherNonExists || TestStruct.ThirdNonExist.Contains("included value") == true || TestStruct.exist.Contains(TestStruct.NonExisting) == true
     then
 		Retract("AccessErrRule");
 }`
@@ -167,7 +168,8 @@ func TestEngine_ExecuteErr(t *testing.T) {
 
 func TestEngine_ExecuteHandleNilsJSON(t *testing.T) {
 	dctx := ast.NewDataContext()
-	err := dctx.AddJSON("TestStruct", []byte("{}"))
+	testJson := `{ "exist": "\"This field exist\"" }`
+	err := dctx.AddJSON("TestStruct", []byte(testJson))
 	assert.NoError(t, err)
 
 	lib := ast.NewKnowledgeLibrary()
