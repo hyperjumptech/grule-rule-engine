@@ -360,6 +360,10 @@ func (e *ExpressionAtom) Evaluate(dataContext IDataContext, memory *WorkingMemor
 			return reflect.ValueOf(nil), err
 		}
 
+		if e.ExpressionAtom.ValueNode == nil && e.CompareNilValues {
+			return reflect.ValueOf(nil), nil
+		}
+
 		retVal, err := e.ExpressionAtom.ValueNode.CallFunction(e.FunctionCall.FunctionName, args...)
 		if err != nil {
 

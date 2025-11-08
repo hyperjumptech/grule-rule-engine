@@ -142,7 +142,7 @@ func getTypeOf(i interface{}) string {
 
 const ruleWithAccessErr = `rule AccessErrRule "test access error rule" salience 10 {
     when
-        TestStruct.NotExist == 1 || TestStruct.OtherNonExists
+        TestStruct.NotExist == 1 || TestStruct.OtherNonExists || TestStruct.ThirdNonExist.StrContains("included value") == true
     then
 		Retract("AccessErrRule");
 }`
@@ -163,6 +163,25 @@ func TestEngine_ExecuteErr(t *testing.T) {
 	assert.NoError(t, err)
 	err = engine.Execute(dctx, kb)
 	assert.Error(t, err)
+}
+
+func TestEngine_ExecuteHandleNilsJSON(t *testing.T) {
+	dctx := ast.NewDataContext()
+	err := dctx.AddJSON("TestStruct", []byte("{}"))
+	assert.NoError(t, err)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	err = rb.BuildRuleFromResource("Test", "0.1.1", pkg.NewBytesResource([]byte(ruleWithAccessErr)))
+	assert.NoError(t, err)
+
+	engine := NewGruleEngine()
+	engine.ReturnErrOnFailedRuleEvaluation = true
+	engine.CompareNilValues = true
+	kb, err := lib.NewKnowledgeBaseInstance("Test", "0.1.1")
+	assert.NoError(t, err)
+	err = engine.Execute(dctx, kb)
+	assert.NoError(t, err)
 }
 
 func TestEngine_ExecuteHandleNils(t *testing.T) {
