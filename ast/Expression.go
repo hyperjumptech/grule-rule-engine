@@ -17,10 +17,10 @@ package ast
 import (
 	"errors"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"reflect"
 	"strings"
 
+	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
@@ -316,7 +316,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		if e.Operator == OpAnd {
 			if lerr != nil {
 
-				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %w", lerr)
 			}
 			val, opErr = pkg.EvaluateLogicSingle(lval)
 			if opErr == nil && !val.Bool() {
@@ -329,7 +329,7 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		if e.Operator == OpOr {
 			if lerr != nil {
 
-				return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+				return reflect.Value{}, fmt.Errorf("left hand expression error. got %w", lerr)
 			}
 			val, opErr = pkg.EvaluateLogicSingle(lval)
 			if opErr == nil && val.Bool() {
@@ -343,11 +343,11 @@ func (e *Expression) Evaluate(dataContext IDataContext, memory *WorkingMemory) (
 		rval, rerr := e.RightExpression.Evaluate(dataContext, memory)
 		if lerr != nil {
 
-			return reflect.Value{}, fmt.Errorf("left hand expression error. got %v", lerr)
+			return reflect.Value{}, fmt.Errorf("left hand expression error. got %w", lerr)
 		}
 		if rerr != nil {
 
-			return reflect.Value{}, fmt.Errorf("right hand expression error.  got %v", rerr)
+			return reflect.Value{}, fmt.Errorf("right hand expression error. got %w", rerr)
 		}
 
 		switch e.Operator {

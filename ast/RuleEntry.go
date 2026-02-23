@@ -167,7 +167,6 @@ func (e *RuleEntry) SetGrlText(grlText string) {
 // Evaluate will evaluate this AST graph for when scope evaluation
 func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memory *WorkingMemory) (can bool, err error) {
 	if ctx.Err() != nil {
-
 		return false, fmt.Errorf("context error on evaluating rule %s. got %w", e.RuleName, ctx.Err())
 	}
 	defer func() {
@@ -184,7 +183,7 @@ func (e *RuleEntry) Evaluate(ctx context.Context, dataContext IDataContext, memo
 	if err != nil {
 		AstLog.Errorf("Error while evaluating rule %s, got %v", e.RuleName, err)
 
-		return false, fmt.Errorf("evaluating expression in rule '%s' the when raised an error. got %v", e.RuleName, err)
+		return false, fmt.Errorf("evaluating expression in rule '%s' the when raised an error. got %w", e.RuleName, err)
 	}
 	if val.Kind() != reflect.Bool {
 
